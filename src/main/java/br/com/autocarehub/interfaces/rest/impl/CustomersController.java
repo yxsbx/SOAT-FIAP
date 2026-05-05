@@ -1,10 +1,18 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
+import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.DeleteCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.FindCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
+import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
+import br.com.autocarehub.domain.Customer;
 import br.com.autocarehub.interfaces.rest.generated.api.CustomersApi;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
+import br.com.autocarehub.interfaces.rest.impl.mapper.CustomerRestMapper;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,28 +21,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CustomersController implements CustomersApi {
 
+    private final CreateCustomerUseCase createCustomerUseCase;
+    private final UpdateCustomerUseCase updateCustomerUseCase;
+    private final FindCustomerUseCase findCustomerUseCase;
+    private final ListCustomersUseCase listCustomersUseCase;
+    private final DeleteCustomerUseCase deleteCustomerUseCase;
+
+    public CustomersController(CreateCustomerUseCase createCustomerUseCase, UpdateCustomerUseCase updateCustomerUseCase, FindCustomerUseCase findCustomerUseCase, ListCustomersUseCase listCustomersUseCase, DeleteCustomerUseCase deleteCustomerUseCase) {
+        this.createCustomerUseCase = createCustomerUseCase;
+        this.updateCustomerUseCase = updateCustomerUseCase;
+        this.findCustomerUseCase = findCustomerUseCase;
+        this.listCustomersUseCase = listCustomersUseCase;
+        this.deleteCustomerUseCase = deleteCustomerUseCase;
+    }
+
     @Override
     public ResponseEntity<CustomerResponse> createCustomer(CreateCustomerRequest createCustomerRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        Customer customer = createCustomerUseCase.execute(CustomerRestMapper.toCommand(createCustomerRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(CustomerRestMapper.toResponse(customer));
     }
 
     @Override
     public ResponseEntity<Void> deleteCustomer(UUID customerId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        deleteCustomerUseCase.execute(customerId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<CustomerResponse> getCustomerById(UUID customerId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(CustomerRestMapper.toResponse(findCustomerUseCase.execute(customerId)));
     }
 
     @Override
     public ResponseEntity<CustomerListResponse> listCustomers(Integer page, Integer size, Boolean active) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        List<Customer> customers = listCustomersUseCase.execute().stream()
+                .filter(customer -> active == null || customer.active() == active)
+                .toList();
+        return ResponseEntity.ok(CustomerRestMapper.toListResponse(customers, page, size));
     }
 
     @Override
     public ResponseEntity<CustomerResponse> updateCustomer(UUID customerId, UpdateCustomerRequest updateCustomerRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        Customer customer = updateCustomerUseCase.execute(CustomerRestMapper.toCommand(customerId, updateCustomerRequest));
+        return ResponseEntity.ok(CustomerRestMapper.toResponse(customer));
     }
 }

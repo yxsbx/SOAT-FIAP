@@ -1,10 +1,18 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
+import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
+import br.com.autocarehub.domain.WorkshopService;
 import br.com.autocarehub.interfaces.rest.generated.api.WorkshopServicesApi;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateWorkshopServiceRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateWorkshopServiceRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceResponse;
+import br.com.autocarehub.interfaces.rest.impl.mapper.WorkshopServiceRestMapper;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,28 +21,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WorkshopServicesController implements WorkshopServicesApi {
 
+    private final CreateWorkshopServiceUseCase createWorkshopServiceUseCase;
+    private final UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase;
+    private final FindWorkshopServiceUseCase findWorkshopServiceUseCase;
+    private final ListWorkshopServicesUseCase listWorkshopServicesUseCase;
+    private final DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase;
+
+    public WorkshopServicesController(CreateWorkshopServiceUseCase createWorkshopServiceUseCase, UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase, FindWorkshopServiceUseCase findWorkshopServiceUseCase, ListWorkshopServicesUseCase listWorkshopServicesUseCase, DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase) {
+        this.createWorkshopServiceUseCase = createWorkshopServiceUseCase;
+        this.updateWorkshopServiceUseCase = updateWorkshopServiceUseCase;
+        this.findWorkshopServiceUseCase = findWorkshopServiceUseCase;
+        this.listWorkshopServicesUseCase = listWorkshopServicesUseCase;
+        this.deleteWorkshopServiceUseCase = deleteWorkshopServiceUseCase;
+    }
+
     @Override
     public ResponseEntity<WorkshopServiceResponse> createWorkshopService(CreateWorkshopServiceRequest createWorkshopServiceRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        WorkshopService service = createWorkshopServiceUseCase.execute(WorkshopServiceRestMapper.toCommand(createWorkshopServiceRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(WorkshopServiceRestMapper.toResponse(service));
     }
 
     @Override
     public ResponseEntity<Void> deleteWorkshopService(UUID serviceId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        deleteWorkshopServiceUseCase.execute(serviceId);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<WorkshopServiceResponse> getWorkshopServiceById(UUID serviceId) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(findWorkshopServiceUseCase.execute(serviceId)));
     }
 
     @Override
     public ResponseEntity<WorkshopServiceListResponse> listWorkshopServices(Integer page, Integer size, Boolean active) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        List<WorkshopService> services = listWorkshopServicesUseCase.execute().stream()
+                .filter(service -> active == null || service.active() == active)
+                .toList();
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toListResponse(services, page, size));
     }
 
     @Override
     public ResponseEntity<WorkshopServiceResponse> updateWorkshopService(UUID serviceId, UpdateWorkshopServiceRequest updateWorkshopServiceRequest) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        WorkshopService service = updateWorkshopServiceUseCase.execute(WorkshopServiceRestMapper.toCommand(serviceId, updateWorkshopServiceRequest));
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(service));
     }
 }
