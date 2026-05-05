@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: AutoCare Hub API
+  version: 0.0.1
+  description: API para gerenciamento de oficina mecanica
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Health
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      operationId: getHealth
+      responses:
+        "200":
+          description: Aplicacao disponivel
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: UP

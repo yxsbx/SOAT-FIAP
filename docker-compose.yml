@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: autocarehub-postgres
+    environment:
+      POSTGRES_DB: autocarehub
+      POSTGRES_USER: autocarehub
+      POSTGRES_PASSWORD: autocarehub
+    ports:
+      - "5432:5432"
+    volumes:
+      - autocarehub-postgres-data:/var/lib/postgresql/data
+
+volumes:
+  autocarehub-postgres-data:

@@ -1,0 +1,1431 @@
+openapi: 3.0.3
+info:
+  title: AutoCare Hub API
+  version: 1.0.0
+  description: API para gerenciamento de clientes, veiculos, servicos, pecas, ordens de servico, orcamentos, aprovacoes e acompanhamento de status de uma oficina mecanica.
+servers:
+  - url: http://localhost:8080
+    description: Ambiente local
+security:
+  - bearerAuth: []
+tags:
+  - name: Auth
+    description: Autenticacao e emissao de token JWT
+  - name: Customers
+    description: Cadastro e manutencao de clientes
+  - name: Vehicles
+    description: Cadastro e manutencao de veiculos
+  - name: Workshop Services
+    description: Cadastro e manutencao dos servicos oferecidos pela oficina
+  - name: Parts
+    description: Cadastro, manutencao e controle de estoque de pecas e insumos
+  - name: Service Orders
+    description: Criacao, composicao, orcamento, aprovacao e acompanhamento de ordens de servico
+paths:
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Autentica um usuario
+      operationId: login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login realizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/customers:
+    post:
+      tags:
+        - Customers
+      summary: Cria um cliente
+      operationId: createCustomer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCustomerRequest"
+      responses:
+        "201":
+          description: Cliente criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      tags:
+        - Customers
+      summary: Lista clientes
+      operationId: listCustomers
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Clientes encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/customers/{customerId}:
+    get:
+      tags:
+        - Customers
+      summary: Busca um cliente por id
+      operationId: getCustomerById
+      parameters:
+        - $ref: "#/components/parameters/CustomerIdPathParam"
+      responses:
+        "200":
+          description: Cliente encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Customers
+      summary: Atualiza um cliente
+      operationId: updateCustomer
+      parameters:
+        - $ref: "#/components/parameters/CustomerIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCustomerRequest"
+      responses:
+        "200":
+          description: Cliente atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Customers
+      summary: Remove logicamente um cliente
+      operationId: deleteCustomer
+      parameters:
+        - $ref: "#/components/parameters/CustomerIdPathParam"
+      responses:
+        "204":
+          description: Cliente removido
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/customers/{customerId}/vehicles:
+    get:
+      tags:
+        - Vehicles
+      summary: Lista veiculos de um cliente
+      operationId: listVehiclesByCustomer
+      parameters:
+        - $ref: "#/components/parameters/CustomerIdPathParam"
+      responses:
+        "200":
+          description: Veiculos encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/customers/{customerId}/service-orders:
+    get:
+      tags:
+        - Service Orders
+      summary: Lista ordens de servico de um cliente
+      operationId: listServiceOrdersByCustomer
+      parameters:
+        - $ref: "#/components/parameters/CustomerIdPathParam"
+      responses:
+        "200":
+          description: Ordens de servico encontradas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/vehicles:
+    post:
+      tags:
+        - Vehicles
+      summary: Cria um veiculo
+      operationId: createVehicle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVehicleRequest"
+      responses:
+        "201":
+          description: Veiculo criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      tags:
+        - Vehicles
+      summary: Lista veiculos
+      operationId: listVehicles
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Veiculos encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/vehicles/{vehicleId}:
+    get:
+      tags:
+        - Vehicles
+      summary: Busca um veiculo por id
+      operationId: getVehicleById
+      parameters:
+        - $ref: "#/components/parameters/VehicleIdPathParam"
+      responses:
+        "200":
+          description: Veiculo encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Vehicles
+      summary: Atualiza um veiculo
+      operationId: updateVehicle
+      parameters:
+        - $ref: "#/components/parameters/VehicleIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateVehicleRequest"
+      responses:
+        "200":
+          description: Veiculo atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VehicleResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Vehicles
+      summary: Remove logicamente um veiculo
+      operationId: deleteVehicle
+      parameters:
+        - $ref: "#/components/parameters/VehicleIdPathParam"
+      responses:
+        "204":
+          description: Veiculo removido
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/workshop-services:
+    post:
+      tags:
+        - Workshop Services
+      summary: Cria um servico da oficina
+      operationId: createWorkshopService
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkshopServiceRequest"
+      responses:
+        "201":
+          description: Servico criado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkshopServiceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      tags:
+        - Workshop Services
+      summary: Lista servicos da oficina
+      operationId: listWorkshopServices
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Servicos encontrados
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkshopServiceListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/workshop-services/{serviceId}:
+    get:
+      tags:
+        - Workshop Services
+      summary: Busca um servico da oficina por id
+      operationId: getWorkshopServiceById
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPathParam"
+      responses:
+        "200":
+          description: Servico encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkshopServiceResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Workshop Services
+      summary: Atualiza um servico da oficina
+      operationId: updateWorkshopService
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkshopServiceRequest"
+      responses:
+        "200":
+          description: Servico atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WorkshopServiceResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Workshop Services
+      summary: Remove logicamente um servico da oficina
+      operationId: deleteWorkshopService
+      parameters:
+        - $ref: "#/components/parameters/ServiceIdPathParam"
+      responses:
+        "204":
+          description: Servico removido
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/parts:
+    post:
+      tags:
+        - Parts
+      summary: Cria uma peca ou insumo
+      operationId: createPart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePartRequest"
+      responses:
+        "201":
+          description: Peca criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+    get:
+      tags:
+        - Parts
+      summary: Lista pecas e insumos
+      operationId: listParts
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - name: active
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: lowStock
+          in: query
+          required: false
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Pecas encontradas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/parts/{partId}:
+    get:
+      tags:
+        - Parts
+      summary: Busca uma peca por id
+      operationId: getPartById
+      parameters:
+        - $ref: "#/components/parameters/PartIdPathParam"
+      responses:
+        "200":
+          description: Peca encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+        - Parts
+      summary: Atualiza uma peca ou insumo
+      operationId: updatePart
+      parameters:
+        - $ref: "#/components/parameters/PartIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePartRequest"
+      responses:
+        "200":
+          description: Peca atualizada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+        - Parts
+      summary: Remove logicamente uma peca ou insumo
+      operationId: deletePart
+      parameters:
+        - $ref: "#/components/parameters/PartIdPathParam"
+      responses:
+        "204":
+          description: Peca removida
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/parts/{partId}/stock:
+    patch:
+      tags:
+        - Parts
+      summary: Atualiza o estoque de uma peca ou insumo
+      operationId: updatePartStock
+      parameters:
+        - $ref: "#/components/parameters/PartIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePartStockRequest"
+      responses:
+        "200":
+          description: Estoque atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PartResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders:
+    post:
+      tags:
+        - Service Orders
+      summary: Cria uma ordem de servico
+      operationId: createServiceOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateServiceOrderRequest"
+      responses:
+        "201":
+          description: Ordem de servico criada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    get:
+      tags:
+        - Service Orders
+      summary: Lista ordens de servico
+      operationId: listServiceOrders
+      parameters:
+        - $ref: "#/components/parameters/PageParam"
+        - $ref: "#/components/parameters/SizeParam"
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: "#/components/schemas/ServiceOrderStatus"
+      responses:
+        "200":
+          description: Ordens de servico encontradas
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderListResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+  /api/v1/service-orders/{serviceOrderId}:
+    get:
+      tags:
+        - Service Orders
+      summary: Busca uma ordem de servico por id
+      operationId: getServiceOrderById
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      responses:
+        "200":
+          description: Ordem de servico encontrada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders/{serviceOrderId}/services:
+    post:
+      tags:
+        - Service Orders
+      summary: Adiciona um servico a uma ordem de servico
+      operationId: addServiceToServiceOrder
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddServiceOrderServiceRequest"
+      responses:
+        "200":
+          description: Servico adicionado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders/{serviceOrderId}/parts:
+    post:
+      tags:
+        - Service Orders
+      summary: Adiciona uma peca a uma ordem de servico
+      operationId: addPartToServiceOrder
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddServiceOrderPartRequest"
+      responses:
+        "200":
+          description: Peca adicionada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders/{serviceOrderId}/budget/generate:
+    post:
+      tags:
+        - Service Orders
+      summary: Gera o orcamento de uma ordem de servico
+      operationId: generateServiceOrderBudget
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      responses:
+        "200":
+          description: Orcamento gerado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders/{serviceOrderId}/budget/approve:
+    post:
+      tags:
+        - Service Orders
+      summary: Aprova o orcamento de uma ordem de servico
+      operationId: approveServiceOrderBudget
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      responses:
+        "200":
+          description: Orcamento aprovado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /api/v1/service-orders/{serviceOrderId}/status:
+    patch:
+      tags:
+        - Service Orders
+      summary: Atualiza o status de uma ordem de servico
+      operationId: updateServiceOrderStatus
+      parameters:
+        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateServiceOrderStatusRequest"
+      responses:
+        "200":
+          description: Status atualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServiceOrderResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+    SizeParam:
+      name: size
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 20
+    CustomerIdPathParam:
+      name: customerId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    VehicleIdPathParam:
+      name: vehicleId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ServiceIdPathParam:
+      name: serviceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    PartIdPathParam:
+      name: partId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    ServiceOrderIdPathParam:
+      name: serviceOrderId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Requisicao invalida
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    Unauthorized:
+      description: Credenciais ausentes ou invalidas
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    NotFound:
+      description: Recurso nao encontrado
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 120
+          example: admin@autocarehub.com
+        password:
+          type: string
+          minLength: 8
+          maxLength: 120
+          format: password
+          example: autocare123
+    LoginResponse:
+      type: object
+      required:
+        - accessToken
+        - tokenType
+        - expiresIn
+      properties:
+        accessToken:
+          type: string
+          minLength: 1
+        tokenType:
+          type: string
+          example: Bearer
+        expiresIn:
+          type: integer
+          format: int64
+          minimum: 1
+          example: 3600
+    Address:
+      type: object
+      required:
+        - street
+        - number
+        - neighborhood
+        - city
+        - state
+        - zipCode
+      properties:
+        street:
+          type: string
+          minLength: 2
+          maxLength: 120
+          example: Avenida Paulista
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+          example: "1000"
+        complement:
+          type: string
+          maxLength: 80
+          example: Sala 10
+        neighborhood:
+          type: string
+          minLength: 2
+          maxLength: 80
+          example: Bela Vista
+        city:
+          type: string
+          minLength: 2
+          maxLength: 80
+          example: Sao Paulo
+        state:
+          type: string
+          minLength: 2
+          maxLength: 2
+          example: SP
+        zipCode:
+          type: string
+          minLength: 8
+          maxLength: 9
+          pattern: "^\\d{5}-?\\d{3}$"
+          example: 01310-100
+    CreateCustomerRequest:
+      type: object
+      required:
+        - name
+        - document
+        - phone
+        - email
+        - address
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 120
+        document:
+          type: string
+          minLength: 11
+          maxLength: 14
+          pattern: "^\\d{11}$|^\\d{14}$"
+          description: CPF ou CNPJ contendo apenas numeros.
+        phone:
+          type: string
+          minLength: 10
+          maxLength: 20
+        email:
+          type: string
+          format: email
+          maxLength: 120
+        address:
+          $ref: "#/components/schemas/Address"
+    UpdateCustomerRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateCustomerRequest"
+        - type: object
+          required:
+            - active
+          properties:
+            active:
+              type: boolean
+    CustomerResponse:
+      type: object
+      required:
+        - id
+        - name
+        - document
+        - phone
+        - email
+        - address
+        - active
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        document:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        address:
+          $ref: "#/components/schemas/Address"
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    CustomerListResponse:
+      type: object
+      required:
+        - items
+        - page
+        - size
+        - totalItems
+        - totalPages
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomerResponse"
+        page:
+          type: integer
+          minimum: 0
+        size:
+          type: integer
+          minimum: 1
+        totalItems:
+          type: integer
+          format: int64
+          minimum: 0
+        totalPages:
+          type: integer
+          minimum: 0
+    CreateVehicleRequest:
+      type: object
+      required:
+        - customerId
+        - plate
+        - brand
+        - model
+        - year
+        - mileage
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        plate:
+          type: string
+          minLength: 7
+          maxLength: 8
+          pattern: "^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$"
+          example: ABC1D23
+        brand:
+          type: string
+          minLength: 2
+          maxLength: 60
+        model:
+          type: string
+          minLength: 1
+          maxLength: 80
+        year:
+          type: integer
+          minimum: 1900
+          maximum: 2100
+        mileage:
+          type: integer
+          minimum: 0
+    UpdateVehicleRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateVehicleRequest"
+        - type: object
+          required:
+            - active
+          properties:
+            active:
+              type: boolean
+    VehicleResponse:
+      type: object
+      required:
+        - id
+        - customerId
+        - plate
+        - brand
+        - model
+        - year
+        - mileage
+        - active
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        plate:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        mileage:
+          type: integer
+        active:
+          type: boolean
+    VehicleListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/VehicleResponse"
+    CreateWorkshopServiceRequest:
+      type: object
+      required:
+        - name
+        - description
+        - basePrice
+        - estimatedTimeInMinutes
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        description:
+          type: string
+          minLength: 5
+          maxLength: 500
+        basePrice:
+          type: number
+          format: double
+          minimum: 0
+        estimatedTimeInMinutes:
+          type: integer
+          minimum: 1
+    UpdateWorkshopServiceRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreateWorkshopServiceRequest"
+        - type: object
+          required:
+            - active
+          properties:
+            active:
+              type: boolean
+    WorkshopServiceResponse:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - basePrice
+        - estimatedTimeInMinutes
+        - active
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        basePrice:
+          type: number
+          format: double
+        estimatedTimeInMinutes:
+          type: integer
+        active:
+          type: boolean
+    WorkshopServiceListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/WorkshopServiceResponse"
+    CreatePartRequest:
+      type: object
+      required:
+        - name
+        - sku
+        - category
+        - brand
+        - unitPrice
+        - stockQuantity
+        - minimumStock
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 120
+        sku:
+          type: string
+          minLength: 3
+          maxLength: 60
+        category:
+          type: string
+          minLength: 2
+          maxLength: 80
+        subcategory:
+          type: string
+          maxLength: 80
+        brand:
+          type: string
+          minLength: 2
+          maxLength: 80
+        unitPrice:
+          type: number
+          format: double
+          minimum: 0
+        stockQuantity:
+          type: integer
+          minimum: 0
+        minimumStock:
+          type: integer
+          minimum: 0
+    UpdatePartRequest:
+      allOf:
+        - $ref: "#/components/schemas/CreatePartRequest"
+        - type: object
+          required:
+            - active
+          properties:
+            active:
+              type: boolean
+    UpdatePartStockRequest:
+      type: object
+      required:
+        - stockQuantity
+      properties:
+        stockQuantity:
+          type: integer
+          minimum: 0
+    PartResponse:
+      type: object
+      required:
+        - id
+        - name
+        - sku
+        - category
+        - brand
+        - unitPrice
+        - stockQuantity
+        - minimumStock
+        - active
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        sku:
+          type: string
+        category:
+          type: string
+        subcategory:
+          type: string
+        brand:
+          type: string
+        unitPrice:
+          type: number
+          format: double
+        stockQuantity:
+          type: integer
+        minimumStock:
+          type: integer
+        active:
+          type: boolean
+    PartListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PartResponse"
+    CreateServiceOrderRequest:
+      type: object
+      required:
+        - customerId
+        - vehicleId
+        - diagnosticNotes
+      properties:
+        customerId:
+          type: string
+          format: uuid
+        vehicleId:
+          type: string
+          format: uuid
+        diagnosticNotes:
+          type: string
+          minLength: 5
+          maxLength: 2000
+    AddServiceOrderServiceRequest:
+      type: object
+      required:
+        - serviceId
+        - quantity
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+    AddServiceOrderPartRequest:
+      type: object
+      required:
+        - partId
+        - quantity
+      properties:
+        partId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+    UpdateServiceOrderStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          $ref: "#/components/schemas/ServiceOrderStatus"
+    ServiceOrderServiceItem:
+      type: object
+      required:
+        - serviceId
+        - name
+        - quantity
+        - unitPrice
+        - totalPrice
+      properties:
+        serviceId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unitPrice:
+          type: number
+          format: double
+          minimum: 0
+        totalPrice:
+          type: number
+          format: double
+          minimum: 0
+    ServiceOrderPartItem:
+      type: object
+      required:
+        - partId
+        - name
+        - sku
+        - quantity
+        - unitPrice
+        - totalPrice
+      properties:
+        partId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        sku:
+          type: string
+        quantity:
+          type: integer
+          minimum: 1
+        unitPrice:
+          type: number
+          format: double
+          minimum: 0
+        totalPrice:
+          type: number
+          format: double
+          minimum: 0
+    ServiceOrderResponse:
+      type: object
+      required:
+        - id
+        - customerId
+        - vehicleId
+        - status
+        - diagnosticNotes
+        - services
+        - parts
+        - totalAmount
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        customerId:
+          type: string
+          format: uuid
+        vehicleId:
+          type: string
+          format: uuid
+        status:
+          $ref: "#/components/schemas/ServiceOrderStatus"
+        diagnosticNotes:
+          type: string
+        services:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceOrderServiceItem"
+        parts:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceOrderPartItem"
+        totalAmount:
+          type: number
+          format: double
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+        budgetGeneratedAt:
+          type: string
+          format: date-time
+        approvedAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+        finishedAt:
+          type: string
+          format: date-time
+        deliveredAt:
+          type: string
+          format: date-time
+    ServiceOrderListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ServiceOrderResponse"
+    ServiceOrderStatus:
+      type: string
+      enum:
+        - RECEIVED
+        - IN_DIAGNOSIS
+        - WAITING_APPROVAL
+        - IN_PROGRESS
+        - FINISHED
+        - DELIVERED
+    ErrorResponse:
+      type: object
+      required:
+        - timestamp
+        - status
+        - error
+        - message
+        - path
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          minimum: 100
+          maximum: 599
+        error:
+          type: string
+          minLength: 1
+        message:
+          type: string
+          minLength: 1
+        path:
+          type: string
+          minLength: 1
+        details:
+          type: array
+          items:
+            type: string
