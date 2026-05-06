@@ -8,24 +8,37 @@ import java.util.UUID;
 
 public class UpdateVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+  private final VehicleRepository vehicleRepository;
 
-    public UpdateVehicleUseCase(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
-    }
+  public UpdateVehicleUseCase(VehicleRepository vehicleRepository) {
+    this.vehicleRepository = vehicleRepository;
+  }
 
-    public Vehicle execute(Command command) {
-        Vehicle vehicle = vehicleRepository.findById(command.vehicleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-        vehicle.update(new Plate(command.plate()), command.brand(), command.model(), command.year(), command.mileage());
-        if (command.active()) {
-            vehicle.activate();
-        } else {
-            vehicle.deactivate();
-        }
-        return vehicleRepository.save(vehicle);
+  public Vehicle execute(Command command) {
+    Vehicle vehicle =
+        vehicleRepository
+            .findById(command.vehicleId())
+            .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+    vehicle.update(
+        new Plate(command.plate()),
+        command.brand(),
+        command.model(),
+        command.year(),
+        command.mileage());
+    if (command.active()) {
+      vehicle.activate();
+    } else {
+      vehicle.deactivate();
     }
+    return vehicleRepository.save(vehicle);
+  }
 
-    public record Command(UUID vehicleId, String plate, String brand, String model, int year, int mileage, boolean active) {
-    }
+  public record Command(
+      UUID vehicleId,
+      String plate,
+      String brand,
+      String model,
+      int year,
+      int mileage,
+      boolean active) {}
 }

@@ -28,77 +28,112 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ServiceOrdersController implements ServiceOrdersApi {
 
-    private final CreateServiceOrderUseCase createServiceOrderUseCase;
-    private final FindServiceOrderUseCase findServiceOrderUseCase;
-    private final ListServiceOrdersUseCase listServiceOrdersUseCase;
-    private final AddServiceToServiceOrderUseCase addServiceToServiceOrderUseCase;
-    private final AddPartToServiceOrderUseCase addPartToServiceOrderUseCase;
-    private final GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase;
-    private final ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase;
-    private final UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase;
-    private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
+  private final CreateServiceOrderUseCase createServiceOrderUseCase;
+  private final FindServiceOrderUseCase findServiceOrderUseCase;
+  private final ListServiceOrdersUseCase listServiceOrdersUseCase;
+  private final AddServiceToServiceOrderUseCase addServiceToServiceOrderUseCase;
+  private final AddPartToServiceOrderUseCase addPartToServiceOrderUseCase;
+  private final GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase;
+  private final ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase;
+  private final UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase;
+  private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
 
-    public ServiceOrdersController(CreateServiceOrderUseCase createServiceOrderUseCase, FindServiceOrderUseCase findServiceOrderUseCase, ListServiceOrdersUseCase listServiceOrdersUseCase, AddServiceToServiceOrderUseCase addServiceToServiceOrderUseCase, AddPartToServiceOrderUseCase addPartToServiceOrderUseCase, GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase, ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase, UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase, ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase) {
-        this.createServiceOrderUseCase = createServiceOrderUseCase;
-        this.findServiceOrderUseCase = findServiceOrderUseCase;
-        this.listServiceOrdersUseCase = listServiceOrdersUseCase;
-        this.addServiceToServiceOrderUseCase = addServiceToServiceOrderUseCase;
-        this.addPartToServiceOrderUseCase = addPartToServiceOrderUseCase;
-        this.generateServiceOrderBudgetUseCase = generateServiceOrderBudgetUseCase;
-        this.approveServiceOrderBudgetUseCase = approveServiceOrderBudgetUseCase;
-        this.updateServiceOrderStatusUseCase = updateServiceOrderStatusUseCase;
-        this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
-    }
+  public ServiceOrdersController(
+      CreateServiceOrderUseCase createServiceOrderUseCase,
+      FindServiceOrderUseCase findServiceOrderUseCase,
+      ListServiceOrdersUseCase listServiceOrdersUseCase,
+      AddServiceToServiceOrderUseCase addServiceToServiceOrderUseCase,
+      AddPartToServiceOrderUseCase addPartToServiceOrderUseCase,
+      GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase,
+      ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase,
+      UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase,
+      ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase) {
+    this.createServiceOrderUseCase = createServiceOrderUseCase;
+    this.findServiceOrderUseCase = findServiceOrderUseCase;
+    this.listServiceOrdersUseCase = listServiceOrdersUseCase;
+    this.addServiceToServiceOrderUseCase = addServiceToServiceOrderUseCase;
+    this.addPartToServiceOrderUseCase = addPartToServiceOrderUseCase;
+    this.generateServiceOrderBudgetUseCase = generateServiceOrderBudgetUseCase;
+    this.approveServiceOrderBudgetUseCase = approveServiceOrderBudgetUseCase;
+    this.updateServiceOrderStatusUseCase = updateServiceOrderStatusUseCase;
+    this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderResponse> addPartToServiceOrder(UUID serviceOrderId, AddServiceOrderPartRequest addServiceOrderPartRequest) {
-        ServiceOrder serviceOrder = addPartToServiceOrderUseCase.execute(ServiceOrderRestMapper.toCommand(serviceOrderId, addServiceOrderPartRequest));
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderResponse> addPartToServiceOrder(
+      UUID serviceOrderId, AddServiceOrderPartRequest addServiceOrderPartRequest) {
+    ServiceOrder serviceOrder =
+        addPartToServiceOrderUseCase.execute(
+            ServiceOrderRestMapper.toCommand(serviceOrderId, addServiceOrderPartRequest));
+    return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderResponse> addServiceToServiceOrder(UUID serviceOrderId, AddServiceOrderServiceRequest addServiceOrderServiceRequest) {
-        ServiceOrder serviceOrder = addServiceToServiceOrderUseCase.execute(ServiceOrderRestMapper.toCommand(serviceOrderId, addServiceOrderServiceRequest));
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderResponse> addServiceToServiceOrder(
+      UUID serviceOrderId, AddServiceOrderServiceRequest addServiceOrderServiceRequest) {
+    ServiceOrder serviceOrder =
+        addServiceToServiceOrderUseCase.execute(
+            ServiceOrderRestMapper.toCommand(serviceOrderId, addServiceOrderServiceRequest));
+    return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
+  }
 
-    @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
-    public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudget(UUID serviceOrderId) {
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(approveServiceOrderBudgetUseCase.execute(serviceOrderId)));
-    }
+  @Override
+  @PreAuthorize(
+      "hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
+  public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudget(UUID serviceOrderId) {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toResponse(
+            approveServiceOrderBudgetUseCase.execute(serviceOrderId)));
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderResponse> createServiceOrder(CreateServiceOrderRequest createServiceOrderRequest) {
-        ServiceOrder serviceOrder = createServiceOrderUseCase.execute(ServiceOrderRestMapper.toCommand(createServiceOrderRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(ServiceOrderRestMapper.toResponse(serviceOrder));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderResponse> createServiceOrder(
+      CreateServiceOrderRequest createServiceOrderRequest) {
+    ServiceOrder serviceOrder =
+        createServiceOrderUseCase.execute(
+            ServiceOrderRestMapper.toCommand(createServiceOrderRequest));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(ServiceOrderRestMapper.toResponse(serviceOrder));
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderResponse> generateServiceOrderBudget(UUID serviceOrderId) {
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(generateServiceOrderBudgetUseCase.execute(serviceOrderId)));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderResponse> generateServiceOrderBudget(UUID serviceOrderId) {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toResponse(
+            generateServiceOrderBudgetUseCase.execute(serviceOrderId)));
+  }
 
-    @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
-    public ResponseEntity<ServiceOrderResponse> getServiceOrderById(UUID serviceOrderId) {
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(findServiceOrderUseCase.execute(serviceOrderId)));
-    }
+  @Override
+  @PreAuthorize(
+      "hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
+  public ResponseEntity<ServiceOrderResponse> getServiceOrderById(UUID serviceOrderId) {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toResponse(findServiceOrderUseCase.execute(serviceOrderId)));
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderListResponse> listServiceOrders(Integer page, Integer size, ServiceOrderStatus status) {
-        return ResponseEntity.ok(ServiceOrderRestMapper.toListResponse(listServiceOrdersUseCase.execute(ServiceOrderRestMapper.toQuery(status)), page, size));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderListResponse> listServiceOrders(
+      Integer page, Integer size, ServiceOrderStatus status) {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toListResponse(
+            listServiceOrdersUseCase.execute(ServiceOrderRestMapper.toQuery(status)), page, size));
+  }
 
-    @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessCustomer(#customerId)")
-    public ResponseEntity<ServiceOrderListResponse> listServiceOrdersByCustomer(UUID customerId) {
-        return ResponseEntity.ok(ServiceOrderRestMapper.toListResponse(listServiceOrdersByCustomerUseCase.execute(customerId), null, null));
-    }
+  @Override
+  @PreAuthorize(
+      "hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessCustomer(#customerId)")
+  public ResponseEntity<ServiceOrderListResponse> listServiceOrdersByCustomer(UUID customerId) {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toListResponse(
+            listServiceOrdersByCustomerUseCase.execute(customerId), null, null));
+  }
 
-    @Override
-    public ResponseEntity<ServiceOrderResponse> updateServiceOrderStatus(UUID serviceOrderId, UpdateServiceOrderStatusRequest updateServiceOrderStatusRequest) {
-        ServiceOrder serviceOrder = updateServiceOrderStatusUseCase.execute(ServiceOrderRestMapper.toCommand(serviceOrderId, updateServiceOrderStatusRequest));
-        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
-    }
+  @Override
+  public ResponseEntity<ServiceOrderResponse> updateServiceOrderStatus(
+      UUID serviceOrderId, UpdateServiceOrderStatusRequest updateServiceOrderStatusRequest) {
+    ServiceOrder serviceOrder =
+        updateServiceOrderStatusUseCase.execute(
+            ServiceOrderRestMapper.toCommand(serviceOrderId, updateServiceOrderStatusRequest));
+    return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
+  }
 }

@@ -6,23 +6,26 @@ import java.util.List;
 
 public class ListPartsUseCase {
 
-    private final PartRepository partRepository;
+  private final PartRepository partRepository;
 
-    public ListPartsUseCase(PartRepository partRepository) {
-        this.partRepository = partRepository;
-    }
+  public ListPartsUseCase(PartRepository partRepository) {
+    this.partRepository = partRepository;
+  }
 
-    public List<Part> execute() {
-        return partRepository.findAll();
-    }
+  public List<Part> execute() {
+    return partRepository.findAll();
+  }
 
-    public List<Part> execute(Query query) {
-        return partRepository.findAll().stream()
-                .filter(part -> query.active() == null || part.active() == query.active())
-                .filter(part -> query.lowStock() == null || !query.lowStock() || part.stockQuantity() <= part.minimumStock())
-                .toList();
-    }
+  public List<Part> execute(Query query) {
+    return partRepository.findAll().stream()
+        .filter(part -> query.active() == null || part.active() == query.active())
+        .filter(
+            part ->
+                query.lowStock() == null
+                    || !query.lowStock()
+                    || part.stockQuantity() <= part.minimumStock())
+        .toList();
+  }
 
-    public record Query(Boolean active, Boolean lowStock) {
-    }
+  public record Query(Boolean active, Boolean lowStock) {}
 }

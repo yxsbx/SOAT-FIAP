@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface WorkshopServiceRepository {
 
-    WorkshopService save(WorkshopService workshopService);
+  WorkshopService save(WorkshopService workshopService);
 
-    Optional<WorkshopService> findById(UUID id);
+  Optional<WorkshopService> findById(UUID id);
 
-    List<WorkshopService> findAll();
+  List<WorkshopService> findAll();
 }

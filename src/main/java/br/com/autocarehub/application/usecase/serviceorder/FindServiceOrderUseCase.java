@@ -7,14 +7,15 @@ import java.util.UUID;
 
 public class FindServiceOrderUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+  private final ServiceOrderRepository serviceOrderRepository;
 
-    public FindServiceOrderUseCase(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
-    }
+  public FindServiceOrderUseCase(ServiceOrderRepository serviceOrderRepository) {
+    this.serviceOrderRepository = serviceOrderRepository;
+  }
 
-    public ServiceOrder execute(UUID serviceOrderId) {
-        return serviceOrderRepository.findById(serviceOrderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
-    }
+  public ServiceOrder execute(UUID serviceOrderId) {
+    return serviceOrderRepository
+        .findById(serviceOrderId)
+        .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+  }
 }

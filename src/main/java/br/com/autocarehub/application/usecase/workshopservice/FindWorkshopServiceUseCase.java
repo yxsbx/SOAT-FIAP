@@ -7,14 +7,15 @@ import java.util.UUID;
 
 public class FindWorkshopServiceUseCase {
 
-    private final WorkshopServiceRepository workshopServiceRepository;
+  private final WorkshopServiceRepository workshopServiceRepository;
 
-    public FindWorkshopServiceUseCase(WorkshopServiceRepository workshopServiceRepository) {
-        this.workshopServiceRepository = workshopServiceRepository;
-    }
+  public FindWorkshopServiceUseCase(WorkshopServiceRepository workshopServiceRepository) {
+    this.workshopServiceRepository = workshopServiceRepository;
+  }
 
-    public WorkshopService execute(UUID serviceId) {
-        return workshopServiceRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Workshop service not found"));
-    }
+  public WorkshopService execute(UUID serviceId) {
+    return workshopServiceRepository
+        .findById(serviceId)
+        .orElseThrow(() -> new ResourceNotFoundException("Workshop service not found"));
+  }
 }

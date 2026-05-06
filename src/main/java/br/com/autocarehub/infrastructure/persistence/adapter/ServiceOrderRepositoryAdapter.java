@@ -12,29 +12,34 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
 
-    private final ServiceOrderJpaRepository serviceOrderJpaRepository;
+  private final ServiceOrderJpaRepository serviceOrderJpaRepository;
 
-    public ServiceOrderRepositoryAdapter(ServiceOrderJpaRepository serviceOrderJpaRepository) {
-        this.serviceOrderJpaRepository = serviceOrderJpaRepository;
-    }
+  public ServiceOrderRepositoryAdapter(ServiceOrderJpaRepository serviceOrderJpaRepository) {
+    this.serviceOrderJpaRepository = serviceOrderJpaRepository;
+  }
 
-    @Override
-    public ServiceOrder save(ServiceOrder serviceOrder) {
-        return ServiceOrderJpaMapper.toDomain(serviceOrderJpaRepository.save(ServiceOrderJpaMapper.toEntity(serviceOrder)));
-    }
+  @Override
+  public ServiceOrder save(ServiceOrder serviceOrder) {
+    return ServiceOrderJpaMapper.toDomain(
+        serviceOrderJpaRepository.save(ServiceOrderJpaMapper.toEntity(serviceOrder)));
+  }
 
-    @Override
-    public Optional<ServiceOrder> findById(UUID id) {
-        return serviceOrderJpaRepository.findById(id).map(ServiceOrderJpaMapper::toDomain);
-    }
+  @Override
+  public Optional<ServiceOrder> findById(UUID id) {
+    return serviceOrderJpaRepository.findById(id).map(ServiceOrderJpaMapper::toDomain);
+  }
 
-    @Override
-    public List<ServiceOrder> findAll() {
-        return serviceOrderJpaRepository.findAll().stream().map(ServiceOrderJpaMapper::toDomain).toList();
-    }
+  @Override
+  public List<ServiceOrder> findAll() {
+    return serviceOrderJpaRepository.findAll().stream()
+        .map(ServiceOrderJpaMapper::toDomain)
+        .toList();
+  }
 
-    @Override
-    public List<ServiceOrder> findByCustomerId(UUID customerId) {
-        return serviceOrderJpaRepository.findByCustomerId(customerId).stream().map(ServiceOrderJpaMapper::toDomain).toList();
-    }
+  @Override
+  public List<ServiceOrder> findByCustomerId(UUID customerId) {
+    return serviceOrderJpaRepository.findByCustomerId(customerId).stream()
+        .map(ServiceOrderJpaMapper::toDomain)
+        .toList();
+  }
 }

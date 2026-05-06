@@ -12,29 +12,31 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class VehicleRepositoryAdapter implements VehicleRepository {
 
-    private final VehicleJpaRepository vehicleJpaRepository;
+  private final VehicleJpaRepository vehicleJpaRepository;
 
-    public VehicleRepositoryAdapter(VehicleJpaRepository vehicleJpaRepository) {
-        this.vehicleJpaRepository = vehicleJpaRepository;
-    }
+  public VehicleRepositoryAdapter(VehicleJpaRepository vehicleJpaRepository) {
+    this.vehicleJpaRepository = vehicleJpaRepository;
+  }
 
-    @Override
-    public Vehicle save(Vehicle vehicle) {
-        return VehicleJpaMapper.toDomain(vehicleJpaRepository.save(VehicleJpaMapper.toEntity(vehicle)));
-    }
+  @Override
+  public Vehicle save(Vehicle vehicle) {
+    return VehicleJpaMapper.toDomain(vehicleJpaRepository.save(VehicleJpaMapper.toEntity(vehicle)));
+  }
 
-    @Override
-    public Optional<Vehicle> findById(UUID id) {
-        return vehicleJpaRepository.findById(id).map(VehicleJpaMapper::toDomain);
-    }
+  @Override
+  public Optional<Vehicle> findById(UUID id) {
+    return vehicleJpaRepository.findById(id).map(VehicleJpaMapper::toDomain);
+  }
 
-    @Override
-    public List<Vehicle> findAll() {
-        return vehicleJpaRepository.findAll().stream().map(VehicleJpaMapper::toDomain).toList();
-    }
+  @Override
+  public List<Vehicle> findAll() {
+    return vehicleJpaRepository.findAll().stream().map(VehicleJpaMapper::toDomain).toList();
+  }
 
-    @Override
-    public List<Vehicle> findByCustomerId(UUID customerId) {
-        return vehicleJpaRepository.findByCustomerId(customerId).stream().map(VehicleJpaMapper::toDomain).toList();
-    }
+  @Override
+  public List<Vehicle> findByCustomerId(UUID customerId) {
+    return vehicleJpaRepository.findByCustomerId(customerId).stream()
+        .map(VehicleJpaMapper::toDomain)
+        .toList();
+  }
 }

@@ -7,16 +7,18 @@ import java.util.UUID;
 
 public class DeleteCustomerUseCase {
 
-    private final CustomerRepository customerRepository;
+  private final CustomerRepository customerRepository;
 
-    public DeleteCustomerUseCase(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+  public DeleteCustomerUseCase(CustomerRepository customerRepository) {
+    this.customerRepository = customerRepository;
+  }
 
-    public void execute(UUID customerId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-        customer.deactivate();
-        customerRepository.save(customer);
-    }
+  public void execute(UUID customerId) {
+    Customer customer =
+        customerRepository
+            .findById(customerId)
+            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+    customer.deactivate();
+    customerRepository.save(customer);
+  }
 }

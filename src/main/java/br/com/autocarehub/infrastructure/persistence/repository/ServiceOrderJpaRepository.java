@@ -9,14 +9,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ServiceOrderJpaRepository extends JpaRepository<ServiceOrderJpaEntity, UUID> {
 
-    @Override
-    @EntityGraph(attributePaths = {"services", "parts"})
-    List<ServiceOrderJpaEntity> findAll();
+  @Override
+  @EntityGraph(attributePaths = {"services", "parts"})
+  List<ServiceOrderJpaEntity> findAll();
 
-    @Override
-    @EntityGraph(attributePaths = {"services", "parts"})
-    Optional<ServiceOrderJpaEntity> findById(UUID id);
+  @Override
+  @EntityGraph(attributePaths = {"services", "parts"})
+  Optional<ServiceOrderJpaEntity> findById(UUID id);
 
-    @EntityGraph(attributePaths = {"services", "parts"})
-    List<ServiceOrderJpaEntity> findByCustomerId(UUID customerId);
+  @EntityGraph(attributePaths = {"services", "parts"})
+  List<ServiceOrderJpaEntity> findByCustomerId(UUID customerId);
 }

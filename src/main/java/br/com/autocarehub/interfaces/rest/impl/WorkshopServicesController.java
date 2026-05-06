@@ -20,45 +20,63 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WorkshopServicesController implements WorkshopServicesApi {
 
-    private final CreateWorkshopServiceUseCase createWorkshopServiceUseCase;
-    private final UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase;
-    private final FindWorkshopServiceUseCase findWorkshopServiceUseCase;
-    private final ListWorkshopServicesUseCase listWorkshopServicesUseCase;
-    private final DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase;
+  private final CreateWorkshopServiceUseCase createWorkshopServiceUseCase;
+  private final UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase;
+  private final FindWorkshopServiceUseCase findWorkshopServiceUseCase;
+  private final ListWorkshopServicesUseCase listWorkshopServicesUseCase;
+  private final DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase;
 
-    public WorkshopServicesController(CreateWorkshopServiceUseCase createWorkshopServiceUseCase, UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase, FindWorkshopServiceUseCase findWorkshopServiceUseCase, ListWorkshopServicesUseCase listWorkshopServicesUseCase, DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase) {
-        this.createWorkshopServiceUseCase = createWorkshopServiceUseCase;
-        this.updateWorkshopServiceUseCase = updateWorkshopServiceUseCase;
-        this.findWorkshopServiceUseCase = findWorkshopServiceUseCase;
-        this.listWorkshopServicesUseCase = listWorkshopServicesUseCase;
-        this.deleteWorkshopServiceUseCase = deleteWorkshopServiceUseCase;
-    }
+  public WorkshopServicesController(
+      CreateWorkshopServiceUseCase createWorkshopServiceUseCase,
+      UpdateWorkshopServiceUseCase updateWorkshopServiceUseCase,
+      FindWorkshopServiceUseCase findWorkshopServiceUseCase,
+      ListWorkshopServicesUseCase listWorkshopServicesUseCase,
+      DeleteWorkshopServiceUseCase deleteWorkshopServiceUseCase) {
+    this.createWorkshopServiceUseCase = createWorkshopServiceUseCase;
+    this.updateWorkshopServiceUseCase = updateWorkshopServiceUseCase;
+    this.findWorkshopServiceUseCase = findWorkshopServiceUseCase;
+    this.listWorkshopServicesUseCase = listWorkshopServicesUseCase;
+    this.deleteWorkshopServiceUseCase = deleteWorkshopServiceUseCase;
+  }
 
-    @Override
-    public ResponseEntity<WorkshopServiceResponse> createWorkshopService(CreateWorkshopServiceRequest createWorkshopServiceRequest) {
-        WorkshopService service = createWorkshopServiceUseCase.execute(WorkshopServiceRestMapper.toCommand(createWorkshopServiceRequest));
-        return ResponseEntity.status(HttpStatus.CREATED).body(WorkshopServiceRestMapper.toResponse(service));
-    }
+  @Override
+  public ResponseEntity<WorkshopServiceResponse> createWorkshopService(
+      CreateWorkshopServiceRequest createWorkshopServiceRequest) {
+    WorkshopService service =
+        createWorkshopServiceUseCase.execute(
+            WorkshopServiceRestMapper.toCommand(createWorkshopServiceRequest));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(WorkshopServiceRestMapper.toResponse(service));
+  }
 
-    @Override
-    public ResponseEntity<Void> deleteWorkshopService(UUID serviceId) {
-        deleteWorkshopServiceUseCase.execute(serviceId);
-        return ResponseEntity.noContent().build();
-    }
+  @Override
+  public ResponseEntity<Void> deleteWorkshopService(UUID serviceId) {
+    deleteWorkshopServiceUseCase.execute(serviceId);
+    return ResponseEntity.noContent().build();
+  }
 
-    @Override
-    public ResponseEntity<WorkshopServiceResponse> getWorkshopServiceById(UUID serviceId) {
-        return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(findWorkshopServiceUseCase.execute(serviceId)));
-    }
+  @Override
+  public ResponseEntity<WorkshopServiceResponse> getWorkshopServiceById(UUID serviceId) {
+    return ResponseEntity.ok(
+        WorkshopServiceRestMapper.toResponse(findWorkshopServiceUseCase.execute(serviceId)));
+  }
 
-    @Override
-    public ResponseEntity<WorkshopServiceListResponse> listWorkshopServices(Integer page, Integer size, Boolean active) {
-        return ResponseEntity.ok(WorkshopServiceRestMapper.toListResponse(listWorkshopServicesUseCase.execute(WorkshopServiceRestMapper.toQuery(active)), page, size));
-    }
+  @Override
+  public ResponseEntity<WorkshopServiceListResponse> listWorkshopServices(
+      Integer page, Integer size, Boolean active) {
+    return ResponseEntity.ok(
+        WorkshopServiceRestMapper.toListResponse(
+            listWorkshopServicesUseCase.execute(WorkshopServiceRestMapper.toQuery(active)),
+            page,
+            size));
+  }
 
-    @Override
-    public ResponseEntity<WorkshopServiceResponse> updateWorkshopService(UUID serviceId, UpdateWorkshopServiceRequest updateWorkshopServiceRequest) {
-        WorkshopService service = updateWorkshopServiceUseCase.execute(WorkshopServiceRestMapper.toCommand(serviceId, updateWorkshopServiceRequest));
-        return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(service));
-    }
+  @Override
+  public ResponseEntity<WorkshopServiceResponse> updateWorkshopService(
+      UUID serviceId, UpdateWorkshopServiceRequest updateWorkshopServiceRequest) {
+    WorkshopService service =
+        updateWorkshopServiceUseCase.execute(
+            WorkshopServiceRestMapper.toCommand(serviceId, updateWorkshopServiceRequest));
+    return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(service));
+  }
 }

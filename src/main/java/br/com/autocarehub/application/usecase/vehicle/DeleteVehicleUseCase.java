@@ -7,16 +7,18 @@ import java.util.UUID;
 
 public class DeleteVehicleUseCase {
 
-    private final VehicleRepository vehicleRepository;
+  private final VehicleRepository vehicleRepository;
 
-    public DeleteVehicleUseCase(VehicleRepository vehicleRepository) {
-        this.vehicleRepository = vehicleRepository;
-    }
+  public DeleteVehicleUseCase(VehicleRepository vehicleRepository) {
+    this.vehicleRepository = vehicleRepository;
+  }
 
-    public void execute(UUID vehicleId) {
-        Vehicle vehicle = vehicleRepository.findById(vehicleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-        vehicle.deactivate();
-        vehicleRepository.save(vehicle);
-    }
+  public void execute(UUID vehicleId) {
+    Vehicle vehicle =
+        vehicleRepository
+            .findById(vehicleId)
+            .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+    vehicle.deactivate();
+    vehicleRepository.save(vehicle);
+  }
 }

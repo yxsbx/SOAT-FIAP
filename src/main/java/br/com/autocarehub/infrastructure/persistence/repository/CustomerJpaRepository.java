@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomerJpaRepository extends JpaRepository<CustomerJpaEntity, UUID> {
 
-    Optional<CustomerJpaEntity> findByDocumentValue(String documentValue);
+  Optional<CustomerJpaEntity> findByDocumentValue(String documentValue);
 }

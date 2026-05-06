@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VehicleJpaRepository extends JpaRepository<VehicleJpaEntity, UUID> {
 
-    List<VehicleJpaEntity> findByCustomerId(UUID customerId);
+  List<VehicleJpaEntity> findByCustomerId(UUID customerId);
 }

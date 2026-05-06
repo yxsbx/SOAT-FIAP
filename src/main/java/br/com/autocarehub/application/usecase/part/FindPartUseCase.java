@@ -7,14 +7,15 @@ import java.util.UUID;
 
 public class FindPartUseCase {
 
-    private final PartRepository partRepository;
+  private final PartRepository partRepository;
 
-    public FindPartUseCase(PartRepository partRepository) {
-        this.partRepository = partRepository;
-    }
+  public FindPartUseCase(PartRepository partRepository) {
+    this.partRepository = partRepository;
+  }
 
-    public Part execute(UUID partId) {
-        return partRepository.findById(partId)
-                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-    }
+  public Part execute(UUID partId) {
+    return partRepository
+        .findById(partId)
+        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+  }
 }

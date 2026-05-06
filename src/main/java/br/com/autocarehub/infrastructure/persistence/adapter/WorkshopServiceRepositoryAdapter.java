@@ -12,24 +12,28 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class WorkshopServiceRepositoryAdapter implements WorkshopServiceRepository {
 
-    private final WorkshopServiceJpaRepository workshopServiceJpaRepository;
+  private final WorkshopServiceJpaRepository workshopServiceJpaRepository;
 
-    public WorkshopServiceRepositoryAdapter(WorkshopServiceJpaRepository workshopServiceJpaRepository) {
-        this.workshopServiceJpaRepository = workshopServiceJpaRepository;
-    }
+  public WorkshopServiceRepositoryAdapter(
+      WorkshopServiceJpaRepository workshopServiceJpaRepository) {
+    this.workshopServiceJpaRepository = workshopServiceJpaRepository;
+  }
 
-    @Override
-    public WorkshopService save(WorkshopService workshopService) {
-        return WorkshopServiceJpaMapper.toDomain(workshopServiceJpaRepository.save(WorkshopServiceJpaMapper.toEntity(workshopService)));
-    }
+  @Override
+  public WorkshopService save(WorkshopService workshopService) {
+    return WorkshopServiceJpaMapper.toDomain(
+        workshopServiceJpaRepository.save(WorkshopServiceJpaMapper.toEntity(workshopService)));
+  }
 
-    @Override
-    public Optional<WorkshopService> findById(UUID id) {
-        return workshopServiceJpaRepository.findById(id).map(WorkshopServiceJpaMapper::toDomain);
-    }
+  @Override
+  public Optional<WorkshopService> findById(UUID id) {
+    return workshopServiceJpaRepository.findById(id).map(WorkshopServiceJpaMapper::toDomain);
+  }
 
-    @Override
-    public List<WorkshopService> findAll() {
-        return workshopServiceJpaRepository.findAll().stream().map(WorkshopServiceJpaMapper::toDomain).toList();
-    }
+  @Override
+  public List<WorkshopService> findAll() {
+    return workshopServiceJpaRepository.findAll().stream()
+        .map(WorkshopServiceJpaMapper::toDomain)
+        .toList();
+  }
 }

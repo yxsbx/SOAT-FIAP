@@ -7,16 +7,18 @@ import java.util.UUID;
 
 public class GenerateServiceOrderBudgetUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+  private final ServiceOrderRepository serviceOrderRepository;
 
-    public GenerateServiceOrderBudgetUseCase(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
-    }
+  public GenerateServiceOrderBudgetUseCase(ServiceOrderRepository serviceOrderRepository) {
+    this.serviceOrderRepository = serviceOrderRepository;
+  }
 
-    public ServiceOrder execute(UUID serviceOrderId) {
-        ServiceOrder serviceOrder = serviceOrderRepository.findById(serviceOrderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
-        serviceOrder.generateBudget();
-        return serviceOrderRepository.save(serviceOrder);
-    }
+  public ServiceOrder execute(UUID serviceOrderId) {
+    ServiceOrder serviceOrder =
+        serviceOrderRepository
+            .findById(serviceOrderId)
+            .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+    serviceOrder.generateBudget();
+    return serviceOrderRepository.save(serviceOrder);
+  }
 }

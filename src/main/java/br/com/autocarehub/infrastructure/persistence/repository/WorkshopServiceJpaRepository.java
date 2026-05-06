@@ -4,5 +4,5 @@ import br.com.autocarehub.infrastructure.persistence.entity.WorkshopServiceJpaEn
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WorkshopServiceJpaRepository extends JpaRepository<WorkshopServiceJpaEntity, UUID> {
-}
+public interface WorkshopServiceJpaRepository
+    extends JpaRepository<WorkshopServiceJpaEntity, UUID> {}

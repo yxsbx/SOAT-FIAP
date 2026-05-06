@@ -13,53 +13,53 @@ import java.util.UUID;
 
 public final class VehicleRestMapper {
 
-    private VehicleRestMapper() {
-    }
+  private VehicleRestMapper() {}
 
-    public static CreateVehicleUseCase.Command toCommand(CreateVehicleRequest request) {
-        return new CreateVehicleUseCase.Command(
-                request.getCustomerId(),
-                request.getPlate(),
-                request.getBrand(),
-                request.getModel(),
-                request.getYear(),
-                request.getMileage()
-        );
-    }
+  public static CreateVehicleUseCase.Command toCommand(CreateVehicleRequest request) {
+    return new CreateVehicleUseCase.Command(
+        request.getCustomerId(),
+        request.getPlate(),
+        request.getBrand(),
+        request.getModel(),
+        request.getYear(),
+        request.getMileage());
+  }
 
-    public static UpdateVehicleUseCase.Command toCommand(UUID vehicleId, UpdateVehicleRequest request) {
-        return new UpdateVehicleUseCase.Command(
-                vehicleId,
-                request.getPlate(),
-                request.getBrand(),
-                request.getModel(),
-                request.getYear(),
-                request.getMileage(),
-                Boolean.TRUE.equals(request.getActive())
-        );
-    }
+  public static UpdateVehicleUseCase.Command toCommand(
+      UUID vehicleId, UpdateVehicleRequest request) {
+    return new UpdateVehicleUseCase.Command(
+        vehicleId,
+        request.getPlate(),
+        request.getBrand(),
+        request.getModel(),
+        request.getYear(),
+        request.getMileage(),
+        Boolean.TRUE.equals(request.getActive()));
+  }
 
-    public static ListVehiclesUseCase.Query toQuery(Boolean active) {
-        return new ListVehiclesUseCase.Query(active);
-    }
+  public static ListVehiclesUseCase.Query toQuery(Boolean active) {
+    return new ListVehiclesUseCase.Query(active);
+  }
 
-    public static VehicleResponse toResponse(Vehicle vehicle) {
-        return new VehicleResponse(
-                vehicle.id(),
-                vehicle.customerId(),
-                vehicle.plate().value(),
-                vehicle.brand(),
-                vehicle.model(),
-                vehicle.year(),
-                vehicle.mileage(),
-                vehicle.active()
-        );
-    }
+  public static VehicleResponse toResponse(Vehicle vehicle) {
+    return new VehicleResponse(
+        vehicle.id(),
+        vehicle.customerId(),
+        vehicle.plate().value(),
+        vehicle.brand(),
+        vehicle.model(),
+        vehicle.year(),
+        vehicle.mileage(),
+        vehicle.active());
+  }
 
-    public static VehicleListResponse toListResponse(List<Vehicle> vehicles, Integer page, Integer size) {
-        VehicleListResponse response = new VehicleListResponse(RestMapperSupport.page(vehicles, page, size).stream()
+  public static VehicleListResponse toListResponse(
+      List<Vehicle> vehicles, Integer page, Integer size) {
+    VehicleListResponse response =
+        new VehicleListResponse(
+            RestMapperSupport.page(vehicles, page, size).stream()
                 .map(VehicleRestMapper::toResponse)
                 .toList());
-        return response;
-    }
+    return response;
+  }
 }

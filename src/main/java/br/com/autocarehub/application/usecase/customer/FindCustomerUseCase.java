@@ -7,14 +7,15 @@ import java.util.UUID;
 
 public class FindCustomerUseCase {
 
-    private final CustomerRepository customerRepository;
+  private final CustomerRepository customerRepository;
 
-    public FindCustomerUseCase(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
-    }
+  public FindCustomerUseCase(CustomerRepository customerRepository) {
+    this.customerRepository = customerRepository;
+  }
 
-    public Customer execute(UUID customerId) {
-        return customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-    }
+  public Customer execute(UUID customerId) {
+    return customerRepository
+        .findById(customerId)
+        .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+  }
 }

@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface PartRepository {
 
-    Part save(Part part);
+  Part save(Part part);
 
-    Optional<Part> findById(UUID id);
+  Optional<Part> findById(UUID id);
 
-    List<Part> findAll();
+  List<Part> findAll();
 }
