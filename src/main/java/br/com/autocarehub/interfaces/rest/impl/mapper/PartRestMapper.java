@@ -1,6 +1,7 @@
 package br.com.autocarehub.interfaces.rest.impl.mapper;
 
 import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
+import br.com.autocarehub.application.usecase.part.ListPartsUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartUseCase;
 import br.com.autocarehub.domain.Money;
@@ -48,6 +49,10 @@ public final class PartRestMapper {
 
     public static UpdatePartStockUseCase.Command toCommand(UUID partId, UpdatePartStockRequest request) {
         return new UpdatePartStockUseCase.Command(partId, request.getStockQuantity());
+    }
+
+    public static ListPartsUseCase.Query toQuery(Boolean active, Boolean lowStock) {
+        return new ListPartsUseCase.Query(active, lowStock);
     }
 
     public static PartResponse toResponse(Part part) {

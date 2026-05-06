@@ -3,6 +3,7 @@ package br.com.autocarehub.interfaces.rest.impl.mapper;
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
@@ -42,6 +43,10 @@ public final class ServiceOrderRestMapper {
                 serviceOrderId,
                 br.com.autocarehub.domain.ServiceOrderStatus.valueOf(request.getStatus().getValue())
         );
+    }
+
+    public static ListServiceOrdersUseCase.Query toQuery(br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus status) {
+        return new ListServiceOrdersUseCase.Query(status == null ? null : br.com.autocarehub.domain.ServiceOrderStatus.valueOf(status.getValue()));
     }
 
     public static ServiceOrderResponse toResponse(ServiceOrder serviceOrder) {

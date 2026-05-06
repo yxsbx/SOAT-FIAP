@@ -25,4 +25,11 @@ public class ListServiceOrdersUseCase {
                 .filter(serviceOrder -> serviceOrder.status() == status)
                 .toList();
     }
+
+    public List<ServiceOrder> execute(Query query) {
+        return execute(query.status());
+    }
+
+    public record Query(ServiceOrderStatus status) {
+    }
 }

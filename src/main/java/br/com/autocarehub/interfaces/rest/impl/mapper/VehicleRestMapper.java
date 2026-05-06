@@ -1,6 +1,7 @@
 package br.com.autocarehub.interfaces.rest.impl.mapper;
 
 import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.ListVehiclesUseCase;
 import br.com.autocarehub.application.usecase.vehicle.UpdateVehicleUseCase;
 import br.com.autocarehub.domain.Vehicle;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateVehicleRequest;
@@ -36,6 +37,10 @@ public final class VehicleRestMapper {
                 request.getMileage(),
                 Boolean.TRUE.equals(request.getActive())
         );
+    }
+
+    public static ListVehiclesUseCase.Query toQuery(Boolean active) {
+        return new ListVehiclesUseCase.Query(active);
     }
 
     public static VehicleResponse toResponse(Vehicle vehicle) {

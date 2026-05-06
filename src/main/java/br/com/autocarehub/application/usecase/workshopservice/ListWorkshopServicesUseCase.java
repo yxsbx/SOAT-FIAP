@@ -15,4 +15,13 @@ public class ListWorkshopServicesUseCase {
     public List<WorkshopService> execute() {
         return workshopServiceRepository.findAll();
     }
+
+    public List<WorkshopService> execute(Query query) {
+        return workshopServiceRepository.findAll().stream()
+                .filter(workshopService -> query.active() == null || workshopService.active() == query.active())
+                .toList();
+    }
+
+    public record Query(Boolean active) {
+    }
 }

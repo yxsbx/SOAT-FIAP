@@ -12,7 +12,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateWorkshopServiceR
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceResponse;
 import br.com.autocarehub.interfaces.rest.impl.mapper.WorkshopServiceRestMapper;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,10 +53,7 @@ public class WorkshopServicesController implements WorkshopServicesApi {
 
     @Override
     public ResponseEntity<WorkshopServiceListResponse> listWorkshopServices(Integer page, Integer size, Boolean active) {
-        List<WorkshopService> services = listWorkshopServicesUseCase.execute().stream()
-                .filter(service -> active == null || service.active() == active)
-                .toList();
-        return ResponseEntity.ok(WorkshopServiceRestMapper.toListResponse(services, page, size));
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toListResponse(listWorkshopServicesUseCase.execute(WorkshopServiceRestMapper.toQuery(active)), page, size));
     }
 
     @Override

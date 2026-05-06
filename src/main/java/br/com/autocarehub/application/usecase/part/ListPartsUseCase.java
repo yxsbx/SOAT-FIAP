@@ -15,4 +15,14 @@ public class ListPartsUseCase {
     public List<Part> execute() {
         return partRepository.findAll();
     }
+
+    public List<Part> execute(Query query) {
+        return partRepository.findAll().stream()
+                .filter(part -> query.active() == null || part.active() == query.active())
+                .filter(part -> query.lowStock() == null || !query.lowStock() || part.stockQuantity() <= part.minimumStock())
+                .toList();
+    }
+
+    public record Query(Boolean active, Boolean lowStock) {
+    }
 }

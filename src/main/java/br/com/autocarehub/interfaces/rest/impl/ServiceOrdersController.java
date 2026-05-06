@@ -22,6 +22,7 @@ import br.com.autocarehub.interfaces.rest.impl.mapper.ServiceOrderRestMapper;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -62,6 +63,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudget(UUID serviceOrderId) {
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(approveServiceOrderBudgetUseCase.execute(serviceOrderId)));
     }
@@ -78,17 +80,18 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> getServiceOrderById(UUID serviceOrderId) {
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(findServiceOrderUseCase.execute(serviceOrderId)));
     }
 
     @Override
     public ResponseEntity<ServiceOrderListResponse> listServiceOrders(Integer page, Integer size, ServiceOrderStatus status) {
-        br.com.autocarehub.domain.ServiceOrderStatus domainStatus = status == null ? null : br.com.autocarehub.domain.ServiceOrderStatus.valueOf(status.getValue());
-        return ResponseEntity.ok(ServiceOrderRestMapper.toListResponse(listServiceOrdersUseCase.execute(domainStatus), page, size));
+        return ResponseEntity.ok(ServiceOrderRestMapper.toListResponse(listServiceOrdersUseCase.execute(ServiceOrderRestMapper.toQuery(status)), page, size));
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessCustomer(#customerId)")
     public ResponseEntity<ServiceOrderListResponse> listServiceOrdersByCustomer(UUID customerId) {
         return ResponseEntity.ok(ServiceOrderRestMapper.toListResponse(listServiceOrdersByCustomerUseCase.execute(customerId), null, null));
     }

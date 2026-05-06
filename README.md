@@ -1,42 +1,269 @@
 # AutoCare Hub API
 
-MVP academico de back-end para gerenciamento de oficina mecanica.
+API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, servicos de oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
 
-## Stack
+## Objetivo Academico
+
+Este projeto foi desenvolvido como MVP academico para demonstrar a construcao de uma API backend usando arquitetura em camadas, DDD, contrato OpenAPI First, persistencia relacional, migrations versionadas, autenticacao JWT e conteinerizacao com Docker.
+
+## Stack Utilizada
 
 - Java 21
-- Spring Boot
+- Spring Boot 3
+- Spring Web
+- Spring Security
+- Spring Data JPA
 - PostgreSQL
+- Flyway
 - Maven
 - OpenAPI Generator
-- Swagger/OpenAPI
-- JWT
-- Flyway
-- Docker
-- Testes automatizados
+- Springdoc Swagger UI
+- JWT com JJWT
+- Docker e Docker Compose
+- JUnit e Spring Boot Test
+- H2 para testes automatizados
 
 ## Arquitetura
 
-- Monolito em camadas
-- Domain-Driven Design
-- OpenAPI First
+O projeto segue um monolito em camadas:
 
-## Comandos iniciais
+- `domain`: entidades e regras centrais do negocio.
+- `application`: use cases, comandos, consultas e portas de repositorio.
+- `infrastructure`: configuracoes, seguranca, persistencia JPA, repositories Spring Data e adapters.
+- `interfaces`: controllers REST manuais e mappers para DTOs gerados pelo OpenAPI.
+- `docs/openapi`: contrato OpenAPI que define os endpoints e DTOs publicos.
 
-```bash
-mvn clean test
-```
+Essa organizacao separa regra de negocio, orquestracao de casos de uso, detalhes tecnicos e interface HTTP.
+
+## Como Rodar Localmente
+
+Pre-requisitos:
+
+- Java 21
+- Maven 3.9+
+- Docker, caso queira subir PostgreSQL local via compose
+
+Suba apenas o banco:
 
 ```bash
 docker compose up -d postgres
 ```
 
+Execute a aplicacao localmente:
+
 ```bash
 mvn spring-boot:run
 ```
 
-## OpenAPI
+A API ficara disponivel em:
 
-Contrato principal: `docs/openapi/openapi.yaml`
+```text
+http://localhost:8080
+```
 
-Swagger UI: `http://localhost:8080/swagger-ui.html`
+Por padrao, a aplicacao usa:
+
+```text
+DB_URL=jdbc:postgresql://localhost:5432/autocarehub
+DB_USERNAME=autocarehub
+DB_PASSWORD=autocarehub
+JWT_SECRET=change-me-change-me-change-me-change-me
+JWT_EXPIRATION_MINUTES=60
+```
+
+## Como Rodar com Docker
+
+Suba a aplicacao e o PostgreSQL:
+
+```bash
+docker compose up --build
+```
+
+Para rodar em background:
+
+```bash
+docker compose up -d --build
+```
+
+Para parar:
+
+```bash
+docker compose down
+```
+
+Para remover tambem o volume do banco:
+
+```bash
+docker compose down -v
+```
+
+## Swagger
+
+Swagger UI:
+
+```text
+http://localhost:8080/swagger-ui.html
+```
+
+Contrato OpenAPI:
+
+```text
+docs/openapi/openapi.yaml
+```
+
+## Testes
+
+Execute:
+
+```bash
+mvn test
+```
+
+Os testes usam H2 em memoria com Flyway habilitado.
+
+## Analise de Vulnerabilidades
+
+O projeto usa OWASP Dependency-Check para analisar vulnerabilidades conhecidas nas dependencias Maven.
+
+Execute:
+
+```bash
+mvn dependency-check:check
+```
+
+Em ambientes que precisam forcar o Maven Central:
+
+```bash
+mvn -gs .mvn-settings-central.xml -s .mvn-settings-central.xml dependency-check:check
+```
+
+Os relatorios sao gerados em:
+
+```text
+target/dependency-check
+```
+
+A documentacao da analise fica em:
+
+```text
+docs/security/vulnerability-analysis.md
+```
+
+## Migrations
+
+As migrations ficam em:
+
+```text
+src/main/resources/db/migration
+```
+
+Ao iniciar a aplicacao, o Flyway executa automaticamente as migrations pendentes.
+
+Para aplicar migrations localmente, suba o PostgreSQL e inicie a aplicacao:
+
+```bash
+docker compose up -d postgres
+mvn spring-boot:run
+```
+
+Com Docker Compose completo, as migrations tambem rodam no startup do container da aplicacao:
+
+```bash
+docker compose up --build
+```
+
+## Usuario Admin Local
+
+Seed inicial criado por Flyway:
+
+```text
+Usuario: admin@autocarehub.com
+Senha: autocare123
+Perfil: ADMIN
+```
+
+Login:
+
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
+```
+
+Use o campo `accessToken` retornado como Bearer token nas demais chamadas.
+
+## Principais Endpoints
+
+Autenticacao:
+
+- `POST /api/v1/auth/login`
+
+Clientes:
+
+- `GET /api/v1/customers`
+- `POST /api/v1/customers`
+- `GET /api/v1/customers/{customerId}`
+- `PUT /api/v1/customers/{customerId}`
+- `DELETE /api/v1/customers/{customerId}`
+
+Veiculos:
+
+- `GET /api/v1/vehicles`
+- `POST /api/v1/vehicles`
+- `GET /api/v1/vehicles/{vehicleId}`
+- `PUT /api/v1/vehicles/{vehicleId}`
+- `DELETE /api/v1/vehicles/{vehicleId}`
+- `GET /api/v1/customers/{customerId}/vehicles`
+
+Servicos da oficina:
+
+- `GET /api/v1/workshop-services`
+- `POST /api/v1/workshop-services`
+- `GET /api/v1/workshop-services/{serviceId}`
+- `PUT /api/v1/workshop-services/{serviceId}`
+- `DELETE /api/v1/workshop-services/{serviceId}`
+
+Pecas:
+
+- `GET /api/v1/parts`
+- `POST /api/v1/parts`
+- `GET /api/v1/parts/{partId}`
+- `PUT /api/v1/parts/{partId}`
+- `DELETE /api/v1/parts/{partId}`
+- `PATCH /api/v1/parts/{partId}/stock`
+
+Ordens de servico:
+
+- `GET /api/v1/service-orders`
+- `POST /api/v1/service-orders`
+- `GET /api/v1/service-orders/{serviceOrderId}`
+- `POST /api/v1/service-orders/{serviceOrderId}/services`
+- `POST /api/v1/service-orders/{serviceOrderId}/parts`
+- `POST /api/v1/service-orders/{serviceOrderId}/budget/generate`
+- `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`
+- `PATCH /api/v1/service-orders/{serviceOrderId}/status`
+- `GET /api/v1/customers/{customerId}/service-orders`
+
+## OpenAPI First
+
+O contrato da API e definido antes da implementacao em `docs/openapi/openapi.yaml`. A partir desse contrato, o OpenAPI Generator cria interfaces Java e DTOs em `target/generated-sources/openapi`.
+
+Os controllers manuais implementam as interfaces geradas e convertem os DTOs gerados para commands e queries da camada de application. Isso reduz divergencia entre documentacao e implementacao, facilita validacao do contrato e torna o Swagger uma representacao direta da API publica.
+
+## DDD
+
+O projeto usa conceitos de Domain-Driven Design para isolar o conhecimento de negocio no dominio. Entidades como `Customer`, `Vehicle`, `Part`, `WorkshopService` e `ServiceOrder` concentram regras e invariantes. A camada de application coordena casos de uso e depende de portas de repositorio, sem conhecer detalhes de JPA ou HTTP.
+
+Essa abordagem mantem controllers, DTOs gerados, repositories Spring Data e entidades JPA fora do nucleo de negocio.
+
+## Justificativa do PostgreSQL
+
+PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, servicos e pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
+
+O uso de PostgreSQL tambem combina bem com Flyway, JPA e execucao via Docker Compose.
+
+## Justificativa do Monolito em Camadas
+
+Para o escopo academico e para um MVP, um monolito em camadas oferece menor complexidade operacional, deploy simples e boa separacao interna de responsabilidades. A aplicacao ainda mantem fronteiras claras entre dominio, casos de uso, infraestrutura e interface REST, permitindo evolucao futura sem introduzir a complexidade de microsservicos antes de haver necessidade real.
+
+Essa escolha favorece clareza arquitetural, testabilidade e entrega incremental.

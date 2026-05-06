@@ -1,6 +1,7 @@
 package br.com.autocarehub.interfaces.rest.impl.mapper;
 
 import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
 import br.com.autocarehub.domain.Money;
 import br.com.autocarehub.domain.WorkshopService;
@@ -35,6 +36,10 @@ public final class WorkshopServiceRestMapper {
                 request.getEstimatedTimeInMinutes(),
                 Boolean.TRUE.equals(request.getActive())
         );
+    }
+
+    public static ListWorkshopServicesUseCase.Query toQuery(Boolean active) {
+        return new ListWorkshopServicesUseCase.Query(active);
     }
 
     public static WorkshopServiceResponse toResponse(WorkshopService service) {

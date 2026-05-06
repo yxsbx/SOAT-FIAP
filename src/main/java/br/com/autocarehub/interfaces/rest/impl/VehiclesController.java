@@ -13,7 +13,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateVehicleRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleResponse;
 import br.com.autocarehub.interfaces.rest.impl.mapper.VehicleRestMapper;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -57,10 +56,7 @@ public class VehiclesController implements VehiclesApi {
 
     @Override
     public ResponseEntity<VehicleListResponse> listVehicles(Integer page, Integer size, Boolean active) {
-        List<Vehicle> vehicles = listVehiclesUseCase.execute().stream()
-                .filter(vehicle -> active == null || vehicle.active() == active)
-                .toList();
-        return ResponseEntity.ok(VehicleRestMapper.toListResponse(vehicles, page, size));
+        return ResponseEntity.ok(VehicleRestMapper.toListResponse(listVehiclesUseCase.execute(VehicleRestMapper.toQuery(active)), page, size));
     }
 
     @Override

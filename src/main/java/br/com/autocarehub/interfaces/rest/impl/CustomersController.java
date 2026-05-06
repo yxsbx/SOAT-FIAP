@@ -12,7 +12,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.impl.mapper.CustomerRestMapper;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,10 +53,7 @@ public class CustomersController implements CustomersApi {
 
     @Override
     public ResponseEntity<CustomerListResponse> listCustomers(Integer page, Integer size, Boolean active) {
-        List<Customer> customers = listCustomersUseCase.execute().stream()
-                .filter(customer -> active == null || customer.active() == active)
-                .toList();
-        return ResponseEntity.ok(CustomerRestMapper.toListResponse(customers, page, size));
+        return ResponseEntity.ok(CustomerRestMapper.toListResponse(listCustomersUseCase.execute(CustomerRestMapper.toQuery(active)), page, size));
     }
 
     @Override

@@ -14,7 +14,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.PartResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
 import br.com.autocarehub.interfaces.rest.impl.mapper.PartRestMapper;
-import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,11 +57,7 @@ public class PartsController implements PartsApi {
 
     @Override
     public ResponseEntity<PartListResponse> listParts(Integer page, Integer size, Boolean active, Boolean lowStock) {
-        List<Part> parts = listPartsUseCase.execute().stream()
-                .filter(part -> active == null || part.active() == active)
-                .filter(part -> lowStock == null || !lowStock || part.stockQuantity() <= part.minimumStock())
-                .toList();
-        return ResponseEntity.ok(PartRestMapper.toListResponse(parts, page, size));
+        return ResponseEntity.ok(PartRestMapper.toListResponse(listPartsUseCase.execute(PartRestMapper.toQuery(active, lowStock)), page, size));
     }
 
     @Override

@@ -15,4 +15,13 @@ public class ListVehiclesUseCase {
     public List<Vehicle> execute() {
         return vehicleRepository.findAll();
     }
+
+    public List<Vehicle> execute(Query query) {
+        return vehicleRepository.findAll().stream()
+                .filter(vehicle -> query.active() == null || vehicle.active() == query.active())
+                .toList();
+    }
+
+    public record Query(Boolean active) {
+    }
 }

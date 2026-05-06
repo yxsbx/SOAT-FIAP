@@ -1,6 +1,7 @@
 package br.com.autocarehub.interfaces.rest.impl.mapper;
 
 import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
 import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
 import br.com.autocarehub.domain.Customer;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
@@ -34,6 +35,10 @@ public final class CustomerRestMapper {
                 toDomainAddress(request.getAddress()),
                 Boolean.TRUE.equals(request.getActive())
         );
+    }
+
+    public static ListCustomersUseCase.Query toQuery(Boolean active) {
+        return new ListCustomersUseCase.Query(active);
     }
 
     public static CustomerResponse toResponse(Customer customer) {

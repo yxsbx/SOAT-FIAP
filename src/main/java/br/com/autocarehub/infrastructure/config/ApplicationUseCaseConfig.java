@@ -37,6 +37,8 @@ import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServ
 import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
+import br.com.autocarehub.infrastructure.security.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -44,8 +46,8 @@ import org.springframework.context.annotation.Configuration;
 public class ApplicationUseCaseConfig {
 
     @Bean
-    LoginUseCase loginUseCase() {
-        return new LoginUseCase();
+    LoginUseCase loginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
+        return new LoginUseCase(authenticationManager, jwtService);
     }
 
     @Bean

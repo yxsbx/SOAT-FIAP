@@ -23,6 +23,9 @@ public class UserJpaEntity {
     @Column(nullable = false, length = 50)
     private String role;
 
+    @Column(name = "customer_id")
+    private UUID customerId;
+
     @Column(nullable = false)
     private boolean active;
 
@@ -62,6 +65,14 @@ public class UserJpaEntity {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public UUID getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public boolean isActive() {
