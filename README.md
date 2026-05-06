@@ -131,12 +131,6 @@ Execute:
 mvn dependency-check:check
 ```
 
-Em ambientes que precisam forcar o Maven Central:
-
-```bash
-mvn -gs .mvn-settings-central.xml -s .mvn-settings-central.xml dependency-check:check
-```
-
 Os relatorios sao gerados em:
 
 ```text

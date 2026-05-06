@@ -77,7 +77,7 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response, "id");
+        return uuid(response);
     }
 
     private UUID createVehicle(String token, UUID customerId) throws Exception {
@@ -97,7 +97,7 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response, "id");
+        return uuid(response);
     }
 
     private UUID createPart(String token) throws Exception {
@@ -119,7 +119,7 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response, "id");
+        return uuid(response);
     }
 
     private UUID createWorkshopService(String token) throws Exception {
@@ -137,7 +137,7 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response, "id");
+        return uuid(response);
     }
 
     private UUID createServiceOrder(String token, UUID customerId, UUID vehicleId) throws Exception {
@@ -154,7 +154,7 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response, "id");
+        return uuid(response);
     }
 
     private void addServiceToServiceOrder(String token, UUID serviceOrderId, UUID serviceId) throws Exception {
@@ -203,9 +203,9 @@ class ServiceOrderFlowIntegrationTest {
         return objectMapper.writeValueAsString(value);
     }
 
-    private UUID uuid(String response, String fieldName) throws Exception {
+    private UUID uuid(String response) throws Exception {
         JsonNode jsonNode = objectMapper.readTree(response);
-        return UUID.fromString(jsonNode.get(fieldName).asText());
+        return UUID.fromString(jsonNode.get("id").asText());
     }
 
     private String bearer(String token) {
