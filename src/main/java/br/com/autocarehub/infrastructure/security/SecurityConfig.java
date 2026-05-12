@@ -45,8 +45,55 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET,
-                        "/api/v1/customers/*/service-orders")
+                        "/api/v1/customers/*/service-orders",
+                        "/api/v1/customers/*/vehicles")
                     .authenticated()
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.GET,
+                        "/api/v1/customers",
+                        "/api/v1/customers/*")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.GET,
+                        "/api/v1/vehicles",
+                        "/api/v1/vehicles/*",
+                        "/api/v1/workshop-services",
+                        "/api/v1/workshop-services/*",
+                        "/api/v1/parts",
+                        "/api/v1/parts/*",
+                        "/api/v1/service-orders",
+                        "/api/v1/service-orders/metrics/average-execution-time")
+                    .hasAnyRole("ADMIN", "EMPLOYEE")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.POST,
+                        "/api/v1/customers",
+                        "/api/v1/vehicles",
+                        "/api/v1/workshop-services",
+                        "/api/v1/parts")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.POST,
+                        "/api/v1/service-orders")
+                    .hasAnyRole("ADMIN", "EMPLOYEE")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.PUT,
+                        "/api/v1/customers/*",
+                        "/api/v1/vehicles/*",
+                        "/api/v1/workshop-services/*",
+                        "/api/v1/parts/*")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.PATCH,
+                        "/api/v1/parts/*/stock",
+                        "/api/v1/service-orders/*/status")
+                    .hasAnyRole("ADMIN", "EMPLOYEE")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.DELETE,
+                        "/api/v1/customers/*",
+                        "/api/v1/vehicles/*",
+                        "/api/v1/workshop-services/*",
+                        "/api/v1/parts/*")
+                    .hasRole("ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET, "/api/v1/service-orders/*")
                     .authenticated()

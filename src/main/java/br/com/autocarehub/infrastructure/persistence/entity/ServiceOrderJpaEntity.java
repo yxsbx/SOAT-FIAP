@@ -9,7 +9,9 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -52,10 +54,10 @@ public class ServiceOrderJpaEntity {
   private LocalDateTime deliveredAt;
 
   @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ServiceOrderServiceJpaEntity> services = new ArrayList<>();
+  private Set<ServiceOrderServiceJpaEntity> services = new LinkedHashSet<>();
 
   @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<ServiceOrderPartJpaEntity> parts = new ArrayList<>();
+  private Set<ServiceOrderPartJpaEntity> parts = new LinkedHashSet<>();
 
   public ServiceOrderJpaEntity() {}
 
@@ -176,10 +178,10 @@ public class ServiceOrderJpaEntity {
   }
 
   public List<ServiceOrderServiceJpaEntity> getServices() {
-    return services;
+    return new ArrayList<>(services);
   }
 
   public List<ServiceOrderPartJpaEntity> getParts() {
-    return parts;
+    return new ArrayList<>(parts);
   }
 }

@@ -10,6 +10,38 @@ const username = ref('admin@autocarehub.com');
 const password = ref('autocare123');
 const loading = ref(false);
 const error = ref('');
+const selectedProfile = ref('admin');
+
+const demoProfiles = [
+  {
+    id: 'admin',
+    label: 'Administrador',
+    username: 'admin@autocarehub.com',
+    password: 'autocare123',
+    description: 'Acesso completo ao painel, cadastros, estoque e comandos.',
+  },
+  {
+    id: 'employee',
+    label: 'Funcionario',
+    username: 'funcionario@autocarehub.com',
+    password: 'autocare123',
+    description: 'Operacao da oficina: ordens, pecas, servicos e atendimento.',
+  },
+  {
+    id: 'customer',
+    label: 'Cliente',
+    username: 'cliente@autocarehub.com',
+    password: 'autocare123',
+    description: 'Visao do cliente Mariana Costa com seus carros e ordens.',
+  },
+];
+
+function selectProfile(profile) {
+  selectedProfile.value = profile.id;
+  username.value = profile.username;
+  password.value = profile.password;
+  error.value = '';
+}
 
 async function submit() {
   loading.value = true;
@@ -34,6 +66,19 @@ async function submit() {
       </div>
       <h1>AutoCare Hub</h1>
       <p>Gestao operacional da oficina</p>
+
+      <div class="profile-picker">
+        <button
+          v-for="profile in demoProfiles"
+          :key="profile.id"
+          type="button"
+          :class="{ active: selectedProfile === profile.id }"
+          @click="selectProfile(profile)"
+        >
+          <strong>{{ profile.label }}</strong>
+          <span>{{ profile.description }}</span>
+        </button>
+      </div>
 
       <form class="login-form" @submit.prevent="submit">
         <label>

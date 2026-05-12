@@ -221,6 +221,20 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 
 Use o campo `accessToken` retornado como Bearer token nas demais chamadas.
 
+## Dados Demonstrativos
+
+O Flyway tambem carrega uma massa de dados demonstrativa para uso no frontend:
+
+```text
+Administrador: admin@autocarehub.com / autocare123
+Funcionario: funcionario@autocarehub.com / autocare123
+Cliente: cliente@autocarehub.com / autocare123
+```
+
+A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, pecas em estoque,
+pecas abaixo do minimo, servicos da oficina e ordens de servico com notas de diagnostico em
+diferentes status.
+
 ## Principais Endpoints
 
 Autenticacao:

@@ -1,0 +1,16 @@
+INSERT INTO parts (
+    id, name, sku, category, subcategory, brand, unit_price, stock_quantity, minimum_stock, active
+) VALUES
+    ('40000000-0000-0000-0000-000000000021', 'Filtro de combustivel flex', 'FIL-COM-FLX01', 'Filtros', 'Combustivel', 'Tecfil', 58.00, 26, 8, TRUE),
+    ('40000000-0000-0000-0000-000000000022', 'Correia poly-v', 'MOT-COR-POL01', 'Motor', 'Correias', 'Gates', 96.00, 15, 5, TRUE),
+    ('40000000-0000-0000-0000-000000000023', 'Tensor da correia poly-v', 'MOT-TEN-POL01', 'Motor', 'Tensores', 'SKF', 185.00, 9, 4, TRUE),
+    ('40000000-0000-0000-0000-000000000024', 'Terminal de direcao', 'DIR-TER-DIR01', 'Direcao', 'Terminais', 'Axios', 88.00, 14, 6, TRUE),
+    ('40000000-0000-0000-0000-000000000025', 'Pivo de suspensao', 'SUS-PIV-DIA01', 'Suspensao', 'Pivos', 'Nakata', 112.00, 11, 5, TRUE),
+    ('40000000-0000-0000-0000-000000000026', 'Cabo de vela', 'MOT-CAB-VEL01', 'Motor', 'Ignicao', 'NGK', 145.00, 10, 4, TRUE),
+    ('40000000-0000-0000-0000-000000000027', 'Sensor de oxigenio', 'ELE-SEN-OXI01', 'Eletrica', 'Sensores', 'Bosch', 260.00, 8, 3, TRUE),
+    ('40000000-0000-0000-0000-000000000028', 'Cilindro mestre de freio', 'FR-CIL-MES01', 'Freios', 'Hidraulico', 'TRW', 310.00, 7, 3, TRUE),
+    ('40000000-0000-0000-0000-000000000029', 'Jogo de tapetes automotivos', 'ACE-TAP-JOG01', 'Acessorios', 'Interior', 'Borcol', 120.00, 18, 6, TRUE),
+    ('40000000-0000-0000-0000-000000000030', 'Limpador de para-brisa aditivo', 'ACE-LIM-PAR01', 'Acessorios', 'Limpeza', 'Wurth', 22.00, 35, 12, TRUE),
+    ('40000000-0000-0000-0000-000000000031', 'Fluido para radiador concentrado', 'ARR-FLU-CON01', 'Arrefecimento', 'Fluidos', 'Radiex', 48.00, 19, 8, TRUE),
+    ('40000000-0000-0000-0000-000000000032', 'Graxa automotiva 500g', 'LUB-GRA-500G', 'Lubrificantes', 'Graxa', 'Ipiranga', 36.00, 22, 8, TRUE)
+ON CONFLICT (id) DO NOTHING;
