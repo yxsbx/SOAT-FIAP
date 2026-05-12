@@ -5,9 +5,9 @@ INSERT INTO customers (
 ) VALUES
     ('10000000-0000-0000-0000-000000000001', 'Mariana Costa', 'CPF', '12345678909', '11988887777', 'mariana.costa@email.com', 'Rua das Oficinas', '120', 'Casa 2', 'Mooca', 'Sao Paulo', 'SP', '03111000', TRUE, CURRENT_TIMESTAMP),
     ('10000000-0000-0000-0000-000000000002', 'Ricardo Almeida', 'CPF', '98765432100', '11977776666', 'ricardo.almeida@email.com', 'Avenida Brasil', '450', NULL, 'Jardins', 'Sao Paulo', 'SP', '01430000', TRUE, CURRENT_TIMESTAMP),
-    ('10000000-0000-0000-0000-000000000003', 'Patricia Oliveira', 'CPF', '45678912300', '11966665555', 'patricia.oliveira@email.com', 'Rua Vergueiro', '2200', 'Apto 81', 'Vila Mariana', 'Sao Paulo', 'SP', '04102000', TRUE, CURRENT_TIMESTAMP),
-    ('10000000-0000-0000-0000-000000000004', 'TechLog Transportes Ltda', 'CNPJ', '11222333000144', '1133332222', 'frota@techlog.com', 'Avenida Industrial', '900', 'Galpao B', 'Tambore', 'Barueri', 'SP', '06460000', TRUE, CURRENT_TIMESTAMP),
-    ('10000000-0000-0000-0000-000000000005', 'Joao Pereira', 'CPF', '32165498701', '11955554444', 'joao.pereira@email.com', 'Rua Augusta', '1001', NULL, 'Consolacao', 'Sao Paulo', 'SP', '01305000', TRUE, CURRENT_TIMESTAMP)
+    ('10000000-0000-0000-0000-000000000003', 'Patricia Oliveira', 'CPF', '45678912364', '11966665555', 'patricia.oliveira@email.com', 'Rua Vergueiro', '2200', 'Apto 81', 'Vila Mariana', 'Sao Paulo', 'SP', '04102000', TRUE, CURRENT_TIMESTAMP),
+    ('10000000-0000-0000-0000-000000000004', 'TechLog Transportes Ltda', 'CNPJ', '11222333000181', '1133332222', 'frota@techlog.com', 'Avenida Industrial', '900', 'Galpao B', 'Tambore', 'Barueri', 'SP', '06460000', TRUE, CURRENT_TIMESTAMP),
+    ('10000000-0000-0000-0000-000000000005', 'Joao Pereira', 'CPF', '32165498791', '11955554444', 'joao.pereira@email.com', 'Rua Augusta', '1001', NULL, 'Consolacao', 'Sao Paulo', 'SP', '01305000', TRUE, CURRENT_TIMESTAMP)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO vehicles (

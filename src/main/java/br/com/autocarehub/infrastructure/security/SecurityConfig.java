@@ -52,7 +52,7 @@ public class SecurityConfig {
                         org.springframework.http.HttpMethod.GET,
                         "/api/v1/customers",
                         "/api/v1/customers/*")
-                    .hasRole("ADMIN")
+                    .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET,
                         "/api/v1/vehicles",
@@ -70,7 +70,7 @@ public class SecurityConfig {
                         "/api/v1/vehicles",
                         "/api/v1/workshop-services",
                         "/api/v1/parts")
-                    .hasRole("ADMIN")
+                    .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.POST,
                         "/api/v1/service-orders")
@@ -81,7 +81,7 @@ public class SecurityConfig {
                         "/api/v1/vehicles/*",
                         "/api/v1/workshop-services/*",
                         "/api/v1/parts/*")
-                    .hasRole("ADMIN")
+                    .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.PATCH,
                         "/api/v1/parts/*/stock",
@@ -93,7 +93,7 @@ public class SecurityConfig {
                         "/api/v1/vehicles/*",
                         "/api/v1/workshop-services/*",
                         "/api/v1/parts/*")
-                    .hasRole("ADMIN")
+                    .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET, "/api/v1/service-orders/*")
                     .authenticated()

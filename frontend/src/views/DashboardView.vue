@@ -7,14 +7,11 @@ import {
   Car,
   CheckCircle2,
   ClipboardList,
-  Copy,
   Gauge,
   LogOut,
   Menu,
   Package,
-  Play,
   Plus,
-  RefreshCw,
   Search,
   ShieldCheck,
   TrendingUp,
@@ -25,7 +22,6 @@ import {
 } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { resources } from '@/services/api';
-import { commandGroups } from '@/data/commands';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -33,9 +29,9 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref('');
 const success = ref('');
-const copiedCommand = ref('');
 const activeTab = ref('overview');
 const mobileMenuOpen = ref(false);
+const sidebarCollapsed = ref(true);
 const globalSearch = ref('');
 
 const statuses = ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'];
@@ -169,13 +165,6 @@ const availableTabs = computed(() => {
       description: 'Catalogo e prazos previstos',
       icon: Wrench,
       roles: ['ADMIN', 'EMPLOYEE'],
-    },
-    {
-      id: 'commands',
-      label: 'Comandos',
-      description: 'Comandos tecnicos do projeto',
-      icon: Play,
-      roles: ['ADMIN'],
     },
   ];
 
@@ -502,9 +491,14 @@ async function loadDashboard() {
       serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
 
-    const failed = requests.filter(
-      (request) => request.status === 'rejected' && request.reason.status !== 403,
-    );
+    const failed = requests.filter((request) => {
+      if (request.status !== 'rejected') {
+        return false;
+      }
+
+      const isCustomersRequest = request.reason.path?.startsWith('/api/v1/customers');
+      return request.reason.status !== 403 || (auth.role === 'ADMIN' && isCustomersRequest);
+    });
     if (failed.length) {
       error.value = failed.map((request) => request.reason.message).join(' | ');
     }
@@ -655,16 +649,6 @@ function addPartToOrder() {
   }, 'Peca adicionada a ordem.');
 }
 
-async function copyCommand(command) {
-  await navigator.clipboard.writeText(command);
-  copiedCommand.value = command;
-  window.setTimeout(() => {
-    if (copiedCommand.value === command) {
-      copiedCommand.value = '';
-    }
-  }, 1600);
-}
-
 function changePage(resource, direction) {
   pagination[resource].page = Math.max(0, pagination[resource].page + direction);
   loadDashboard();
@@ -689,29 +673,26 @@ onMounted(loadDashboard);
 </script>
 
 <template>
-  <main class="app-shell">
+  <main class="app-shell" :class="{ 'mobile-sidebar-open': mobileMenuOpen }">
     <header class="site-navbar">
       <div class="navbar-inner">
-        <div class="sidebar-brand">
+        <button
+          class="menu-button"
+          type="button"
+          title="Abrir menu"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <X v-if="mobileMenuOpen" :size="22" />
+          <Menu v-else :size="22" />
+        </button>
+
+        <div class="navbar-brand">
           <div class="brand-mark"><Wrench :size="22" /></div>
           <div>
             <strong>AutoCare Hub</strong>
             <span>{{ roleLabel }}</span>
           </div>
         </div>
-
-        <nav class="desktop-nav" aria-label="Acessos principais">
-          <button
-            v-for="tab in availableTabs"
-            :key="tab.id"
-            type="button"
-            :class="{ active: activeTab === tab.id }"
-            @click="selectTab(tab.id)"
-          >
-            <component :is="tab.icon" :size="17" />
-            {{ tab.label }}
-          </button>
-        </nav>
 
         <div class="navbar-search">
           <Search :size="17" />
@@ -738,661 +719,620 @@ onMounted(loadDashboard);
         </div>
 
         <div class="navbar-actions">
-          <button class="icon-button" type="button" title="Atualizar dados" @click="loadDashboard">
-            <RefreshCw :size="19" />
-          </button>
           <button class="ghost-button compact" type="button" @click="logout">
             <LogOut :size="18" />
             <span>Sair</span>
           </button>
-          <button
-            class="menu-button"
-            type="button"
-            title="Abrir menu"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-          >
-            <X v-if="mobileMenuOpen" :size="22" />
-            <Menu v-else :size="22" />
-          </button>
         </div>
       </div>
-
-      <nav v-if="mobileMenuOpen" class="mobile-nav" aria-label="Menu mobile">
-        <button
-          v-for="tab in availableTabs"
-          :key="tab.id"
-          type="button"
-          :class="{ active: activeTab === tab.id }"
-          @click="selectTab(tab.id)"
-        >
-          <component :is="tab.icon" :size="18" />
-          {{ tab.label }}
-        </button>
-        <div class="mobile-search">
-          <Search :size="17" />
-          <input
-            v-model="globalSearch"
-            type="search"
-            placeholder="Buscar no sistema"
-            aria-label="Busca global mobile"
-          />
-        </div>
-        <button type="button" @click="logout">
-          <LogOut :size="18" />
-          Sair
-        </button>
-      </nav>
     </header>
 
-    <section class="content">
-      <section class="hero-panel">
-        <div>
-          <span class="eyebrow"><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
-          <h1>Controle inteligente para oficinas modernas</h1>
-          <p>
-            Acompanhe ordens, estoque, clientes e veiculos em um painel unico para atendimento,
-            compras e execucao dos servicos.
-          </p>
-        </div>
-        <div class="hero-kpis">
-          <article v-for="insight in quickInsights" :key="insight.label">
-            <component :is="insight.icon" :size="20" />
-            <strong>{{ insight.value }}</strong>
-            <span>{{ insight.label }}</span>
-          </article>
-        </div>
-      </section>
+    <div class="app-layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+      <aside class="app-sidebar" :class="{ collapsed: sidebarCollapsed }">
+        <button
+          class="sidebar-toggle"
+          type="button"
+          :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
+          @click="sidebarCollapsed = !sidebarCollapsed"
+        >
+          <Menu :size="18" />
+          <span>{{ sidebarCollapsed ? 'Expandir' : 'Recolher' }}</span>
+        </button>
 
-      <section class="workspace-header">
-        <div>
-          <span>Area atual</span>
-          <h2>{{ activeTabMeta.label }}</h2>
-          <p>{{ activeTabMeta.description }}</p>
-        </div>
-        <div class="highlight-strip">
-          <article
-            v-for="item in operationalHighlights"
-            :key="item.label"
-            :class="`tone-${item.tone}`"
+        <nav class="side-nav" aria-label="Acessos principais">
+          <button
+            v-for="tab in availableTabs"
+            :key="tab.id"
+            type="button"
+            :class="{ active: activeTab === tab.id }"
+            :title="tab.label"
+            @click="selectTab(tab.id)"
           >
-            <strong>{{ item.value }}</strong>
-            <span>{{ item.label }}</span>
-            <small>{{ item.detail }}</small>
-          </article>
-        </div>
-      </section>
+            <component :is="tab.icon" :size="20" />
+            <span>
+              <strong>{{ tab.label }}</strong>
+              <small>{{ tab.description }}</small>
+            </span>
+          </button>
+        </nav>
+      </aside>
 
-      <p v-if="error" class="alert error">{{ error }}</p>
-      <p v-if="success" class="alert success">{{ success }}</p>
+      <button
+        v-if="mobileMenuOpen"
+        class="sidebar-backdrop"
+        type="button"
+        aria-label="Fechar menu"
+        @click="mobileMenuOpen = false"
+      ></button>
 
-      <section v-if="activeTab === 'overview'" class="screen-stack">
-        <div class="metric-grid">
-          <article class="metric-card">
-            <span>Clientes</span>
-            <strong>{{ data.customers.length }}</strong>
-          </article>
-          <article class="metric-card">
-            <span>Veiculos</span>
-            <strong>{{ data.vehicles.length }}</strong>
-          </article>
-          <article class="metric-card warning">
-            <span>Pecas para comprar</span>
-            <strong>{{ data.lowStockParts.length }}</strong>
-          </article>
-          <article class="metric-card">
-            <span>Estoque saudavel</span>
-            <strong>{{ healthyParts.length }}</strong>
-          </article>
-          <article class="metric-card">
-            <span>Media execucao</span>
-            <strong>{{ averageExecutionLabel }}</strong>
-          </article>
-        </div>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Alertas de compra</h2>
-            <span>Estoque abaixo do minimo</span>
+      <section class="content">
+        <section class="hero-panel">
+          <div>
+            <span class="eyebrow"><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
+            <h1>Controle inteligente para oficinas modernas</h1>
+            <p>
+              Acompanhe ordens, estoque, clientes e veiculos em um painel unico para atendimento,
+              compras e execucao dos servicos.
+            </p>
           </div>
-          <div class="table-list">
-            <article v-for="part in data.lowStockParts" :key="part.id" class="row-item danger">
-              <div>
-                <strong>{{ part.name }}</strong>
-                <span>{{ part.sku }} - minimo {{ part.minimumStock }}</span>
-              </div>
-              <span>{{ part.stockQuantity }} un.</span>
+          <div class="hero-kpis">
+            <article v-for="insight in quickInsights" :key="insight.label">
+              <component :is="insight.icon" :size="20" />
+              <strong>{{ insight.value }}</strong>
+              <span>{{ insight.label }}</span>
             </article>
-            <p v-if="!data.lowStockParts.length" class="empty-state">Nenhum alerta de estoque.</p>
           </div>
         </section>
 
-        <section class="analytics-grid">
-          <article class="section-block chart-panel">
+        <section class="workspace-header">
+          <div>
+            <span>Area atual</span>
+            <h2>{{ activeTabMeta.label }}</h2>
+            <p>{{ activeTabMeta.description }}</p>
+          </div>
+          <div class="highlight-strip">
+            <article
+              v-for="item in operationalHighlights"
+              :key="item.label"
+              :class="`tone-${item.tone}`"
+            >
+              <strong>{{ item.value }}</strong>
+              <span>{{ item.label }}</span>
+              <small>{{ item.detail }}</small>
+            </article>
+          </div>
+        </section>
+
+        <p v-if="error" class="alert error">{{ error }}</p>
+        <p v-if="success" class="alert success">{{ success }}</p>
+
+        <section v-if="activeTab === 'overview'" class="screen-stack">
+          <div class="metric-grid">
+            <article class="metric-card">
+              <span>Clientes</span>
+              <strong>{{ data.customers.length }}</strong>
+            </article>
+            <article class="metric-card">
+              <span>Veiculos</span>
+              <strong>{{ data.vehicles.length }}</strong>
+            </article>
+            <article class="metric-card warning">
+              <span>Pecas para comprar</span>
+              <strong>{{ data.lowStockParts.length }}</strong>
+            </article>
+            <article class="metric-card">
+              <span>Estoque saudavel</span>
+              <strong>{{ healthyParts.length }}</strong>
+            </article>
+            <article class="metric-card">
+              <span>Media execucao</span>
+              <strong>{{ averageExecutionLabel }}</strong>
+            </article>
+          </div>
+
+          <section class="section-block">
             <div class="section-heading">
-              <h2>Status atual dos carros</h2>
-              <span>{{ data.serviceOrders.length }} ordens monitoradas</span>
+              <h2>Alertas de compra</h2>
+              <span>Estoque abaixo do minimo</span>
             </div>
-            <div class="bar-chart">
-              <div v-for="item in statusChart" :key="item.status" class="bar-row">
-                <span>{{ item.status }}</span>
-                <div class="bar-track">
-                  <i :style="{ width: `${item.percent}%`, background: item.color }"></i>
+            <div class="table-list">
+              <article v-for="part in data.lowStockParts" :key="part.id" class="row-item danger">
+                <div>
+                  <strong>{{ part.name }}</strong>
+                  <span>{{ part.sku }} - minimo {{ part.minimumStock }}</span>
                 </div>
-                <strong>{{ item.count }}</strong>
-              </div>
+                <span>{{ part.stockQuantity }} un.</span>
+              </article>
+              <p v-if="!data.lowStockParts.length" class="empty-state">Nenhum alerta de estoque.</p>
             </div>
-          </article>
+          </section>
 
-          <article class="section-block chart-panel">
+          <section class="analytics-grid">
+            <article class="section-block chart-panel">
+              <div class="section-heading">
+                <h2>Status atual dos carros</h2>
+                <span>{{ data.serviceOrders.length }} ordens monitoradas</span>
+              </div>
+              <div class="bar-chart">
+                <div v-for="item in statusChart" :key="item.status" class="bar-row">
+                  <span>{{ item.status }}</span>
+                  <div class="bar-track">
+                    <i :style="{ width: `${item.percent}%`, background: item.color }"></i>
+                  </div>
+                  <strong>{{ item.count }}</strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="section-block chart-panel">
+              <div class="section-heading">
+                <h2>Saude do estoque</h2>
+                <span>Itens abaixo do minimo</span>
+              </div>
+              <div class="donut-wrap">
+                <div
+                  class="donut-chart"
+                  :style="{
+                    background: `conic-gradient(#dc2626 0 ${inventoryHealth[1].percent}%, #0f766e ${inventoryHealth[1].percent}% 100%)`,
+                  }"
+                >
+                  <span>{{ inventoryHealth[1].percent }}%</span>
+                </div>
+                <div class="legend-list">
+                  <span v-for="item in inventoryHealth" :key="item.label">
+                    <i :style="{ background: item.color }"></i>
+                    {{ item.label }}: {{ item.value }}
+                  </span>
+                </div>
+              </div>
+            </article>
+
+            <article class="section-block chart-panel">
+              <div class="section-heading">
+                <h2>Resumo por status</h2>
+                <span>Distribuicao rapida</span>
+              </div>
+              <div class="status-grid">
+                <article v-for="item in statusCounts" :key="item.status" class="status-card">
+                  <strong>{{ item.count }}</strong>
+                  <span>{{ item.status }}</span>
+                </article>
+              </div>
+            </article>
+          </section>
+
+          <section class="section-block">
             <div class="section-heading">
-              <h2>Saude do estoque</h2>
-              <span>Itens abaixo do minimo</span>
+              <h2>Prazo previsto x realizado por servico</h2>
+              <span>Media por servico em ordens finalizadas ou entregues</span>
             </div>
-            <div class="donut-wrap">
-              <div
-                class="donut-chart"
-                :style="{
-                  background: `conic-gradient(#dc2626 0 ${inventoryHealth[1].percent}%, #0f766e ${inventoryHealth[1].percent}% 100%)`,
-                }"
+            <div class="comparison-list">
+              <article
+                v-for="item in serviceSlaComparisons"
+                :key="item.serviceId"
+                class="comparison-row"
+                :class="{ late: item.difference > 0 }"
               >
-                <span>{{ inventoryHealth[1].percent }}%</span>
-              </div>
-              <div class="legend-list">
-                <span v-for="item in inventoryHealth" :key="item.label">
-                  <i :style="{ background: item.color }"></i>
-                  {{ item.label }}: {{ item.value }}
+                <div>
+                  <strong>{{ item.name }}</strong>
+                  <span>{{ item.count }} ordem(ns) analisada(s)</span>
+                </div>
+                <div class="comparison-bars">
+                  <label>
+                    Previsto
+                    <i><b class="planned" style="width: 100%"></b></i>
+                    <span>{{ item.plannedLabel }}</span>
+                  </label>
+                  <label>
+                    Realizado
+                    <i><b :style="{ width: `${item.actualPercent}%` }"></b></i>
+                    <span>{{ item.actualLabel }}</span>
+                  </label>
+                </div>
+                <span class="badge" :class="{ danger: item.difference > 0 }">
+                  {{ item.status }} {{ item.differenceLabel }}
                 </span>
-              </div>
+              </article>
+              <p v-if="!serviceSlaComparisons.length" class="empty-state">
+                Ainda nao ha ordens finalizadas suficientes para comparar prazos.
+              </p>
             </div>
-          </article>
+            <p class="hint">
+              Quando uma ordem possui varios servicos, o tempo real e distribuido proporcionalmente ao
+              tempo previsto de cada item.
+            </p>
+          </section>
 
-          <article class="section-block chart-panel">
-            <div class="section-heading">
-              <h2>Resumo por status</h2>
-              <span>Distribuicao rapida</span>
+          <section class="section-block info-panel">
+            <BarChart3 :size="24" />
+            <div>
+              <h2>Fluxo sugerido</h2>
+              <p>
+                Cadastre o cliente, associe o veiculo, crie a ordem de servico, adicione pecas e
+                servicos, gere o orcamento e acompanhe o status ate a entrega.
+              </p>
             </div>
-            <div class="status-grid">
-              <article v-for="item in statusCounts" :key="item.status" class="status-card">
-                <strong>{{ item.count }}</strong>
-                <span>{{ item.status }}</span>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'customers'" class="screen-stack">
+          <section v-if="auth.role === 'ADMIN'" class="section-block">
+            <div class="section-heading">
+              <h2>Cadastro e conta do cliente</h2>
+              <span>Cria o cadastro base usado por veiculos e ordens</span>
+            </div>
+            <form class="form-grid" @submit.prevent="createCustomer">
+              <input v-model="forms.customer.name" placeholder="Nome" required />
+              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente numeros" required />
+              <input v-model="forms.customer.phone" placeholder="Telefone" required />
+              <input v-model="forms.customer.email" placeholder="E-mail" type="email" required />
+              <input v-model="forms.customer.address.street" placeholder="Rua" required />
+              <input v-model="forms.customer.address.number" placeholder="Numero" required />
+              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
+              <input v-model="forms.customer.address.city" placeholder="Cidade" required />
+              <input v-model="forms.customer.address.state" placeholder="UF" maxlength="2" required />
+              <input v-model="forms.customer.address.zipCode" placeholder="CEP" required />
+              <input v-model="forms.customer.address.complement" placeholder="Complemento" />
+              <button class="primary-button" type="submit" :disabled="saving">
+                <UserPlus :size="18" />
+                <span>Cadastrar cliente</span>
+              </button>
+            </form>
+            <p class="hint">
+              O backend atual ainda nao expoe criacao de credenciais para login de cliente; este fluxo
+              cria o cadastro do cliente na API.
+            </p>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Clientes</h2>
+              <span>Pagina {{ pagination.customers.page + 1 }}</span>
+            </div>
+            <div class="filters">
+              <select v-model="pagination.customers.active">
+                <option value="">Todos</option>
+                <option value="true">Ativos</option>
+                <option value="false">Inativos</option>
+              </select>
+              <button class="secondary-button" type="button" @click="loadDashboard">
+                <Search :size="17" />
+                Filtrar
+              </button>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header customers-grid">
+                <span>Cliente</span>
+                <span>Contato</span>
+                <span>Documento</span>
+                <span>Status</span>
+              </div>
+              <article
+                v-for="customer in data.customers"
+                :key="customer.id"
+                class="data-table-row customers-grid"
+              >
+                <strong>{{ customer.name }}</strong>
+                <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
+                <code>{{ customer.document }}</code>
+                <span class="badge"><CheckCircle2 :size="14" /> Ativo</span>
               </article>
             </div>
-          </article>
+            <div class="pager">
+              <button type="button" @click="changePage('customers', -1)">Anterior</button>
+              <button type="button" @click="changePage('customers', 1)">Proxima</button>
+            </div>
+          </section>
         </section>
 
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Prazo previsto x realizado por servico</h2>
-            <span>Media por servico em ordens finalizadas ou entregues</span>
-          </div>
-          <div class="comparison-list">
-            <article
-              v-for="item in serviceSlaComparisons"
-              :key="item.serviceId"
-              class="comparison-row"
-              :class="{ late: item.difference > 0 }"
-            >
-              <div>
-                <strong>{{ item.name }}</strong>
-                <span>{{ item.count }} ordem(ns) analisada(s)</span>
+        <section v-if="activeTab === 'vehicles'" class="screen-stack">
+          <section v-if="auth.role === 'ADMIN'" class="section-block">
+            <div class="section-heading">
+              <h2>Cadastro de veiculo</h2>
+              <span>Vinculado ao cliente</span>
+            </div>
+            <form class="form-grid compact" @submit.prevent="createVehicle">
+              <input v-model="forms.vehicle.customerId" placeholder="ID do cliente" required />
+              <input v-model="forms.vehicle.plate" placeholder="Placa ABC1D23" required />
+              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
+              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
+              <input v-model.number="forms.vehicle.year" type="number" placeholder="Ano" required />
+              <input v-model.number="forms.vehicle.mileage" type="number" placeholder="Km" required />
+              <button class="primary-button" type="submit" :disabled="saving">
+                <Plus :size="18" />
+                <span>Cadastrar veiculo</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Status dos carros</h2>
+              <span>Pagina {{ pagination.vehicles.page + 1 }}</span>
+            </div>
+            <div class="filters">
+              <select v-model="pagination.vehicles.active">
+                <option value="">Todos</option>
+                <option value="true">Ativos</option>
+                <option value="false">Inativos</option>
+              </select>
+              <button class="secondary-button" type="button" @click="loadDashboard">
+                <Search :size="17" />
+                Filtrar
+              </button>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header vehicles-grid">
+                <span>Placa</span>
+                <span>Veiculo</span>
+                <span>Km</span>
+                <span>Status</span>
               </div>
-              <div class="comparison-bars">
-                <label>
-                  Previsto
-                  <i><b class="planned" style="width: 100%"></b></i>
-                  <span>{{ item.plannedLabel }}</span>
-                </label>
-                <label>
-                  Realizado
-                  <i><b :style="{ width: `${item.actualPercent}%` }"></b></i>
-                  <span>{{ item.actualLabel }}</span>
-                </label>
+              <article
+                v-for="vehicle in vehiclesWithCurrentStatus"
+                :key="vehicle.id"
+                class="data-table-row vehicles-grid"
+              >
+                <strong>{{ vehicle.plate }}</strong>
+                <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
+                <span>{{ vehicle.mileage }} km</span>
+                <span class="badge">{{ vehicle.currentStatus }}</span>
+              </article>
+            </div>
+            <div class="pager">
+              <button type="button" @click="changePage('vehicles', -1)">Anterior</button>
+              <button type="button" @click="changePage('vehicles', 1)">Proxima</button>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'parts'" class="screen-stack">
+          <section v-if="auth.role === 'ADMIN'" class="section-block">
+            <div class="section-heading">
+              <h2>Cadastro de pecas</h2>
+              <span>Catalogo e minimo de estoque</span>
+            </div>
+            <form class="form-grid" @submit.prevent="createPart">
+              <input v-model="forms.part.name" placeholder="Nome" required />
+              <input v-model="forms.part.sku" placeholder="SKU" required />
+              <input v-model="forms.part.category" placeholder="Categoria" required />
+              <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
+              <input v-model="forms.part.brand" placeholder="Marca" required />
+              <input v-model.number="forms.part.unitPrice" type="number" min="0" step="0.01" placeholder="Preco unitario" required />
+              <input v-model.number="forms.part.stockQuantity" type="number" min="0" placeholder="Estoque" required />
+              <input v-model.number="forms.part.minimumStock" type="number" min="0" placeholder="Estoque minimo" required />
+              <button class="primary-button" type="submit" :disabled="saving">
+                <Plus :size="18" />
+                <span>Cadastrar peca</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Atualizar estoque</h2>
+              <span>Reposicao ou ajuste</span>
+            </div>
+            <form class="form-grid compact" @submit.prevent="updateStock">
+              <select v-model="forms.stock.partId" required>
+                <option value="">Selecione uma peca</option>
+                <option v-for="part in data.parts" :key="part.id" :value="part.id">
+                  {{ part.name }} - {{ part.sku }}
+                </option>
+              </select>
+              <input v-model.number="forms.stock.stockQuantity" type="number" min="0" placeholder="Nova quantidade" required />
+              <button class="primary-button" type="submit" :disabled="saving">
+                <Package :size="18" />
+                <span>Atualizar</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Estoque</h2>
+              <span>{{ data.lowStockParts.length }} alertas de compra</span>
+            </div>
+            <div class="filters">
+              <select v-model="pagination.parts.lowStock">
+                <option value="">Todos</option>
+                <option value="true">Somente baixo estoque</option>
+              </select>
+              <select v-model="pagination.parts.active">
+                <option value="">Todos</option>
+                <option value="true">Ativos</option>
+                <option value="false">Inativos</option>
+              </select>
+              <button class="secondary-button" type="button" @click="loadDashboard">
+                <Search :size="17" />
+                Filtrar
+              </button>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header parts-grid">
+                <span>Peca</span>
+                <span>Categoria</span>
+                <span>Estoque</span>
+                <span>Preco</span>
+                <span>Sinal</span>
               </div>
-              <span class="badge" :class="{ danger: item.difference > 0 }">
-                {{ item.status }} {{ item.differenceLabel }}
-              </span>
-            </article>
-            <p v-if="!serviceSlaComparisons.length" class="empty-state">
-              Ainda nao ha ordens finalizadas suficientes para comparar prazos.
-            </p>
-          </div>
-          <p class="hint">
-            Quando uma ordem possui varios servicos, o tempo real e distribuido proporcionalmente ao
-            tempo previsto de cada item.
-          </p>
-        </section>
-
-        <section class="section-block info-panel">
-          <BarChart3 :size="24" />
-          <div>
-            <h2>Fluxo sugerido</h2>
-            <p>
-              Cadastre o cliente, associe o veiculo, crie a ordem de servico, adicione pecas e
-              servicos, gere o orcamento e acompanhe o status ate a entrega.
-            </p>
-          </div>
-        </section>
-      </section>
-
-      <section v-if="activeTab === 'customers'" class="screen-stack">
-        <section v-if="auth.role === 'ADMIN'" class="section-block">
-          <div class="section-heading">
-            <h2>Cadastro e conta do cliente</h2>
-            <span>Cria o cadastro base usado por veiculos e ordens</span>
-          </div>
-          <form class="form-grid" @submit.prevent="createCustomer">
-            <input v-model="forms.customer.name" placeholder="Nome" required />
-            <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente numeros" required />
-            <input v-model="forms.customer.phone" placeholder="Telefone" required />
-            <input v-model="forms.customer.email" placeholder="E-mail" type="email" required />
-            <input v-model="forms.customer.address.street" placeholder="Rua" required />
-            <input v-model="forms.customer.address.number" placeholder="Numero" required />
-            <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
-            <input v-model="forms.customer.address.city" placeholder="Cidade" required />
-            <input v-model="forms.customer.address.state" placeholder="UF" maxlength="2" required />
-            <input v-model="forms.customer.address.zipCode" placeholder="CEP" required />
-            <input v-model="forms.customer.address.complement" placeholder="Complemento" />
-            <button class="primary-button" type="submit" :disabled="saving">
-              <UserPlus :size="18" />
-              <span>Cadastrar cliente</span>
-            </button>
-          </form>
-          <p class="hint">
-            O backend atual ainda nao expoe criacao de credenciais para login de cliente; este fluxo
-            cria o cadastro do cliente na API.
-          </p>
-        </section>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Clientes</h2>
-            <span>Pagina {{ pagination.customers.page + 1 }}</span>
-          </div>
-          <div class="filters">
-            <select v-model="pagination.customers.active">
-              <option value="">Todos</option>
-              <option value="true">Ativos</option>
-              <option value="false">Inativos</option>
-            </select>
-            <button class="secondary-button" type="button" @click="loadDashboard">
-              <Search :size="17" />
-              Filtrar
-            </button>
-          </div>
-          <div class="data-table">
-            <div class="data-table-header customers-grid">
-              <span>Cliente</span>
-              <span>Contato</span>
-              <span>Documento</span>
-              <span>Status</span>
+              <article
+                v-for="part in data.parts"
+                :key="part.id"
+                class="data-table-row parts-grid"
+                :class="{ danger: part.stockQuantity <= part.minimumStock }"
+              >
+                <strong>{{ part.name }}<small>{{ part.sku }}</small></strong>
+                <span>{{ part.category }}<small>{{ part.brand }}</small></span>
+                <span>{{ part.stockQuantity }} un.<small>Min. {{ part.minimumStock }}</small></span>
+                <span>R$ {{ money(part.unitPrice) }}</span>
+                <span class="badge" :class="{ danger: part.stockQuantity <= part.minimumStock }">
+                  {{ part.stockQuantity <= part.minimumStock ? 'Comprar' : 'Ok' }}
+                </span>
+              </article>
             </div>
-            <article
-              v-for="customer in data.customers"
-              :key="customer.id"
-              class="data-table-row customers-grid"
-            >
-              <strong>{{ customer.name }}</strong>
-              <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
-              <code>{{ customer.document }}</code>
-              <span class="badge"><CheckCircle2 :size="14" /> Ativo</span>
-            </article>
-          </div>
-          <div class="pager">
-            <button type="button" @click="changePage('customers', -1)">Anterior</button>
-            <button type="button" @click="changePage('customers', 1)">Proxima</button>
-          </div>
-        </section>
-      </section>
-
-      <section v-if="activeTab === 'vehicles'" class="screen-stack">
-        <section v-if="auth.role === 'ADMIN'" class="section-block">
-          <div class="section-heading">
-            <h2>Cadastro de veiculo</h2>
-            <span>Vinculado ao cliente</span>
-          </div>
-          <form class="form-grid compact" @submit.prevent="createVehicle">
-            <input v-model="forms.vehicle.customerId" placeholder="ID do cliente" required />
-            <input v-model="forms.vehicle.plate" placeholder="Placa ABC1D23" required />
-            <input v-model="forms.vehicle.brand" placeholder="Marca" required />
-            <input v-model="forms.vehicle.model" placeholder="Modelo" required />
-            <input v-model.number="forms.vehicle.year" type="number" placeholder="Ano" required />
-            <input v-model.number="forms.vehicle.mileage" type="number" placeholder="Km" required />
-            <button class="primary-button" type="submit" :disabled="saving">
-              <Plus :size="18" />
-              <span>Cadastrar veiculo</span>
-            </button>
-          </form>
-        </section>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Status dos carros</h2>
-            <span>Pagina {{ pagination.vehicles.page + 1 }}</span>
-          </div>
-          <div class="filters">
-            <select v-model="pagination.vehicles.active">
-              <option value="">Todos</option>
-              <option value="true">Ativos</option>
-              <option value="false">Inativos</option>
-            </select>
-            <button class="secondary-button" type="button" @click="loadDashboard">
-              <Search :size="17" />
-              Filtrar
-            </button>
-          </div>
-          <div class="data-table">
-            <div class="data-table-header vehicles-grid">
-              <span>Placa</span>
-              <span>Veiculo</span>
-              <span>Km</span>
-              <span>Status</span>
+            <div class="pager">
+              <button type="button" @click="changePage('parts', -1)">Anterior</button>
+              <button type="button" @click="changePage('parts', 1)">Proxima</button>
             </div>
-            <article
-              v-for="vehicle in vehiclesWithCurrentStatus"
-              :key="vehicle.id"
-              class="data-table-row vehicles-grid"
-            >
-              <strong>{{ vehicle.plate }}</strong>
-              <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
-              <span>{{ vehicle.mileage }} km</span>
-              <span class="badge">{{ vehicle.currentStatus }}</span>
-            </article>
-          </div>
-          <div class="pager">
-            <button type="button" @click="changePage('vehicles', -1)">Anterior</button>
-            <button type="button" @click="changePage('vehicles', 1)">Proxima</button>
-          </div>
-        </section>
-      </section>
-
-      <section v-if="activeTab === 'parts'" class="screen-stack">
-        <section v-if="auth.role === 'ADMIN'" class="section-block">
-          <div class="section-heading">
-            <h2>Cadastro de pecas</h2>
-            <span>Catalogo e minimo de estoque</span>
-          </div>
-          <form class="form-grid" @submit.prevent="createPart">
-            <input v-model="forms.part.name" placeholder="Nome" required />
-            <input v-model="forms.part.sku" placeholder="SKU" required />
-            <input v-model="forms.part.category" placeholder="Categoria" required />
-            <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
-            <input v-model="forms.part.brand" placeholder="Marca" required />
-            <input v-model.number="forms.part.unitPrice" type="number" min="0" step="0.01" placeholder="Preco unitario" required />
-            <input v-model.number="forms.part.stockQuantity" type="number" min="0" placeholder="Estoque" required />
-            <input v-model.number="forms.part.minimumStock" type="number" min="0" placeholder="Estoque minimo" required />
-            <button class="primary-button" type="submit" :disabled="saving">
-              <Plus :size="18" />
-              <span>Cadastrar peca</span>
-            </button>
-          </form>
+          </section>
         </section>
 
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Atualizar estoque</h2>
-            <span>Reposicao ou ajuste</span>
-          </div>
-          <form class="form-grid compact" @submit.prevent="updateStock">
-            <select v-model="forms.stock.partId" required>
-              <option value="">Selecione uma peca</option>
-              <option v-for="part in data.parts" :key="part.id" :value="part.id">
-                {{ part.name }} - {{ part.sku }}
-              </option>
-            </select>
-            <input v-model.number="forms.stock.stockQuantity" type="number" min="0" placeholder="Nova quantidade" required />
-            <button class="primary-button" type="submit" :disabled="saving">
-              <Package :size="18" />
-              <span>Atualizar</span>
-            </button>
-          </form>
-        </section>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Estoque</h2>
-            <span>{{ data.lowStockParts.length }} alertas de compra</span>
-          </div>
-          <div class="filters">
-            <select v-model="pagination.parts.lowStock">
-              <option value="">Todos</option>
-              <option value="true">Somente baixo estoque</option>
-            </select>
-            <select v-model="pagination.parts.active">
-              <option value="">Todos</option>
-              <option value="true">Ativos</option>
-              <option value="false">Inativos</option>
-            </select>
-            <button class="secondary-button" type="button" @click="loadDashboard">
-              <Search :size="17" />
-              Filtrar
-            </button>
-          </div>
-          <div class="data-table">
-            <div class="data-table-header parts-grid">
-              <span>Peca</span>
-              <span>Categoria</span>
-              <span>Estoque</span>
-              <span>Preco</span>
-              <span>Sinal</span>
+        <section v-if="activeTab === 'orders'" class="screen-stack">
+          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
+            <div class="section-heading">
+              <h2>Criar ordem de servico</h2>
+              <span>Entrada do carro na oficina</span>
             </div>
-            <article
-              v-for="part in data.parts"
-              :key="part.id"
-              class="data-table-row parts-grid"
-              :class="{ danger: part.stockQuantity <= part.minimumStock }"
-            >
-              <strong>{{ part.name }}<small>{{ part.sku }}</small></strong>
-              <span>{{ part.category }}<small>{{ part.brand }}</small></span>
-              <span>{{ part.stockQuantity }} un.<small>Min. {{ part.minimumStock }}</small></span>
-              <span>R$ {{ money(part.unitPrice) }}</span>
-              <span class="badge" :class="{ danger: part.stockQuantity <= part.minimumStock }">
-                {{ part.stockQuantity <= part.minimumStock ? 'Comprar' : 'Ok' }}
-              </span>
-            </article>
-          </div>
-          <div class="pager">
-            <button type="button" @click="changePage('parts', -1)">Anterior</button>
-            <button type="button" @click="changePage('parts', 1)">Proxima</button>
-          </div>
-        </section>
-      </section>
+            <form class="form-grid compact" @submit.prevent="createOrder">
+              <input v-model="forms.order.customerDocument" placeholder="CPF/CNPJ do cliente" required />
+              <select v-model="forms.order.vehicleId" required>
+                <option value="">Selecione o veiculo</option>
+                <option v-for="vehicle in data.vehicles" :key="vehicle.id" :value="vehicle.id">
+                  {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
+                </option>
+              </select>
+              <textarea v-model="forms.order.diagnosticNotes" placeholder="Diagnostico inicial" required></textarea>
+              <button class="primary-button" type="submit" :disabled="saving">
+                <Plus :size="18" />
+                <span>Criar ordem</span>
+              </button>
+            </form>
+          </section>
 
-      <section v-if="activeTab === 'orders'" class="screen-stack">
-        <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
-          <div class="section-heading">
-            <h2>Criar ordem de servico</h2>
-            <span>Entrada do carro na oficina</span>
-          </div>
-          <form class="form-grid compact" @submit.prevent="createOrder">
-            <input v-model="forms.order.customerDocument" placeholder="CPF/CNPJ do cliente" required />
-            <select v-model="forms.order.vehicleId" required>
-              <option value="">Selecione o veiculo</option>
-              <option v-for="vehicle in data.vehicles" :key="vehicle.id" :value="vehicle.id">
-                {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
-              </option>
-            </select>
-            <textarea v-model="forms.order.diagnosticNotes" placeholder="Diagnostico inicial" required></textarea>
-            <button class="primary-button" type="submit" :disabled="saving">
-              <Plus :size="18" />
-              <span>Criar ordem</span>
-            </button>
-          </form>
-        </section>
-
-        <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
-          <div class="section-heading">
-            <h2>Operacoes da ordem</h2>
-            <span>Status, orcamento, pecas e servicos</span>
-          </div>
-          <form class="form-grid" @submit.prevent="updateOrderStatus">
-            <select v-model="forms.orderAction.serviceOrderId" required>
-              <option value="">Selecione a ordem</option>
-              <option v-for="order in data.serviceOrders" :key="order.id" :value="order.id">
-                {{ order.status }} - {{ order.diagnosticNotes }}
-              </option>
-            </select>
-            <select v-model="forms.orderAction.status">
-              <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
-            </select>
-            <button class="primary-button" type="submit" :disabled="saving">Atualizar status</button>
-            <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="generateBudget">
-              Gerar orcamento
-            </button>
-            <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="approveBudget">
-              Aprovar orcamento
-            </button>
-          </form>
-          <form class="form-grid compact" @submit.prevent="addServiceToOrder">
-            <select v-model="forms.orderAction.serviceId" required>
-              <option value="">Servico</option>
-              <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}</option>
-            </select>
-            <input v-model.number="forms.orderAction.serviceQuantity" type="number" min="1" placeholder="Qtd." required />
-            <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar servico</button>
-          </form>
-          <form class="form-grid compact" @submit.prevent="addPartToOrder">
-            <select v-model="forms.orderAction.partId" required>
-              <option value="">Peca</option>
-              <option v-for="part in data.parts" :key="part.id" :value="part.id">{{ part.name }}</option>
-            </select>
-            <input v-model.number="forms.orderAction.partQuantity" type="number" min="1" placeholder="Qtd." required />
-            <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar peca</button>
-          </form>
-        </section>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Ordens de servico</h2>
-            <span>Status atual dos carros</span>
-          </div>
-          <div v-if="auth.role !== 'CUSTOMER'" class="filters">
-            <select v-model="pagination.serviceOrders.status">
-              <option value="">Todos os status</option>
-              <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
-            </select>
-            <button class="secondary-button" type="button" @click="loadDashboard">
-              <Search :size="17" />
-              Filtrar
-            </button>
-          </div>
-          <div class="data-table">
-            <div class="data-table-header orders-grid">
-              <span>Status</span>
-              <span>Nota</span>
-              <span>Itens</span>
-              <span>Total</span>
+          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
+            <div class="section-heading">
+              <h2>Operacoes da ordem</h2>
+              <span>Status, orcamento, pecas e servicos</span>
             </div>
-            <article
-              v-for="order in data.serviceOrders"
-              :key="order.id"
-              class="data-table-row orders-grid"
-            >
-              <span class="badge">{{ order.status }}</span>
-              <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
-              <span>
-                {{ order.services?.length || 0 }} servicos
-                <small>{{ order.parts?.length || 0 }} pecas</small>
-              </span>
-              <strong>R$ {{ money(order.totalAmount) }}</strong>
-            </article>
-            <p v-if="!data.serviceOrders.length && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
-          </div>
-          <div v-if="auth.role !== 'CUSTOMER'" class="pager">
-            <button type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
-            <button type="button" @click="changePage('serviceOrders', 1)">Proxima</button>
-          </div>
-        </section>
-      </section>
+            <form class="form-grid" @submit.prevent="updateOrderStatus">
+              <select v-model="forms.orderAction.serviceOrderId" required>
+                <option value="">Selecione a ordem</option>
+                <option v-for="order in data.serviceOrders" :key="order.id" :value="order.id">
+                  {{ order.status }} - {{ order.diagnosticNotes }}
+                </option>
+              </select>
+              <select v-model="forms.orderAction.status">
+                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+              </select>
+              <button class="primary-button" type="submit" :disabled="saving">Atualizar status</button>
+              <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="generateBudget">
+                Gerar orcamento
+              </button>
+              <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="approveBudget">
+                Aprovar orcamento
+              </button>
+            </form>
+            <form class="form-grid compact" @submit.prevent="addServiceToOrder">
+              <select v-model="forms.orderAction.serviceId" required>
+                <option value="">Servico</option>
+                <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}</option>
+              </select>
+              <input v-model.number="forms.orderAction.serviceQuantity" type="number" min="1" placeholder="Qtd." required />
+              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar servico</button>
+            </form>
+            <form class="form-grid compact" @submit.prevent="addPartToOrder">
+              <select v-model="forms.orderAction.partId" required>
+                <option value="">Peca</option>
+                <option v-for="part in data.parts" :key="part.id" :value="part.id">{{ part.name }}</option>
+              </select>
+              <input v-model.number="forms.orderAction.partQuantity" type="number" min="1" placeholder="Qtd." required />
+              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar peca</button>
+            </form>
+          </section>
 
-      <section v-if="activeTab === 'services'" class="screen-stack">
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Cadastro de servicos</h2>
-            <span>Catalogo da oficina</span>
-          </div>
-          <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
-            <input v-model="forms.service.name" placeholder="Nome" required />
-            <input v-model.number="forms.service.basePrice" type="number" min="0" step="0.01" placeholder="Preco base" required />
-            <input v-model.number="forms.service.estimatedTimeInMinutes" type="number" min="1" placeholder="Tempo em minutos" required />
-            <textarea v-model="forms.service.description" placeholder="Descricao" required></textarea>
-            <button class="primary-button" type="submit" :disabled="saving">
-              <Plus :size="18" />
-              <span>Cadastrar servico</span>
-            </button>
-          </form>
-        </section>
-
-        <section class="section-block">
-          <div class="section-heading">
-            <h2>Servicos cadastrados</h2>
-            <span>Pagina {{ pagination.services.page + 1 }}</span>
-          </div>
-          <div class="data-table">
-            <div class="data-table-header services-grid">
-              <span>Servico</span>
-              <span>Prazo previsto</span>
-              <span>Preco base</span>
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Ordens de servico</h2>
+              <span>Status atual dos carros</span>
             </div>
-            <article
-              v-for="service in data.services"
-              :key="service.id"
-              class="data-table-row services-grid"
-            >
-              <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
-              <span>{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
-              <span>R$ {{ money(service.basePrice) }}</span>
-            </article>
-          </div>
-          <div class="pager">
-            <button type="button" @click="changePage('services', -1)">Anterior</button>
-            <button type="button" @click="changePage('services', 1)">Proxima</button>
-          </div>
-        </section>
-      </section>
-
-      <section v-if="activeTab === 'commands'" class="section-block">
-        <div class="section-heading">
-          <h2>Como rodar o projeto</h2>
-          <span>Copie e execute no terminal</span>
-        </div>
-        <div class="run-guide">
-          <article>
-            <strong>1. Subir banco</strong>
-            <code>docker compose up -d postgres</code>
-          </article>
-          <article>
-            <strong>2. Rodar API com Java 21</strong>
-            <code>mvn spring-boot:run</code>
-          </article>
-          <article>
-            <strong>3. Rodar Vue</strong>
-            <code>cd frontend && npm install && npm run dev</code>
-          </article>
-        </div>
-        <div class="command-groups">
-          <article v-for="group in commandGroups" :key="group.title" class="command-group">
-            <h3>{{ group.title }}</h3>
-            <button
-              v-for="item in group.items"
-              :key="item.command"
-              class="command-row"
-              type="button"
-              :title="`Copiar: ${item.command}`"
-              @click="copyCommand(item.command)"
-            >
-              <div>
-                <strong>{{ item.label }}</strong>
-                <code>{{ item.command }}</code>
-                <span>{{ item.detail }}</span>
+            <div v-if="auth.role !== 'CUSTOMER'" class="filters">
+              <select v-model="pagination.serviceOrders.status">
+                <option value="">Todos os status</option>
+                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+              </select>
+              <button class="secondary-button" type="button" @click="loadDashboard">
+                <Search :size="17" />
+                Filtrar
+              </button>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header orders-grid">
+                <span>Status</span>
+                <span>Nota</span>
+                <span>Itens</span>
+                <span>Total</span>
               </div>
-              <Copy :size="18" />
-            </button>
-          </article>
-        </div>
-        <p v-if="copiedCommand" class="copy-feedback">Comando copiado.</p>
-      </section>
+              <article
+                v-for="order in data.serviceOrders"
+                :key="order.id"
+                class="data-table-row orders-grid"
+              >
+                <span class="badge">{{ order.status }}</span>
+                <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
+                <span>
+                  {{ order.services?.length || 0 }} servicos
+                  <small>{{ order.parts?.length || 0 }} pecas</small>
+                </span>
+                <strong>R$ {{ money(order.totalAmount) }}</strong>
+              </article>
+              <p v-if="!data.serviceOrders.length && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
+            </div>
+            <div v-if="auth.role !== 'CUSTOMER'" class="pager">
+              <button type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
+              <button type="button" @click="changePage('serviceOrders', 1)">Proxima</button>
+            </div>
+          </section>
+        </section>
 
-      <div v-if="loading" class="loading-bar">Carregando dados...</div>
-    </section>
+        <section v-if="activeTab === 'services'" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Cadastro de servicos</h2>
+              <span>Catalogo da oficina</span>
+            </div>
+            <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
+              <input v-model="forms.service.name" placeholder="Nome" required />
+              <input v-model.number="forms.service.basePrice" type="number" min="0" step="0.01" placeholder="Preco base" required />
+              <input v-model.number="forms.service.estimatedTimeInMinutes" type="number" min="1" placeholder="Tempo em minutos" required />
+              <textarea v-model="forms.service.description" placeholder="Descricao" required></textarea>
+              <button class="primary-button" type="submit" :disabled="saving">
+                <Plus :size="18" />
+                <span>Cadastrar servico</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Servicos cadastrados</h2>
+              <span>Pagina {{ pagination.services.page + 1 }}</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header services-grid">
+                <span>Servico</span>
+                <span>Prazo previsto</span>
+                <span>Preco base</span>
+              </div>
+              <article
+                v-for="service in data.services"
+                :key="service.id"
+                class="data-table-row services-grid"
+              >
+                <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
+                <span>{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
+                <span>R$ {{ money(service.basePrice) }}</span>
+              </article>
+            </div>
+            <div class="pager">
+              <button type="button" @click="changePage('services', -1)">Anterior</button>
+              <button type="button" @click="changePage('services', 1)">Proxima</button>
+            </div>
+          </section>
+        </section>
+
+        <div v-if="loading" class="loading-bar">Carregando dados...</div>
+      </section>
+    </div>
   </main>
 </template>
