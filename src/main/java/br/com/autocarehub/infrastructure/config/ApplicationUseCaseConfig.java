@@ -23,6 +23,7 @@ import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBu
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersByCustomerUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
@@ -216,5 +217,11 @@ public class ApplicationUseCaseConfig {
   ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase(
       ServiceOrderRepository serviceOrderRepository, CustomerRepository customerRepository) {
     return new ListServiceOrdersByCustomerUseCase(serviceOrderRepository, customerRepository);
+  }
+
+  @Bean
+  GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase(
+      ServiceOrderRepository serviceOrderRepository) {
+    return new GetAverageServiceOrderExecutionTimeUseCase(serviceOrderRepository);
   }
 }

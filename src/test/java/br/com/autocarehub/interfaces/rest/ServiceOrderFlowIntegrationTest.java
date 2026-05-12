@@ -1,5 +1,6 @@
 package br.com.autocarehub.interfaces.rest;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,6 +39,8 @@ class ServiceOrderFlowIntegrationTest {
     generateBudget(token, serviceOrderId);
     approveBudget(token, serviceOrderId);
     updateStatus(token, serviceOrderId);
+    finishServiceOrder(token, serviceOrderId);
+    getAverageExecutionTime(token);
   }
 
   private String login() throws Exception {
@@ -180,7 +183,7 @@ class ServiceOrderFlowIntegrationTest {
                     .content(
                         json(
                             Map.of(
-                                "customerId", customerId,
+                                "customerDocument", "52998224725",
                                 "vehicleId", vehicleId,
                                 "diagnosticNotes", "Customer reports engine noise"))))
             .andExpect(status().isCreated())
@@ -243,6 +246,27 @@ class ServiceOrderFlowIntegrationTest {
                 .content(json(Map.of("status", "IN_PROGRESS"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.status").value("IN_PROGRESS"));
+  }
+
+  private void finishServiceOrder(String token, UUID serviceOrderId) throws Exception {
+    mockMvc
+        .perform(
+            patch("/api/v1/service-orders/{serviceOrderId}/status", serviceOrderId)
+                .header("Authorization", bearer(token))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json(Map.of("status", "FINISHED"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("FINISHED"));
+  }
+
+  private void getAverageExecutionTime(String token) throws Exception {
+    mockMvc
+        .perform(
+            get("/api/v1/service-orders/metrics/average-execution-time")
+                .header("Authorization", bearer(token)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.completedOrders").value(1))
+        .andExpect(jsonPath("$.averageExecutionTimeInMinutes").isNumber());
   }
 
   private String json(Object value) throws Exception {

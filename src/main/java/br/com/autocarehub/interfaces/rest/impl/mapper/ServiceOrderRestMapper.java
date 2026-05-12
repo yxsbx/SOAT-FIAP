@@ -3,11 +3,13 @@ package br.com.autocarehub.interfaces.rest.impl.mapper;
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.AverageExecutionTimeResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderPartItem;
@@ -23,7 +25,7 @@ public final class ServiceOrderRestMapper {
 
   public static CreateServiceOrderUseCase.Command toCommand(CreateServiceOrderRequest request) {
     return new CreateServiceOrderUseCase.Command(
-        request.getCustomerId(), request.getVehicleId(), request.getDiagnosticNotes());
+        request.getCustomerDocument(), request.getVehicleId(), request.getDiagnosticNotes());
   }
 
   public static AddServiceToServiceOrderUseCase.Command toCommand(
@@ -78,6 +80,12 @@ public final class ServiceOrderRestMapper {
         RestMapperSupport.page(serviceOrders, page, size).stream()
             .map(ServiceOrderRestMapper::toResponse)
             .toList());
+  }
+
+  public static AverageExecutionTimeResponse toResponse(
+      GetAverageServiceOrderExecutionTimeUseCase.Output output) {
+    return new AverageExecutionTimeResponse(
+        output.completedOrders(), output.averageExecutionTimeInMinutes());
   }
 
   private static ServiceOrderServiceItem toServiceItem(ServiceOrder.ServiceOrderService service) {

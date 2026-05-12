@@ -18,8 +18,7 @@ public class GetAverageServiceOrderExecutionTimeUseCase {
         serviceOrderRepository.findCompletedWithExecutionTime().stream()
             .map(this::durationInMinutes)
             .toList();
-    double average =
-        durations.stream().mapToLong(Long::longValue).average().orElse(0);
+    double average = durations.stream().mapToLong(Long::longValue).average().orElse(0);
     return new Output(durations.size(), average);
   }
 

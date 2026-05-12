@@ -1,0 +1,55 @@
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { Wrench, LogIn } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/auth';
+
+const router = useRouter();
+const auth = useAuthStore();
+const username = ref('admin@autocarehub.com');
+const password = ref('autocare123');
+const loading = ref(false);
+const error = ref('');
+
+async function submit() {
+  loading.value = true;
+  error.value = '';
+
+  try {
+    await auth.login(username.value, password.value);
+    router.push({ name: 'dashboard' });
+  } catch (err) {
+    error.value = err.message || 'Nao foi possivel autenticar.';
+  } finally {
+    loading.value = false;
+  }
+}
+</script>
+
+<template>
+  <main class="login-shell">
+    <section class="login-panel">
+      <div class="brand-mark">
+        <Wrench :size="28" />
+      </div>
+      <h1>AutoCare Hub</h1>
+      <p>Gestao operacional da oficina</p>
+
+      <form class="login-form" @submit.prevent="submit">
+        <label>
+          Usuario
+          <input v-model="username" autocomplete="username" type="email" required />
+        </label>
+        <label>
+          Senha
+          <input v-model="password" autocomplete="current-password" type="password" required />
+        </label>
+        <button class="primary-button" type="submit" :disabled="loading">
+          <LogIn :size="18" />
+          <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+        </button>
+        <p v-if="error" class="form-error">{{ error }}</p>
+      </form>
+    </section>
+  </main>
+</template>

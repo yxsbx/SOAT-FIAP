@@ -111,6 +111,41 @@ Contrato OpenAPI:
 docs/openapi/openapi.yaml
 ```
 
+## Frontend Vue 3
+
+O projeto tambem possui um frontend em Vue 3 na pasta `frontend`.
+
+Para rodar a API e o frontend localmente:
+
+```bash
+docker compose up -d postgres
+mvn spring-boot:run
+```
+
+Em outro terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+O frontend ficara disponivel em:
+
+```text
+http://localhost:5173
+```
+
+Scripts uteis do frontend:
+
+```bash
+npm run backend:db
+npm run backend:api
+npm run backend:test
+npm run backend:security
+npm run build
+```
+
 ## Testes
 
 Execute:

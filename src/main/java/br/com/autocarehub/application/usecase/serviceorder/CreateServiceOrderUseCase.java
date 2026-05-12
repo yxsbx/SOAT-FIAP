@@ -29,8 +29,8 @@ public class CreateServiceOrderUseCase {
   public ServiceOrder execute(Command command) {
     Customer customer =
         customerRepository
-        .findByDocument(Document.from(command.customerDocument()))
-        .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+            .findByDocument(Document.from(command.customerDocument()))
+            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     Vehicle vehicle =
         vehicleRepository
             .findById(command.vehicleId())

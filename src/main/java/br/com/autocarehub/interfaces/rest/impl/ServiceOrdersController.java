@@ -6,6 +6,7 @@ import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBu
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersByCustomerUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
@@ -13,6 +14,7 @@ import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.interfaces.rest.generated.api.ServiceOrdersApi;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.AverageExecutionTimeResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderResponse;
@@ -37,6 +39,8 @@ public class ServiceOrdersController implements ServiceOrdersApi {
   private final ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase;
   private final UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase;
   private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
+  private final GetAverageServiceOrderExecutionTimeUseCase
+      getAverageServiceOrderExecutionTimeUseCase;
 
   public ServiceOrdersController(
       CreateServiceOrderUseCase createServiceOrderUseCase,
@@ -47,7 +51,8 @@ public class ServiceOrdersController implements ServiceOrdersApi {
       GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase,
       ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase,
       UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase,
-      ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase) {
+      ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase,
+      GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase) {
     this.createServiceOrderUseCase = createServiceOrderUseCase;
     this.findServiceOrderUseCase = findServiceOrderUseCase;
     this.listServiceOrdersUseCase = listServiceOrdersUseCase;
@@ -57,6 +62,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     this.approveServiceOrderBudgetUseCase = approveServiceOrderBudgetUseCase;
     this.updateServiceOrderStatusUseCase = updateServiceOrderStatusUseCase;
     this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
+    this.getAverageServiceOrderExecutionTimeUseCase = getAverageServiceOrderExecutionTimeUseCase;
   }
 
   @Override
@@ -109,6 +115,12 @@ public class ServiceOrdersController implements ServiceOrdersApi {
   public ResponseEntity<ServiceOrderResponse> getServiceOrderById(UUID serviceOrderId) {
     return ResponseEntity.ok(
         ServiceOrderRestMapper.toResponse(findServiceOrderUseCase.execute(serviceOrderId)));
+  }
+
+  @Override
+  public ResponseEntity<AverageExecutionTimeResponse> getAverageServiceOrderExecutionTime() {
+    return ResponseEntity.ok(
+        ServiceOrderRestMapper.toResponse(getAverageServiceOrderExecutionTimeUseCase.execute()));
   }
 
   @Override
