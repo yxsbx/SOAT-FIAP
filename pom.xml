@@ -118,6 +118,12 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
+            <artifactId>jdbc</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
@@ -174,6 +180,7 @@
                             <inputSpec>${project.basedir}/docs/openapi/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
+                            <addCompileSourceRoot>true</addCompileSourceRoot>
                             <apiPackage>br.com.autocarehub.interfaces.rest.generated.api</apiPackage>
                             <modelPackage>br.com.autocarehub.interfaces.rest.generated.model</modelPackage>
                             <generateSupportingFiles>false</generateSupportingFiles>
@@ -225,6 +232,7 @@
                                     <element>PACKAGE</element>
                                     <includes>
                                         <include>br.com.autocarehub.domain.*</include>
+                                        <include>br.com.autocarehub.domain.**</include>
                                     </includes>
                                     <limits>
                                         <limit>

@@ -5,6 +5,8 @@ import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.application.repository.VehicleRepository;
+import br.com.autocarehub.domain.Customer;
+import br.com.autocarehub.domain.Document;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.domain.Vehicle;
 import java.util.UUID;
@@ -25,20 +27,21 @@ public class CreateServiceOrderUseCase {
   }
 
   public ServiceOrder execute(Command command) {
-    customerRepository
-        .findById(command.customerId())
+    Customer customer =
+        customerRepository
+        .findByDocument(Document.from(command.customerDocument()))
         .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
     Vehicle vehicle =
         vehicleRepository
             .findById(command.vehicleId())
             .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-    if (!vehicle.customerId().equals(command.customerId())) {
+    if (!vehicle.customerId().equals(customer.id())) {
       throw new ApplicationException("Vehicle does not belong to customer");
     }
     ServiceOrder serviceOrder =
-        new ServiceOrder(command.customerId(), command.vehicleId(), command.diagnosticNotes());
+        new ServiceOrder(customer.id(), command.vehicleId(), command.diagnosticNotes());
     return serviceOrderRepository.save(serviceOrder);
   }
 
-  public record Command(UUID customerId, UUID vehicleId, String diagnosticNotes) {}
+  public record Command(String customerDocument, UUID vehicleId, String diagnosticNotes) {}
 }

@@ -14,4 +14,6 @@ public interface ServiceOrderRepository {
   List<ServiceOrder> findAll();
 
   List<ServiceOrder> findByCustomerId(UUID customerId);
+
+  List<ServiceOrder> findCompletedWithExecutionTime();
 }

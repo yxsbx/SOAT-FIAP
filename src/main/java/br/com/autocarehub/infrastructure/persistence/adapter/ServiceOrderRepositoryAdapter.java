@@ -42,4 +42,11 @@ public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
         .map(ServiceOrderJpaMapper::toDomain)
         .toList();
   }
+
+  @Override
+  public List<ServiceOrder> findCompletedWithExecutionTime() {
+    return serviceOrderJpaRepository.findCompletedWithExecutionTime().stream()
+        .map(ServiceOrderJpaMapper::toDomain)
+        .toList();
+  }
 }
