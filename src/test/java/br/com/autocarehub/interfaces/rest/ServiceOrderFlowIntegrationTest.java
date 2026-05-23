@@ -28,6 +28,7 @@ class ServiceOrderFlowIntegrationTest {
   @Test
   void shouldExecuteServiceOrderFlow() throws Exception {
     String token = login();
+    int completedOrdersBefore = getCompletedOrders(token);
     UUID customerId = createCustomer(token);
     UUID vehicleId = createVehicle(token, customerId);
     UUID partId = createPart(token);
@@ -40,7 +41,7 @@ class ServiceOrderFlowIntegrationTest {
     approveBudget(token, serviceOrderId);
     updateStatus(token, serviceOrderId);
     finishServiceOrder(token, serviceOrderId);
-    getAverageExecutionTime(token);
+    getAverageExecutionTime(token, completedOrdersBefore + 1);
   }
 
   private String login() throws Exception {
@@ -259,13 +260,27 @@ class ServiceOrderFlowIntegrationTest {
         .andExpect(jsonPath("$.status").value("FINISHED"));
   }
 
-  private void getAverageExecutionTime(String token) throws Exception {
+  private int getCompletedOrders(String token) throws Exception {
+    String response =
+        mockMvc
+            .perform(
+                get("/api/v1/service-orders/metrics/average-execution-time")
+                    .header("Authorization", bearer(token)))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+    return objectMapper.readTree(response).get("completedOrders").asInt();
+  }
+
+  private void getAverageExecutionTime(String token, int expectedCompletedOrders) throws Exception {
     mockMvc
         .perform(
             get("/api/v1/service-orders/metrics/average-execution-time")
                 .header("Authorization", bearer(token)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.completedOrders").value(1))
+        .andExpect(jsonPath("$.completedOrders").value(expectedCompletedOrders))
         .andExpect(jsonPath("$.averageExecutionTimeInMinutes").isNumber());
   }
 

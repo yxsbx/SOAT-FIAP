@@ -132,7 +132,7 @@ function scrollToSection(id) {
     <header class="preview-header">
       <RouterLink class="preview-brand" to="/preview" @click="activeAudience = 'customer'">
         <span><Wrench :size="24" /></span>
-        <strong>AutoCare</strong>
+        <strong>AutoCare Hub</strong>
       </RouterLink>
       <nav>
         <button
@@ -164,7 +164,7 @@ function scrollToSection(id) {
           <span class="preview-eyebrow">Cuidado transparente para o seu veículo</span>
           <h1>Diagnóstico, orçamento e status do carro sem idas desnecessárias à oficina.</h1>
           <p>
-            A AutoCare ajuda você a registrar os sintomas do veículo, escolher oficinas e lojas de
+            A AutoCare Hub ajuda você a registrar os sintomas do veículo, escolher oficinas e lojas de
             peças com mais clareza e acompanhar tudo pelo site: comunicação, orçamento, aceite e
             finalização do serviço.
           </p>
@@ -210,7 +210,7 @@ function scrollToSection(id) {
           <h2>Menos deslocamento, mais clareza</h2>
           <p>
             O cliente não precisa ir várias vezes à oficina para explicar o problema, pedir retorno
-            ou aprovar orçamento. O histórico fica organizado e acessível no AutoCare.
+            ou aprovar orçamento. O histórico fica organizado e acessível no AutoCare Hub.
           </p>
         </div>
 
@@ -318,7 +318,7 @@ function scrollToSection(id) {
             <div class="phone-screen">
               <header>
                 <Wrench :size="18" />
-                <strong>AutoCare</strong>
+                <strong>AutoCare Hub</strong>
                 <Menu :size="16" />
               </header>
               <section>
@@ -360,7 +360,7 @@ function scrollToSection(id) {
           <span>Diferenciais para parceiros</span>
           <h2>Mais eficiência para oficina e mais demanda para lojas</h2>
           <p>
-            A AutoCare aproxima quem atende o veículo de quem fornece as peças, com comunicação
+            A AutoCare Hub aproxima quem atende o veículo de quem fornece as peças, com comunicação
             clara para o cliente e gestão operacional para o parceiro.
           </p>
         </div>
@@ -377,7 +377,7 @@ function scrollToSection(id) {
       <section class="preview-views" id="views">
         <div class="feature-intro">
           <span>Perfis no sistema</span>
-          <h2>O que cada parceiro consegue fazer com AutoCare</h2>
+          <h2>O que cada parceiro consegue fazer com AutoCare Hub</h2>
           <p>
             A plataforma separa permissões e telas por perfil para que cada pessoa veja o que
             precisa: operação, financeiro, estoque, fornecedores, clientes ou indicadores.

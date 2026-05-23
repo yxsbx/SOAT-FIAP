@@ -3,7 +3,6 @@ import { computed, onMounted, reactive, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import {
   AlertTriangle,
-  BarChart3,
   Car,
   CheckCircle2,
   ChevronLeft,
@@ -38,6 +37,23 @@ const mobileMenuOpen = ref(false);
 const sidebarCollapsed = ref(true);
 const profileMenuOpen = ref(false);
 const globalSearch = ref('');
+const homeSettingsOpen = ref(false);
+
+const defaultHomeWidgetIds = [
+  'orders-progress',
+  'services-catalog',
+  'active-customers',
+  'vehicles-in-service',
+  'pending-budgets',
+  'waiting-contact',
+  'ready-pickup',
+];
+
+const homePreferences = reactive({
+  userWidgets: [...defaultHomeWidgetIds],
+  globalWidgets: [...defaultHomeWidgetIds],
+  showAlertsOnHome: false,
+});
 
 const statuses = ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'];
 
@@ -61,11 +77,11 @@ const data = reactive({
 });
 
 const pagination = reactive({
-  customers: { page: 0, size: 8, active: '' },
-  vehicles: { page: 0, size: 8, active: '' },
-  parts: { page: 0, size: 8, active: '', lowStock: '' },
-  serviceOrders: { page: 0, size: 8, status: '' },
-  services: { page: 0, size: 8, active: '' },
+  customers: { page: 0, size: 24, active: '' },
+  vehicles: { page: 0, size: 24, active: '' },
+  parts: { page: 0, size: 32, active: '', lowStock: '' },
+  serviceOrders: { page: 0, size: 32, status: '' },
+  services: { page: 0, size: 24, active: '' },
 });
 
 const forms = reactive({
@@ -127,7 +143,42 @@ const forms = reactive({
   },
 });
 
+const demoProfile = computed(() => {
+  const profiles = {
+    'master@autocarehub.com': {
+      label: 'Admin Master',
+      tabs: ['overview', 'orders', 'customers', 'vehicles', 'parts', 'services'],
+    },
+    'oficina.admin@autocarehub.com': {
+      label: 'Admin de oficina',
+      tabs: ['overview', 'orders', 'customers', 'vehicles', 'parts', 'services'],
+    },
+    'loja.admin@autocarehub.com': {
+      label: 'Admin de loja de peças',
+      tabs: ['overview', 'orders', 'parts', 'services'],
+    },
+    'oficina.funcionario@autocarehub.com': {
+      label: 'Funcionário de oficina',
+      tabs: ['overview', 'orders', 'vehicles', 'parts', 'services'],
+    },
+    'loja.funcionario@autocarehub.com': {
+      label: 'Funcionário de loja de peças',
+      tabs: ['overview', 'parts', 'services'],
+    },
+    'cliente@autocarehub.com': {
+      label: 'Cliente final',
+      tabs: ['overview', 'orders'],
+    },
+  };
+
+  return profiles[auth.user?.username] || null;
+});
+
 const roleLabel = computed(() => {
+  if (demoProfile.value?.label) {
+    return demoProfile.value.label;
+  }
+
   const labels = {
     ADMIN: 'Administrador',
     EMPLOYEE: 'Atendimento e oficina',
@@ -162,14 +213,14 @@ const availableTabs = computed(() => {
     {
       id: 'vehicles',
       label: 'Veículos',
-      description: 'Frota, placas e status dos carros',
+      description: 'Frota, placas e status dos veículos',
       icon: Car,
       roles: ['ADMIN', 'EMPLOYEE'],
     },
     {
       id: 'parts',
       label: 'Estoque',
-      description: 'Peças, alertas e reposição',
+      description: 'Peças, avisos e reposição',
       icon: Package,
       roles: ['ADMIN', 'EMPLOYEE'],
     },
@@ -182,12 +233,14 @@ const availableTabs = computed(() => {
     },
   ];
 
-  return tabs.filter((tab) => tab.roles.includes(auth.role));
+  return tabs.filter((tab) => {
+    const allowedByRole = tab.roles.includes(auth.role);
+    const allowedByProfile = !demoProfile.value || demoProfile.value.tabs.includes(tab.id);
+    return allowedByRole && allowedByProfile;
+  });
 });
 
-const activeTabMeta = computed(
-  () => availableTabs.value.find((tab) => tab.id === activeTab.value) || availableTabs.value[0],
-);
+const availableTabIds = computed(() => new Set(availableTabs.value.map((tab) => tab.id)));
 
 const userInitials = computed(() => {
   const fallback = auth.user?.username || 'Usuario AutoCare';
@@ -204,93 +257,129 @@ const userInitials = computed(() => {
     .join('');
 });
 
-const statusCounts = computed(() =>
-  statuses.map((status) => ({
-    status,
-    label: statusLabels[status] || status,
-    count: data.serviceOrders.filter((order) => order.status === status).length,
-  })),
-);
+const orderCountByStatus = (status) =>
+  data.serviceOrders.filter((order) => order.status === status).length;
 
-const statusChart = computed(() => {
-  const total = Math.max(data.serviceOrders.length, 1);
-  const colors = {
-    RECEIVED: '#0ea5e9',
-    IN_DIAGNOSIS: '#2563eb',
-    WAITING_APPROVAL: '#0891b2',
-    IN_PROGRESS: '#06b6d4',
-    FINISHED: '#0284c7',
-    DELIVERED: '#64748b',
-  };
-
-  return statusCounts.value.map((item) => ({
-    ...item,
-    color: colors[item.status],
-    percent: Math.round((item.count / total) * 100),
-  }));
-});
-
-const inventoryHealth = computed(() => {
-  const total = Math.max(data.parts.length, 1);
-  const low = Math.min(data.lowStockParts.length, total);
-  const healthy = Math.max(data.parts.length - low, 0);
-
-  return [
-    {
-      label: 'Saudável',
-      value: healthy,
-      percent: Math.round((healthy / total) * 100),
-      color: '#0ea5e9',
-    },
-    {
-      label: 'Comprar',
-      value: low,
-      percent: Math.round((low / total) * 100),
-      color: '#f59e0b',
-    },
-  ];
-});
-
-const quickInsights = computed(() => [
+const homeWidgetDefinitions = computed(() => [
   {
+    id: 'orders-progress',
     label: 'Ordens em andamento',
     value: data.serviceOrders.filter((order) =>
       ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS'].includes(order.status),
     ).length,
     icon: TrendingUp,
+    tabId: 'orders',
+    roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
   },
   {
-    label: 'Itens criticos',
-    value: data.lowStockParts.length,
-    icon: AlertTriangle,
-  },
-  {
+    id: 'services-catalog',
     label: 'Serviços no catálogo',
     value: data.services.length,
     icon: Wrench,
+    tabId: 'services',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'active-customers',
+    label: 'Clientes ativos',
+    value: data.customers.length,
+    icon: Users,
+    tabId: 'customers',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'vehicles-in-service',
+    label: 'Veículos em atendimento',
+    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
+      .length,
+    icon: Car,
+    tabId: 'vehicles',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'pending-budgets',
+    label: 'Orçamentos pendentes',
+    value: orderCountByStatus('WAITING_APPROVAL'),
+    icon: ClipboardList,
+    tabId: 'orders',
+    statusFilter: 'WAITING_APPROVAL',
+    roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
+  },
+  {
+    id: 'waiting-contact',
+    label: 'Clientes aguardando contato',
+    value: orderCountByStatus('RECEIVED'),
+    icon: Users,
+    tabId: 'orders',
+    statusFilter: 'RECEIVED',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'ready-pickup',
+    label: 'Veículos prontos para retirada',
+    value: orderCountByStatus('FINISHED'),
+    icon: CheckCircle2,
+    tabId: 'orders',
+    statusFilter: 'FINISHED',
+    roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
   },
 ]);
 
-const operationalHighlights = computed(() => [
+const visibleHomeWidgetIds = computed(() => {
+  const source = homePreferences.userWidgets.length
+    ? homePreferences.userWidgets
+    : homePreferences.globalWidgets;
+  return new Set(source);
+});
+
+const homeWidgets = computed(() =>
+  homeWidgetDefinitions.value.filter(
+    (widget) =>
+      visibleHomeWidgetIds.value.has(widget.id) &&
+      widget.roles.includes(auth.role) &&
+      (!widget.tabId || availableTabIds.value.has(widget.tabId)),
+  ),
+);
+
+const vehicleStatusWidgets = computed(() => [
   {
-    label: 'Clientes ativos',
-    value: data.customers.length,
-    detail: 'base carregada',
-    tone: 'green',
+    label: 'Em diagnóstico',
+    value: orderCountByStatus('IN_DIAGNOSIS'),
+    statusFilter: 'IN_DIAGNOSIS',
   },
   {
-    label: 'Carros em acompanhamento',
-    value: data.serviceOrders.filter((order) => order.status !== 'DELIVERED').length,
-    detail: 'ordens não entregues',
-    tone: 'blue',
+    label: 'Aguardando orçamento',
+    value: orderCountByStatus('RECEIVED'),
+    statusFilter: 'RECEIVED',
   },
   {
-    label: 'Risco de estoque',
-    value: data.lowStockParts.length,
-    detail: 'itens no minimo',
-    tone: 'orange',
+    label: 'Orçamento enviado',
+    value: orderCountByStatus('WAITING_APPROVAL'),
+    statusFilter: 'WAITING_APPROVAL',
+  },
+  {
+    label: 'Aguardando aprovação',
+    value: orderCountByStatus('WAITING_APPROVAL'),
+    statusFilter: 'WAITING_APPROVAL',
+  },
+  {
+    label: 'Em execução',
+    value: orderCountByStatus('IN_PROGRESS'),
+    statusFilter: 'IN_PROGRESS',
+  },
+  {
+    label: 'Concluído',
+    value: orderCountByStatus('DELIVERED'),
+    statusFilter: 'DELIVERED',
+  },
+  {
+    label: 'Pronto para retirada',
+    value: orderCountByStatus('FINISHED'),
+    statusFilter: 'FINISHED',
   },
 ]);
+
+const showHomeAlerts = computed(() => homePreferences.showAlertsOnHome);
 
 const searchResults = computed(() => {
   const query = normalize(globalSearch.value);
@@ -342,75 +431,6 @@ const searchResults = computed(() => {
     .slice(0, 8);
 });
 
-const healthyParts = computed(() =>
-  data.parts.filter((part) => part.stockQuantity > part.minimumStock),
-);
-
-const averageExecutionLabel = computed(() =>
-  formatDuration(data.averageExecutionTime?.averageExecutionTimeInMinutes || 0),
-);
-
-const serviceSlaComparisons = computed(() => {
-  const servicesById = new Map(data.services.map((service) => [service.id, service]));
-  const stats = new Map();
-
-  data.serviceOrders
-    .filter((order) => order.startedAt && (order.deliveredAt || order.finishedAt))
-    .forEach((order) => {
-      const serviceItems = order.services || [];
-      if (!serviceItems.length) {
-        return;
-      }
-
-      const actualMinutes = diffInMinutes(order.startedAt, order.deliveredAt || order.finishedAt);
-      const plannedTotal = serviceItems.reduce((total, item) => {
-        const service = servicesById.get(item.serviceId);
-        return total + (service?.estimatedTimeInMinutes || 0) * (item.quantity || 1);
-      }, 0);
-
-      serviceItems.forEach((item) => {
-        const service = servicesById.get(item.serviceId);
-        const plannedMinutes = (service?.estimatedTimeInMinutes || 0) * (item.quantity || 1);
-        const allocatedActual =
-          plannedTotal > 0 ? actualMinutes * (plannedMinutes / plannedTotal) : actualMinutes;
-
-        if (!stats.has(item.serviceId)) {
-          stats.set(item.serviceId, {
-            serviceId: item.serviceId,
-            name: item.name,
-            planned: [],
-            actual: [],
-          });
-        }
-
-        stats.get(item.serviceId).planned.push(plannedMinutes);
-        stats.get(item.serviceId).actual.push(allocatedActual);
-      });
-    });
-
-  return Array.from(stats.values())
-    .map((item) => {
-      const plannedAverage = average(item.planned);
-      const actualAverage = average(item.actual);
-      const difference = actualAverage - plannedAverage;
-
-      return {
-        ...item,
-        count: item.actual.length,
-        plannedAverage,
-        actualAverage,
-        difference,
-        plannedLabel: formatDuration(plannedAverage),
-        actualLabel: formatDuration(actualAverage),
-        differenceLabel: `${difference >= 0 ? '+' : '-'}${formatDuration(Math.abs(difference))}`,
-        status: difference <= 0 ? 'No prazo' : 'Atraso médio',
-        actualPercent:
-          plannedAverage > 0 ? Math.min(100, Math.round((actualAverage / plannedAverage) * 100)) : 0,
-      };
-    })
-    .sort((a, b) => b.difference - a.difference);
-});
-
 const vehiclesWithCurrentStatus = computed(() =>
   data.vehicles.map((vehicle) => {
     const order = data.serviceOrders.find((item) => item.vehicleId === vehicle.id);
@@ -437,25 +457,6 @@ function normalize(value) {
     .toLowerCase();
 }
 
-function average(values) {
-  if (!values.length) {
-    return 0;
-  }
-
-  return values.reduce((total, value) => total + value, 0) / values.length;
-}
-
-function diffInMinutes(start, end) {
-  const startTime = new Date(start).getTime();
-  const endTime = new Date(end).getTime();
-
-  if (Number.isNaN(startTime) || Number.isNaN(endTime) || endTime <= startTime) {
-    return 0;
-  }
-
-  return Math.round((endTime - startTime) / 60000);
-}
-
 function formatDuration(minutes) {
   const roundedMinutes = Math.max(0, Math.round(minutes || 0));
   const hours = roundedMinutes / 60;
@@ -475,6 +476,69 @@ function formatDuration(minutes) {
 function resetMessage() {
   error.value = '';
   success.value = '';
+}
+
+function userHomeKey() {
+  return `autocare.home.${auth.user?.id || auth.user?.username || 'guest'}`;
+}
+
+function readStoredJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function loadHomePreferences() {
+  const globalConfig = readStoredJson('autocare.home.workshop.global', {
+    widgets: defaultHomeWidgetIds,
+    showAlertsOnHome: false,
+  });
+  const userConfig = readStoredJson(userHomeKey(), {
+    widgets: globalConfig.widgets || defaultHomeWidgetIds,
+  });
+
+  homePreferences.globalWidgets = [...(globalConfig.widgets || defaultHomeWidgetIds)];
+  homePreferences.showAlertsOnHome = Boolean(globalConfig.showAlertsOnHome);
+  homePreferences.userWidgets = [...(userConfig.widgets || homePreferences.globalWidgets)];
+}
+
+function saveUserHomePreferences() {
+  localStorage.setItem(userHomeKey(), JSON.stringify({ widgets: homePreferences.userWidgets }));
+}
+
+function saveGlobalHomePreferences() {
+  localStorage.setItem(
+    'autocare.home.workshop.global',
+    JSON.stringify({
+      widgets: homePreferences.globalWidgets,
+      showAlertsOnHome: homePreferences.showAlertsOnHome,
+    }),
+  );
+}
+
+function toggleHomeWidget(widgetId, scope = 'user') {
+  const target = scope === 'global' ? homePreferences.globalWidgets : homePreferences.userWidgets;
+  const index = target.indexOf(widgetId);
+
+  if (index >= 0 && target.length > 1) {
+    target.splice(index, 1);
+  } else if (index < 0) {
+    target.push(widgetId);
+  }
+
+  if (scope === 'global') {
+    saveGlobalHomePreferences();
+    return;
+  }
+
+  saveUserHomePreferences();
+}
+
+function toggleHomeAlerts() {
+  homePreferences.showAlertsOnHome = !homePreferences.showAlertsOnHome;
+  saveGlobalHomePreferences();
 }
 
 async function loadDashboard() {
@@ -689,6 +753,19 @@ function selectTab(tabId) {
   mobileMenuOpen.value = false;
 }
 
+function openHomeWidget(widget) {
+  if (widget.statusFilter) {
+    pagination.serviceOrders.status = widget.statusFilter;
+  }
+
+  selectTab(widget.tabId);
+}
+
+function openStatusWidget(statusFilter) {
+  pagination.serviceOrders.status = statusFilter;
+  selectTab('orders');
+}
+
 function selectSearchResult(result) {
   selectTab(result.tabId);
   globalSearch.value = '';
@@ -705,7 +782,10 @@ function logout() {
   router.push({ name: 'login' });
 }
 
-onMounted(loadDashboard);
+onMounted(() => {
+  loadHomePreferences();
+  loadDashboard();
+});
 </script>
 
 <template>
@@ -824,186 +904,97 @@ onMounted(loadDashboard);
       ></button>
 
       <section class="content">
-        <section class="hero-panel">
-          <div>
-            <span class="eyebrow"><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
-            <h1>Controle inteligente para oficinas modernas</h1>
-            <p>
-              Acompanhe ordens, estoque, clientes e veículos em um painel unico para atendimento,
-              compras e execução dos serviços.
-            </p>
-          </div>
-          <div class="hero-kpis">
-            <article v-for="insight in quickInsights" :key="insight.label">
-              <component :is="insight.icon" :size="20" />
-              <strong>{{ insight.value }}</strong>
-              <span>{{ insight.label }}</span>
-            </article>
-          </div>
-        </section>
-
-        <section class="workspace-header" :aria-label="activeTabMeta.description">
-          <div class="highlight-strip">
-            <article
-              v-for="item in operationalHighlights"
-              :key="item.label"
-              :class="`tone-${item.tone}`"
-            >
-              <strong>{{ item.value }}</strong>
-              <span>{{ item.label }}</span>
-              <small>{{ item.detail }}</small>
-            </article>
-          </div>
-        </section>
-
         <p v-if="error" class="alert error">{{ error }}</p>
         <p v-if="success" class="alert success">{{ success }}</p>
 
         <section v-if="activeTab === 'overview'" class="screen-stack">
-          <div class="metric-grid">
-            <article class="metric-card">
-              <span>Clientes</span>
-              <strong>{{ data.customers.length }}</strong>
-            </article>
-            <article class="metric-card">
-              <span>Veículos</span>
-              <strong>{{ data.vehicles.length }}</strong>
-            </article>
-            <article class="metric-card warning">
-              <span>Peças para comprar</span>
-              <strong>{{ data.lowStockParts.length }}</strong>
-            </article>
-            <article class="metric-card">
-              <span>Estoque saudável</span>
-              <strong>{{ healthyParts.length }}</strong>
-            </article>
-            <article class="metric-card">
-              <span>Média execução</span>
-              <strong>{{ averageExecutionLabel }}</strong>
-            </article>
+          <div class="home-toolbar">
+            <span><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
+            <button class="secondary-button" type="button" @click="homeSettingsOpen = !homeSettingsOpen">
+              <Plus :size="17" />
+              Personalizar home
+            </button>
           </div>
 
-          <section class="section-block">
-            <div class="section-heading">
-              <h2>Alertas de compra</h2>
-              <span>Estoque abaixo do minimo</span>
-            </div>
-            <div class="table-list">
-              <article v-for="part in data.lowStockParts" :key="part.id" class="row-item danger">
-                <div>
-                  <strong>{{ part.name }}</strong>
-                  <span>{{ part.sku }} - minimo {{ part.minimumStock }}</span>
-                </div>
-                <span>{{ part.stockQuantity }} un.</span>
-              </article>
-              <p v-if="!data.lowStockParts.length" class="empty-state">Nenhum alerta de estoque.</p>
-            </div>
-          </section>
-
-          <section class="analytics-grid">
-            <article class="section-block chart-panel">
-              <div class="section-heading">
-                <h2>Status atual dos carros</h2>
-                <span>{{ data.serviceOrders.length }} ordens monitoradas</span>
-              </div>
-              <div class="bar-chart">
-                <div v-for="item in statusChart" :key="item.status" class="bar-row">
-                  <span>{{ item.label }}</span>
-                  <div class="bar-track">
-                    <i :style="{ width: `${item.percent}%`, background: item.color }"></i>
-                  </div>
-                  <strong>{{ item.count }}</strong>
-                </div>
-              </div>
-            </article>
-
-            <article class="section-block chart-panel">
-              <div class="section-heading">
-                <h2>Saúde do estoque</h2>
-                <span>Itens abaixo do mínimo</span>
-              </div>
-              <div class="donut-wrap">
-                <div
-                  class="donut-chart"
-                  :style="{
-                    background: `conic-gradient(#f59e0b 0 ${inventoryHealth[1].percent}%, #0ea5e9 ${inventoryHealth[1].percent}% 100%)`,
-                  }"
-                >
-                  <span>{{ inventoryHealth[1].percent }}%</span>
-                </div>
-                <div class="legend-list">
-                  <span v-for="item in inventoryHealth" :key="item.label">
-                    <i :style="{ background: item.color }"></i>
-                    {{ item.label }}: {{ item.value }}
-                  </span>
-                </div>
-              </div>
-            </article>
-
-            <article class="section-block chart-panel">
-              <div class="section-heading">
-                <h2>Resumo por status</h2>
-                <span>Distribuição rápida</span>
-              </div>
-              <div class="status-grid">
-                <article v-for="item in statusCounts" :key="item.status" class="status-card">
-                  <strong>{{ item.count }}</strong>
-                  <span>{{ item.label }}</span>
-                </article>
-              </div>
-            </article>
-          </section>
-
-          <section class="section-block">
-            <div class="section-heading">
-              <h2>Prazo previsto x realizado por serviço</h2>
-              <span>Média por serviço em ordens finalizadas ou entregues</span>
-            </div>
-            <div class="comparison-list">
-              <article
-                v-for="item in serviceSlaComparisons"
-                :key="item.serviceId"
-                class="comparison-row"
-                :class="{ late: item.difference > 0 }"
-              >
-                <div>
-                  <strong>{{ item.name }}</strong>
-                  <span>{{ item.count }} ordem(ns) analisada(s)</span>
-                </div>
-                <div class="comparison-bars">
-                  <label>
-                    Previsto
-                    <i><b class="planned" style="width: 100%"></b></i>
-                    <span>{{ item.plannedLabel }}</span>
-                  </label>
-                  <label>
-                    Realizado
-                    <i><b :style="{ width: `${item.actualPercent}%` }"></b></i>
-                    <span>{{ item.actualLabel }}</span>
-                  </label>
-                </div>
-                <span class="badge" :class="{ danger: item.difference > 0 }">
-                  {{ item.status }} {{ item.differenceLabel }}
-                </span>
-              </article>
-              <p v-if="!serviceSlaComparisons.length" class="empty-state">
-                Ainda não há ordens finalizadas suficientes para comparar prazos.
-              </p>
-            </div>
-            <p class="hint">
-              Quando uma ordem possui vários serviços, o tempo real é distribuído proporcionalmente ao
-              tempo previsto de cada item.
-            </p>
-          </section>
-
-          <section class="section-block info-panel">
-            <BarChart3 :size="24" />
+          <section v-if="homeSettingsOpen" class="home-settings-panel">
             <div>
-              <h2>Fluxo sugerido</h2>
-              <p>
-                Cadastre o cliente, associe o veículo, crie a ordem de serviço, adicione peças e
-                serviços, gere o orçamento e acompanhe o status até a entrega.
-              </p>
+              <strong>Meus widgets</strong>
+              <div class="home-option-grid">
+                <label v-for="widget in homeWidgetDefinitions" :key="widget.id">
+                  <input
+                    type="checkbox"
+                    :checked="homePreferences.userWidgets.includes(widget.id)"
+                    @change="toggleHomeWidget(widget.id)"
+                  />
+                  <span>{{ widget.label }}</span>
+                </label>
+              </div>
+            </div>
+            <div v-if="auth.role === 'ADMIN'">
+              <strong>Configuração da oficina</strong>
+              <label class="home-alert-toggle">
+                <input
+                  type="checkbox"
+                  :checked="homePreferences.showAlertsOnHome"
+                  @change="toggleHomeAlerts"
+                />
+                <span>Exibir avisos críticos de estoque para a equipe</span>
+              </label>
+              <div class="home-option-grid">
+                <label v-for="widget in homeWidgetDefinitions" :key="`global-${widget.id}`">
+                  <input
+                    type="checkbox"
+                    :checked="homePreferences.globalWidgets.includes(widget.id)"
+                    @change="toggleHomeWidget(widget.id, 'global')"
+                  />
+                  <span>{{ widget.label }}</span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="home-summary-grid">
+            <button
+              v-for="widget in homeWidgets"
+              :key="widget.id"
+              class="home-widget"
+              type="button"
+              @click="openHomeWidget(widget)"
+            >
+              <component :is="widget.icon" :size="22" />
+              <strong>{{ widget.value }}</strong>
+              <span>{{ widget.label }}</span>
+            </button>
+          </section>
+
+          <section class="vehicle-status-grid" aria-label="Status atual dos veículos">
+            <button
+              v-for="item in vehicleStatusWidgets"
+              :key="item.label"
+              class="status-widget"
+              type="button"
+              @click="openStatusWidget(item.statusFilter)"
+            >
+              <strong>{{ item.value }}</strong>
+              <span>{{ item.label }}</span>
+            </button>
+          </section>
+
+          <section v-if="showHomeAlerts && data.lowStockParts.length" class="home-alerts-panel">
+            <div class="home-alerts-heading">
+              <AlertTriangle :size="22" />
+              <strong>Atenção necessária</strong>
+            </div>
+            <div class="home-alert-list">
+              <button
+                v-for="part in data.lowStockParts.slice(0, 4)"
+                :key="part.id"
+                type="button"
+                @click="selectTab('parts')"
+              >
+                <strong>{{ part.name }}</strong>
+                <span>{{ part.stockQuantity }} un. disponíveis · mínimo {{ part.minimumStock }}</span>
+              </button>
             </div>
           </section>
         </section>
@@ -1100,7 +1091,7 @@ onMounted(loadDashboard);
 
           <section class="section-block">
             <div class="section-heading">
-              <h2>Status dos carros</h2>
+              <h2>Status dos veículos</h2>
               <span>Página {{ pagination.vehicles.page + 1 }}</span>
             </div>
             <div class="filters">
@@ -1184,7 +1175,7 @@ onMounted(loadDashboard);
           <section class="section-block">
             <div class="section-heading">
               <h2>Estoque</h2>
-              <span>{{ data.lowStockParts.length }} alertas de compra</span>
+              <span>{{ data.lowStockParts.length }} avisos de compra</span>
             </div>
             <div class="filters">
               <select v-model="pagination.parts.lowStock">
@@ -1266,7 +1257,9 @@ onMounted(loadDashboard);
                 </option>
               </select>
               <select v-model="forms.orderAction.status">
-                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+                <option v-for="status in statuses" :key="status" :value="status">
+                  {{ statusLabels[status] || status }}
+                </option>
               </select>
               <button class="primary-button" type="submit" :disabled="saving">Atualizar status</button>
               <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="generateBudget">
@@ -1297,12 +1290,14 @@ onMounted(loadDashboard);
           <section class="section-block">
             <div class="section-heading">
               <h2>Ordens de serviço</h2>
-              <span>Status atual dos carros</span>
+              <span>Status atual dos veículos</span>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
               <select v-model="pagination.serviceOrders.status">
                 <option value="">Todos os status</option>
-                <option v-for="status in statuses" :key="status" :value="status">{{ status }}</option>
+                <option v-for="status in statuses" :key="status" :value="status">
+                  {{ statusLabels[status] || status }}
+                </option>
               </select>
               <button class="secondary-button" type="button" @click="loadDashboard">
                 <Search :size="17" />

@@ -6,33 +6,60 @@ import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const auth = useAuthStore();
-const username = ref('admin@autocarehub.com');
+const username = ref('master@autocarehub.com');
 const password = ref('autocare123');
 const loading = ref(false);
 const error = ref('');
-const selectedProfile = ref('admin');
+const selectedProfile = ref('master');
 
 const demoProfiles = [
   {
-    id: 'admin',
-    label: 'Administrador',
-    username: 'admin@autocarehub.com',
+    id: 'master',
+    label: 'Admin Master',
+    subtitle: 'Dona da AutoCare Hub',
+    username: 'master@autocarehub.com',
     password: 'autocare123',
-    description: 'Acesso completo ao painel, cadastros, estoque e comandos.',
+    routeName: 'dashboard',
   },
   {
-    id: 'employee',
-    label: 'Funcionário',
-    username: 'funcionario@autocarehub.com',
+    id: 'workshop-admin',
+    label: 'Admin de oficina',
+    subtitle: 'Gestão da oficina',
+    username: 'oficina.admin@autocarehub.com',
     password: 'autocare123',
-    description: 'Operação da oficina: ordens, peças, serviços e atendimento.',
+    routeName: 'dashboard',
+  },
+  {
+    id: 'parts-admin',
+    label: 'Admin de loja',
+    subtitle: 'Loja de peças',
+    username: 'loja.admin@autocarehub.com',
+    password: 'autocare123',
+    routeName: 'dashboard',
+  },
+  {
+    id: 'workshop-employee',
+    label: 'Funcionário oficina',
+    subtitle: 'Operação e atendimento',
+    username: 'oficina.funcionario@autocarehub.com',
+    password: 'autocare123',
+    routeName: 'dashboard',
+  },
+  {
+    id: 'parts-employee',
+    label: 'Funcionário loja',
+    subtitle: 'Estoque e peças',
+    username: 'loja.funcionario@autocarehub.com',
+    password: 'autocare123',
+    routeName: 'dashboard',
   },
   {
     id: 'customer',
-    label: 'Cliente',
+    label: 'Cliente final',
+    subtitle: 'Dono de veículo',
     username: 'cliente@autocarehub.com',
     password: 'autocare123',
-    description: 'Visão do cliente Mariana Costa com seus carros e ordens.',
+    routeName: 'dashboard',
   },
 ];
 
@@ -46,10 +73,12 @@ function selectProfile(profile) {
 async function submit() {
   loading.value = true;
   error.value = '';
+  const targetRouteName =
+    demoProfiles.find((profile) => profile.id === selectedProfile.value)?.routeName || 'dashboard';
 
   try {
     await auth.login(username.value, password.value);
-    router.push({ name: 'dashboard' });
+    router.push({ name: targetRouteName });
   } catch (err) {
     error.value = err.message || 'Não foi possível autenticar.';
   } finally {
@@ -60,45 +89,63 @@ async function submit() {
 
 <template>
   <main class="login-shell">
-    <section class="login-panel">
+    <header class="login-navbar">
+      <div class="login-brand">
+        <div class="brand-mark">
+          <Wrench :size="20" />
+        </div>
+        <strong>AutoCare Hub</strong>
+      </div>
+
       <RouterLink class="login-back-link" to="/preview">
         <ArrowLeft :size="17" />
         Voltar para a home
       </RouterLink>
-      <div class="brand-mark">
-        <Wrench :size="28" />
-      </div>
-      <h1>AutoCare Hub</h1>
-      <p>Gestão operacional da oficina</p>
+    </header>
 
-      <div class="profile-picker">
-        <button
-          v-for="profile in demoProfiles"
-          :key="profile.id"
-          type="button"
-          :class="{ active: selectedProfile === profile.id }"
-          @click="selectProfile(profile)"
-        >
-          <strong>{{ profile.label }}</strong>
-          <span>{{ profile.description }}</span>
-        </button>
-      </div>
+    <section class="login-content">
+      <div class="login-panel">
+        <section class="login-copy">
+          <div class="brand-mark login-hero-mark">
+            <Wrench :size="24" />
+          </div>
+          <h1>Acesse sua área</h1>
+          <p>Use login manual ou escolha um perfil acadêmico de demonstração.</p>
 
-      <form class="login-form" @submit.prevent="submit">
-        <label>
-          Usuário
-          <input v-model="username" autocomplete="username" type="email" required />
-        </label>
-        <label>
-          Senha
-          <input v-model="password" autocomplete="current-password" type="password" required />
-        </label>
-        <button class="primary-button" type="submit" :disabled="loading">
-          <LogIn :size="18" />
-          <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
-        </button>
-        <p v-if="error" class="form-error">{{ error }}</p>
-      </form>
+          <form class="login-form" @submit.prevent="submit">
+            <label>
+              Usuário
+              <input v-model="username" autocomplete="username" type="email" required />
+            </label>
+            <label>
+              Senha
+              <input v-model="password" autocomplete="current-password" type="password" required />
+            </label>
+            <button class="primary-button" type="submit" :disabled="loading">
+              <LogIn :size="18" />
+              <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
+            </button>
+            <p v-if="error" class="form-error">{{ error }}</p>
+          </form>
+        </section>
+
+        <section class="login-demo-panel" aria-label="Logins rápidos de demonstração">
+          <span>Entrar como</span>
+          <div class="profile-picker">
+            <button
+              v-for="profile in demoProfiles"
+              :key="profile.id"
+              type="button"
+              :class="{ active: selectedProfile === profile.id }"
+              :disabled="loading"
+              @click="selectProfile(profile)"
+            >
+              <strong>{{ profile.label }}</strong>
+              <small>{{ profile.subtitle }}</small>
+            </button>
+          </div>
+        </section>
+      </div>
     </section>
   </main>
 </template>

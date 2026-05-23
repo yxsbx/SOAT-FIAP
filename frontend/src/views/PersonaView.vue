@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
 import {
-  ArrowLeft,
   BarChart3,
   Building2,
   Car,
@@ -50,7 +49,7 @@ const configs = {
     ],
     cards: [
       ['Perfis e permissões', 'Crie funcionários, admins e defina acesso por módulo.', UserCog],
-      ['Operação da oficina', 'Acompanhe ordens, prazos, aprovações e entrega dos carros.', ClipboardList],
+      ['Operação da oficina', 'Acompanhe ordens, prazos, aprovações e entrega dos veículos.', ClipboardList],
       ['Financeiro interno', 'Resumo de faturamento, tickets e serviços mais vendidos.', DollarSign],
     ],
   },
@@ -89,43 +88,7 @@ const configs = {
       ['Leads e assinaturas', 'Empresas que entraram em contato, converteram ou abandonaram.', Eye],
       ['Saúde da plataforma', 'Uso por cliente, churn, crescimento, receita e alertas.', BarChart3],
     ],
-  },
-  partsStore: {
-    label: 'Loja de peças',
-    title: 'Portal para lojas parceiras que atendem oficinas e clientes',
-    text: 'Permite acompanhar pedidos de peças, fornecedores, itens importados, prazos e relacionamento com oficinas filiadas.',
-    icon: Store,
-    accent: 'amber',
-    stats: [
-      ['19', 'Oficinas filiadas'],
-      ['64', 'Pedidos em aberto'],
-      ['8', 'Itens importados'],
-      ['12', 'Fornecedores ativos'],
-    ],
-    cards: [
-      ['Pedidos de peças', 'Acompanhe solicitações de oficinas e status de separação.', Package],
-      ['Fornecedores', 'Controle origem, prazo médio, custo e disponibilidade.', Truck],
-      ['Clientes e oficinas', 'Relacione lojas, oficinas filiadas e compras recorrentes.', Users],
-    ],
-  },
-  customer: {
-    label: 'Cliente final',
-    title: 'Portal para cliente encontrar oficinas, lojas e status do veículo',
-    text: 'O cliente visualiza oficinas e lojas disponíveis, acompanha o carro em atendimento e recebe atualizações simples.',
-    icon: Car,
-    accent: 'green',
-    stats: [
-      ['12', 'Oficinas próximas'],
-      ['7', 'Lojas disponíveis'],
-      ['1', 'Veículo em serviço'],
-      ['Hoje', 'Próxima atualização'],
-    ],
-    cards: [
-      ['Oficinas disponíveis', 'Lista de oficinas, especialidades, avaliação e disponibilidade.', Wrench],
-      ['Status do veículo', 'Acompanhe recebido, diagnóstico, aprovação, execução e entrega.', ClipboardList],
-      ['Lojas de peças', 'Veja lojas filiadas e peças disponíveis quando fizer sentido.', Store],
-    ],
-  },
+  }
 };
 
 const config = computed(() => configs[props.persona] || configs.workshopAdmin);
@@ -151,10 +114,6 @@ const nearbyPlaces = computed(() => {
 <template>
   <main class="persona-shell">
     <header class="persona-header">
-      <RouterLink to="/preview">
-        <ArrowLeft :size="18" />
-        Voltar ao site
-      </RouterLink>
       <strong><Wrench :size="22" /> AutoCare Hub</strong>
     </header>
 
