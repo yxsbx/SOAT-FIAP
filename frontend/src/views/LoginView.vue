@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { Wrench, LogIn } from 'lucide-vue-next';
+import { ArrowLeft, Wrench, LogIn } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
@@ -22,17 +22,17 @@ const demoProfiles = [
   },
   {
     id: 'employee',
-    label: 'Funcionario',
+    label: 'Funcionário',
     username: 'funcionario@autocarehub.com',
     password: 'autocare123',
-    description: 'Operacao da oficina: ordens, pecas, servicos e atendimento.',
+    description: 'Operação da oficina: ordens, peças, serviços e atendimento.',
   },
   {
     id: 'customer',
     label: 'Cliente',
     username: 'cliente@autocarehub.com',
     password: 'autocare123',
-    description: 'Visao do cliente Mariana Costa com seus carros e ordens.',
+    description: 'Visão do cliente Mariana Costa com seus carros e ordens.',
   },
 ];
 
@@ -51,7 +51,7 @@ async function submit() {
     await auth.login(username.value, password.value);
     router.push({ name: 'dashboard' });
   } catch (err) {
-    error.value = err.message || 'Nao foi possivel autenticar.';
+    error.value = err.message || 'Não foi possível autenticar.';
   } finally {
     loading.value = false;
   }
@@ -61,11 +61,15 @@ async function submit() {
 <template>
   <main class="login-shell">
     <section class="login-panel">
+      <RouterLink class="login-back-link" to="/preview">
+        <ArrowLeft :size="17" />
+        Voltar para a home
+      </RouterLink>
       <div class="brand-mark">
         <Wrench :size="28" />
       </div>
       <h1>AutoCare Hub</h1>
-      <p>Gestao operacional da oficina</p>
+      <p>Gestão operacional da oficina</p>
 
       <div class="profile-picker">
         <button
@@ -82,7 +86,7 @@ async function submit() {
 
       <form class="login-form" @submit.prevent="submit">
         <label>
-          Usuario
+          Usuário
           <input v-model="username" autocomplete="username" type="email" required />
         </label>
         <label>

@@ -6,8 +6,11 @@ import {
   BarChart3,
   Car,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   ClipboardList,
   Gauge,
+  KeyRound,
   LogOut,
   Menu,
   Package,
@@ -15,6 +18,7 @@ import {
   Search,
   ShieldCheck,
   TrendingUp,
+  UserCog,
   UserPlus,
   Users,
   Wrench,
@@ -32,9 +36,19 @@ const success = ref('');
 const activeTab = ref('overview');
 const mobileMenuOpen = ref(false);
 const sidebarCollapsed = ref(true);
+const profileMenuOpen = ref(false);
 const globalSearch = ref('');
 
 const statuses = ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'];
+
+const statusLabels = {
+  RECEIVED: 'Recebido',
+  IN_DIAGNOSIS: 'Diagnóstico',
+  WAITING_APPROVAL: 'Aprovação',
+  IN_PROGRESS: 'Em execução',
+  FINISHED: 'Finalizado',
+  DELIVERED: 'Entregue',
+};
 
 const data = reactive({
   customers: [],
@@ -126,15 +140,15 @@ const availableTabs = computed(() => {
   const tabs = [
     {
       id: 'overview',
-      label: 'Resumo',
-      description: 'Indicadores, alertas e graficos',
+      label: 'Painel',
+      description: 'Visão geral operacional',
       icon: Gauge,
       roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
     },
     {
       id: 'orders',
       label: 'Ordens',
-      description: 'Status, orcamentos e execucao',
+      description: 'Status, orçamentos e execução',
       icon: ClipboardList,
       roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
     },
@@ -147,7 +161,7 @@ const availableTabs = computed(() => {
     },
     {
       id: 'vehicles',
-      label: 'Veiculos',
+      label: 'Veículos',
       description: 'Frota, placas e status dos carros',
       icon: Car,
       roles: ['ADMIN', 'EMPLOYEE'],
@@ -155,14 +169,14 @@ const availableTabs = computed(() => {
     {
       id: 'parts',
       label: 'Estoque',
-      description: 'Pecas, alertas e reposicao',
+      description: 'Peças, alertas e reposição',
       icon: Package,
       roles: ['ADMIN', 'EMPLOYEE'],
     },
     {
       id: 'services',
-      label: 'Servicos',
-      description: 'Catalogo e prazos previstos',
+      label: 'Serviços',
+      description: 'Catálogo e prazos previstos',
       icon: Wrench,
       roles: ['ADMIN', 'EMPLOYEE'],
     },
@@ -175,9 +189,25 @@ const activeTabMeta = computed(
   () => availableTabs.value.find((tab) => tab.id === activeTab.value) || availableTabs.value[0],
 );
 
+const userInitials = computed(() => {
+  const fallback = auth.user?.username || 'Usuario AutoCare';
+  const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
+  const parts = name
+    .replace(/[._-]+/g, ' ')
+    .split(' ')
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return parts
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+});
+
 const statusCounts = computed(() =>
   statuses.map((status) => ({
     status,
+    label: statusLabels[status] || status,
     count: data.serviceOrders.filter((order) => order.status === status).length,
   })),
 );
@@ -185,12 +215,12 @@ const statusCounts = computed(() =>
 const statusChart = computed(() => {
   const total = Math.max(data.serviceOrders.length, 1);
   const colors = {
-    RECEIVED: '#0f766e',
+    RECEIVED: '#0ea5e9',
     IN_DIAGNOSIS: '#2563eb',
-    WAITING_APPROVAL: '#d97706',
-    IN_PROGRESS: '#7c3aed',
-    FINISHED: '#059669',
-    DELIVERED: '#475569',
+    WAITING_APPROVAL: '#0891b2',
+    IN_PROGRESS: '#06b6d4',
+    FINISHED: '#0284c7',
+    DELIVERED: '#64748b',
   };
 
   return statusCounts.value.map((item) => ({
@@ -202,21 +232,21 @@ const statusChart = computed(() => {
 
 const inventoryHealth = computed(() => {
   const total = Math.max(data.parts.length, 1);
-  const low = data.lowStockParts.length;
+  const low = Math.min(data.lowStockParts.length, total);
   const healthy = Math.max(data.parts.length - low, 0);
 
   return [
     {
-      label: 'Saudavel',
+      label: 'Saudável',
       value: healthy,
       percent: Math.round((healthy / total) * 100),
-      color: '#0f766e',
+      color: '#0ea5e9',
     },
     {
       label: 'Comprar',
       value: low,
       percent: Math.round((low / total) * 100),
-      color: '#dc2626',
+      color: '#f59e0b',
     },
   ];
 });
@@ -235,7 +265,7 @@ const quickInsights = computed(() => [
     icon: AlertTriangle,
   },
   {
-    label: 'Servicos no catalogo',
+    label: 'Serviços no catálogo',
     value: data.services.length,
     icon: Wrench,
   },
@@ -251,7 +281,7 @@ const operationalHighlights = computed(() => [
   {
     label: 'Carros em acompanhamento',
     value: data.serviceOrders.filter((order) => order.status !== 'DELIVERED').length,
-    detail: 'ordens nao entregues',
+    detail: 'ordens não entregues',
     tone: 'blue',
   },
   {
@@ -269,7 +299,7 @@ const searchResults = computed(() => {
   }
 
   const pageResults = availableTabs.value.map((tab) => ({
-    type: 'Pagina',
+    type: 'Página',
     label: tab.label,
     detail: tab.description,
     tabId: tab.id,
@@ -285,14 +315,14 @@ const searchResults = computed(() => {
       icon: Users,
     })),
     ...data.vehicles.map((vehicle) => ({
-      type: 'Veiculo',
+      type: 'Veículo',
       label: `${vehicle.plate} - ${vehicle.brand} ${vehicle.model}`,
       detail: `${vehicle.year} - ${vehicle.mileage} km`,
       tabId: 'vehicles',
       icon: Car,
     })),
     ...data.parts.map((part) => ({
-      type: 'Peca',
+      type: 'Peça',
       label: part.name,
       detail: `${part.sku} - ${part.category}`,
       tabId: 'parts',
@@ -373,7 +403,7 @@ const serviceSlaComparisons = computed(() => {
         plannedLabel: formatDuration(plannedAverage),
         actualLabel: formatDuration(actualAverage),
         differenceLabel: `${difference >= 0 ? '+' : '-'}${formatDuration(Math.abs(difference))}`,
-        status: difference <= 0 ? 'No prazo' : 'Atraso medio',
+        status: difference <= 0 ? 'No prazo' : 'Atraso médio',
         actualPercent:
           plannedAverage > 0 ? Math.min(100, Math.round((actualAverage / plannedAverage) * 100)) : 0,
       };
@@ -503,7 +533,7 @@ async function loadDashboard() {
       error.value = failed.map((request) => request.reason.message).join(' | ');
     }
   } catch (err) {
-    error.value = err.message || 'Nao foi possivel carregar os dados.';
+    error.value = err.message || 'Não foi possível carregar os dados.';
   } finally {
     loading.value = false;
   }
@@ -518,7 +548,7 @@ async function runAction(action, message) {
     success.value = message;
     await loadDashboard();
   } catch (err) {
-    error.value = err.message || 'Nao foi possivel concluir a operacao.';
+    error.value = err.message || 'Não foi possível concluir a operação.';
   } finally {
     saving.value = false;
   }
@@ -556,7 +586,7 @@ function createVehicle() {
     forms.vehicle.model = '';
     forms.vehicle.year = new Date().getFullYear();
     forms.vehicle.mileage = 0;
-  }, 'Veiculo cadastrado.');
+  }, 'Veículo cadastrado.');
 }
 
 function createPart() {
@@ -577,7 +607,7 @@ function createPart() {
       stockQuantity: 0,
       minimumStock: 1,
     });
-  }, 'Peca cadastrada.');
+  }, 'Peça cadastrada.');
 }
 
 function createWorkshopService() {
@@ -593,7 +623,7 @@ function createWorkshopService() {
       basePrice: 0,
       estimatedTimeInMinutes: 60,
     });
-  }, 'Servico cadastrado.');
+  }, 'Serviço cadastrado.');
 }
 
 function createOrder() {
@@ -602,7 +632,7 @@ function createOrder() {
     forms.order.customerDocument = '';
     forms.order.vehicleId = '';
     forms.order.diagnosticNotes = '';
-  }, 'Ordem de servico criada.');
+  }, 'Ordem de serviço criada.');
 }
 
 function updateStock() {
@@ -622,13 +652,13 @@ function updateOrderStatus() {
 function generateBudget() {
   return runAction(async () => {
     await resources.generateBudget(forms.orderAction.serviceOrderId);
-  }, 'Orcamento gerado.');
+  }, 'Orçamento gerado.');
 }
 
 function approveBudget() {
   return runAction(async () => {
     await resources.approveBudget(forms.orderAction.serviceOrderId);
-  }, 'Orcamento aprovado.');
+  }, 'Orçamento aprovado.');
 }
 
 function addServiceToOrder() {
@@ -637,7 +667,7 @@ function addServiceToOrder() {
       serviceId: forms.orderAction.serviceId,
       quantity: Number(forms.orderAction.serviceQuantity),
     });
-  }, 'Servico adicionado a ordem.');
+  }, 'Serviço adicionado a ordem.');
 }
 
 function addPartToOrder() {
@@ -646,7 +676,7 @@ function addPartToOrder() {
       partId: forms.orderAction.partId,
       quantity: Number(forms.orderAction.partQuantity),
     });
-  }, 'Peca adicionada a ordem.');
+  }, 'Peça adicionada a ordem.');
 }
 
 function changePage(resource, direction) {
@@ -664,7 +694,13 @@ function selectSearchResult(result) {
   globalSearch.value = '';
 }
 
+function showProfileAction(action) {
+  profileMenuOpen.value = false;
+  success.value = `${action} estará disponível quando o backend expuser esse fluxo.`;
+}
+
 function logout() {
+  profileMenuOpen.value = false;
   auth.logout();
   router.push({ name: 'login' });
 }
@@ -699,7 +735,7 @@ onMounted(loadDashboard);
           <input
             v-model="globalSearch"
             type="search"
-            placeholder="Buscar clientes, placas, pecas, ordens..."
+            placeholder="Buscar clientes, placas, peças, ordens..."
             aria-label="Busca global"
           />
           <div v-if="searchResults.length" class="search-popover">
@@ -719,10 +755,32 @@ onMounted(loadDashboard);
         </div>
 
         <div class="navbar-actions">
-          <button class="ghost-button compact" type="button" @click="logout">
-            <LogOut :size="18" />
-            <span>Sair</span>
-          </button>
+          <div class="profile-menu">
+            <button
+              class="profile-trigger"
+              type="button"
+              title="Menu do usuário"
+              :aria-expanded="profileMenuOpen"
+              aria-haspopup="menu"
+              @click="profileMenuOpen = !profileMenuOpen"
+            >
+              {{ userInitials }}
+            </button>
+            <div v-if="profileMenuOpen" class="profile-popover" role="menu">
+              <button type="button" role="menuitem" @click="showProfileAction('Editar informações do usuário')">
+                <UserCog :size="17" />
+                <span>Editar informações do usuário</span>
+              </button>
+              <button type="button" role="menuitem" @click="showProfileAction('Alterar senha')">
+                <KeyRound :size="17" />
+                <span>Alterar senha</span>
+              </button>
+              <button type="button" role="menuitem" @click="logout">
+                <LogOut :size="17" />
+                <span>Sair</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </header>
@@ -735,7 +793,8 @@ onMounted(loadDashboard);
           :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
           @click="sidebarCollapsed = !sidebarCollapsed"
         >
-          <Menu :size="18" />
+          <ChevronRight v-if="sidebarCollapsed" :size="18" />
+          <ChevronLeft v-else :size="18" />
           <span>{{ sidebarCollapsed ? 'Expandir' : 'Recolher' }}</span>
         </button>
 
@@ -751,7 +810,6 @@ onMounted(loadDashboard);
             <component :is="tab.icon" :size="20" />
             <span>
               <strong>{{ tab.label }}</strong>
-              <small>{{ tab.description }}</small>
             </span>
           </button>
         </nav>
@@ -771,8 +829,8 @@ onMounted(loadDashboard);
             <span class="eyebrow"><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
             <h1>Controle inteligente para oficinas modernas</h1>
             <p>
-              Acompanhe ordens, estoque, clientes e veiculos em um painel unico para atendimento,
-              compras e execucao dos servicos.
+              Acompanhe ordens, estoque, clientes e veículos em um painel unico para atendimento,
+              compras e execução dos serviços.
             </p>
           </div>
           <div class="hero-kpis">
@@ -784,12 +842,7 @@ onMounted(loadDashboard);
           </div>
         </section>
 
-        <section class="workspace-header">
-          <div>
-            <span>Area atual</span>
-            <h2>{{ activeTabMeta.label }}</h2>
-            <p>{{ activeTabMeta.description }}</p>
-          </div>
+        <section class="workspace-header" :aria-label="activeTabMeta.description">
           <div class="highlight-strip">
             <article
               v-for="item in operationalHighlights"
@@ -813,19 +866,19 @@ onMounted(loadDashboard);
               <strong>{{ data.customers.length }}</strong>
             </article>
             <article class="metric-card">
-              <span>Veiculos</span>
+              <span>Veículos</span>
               <strong>{{ data.vehicles.length }}</strong>
             </article>
             <article class="metric-card warning">
-              <span>Pecas para comprar</span>
+              <span>Peças para comprar</span>
               <strong>{{ data.lowStockParts.length }}</strong>
             </article>
             <article class="metric-card">
-              <span>Estoque saudavel</span>
+              <span>Estoque saudável</span>
               <strong>{{ healthyParts.length }}</strong>
             </article>
             <article class="metric-card">
-              <span>Media execucao</span>
+              <span>Média execução</span>
               <strong>{{ averageExecutionLabel }}</strong>
             </article>
           </div>
@@ -855,7 +908,7 @@ onMounted(loadDashboard);
               </div>
               <div class="bar-chart">
                 <div v-for="item in statusChart" :key="item.status" class="bar-row">
-                  <span>{{ item.status }}</span>
+                  <span>{{ item.label }}</span>
                   <div class="bar-track">
                     <i :style="{ width: `${item.percent}%`, background: item.color }"></i>
                   </div>
@@ -866,14 +919,14 @@ onMounted(loadDashboard);
 
             <article class="section-block chart-panel">
               <div class="section-heading">
-                <h2>Saude do estoque</h2>
-                <span>Itens abaixo do minimo</span>
+                <h2>Saúde do estoque</h2>
+                <span>Itens abaixo do mínimo</span>
               </div>
               <div class="donut-wrap">
                 <div
                   class="donut-chart"
                   :style="{
-                    background: `conic-gradient(#dc2626 0 ${inventoryHealth[1].percent}%, #0f766e ${inventoryHealth[1].percent}% 100%)`,
+                    background: `conic-gradient(#f59e0b 0 ${inventoryHealth[1].percent}%, #0ea5e9 ${inventoryHealth[1].percent}% 100%)`,
                   }"
                 >
                   <span>{{ inventoryHealth[1].percent }}%</span>
@@ -890,12 +943,12 @@ onMounted(loadDashboard);
             <article class="section-block chart-panel">
               <div class="section-heading">
                 <h2>Resumo por status</h2>
-                <span>Distribuicao rapida</span>
+                <span>Distribuição rápida</span>
               </div>
               <div class="status-grid">
                 <article v-for="item in statusCounts" :key="item.status" class="status-card">
                   <strong>{{ item.count }}</strong>
-                  <span>{{ item.status }}</span>
+                  <span>{{ item.label }}</span>
                 </article>
               </div>
             </article>
@@ -903,8 +956,8 @@ onMounted(loadDashboard);
 
           <section class="section-block">
             <div class="section-heading">
-              <h2>Prazo previsto x realizado por servico</h2>
-              <span>Media por servico em ordens finalizadas ou entregues</span>
+              <h2>Prazo previsto x realizado por serviço</h2>
+              <span>Média por serviço em ordens finalizadas ou entregues</span>
             </div>
             <div class="comparison-list">
               <article
@@ -934,11 +987,11 @@ onMounted(loadDashboard);
                 </span>
               </article>
               <p v-if="!serviceSlaComparisons.length" class="empty-state">
-                Ainda nao ha ordens finalizadas suficientes para comparar prazos.
+                Ainda não há ordens finalizadas suficientes para comparar prazos.
               </p>
             </div>
             <p class="hint">
-              Quando uma ordem possui varios servicos, o tempo real e distribuido proporcionalmente ao
+              Quando uma ordem possui vários serviços, o tempo real é distribuído proporcionalmente ao
               tempo previsto de cada item.
             </p>
           </section>
@@ -948,8 +1001,8 @@ onMounted(loadDashboard);
             <div>
               <h2>Fluxo sugerido</h2>
               <p>
-                Cadastre o cliente, associe o veiculo, crie a ordem de servico, adicione pecas e
-                servicos, gere o orcamento e acompanhe o status ate a entrega.
+                Cadastre o cliente, associe o veículo, crie a ordem de serviço, adicione peças e
+                serviços, gere o orçamento e acompanhe o status até a entrega.
               </p>
             </div>
           </section>
@@ -959,15 +1012,15 @@ onMounted(loadDashboard);
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
               <h2>Cadastro e conta do cliente</h2>
-              <span>Cria o cadastro base usado por veiculos e ordens</span>
+              <span>Cria o cadastro base usado por veículos e ordens</span>
             </div>
             <form class="form-grid" @submit.prevent="createCustomer">
               <input v-model="forms.customer.name" placeholder="Nome" required />
-              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente numeros" required />
+              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente números" required />
               <input v-model="forms.customer.phone" placeholder="Telefone" required />
               <input v-model="forms.customer.email" placeholder="E-mail" type="email" required />
               <input v-model="forms.customer.address.street" placeholder="Rua" required />
-              <input v-model="forms.customer.address.number" placeholder="Numero" required />
+              <input v-model="forms.customer.address.number" placeholder="Número" required />
               <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
               <input v-model="forms.customer.address.city" placeholder="Cidade" required />
               <input v-model="forms.customer.address.state" placeholder="UF" maxlength="2" required />
@@ -979,7 +1032,7 @@ onMounted(loadDashboard);
               </button>
             </form>
             <p class="hint">
-              O backend atual ainda nao expoe criacao de credenciais para login de cliente; este fluxo
+              O backend atual ainda não expõe criação de credenciais para login de cliente; este fluxo
               cria o cadastro do cliente na API.
             </p>
           </section>
@@ -987,7 +1040,7 @@ onMounted(loadDashboard);
           <section class="section-block">
             <div class="section-heading">
               <h2>Clientes</h2>
-              <span>Pagina {{ pagination.customers.page + 1 }}</span>
+              <span>Página {{ pagination.customers.page + 1 }}</span>
             </div>
             <div class="filters">
               <select v-model="pagination.customers.active">
@@ -1020,7 +1073,7 @@ onMounted(loadDashboard);
             </div>
             <div class="pager">
               <button type="button" @click="changePage('customers', -1)">Anterior</button>
-              <button type="button" @click="changePage('customers', 1)">Proxima</button>
+              <button type="button" @click="changePage('customers', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1028,7 +1081,7 @@ onMounted(loadDashboard);
         <section v-if="activeTab === 'vehicles'" class="screen-stack">
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
-              <h2>Cadastro de veiculo</h2>
+              <h2>Cadastro de veículo</h2>
               <span>Vinculado ao cliente</span>
             </div>
             <form class="form-grid compact" @submit.prevent="createVehicle">
@@ -1040,7 +1093,7 @@ onMounted(loadDashboard);
               <input v-model.number="forms.vehicle.mileage" type="number" placeholder="Km" required />
               <button class="primary-button" type="submit" :disabled="saving">
                 <Plus :size="18" />
-                <span>Cadastrar veiculo</span>
+                <span>Cadastrar veículo</span>
               </button>
             </form>
           </section>
@@ -1048,7 +1101,7 @@ onMounted(loadDashboard);
           <section class="section-block">
             <div class="section-heading">
               <h2>Status dos carros</h2>
-              <span>Pagina {{ pagination.vehicles.page + 1 }}</span>
+              <span>Página {{ pagination.vehicles.page + 1 }}</span>
             </div>
             <div class="filters">
               <select v-model="pagination.vehicles.active">
@@ -1064,7 +1117,7 @@ onMounted(loadDashboard);
             <div class="data-table">
               <div class="data-table-header vehicles-grid">
                 <span>Placa</span>
-                <span>Veiculo</span>
+                <span>Veículo</span>
                 <span>Km</span>
                 <span>Status</span>
               </div>
@@ -1081,7 +1134,7 @@ onMounted(loadDashboard);
             </div>
             <div class="pager">
               <button type="button" @click="changePage('vehicles', -1)">Anterior</button>
-              <button type="button" @click="changePage('vehicles', 1)">Proxima</button>
+              <button type="button" @click="changePage('vehicles', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1089,8 +1142,8 @@ onMounted(loadDashboard);
         <section v-if="activeTab === 'parts'" class="screen-stack">
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
-              <h2>Cadastro de pecas</h2>
-              <span>Catalogo e minimo de estoque</span>
+              <h2>Cadastro de peças</h2>
+              <span>Catálogo e minimo de estoque</span>
             </div>
             <form class="form-grid" @submit.prevent="createPart">
               <input v-model="forms.part.name" placeholder="Nome" required />
@@ -1098,12 +1151,12 @@ onMounted(loadDashboard);
               <input v-model="forms.part.category" placeholder="Categoria" required />
               <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
               <input v-model="forms.part.brand" placeholder="Marca" required />
-              <input v-model.number="forms.part.unitPrice" type="number" min="0" step="0.01" placeholder="Preco unitario" required />
+              <input v-model.number="forms.part.unitPrice" type="number" min="0" step="0.01" placeholder="Preço unitário" required />
               <input v-model.number="forms.part.stockQuantity" type="number" min="0" placeholder="Estoque" required />
               <input v-model.number="forms.part.minimumStock" type="number" min="0" placeholder="Estoque minimo" required />
               <button class="primary-button" type="submit" :disabled="saving">
                 <Plus :size="18" />
-                <span>Cadastrar peca</span>
+                <span>Cadastrar peça</span>
               </button>
             </form>
           </section>
@@ -1111,11 +1164,11 @@ onMounted(loadDashboard);
           <section class="section-block">
             <div class="section-heading">
               <h2>Atualizar estoque</h2>
-              <span>Reposicao ou ajuste</span>
+              <span>Reposição ou ajuste</span>
             </div>
             <form class="form-grid compact" @submit.prevent="updateStock">
               <select v-model="forms.stock.partId" required>
-                <option value="">Selecione uma peca</option>
+                <option value="">Selecione uma peça</option>
                 <option v-for="part in data.parts" :key="part.id" :value="part.id">
                   {{ part.name }} - {{ part.sku }}
                 </option>
@@ -1150,10 +1203,10 @@ onMounted(loadDashboard);
             </div>
             <div class="data-table">
               <div class="data-table-header parts-grid">
-                <span>Peca</span>
+                <span>Peça</span>
                 <span>Categoria</span>
                 <span>Estoque</span>
-                <span>Preco</span>
+                <span>Preço</span>
                 <span>Sinal</span>
               </div>
               <article
@@ -1173,7 +1226,7 @@ onMounted(loadDashboard);
             </div>
             <div class="pager">
               <button type="button" @click="changePage('parts', -1)">Anterior</button>
-              <button type="button" @click="changePage('parts', 1)">Proxima</button>
+              <button type="button" @click="changePage('parts', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1181,18 +1234,18 @@ onMounted(loadDashboard);
         <section v-if="activeTab === 'orders'" class="screen-stack">
           <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
             <div class="section-heading">
-              <h2>Criar ordem de servico</h2>
+              <h2>Criar ordem de serviço</h2>
               <span>Entrada do carro na oficina</span>
             </div>
             <form class="form-grid compact" @submit.prevent="createOrder">
               <input v-model="forms.order.customerDocument" placeholder="CPF/CNPJ do cliente" required />
               <select v-model="forms.order.vehicleId" required>
-                <option value="">Selecione o veiculo</option>
+                <option value="">Selecione o veículo</option>
                 <option v-for="vehicle in data.vehicles" :key="vehicle.id" :value="vehicle.id">
                   {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
                 </option>
               </select>
-              <textarea v-model="forms.order.diagnosticNotes" placeholder="Diagnostico inicial" required></textarea>
+              <textarea v-model="forms.order.diagnosticNotes" placeholder="Diagnóstico inicial" required></textarea>
               <button class="primary-button" type="submit" :disabled="saving">
                 <Plus :size="18" />
                 <span>Criar ordem</span>
@@ -1202,8 +1255,8 @@ onMounted(loadDashboard);
 
           <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
             <div class="section-heading">
-              <h2>Operacoes da ordem</h2>
-              <span>Status, orcamento, pecas e servicos</span>
+              <h2>Operações da ordem</h2>
+              <span>Status, orçamento, peças e serviços</span>
             </div>
             <form class="form-grid" @submit.prevent="updateOrderStatus">
               <select v-model="forms.orderAction.serviceOrderId" required>
@@ -1217,33 +1270,33 @@ onMounted(loadDashboard);
               </select>
               <button class="primary-button" type="submit" :disabled="saving">Atualizar status</button>
               <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="generateBudget">
-                Gerar orcamento
+                Gerar orçamento
               </button>
               <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="approveBudget">
-                Aprovar orcamento
+                Aprovar orçamento
               </button>
             </form>
             <form class="form-grid compact" @submit.prevent="addServiceToOrder">
               <select v-model="forms.orderAction.serviceId" required>
-                <option value="">Servico</option>
+                <option value="">Serviço</option>
                 <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}</option>
               </select>
               <input v-model.number="forms.orderAction.serviceQuantity" type="number" min="1" placeholder="Qtd." required />
-              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar servico</button>
+              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar serviço</button>
             </form>
             <form class="form-grid compact" @submit.prevent="addPartToOrder">
               <select v-model="forms.orderAction.partId" required>
-                <option value="">Peca</option>
+                <option value="">Peça</option>
                 <option v-for="part in data.parts" :key="part.id" :value="part.id">{{ part.name }}</option>
               </select>
               <input v-model.number="forms.orderAction.partQuantity" type="number" min="1" placeholder="Qtd." required />
-              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar peca</button>
+              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar peça</button>
             </form>
           </section>
 
           <section class="section-block">
             <div class="section-heading">
-              <h2>Ordens de servico</h2>
+              <h2>Ordens de serviço</h2>
               <span>Status atual dos carros</span>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
@@ -1271,8 +1324,8 @@ onMounted(loadDashboard);
                 <span class="badge">{{ order.status }}</span>
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
                 <span>
-                  {{ order.services?.length || 0 }} servicos
-                  <small>{{ order.parts?.length || 0 }} pecas</small>
+                  {{ order.services?.length || 0 }} serviços
+                  <small>{{ order.parts?.length || 0 }} peças</small>
                 </span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
@@ -1280,7 +1333,7 @@ onMounted(loadDashboard);
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="pager">
               <button type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
-              <button type="button" @click="changePage('serviceOrders', 1)">Proxima</button>
+              <button type="button" @click="changePage('serviceOrders', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1288,31 +1341,31 @@ onMounted(loadDashboard);
         <section v-if="activeTab === 'services'" class="screen-stack">
           <section class="section-block">
             <div class="section-heading">
-              <h2>Cadastro de servicos</h2>
-              <span>Catalogo da oficina</span>
+              <h2>Cadastro de serviços</h2>
+              <span>Catálogo da oficina</span>
             </div>
             <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
               <input v-model="forms.service.name" placeholder="Nome" required />
-              <input v-model.number="forms.service.basePrice" type="number" min="0" step="0.01" placeholder="Preco base" required />
+              <input v-model.number="forms.service.basePrice" type="number" min="0" step="0.01" placeholder="Preço base" required />
               <input v-model.number="forms.service.estimatedTimeInMinutes" type="number" min="1" placeholder="Tempo em minutos" required />
-              <textarea v-model="forms.service.description" placeholder="Descricao" required></textarea>
+              <textarea v-model="forms.service.description" placeholder="Descrição" required></textarea>
               <button class="primary-button" type="submit" :disabled="saving">
                 <Plus :size="18" />
-                <span>Cadastrar servico</span>
+                <span>Cadastrar serviço</span>
               </button>
             </form>
           </section>
 
           <section class="section-block">
             <div class="section-heading">
-              <h2>Servicos cadastrados</h2>
-              <span>Pagina {{ pagination.services.page + 1 }}</span>
+              <h2>Serviços cadastrados</h2>
+              <span>Página {{ pagination.services.page + 1 }}</span>
             </div>
             <div class="data-table">
               <div class="data-table-header services-grid">
-                <span>Servico</span>
+                <span>Serviço</span>
                 <span>Prazo previsto</span>
-                <span>Preco base</span>
+                <span>Preço base</span>
               </div>
               <article
                 v-for="service in data.services"
@@ -1326,7 +1379,7 @@ onMounted(loadDashboard);
             </div>
             <div class="pager">
               <button type="button" @click="changePage('services', -1)">Anterior</button>
-              <button type="button" @click="changePage('services', 1)">Proxima</button>
+              <button type="button" @click="changePage('services', 1)">Próxima</button>
             </div>
           </section>
         </section>

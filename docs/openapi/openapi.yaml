@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: AutoCare Hub API
     version: 1.0.0
-    description: API para gerenciamento de clientes, veiculos, servicos, pecas, ordens de servico, orcamentos, aprovacoes e acompanhamento de status de uma oficina mecanica.
+    description: API para gerenciamento de clientes, veiculos, serviços, pecas, ordens de serviço, orcamentos, aprovacoes e acompanhamento de status de uma oficina mecanica.
 servers:
     - url: http://localhost:8080
       description: Ambiente local
@@ -16,7 +16,7 @@ tags:
     - name: Vehicles
       description: Cadastro e manutencao de veiculos
     - name: Workshop Services
-      description: Cadastro e manutencao dos servicos oferecidos pela oficina
+      description: Cadastro e manutencao dos serviços oferecidos pela oficina
     - name: Parts
       description: Cadastro, manutencao e controle de estoque de pecas e insumos
     - name: Service Orders
@@ -320,7 +320,7 @@ paths:
         get:
             tags:
                 - Workshop Services
-            summary: Lista servicos da oficina
+            summary: Lista serviços da oficina
             operationId: listWorkshopServices
             parameters:
                 - $ref: "#/components/parameters/PageParam"

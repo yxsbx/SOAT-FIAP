@@ -1,11 +1,51 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import DashboardView from '@/views/DashboardView.vue';
+import PreviewView from '@/views/PreviewView.vue';
+import DemoView from '@/views/DemoView.vue';
+import PersonaView from '@/views/PersonaView.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/preview', name: 'preview', component: PreviewView, meta: { public: true } },
+    { path: '/demo', name: 'demo', component: DemoView, meta: { public: true } },
+    {
+      path: '/oficina/admin',
+      name: 'workshop-admin-view',
+      component: PersonaView,
+      props: { persona: 'workshopAdmin' },
+      meta: { public: true },
+    },
+    {
+      path: '/oficina/usuario',
+      name: 'employee-view',
+      component: PersonaView,
+      props: { persona: 'employee' },
+      meta: { public: true },
+    },
+    {
+      path: '/master',
+      name: 'master-view',
+      component: PersonaView,
+      props: { persona: 'master' },
+      meta: { public: true },
+    },
+    {
+      path: '/loja-pecas',
+      name: 'parts-store-view',
+      component: PersonaView,
+      props: { persona: 'partsStore' },
+      meta: { public: true },
+    },
+    {
+      path: '/cliente',
+      name: 'customer-view',
+      component: PersonaView,
+      props: { persona: 'customer' },
+      meta: { public: true },
+    },
     { path: '/login', name: 'login', component: LoginView, meta: { public: true } },
     { path: '/', name: 'dashboard', component: DashboardView },
     { path: '/:pathMatch(.*)*', redirect: '/' },

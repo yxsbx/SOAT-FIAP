@@ -1,6 +1,6 @@
 # AutoCare Hub API
 
-API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, servicos de oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
+API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, serviços de oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
 
 ## Objetivo Academico
 
@@ -232,8 +232,7 @@ Cliente: cliente@autocarehub.com / autocare123
 ```
 
 A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, pecas em estoque,
-pecas abaixo do minimo, servicos da oficina e ordens de servico com notas de diagnostico em
-diferentes status.
+pecas abaixo do minimo, serviços da oficina e ordens de servico com notas de diagnóstico em diferentes status.
 
 ## Principais Endpoints
 
@@ -258,7 +257,7 @@ Veiculos:
 - `DELETE /api/v1/vehicles/{vehicleId}`
 - `GET /api/v1/customers/{customerId}/vehicles`
 
-Servicos da oficina:
+serviços da oficina:
 
 - `GET /api/v1/workshop-services`
 - `POST /api/v1/workshop-services`
@@ -301,7 +300,7 @@ Essa abordagem mantem controllers, DTOs gerados, repositories Spring Data e enti
 
 ## Justificativa do PostgreSQL
 
-PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, servicos e pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
+PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, serviços e pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
 
 O uso de PostgreSQL tambem combina bem com Flyway, JPA e execucao via Docker Compose.
 

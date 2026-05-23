@@ -43,6 +43,8 @@ public class SecurityConfig {
                         "/swagger-ui.html",
                         "/openapi.yaml")
                     .permitAll()
+                    .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/demo-leads")
+                    .permitAll()
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET,
                         "/api/v1/customers/*/service-orders",
@@ -64,6 +66,8 @@ public class SecurityConfig {
                         "/api/v1/service-orders",
                         "/api/v1/service-orders/metrics/average-execution-time")
                     .hasAnyRole("ADMIN", "EMPLOYEE")
+                    .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/demo-leads")
+                    .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.POST,
                         "/api/v1/customers",
@@ -72,8 +76,7 @@ public class SecurityConfig {
                         "/api/v1/parts")
                     .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
-                        org.springframework.http.HttpMethod.POST,
-                        "/api/v1/service-orders")
+                        org.springframework.http.HttpMethod.POST, "/api/v1/service-orders")
                     .hasAnyRole("ADMIN", "EMPLOYEE")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.PUT,

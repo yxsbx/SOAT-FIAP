@@ -25,7 +25,7 @@ Contexto responsavel pelo ciclo de vida da ordem de servico.
 ### MVP
 
 - Criar ordem de servico.
-- Adicionar servicos.
+- Adicionar serviços.
 - Adicionar pecas.
 - Gerar orcamento.
 - Aprovar orcamento.
@@ -61,17 +61,17 @@ Contexto responsavel por pecas, insumos e estoque.
 
 ## Service Catalog Management
 
-Contexto responsavel pelo catalogo de servicos oferecidos pela oficina.
+Contexto responsavel pelo catalogo de serviços oferecidos pela oficina.
 
 ### MVP
 
-- Criar, atualizar, consultar, listar e desativar servicos da oficina.
+- Criar, atualizar, consultar, listar e desativar serviços da oficina.
 - Manter preco base e tempo estimado.
 
 ### Fora do MVP
 
 - Precificacao dinamica.
-- Pacotes de servicos.
+- Pacotes de serviços.
 - Promocoes.
 - Variacao de preco por modelo de veiculo.
 

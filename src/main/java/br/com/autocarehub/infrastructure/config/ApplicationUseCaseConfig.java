@@ -1,6 +1,7 @@
 package br.com.autocarehub.infrastructure.config;
 
 import br.com.autocarehub.application.repository.CustomerRepository;
+import br.com.autocarehub.application.repository.DemoLeadRepository;
 import br.com.autocarehub.application.repository.PartRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.application.repository.VehicleRepository;
@@ -11,6 +12,8 @@ import br.com.autocarehub.application.usecase.customer.DeleteCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.FindCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
 import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
+import br.com.autocarehub.application.usecase.demo.ListDemoLeadsUseCase;
+import br.com.autocarehub.application.usecase.demo.RegisterDemoLeadUseCase;
 import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
 import br.com.autocarehub.application.usecase.part.DeletePartUseCase;
 import br.com.autocarehub.application.usecase.part.FindPartUseCase;
@@ -49,6 +52,16 @@ public class ApplicationUseCaseConfig {
   @Bean
   LoginUseCase loginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
     return new LoginUseCase(authenticationManager, jwtService);
+  }
+
+  @Bean
+  RegisterDemoLeadUseCase registerDemoLeadUseCase(DemoLeadRepository repository) {
+    return new RegisterDemoLeadUseCase(repository);
+  }
+
+  @Bean
+  ListDemoLeadsUseCase listDemoLeadsUseCase(DemoLeadRepository repository) {
+    return new ListDemoLeadsUseCase(repository);
   }
 
   @Bean

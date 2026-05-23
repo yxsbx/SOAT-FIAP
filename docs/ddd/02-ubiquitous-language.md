@@ -32,7 +32,7 @@ Descricao inicial do problema informado ou observado no veiculo. No MVP, a ordem
 
 ## Orcamento
 
-Valor calculado a partir dos servicos e pecas associados a uma ordem de servico. No MVP, o orcamento so pode ser gerado quando ha pelo menos um servico ou uma peca na ordem.
+Valor calculado a partir dos serviços e pecas associados a uma ordem de servico. No MVP, o orcamento so pode ser gerado quando ha pelo menos um servico ou uma peca na ordem.
 
 ## Aprovacao
 
@@ -40,7 +40,7 @@ Confirmacao do cliente ou usuario autorizado para aceitar o orcamento. No MVP, a
 
 ## Execucao
 
-Momento em que a oficina inicia a realizacao dos servicos aprovados. No MVP, a execucao corresponde ao status `IN_PROGRESS`.
+Momento em que a oficina inicia a realizacao dos serviços aprovados. No MVP, a execucao corresponde ao status `IN_PROGRESS`.
 
 ## Entrega
 

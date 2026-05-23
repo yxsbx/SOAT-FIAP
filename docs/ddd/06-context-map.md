@@ -25,7 +25,7 @@ No MVP, essa relacao aparece quando uma ordem de servico e criada. O caso de uso
 
 ## Service Catalog Management -> Service Order Management
 
-Service Order Management depende do catalogo de servicos para adicionar servicos existentes a uma ordem de servico.
+Service Order Management depende do catálogo de serviços para adicionar serviços existentes a uma ordem de servico.
 
 No MVP, ao adicionar um servico a uma ordem, o sistema usa dados do servico cadastrado, como nome e preco base, para compor os itens da ordem.
 

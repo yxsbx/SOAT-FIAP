@@ -44,7 +44,7 @@ Relatorio de vulnerabilidades:
 
 O AutoCare Hub API e um MVP academico para gerenciamento de uma oficina mecanica. A aplicacao oferece uma API REST para cadastro e consulta de clientes, veiculos, servicos, pecas, estoque e ordens de servico.
 
-O fluxo principal do MVP permite registrar uma ordem de servico, associar servicos e pecas, gerar um orcamento, aprovar o orcamento e acompanhar a evolucao do status ate a entrega.
+O fluxo principal do MVP permite registrar uma ordem de servico, associar serviços e pecas, gerar um orcamento, aprovar o orcamento e acompanhar a evolucao do status até a entrega.
 
 O projeto tambem demonstra praticas de arquitetura em camadas, DDD, contrato OpenAPI First, autenticacao com JWT, persistencia relacional, migrations com Flyway, testes automatizados, Docker e analise de vulnerabilidades.
 

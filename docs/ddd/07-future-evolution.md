@@ -91,7 +91,7 @@ Possiveis capacidades:
 
 - Oferecer lava-jato como servico parceiro.
 - Integrar funilaria, pintura, estetica automotiva e guincho.
-- Combinar servicos em pacotes.
+- Combinar serviços em pacotes.
 - Gerenciar repasse financeiro entre parceiros.
 
-No MVP, o catalogo de servicos pertence somente a oficina e nao ha integracao externa.
+No MVP, o catalogo de serviços pertence somente a oficina e nao ha integracao externa.

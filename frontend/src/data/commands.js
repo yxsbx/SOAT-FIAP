@@ -30,7 +30,7 @@ export const commandGroups = [
       {
         label: 'Parar containers',
         command: 'docker compose down',
-        detail: 'Para a aplicacao e o PostgreSQL.',
+        detail: 'Para a aplicação e o PostgreSQL.',
       },
       {
         label: 'Limpar volume',
@@ -45,17 +45,17 @@ export const commandGroups = [
       {
         label: 'Testes backend',
         command: 'mvn test',
-        detail: 'Executa a suite Java com H2 em memoria.',
+        detail: 'Executa a suíte Java com H2 em memória.',
       },
       {
         label: 'Build frontend',
         command: 'cd frontend && npm run build',
-        detail: 'Gera os assets de producao do Vue.',
+        detail: 'Gera os assets de produção do Vue.',
       },
       {
         label: 'Vulnerabilidades',
         command: 'mvn dependency-check:check',
-        detail: 'Gera relatorios em target/dependency-check.',
+        detail: 'Gera relatórios em target/dependency-check.',
       },
     ],
   },

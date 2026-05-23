@@ -52,6 +52,13 @@ export function login(username, password) {
   });
 }
 
+export function createDemoLead(payload) {
+  return apiRequest('/api/v1/demo-leads', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 export const resources = {
   customers: (params) => apiRequest(`/api/v1/customers${toQueryString(params)}`),
   vehicles: (params) => apiRequest(`/api/v1/vehicles${toQueryString(params)}`),

@@ -7,7 +7,7 @@ Este documento descreve os fluxos principais em formato textual. Ele separa coma
 ### Atores
 
 - `ADMIN`: pode executar todos os comandos.
-- `EMPLOYEE`: pode gerenciar clientes, veiculos, servicos, pecas e ordens de servico.
+- `EMPLOYEE`: pode gerenciar clientes, veiculos, serviços, pecas e ordens de servico.
 - `CUSTOMER`: pode consultar suas proprias ordens e aprovar seu proprio orcamento.
 
 ### Comandos
@@ -91,14 +91,14 @@ Este documento descreve os fluxos principais em formato textual. Ele separa coma
 - Nao e permitido reduzir estoque acima da quantidade disponivel.
 - Preco unitario de peca deve ser maior que zero.
 
-## Fluxo de Catalogo de Servicos
+## Fluxo de Catálogo de Serviços
 
 ### Comandos
 
 - Criar servico da oficina.
 - Atualizar servico da oficina.
 - Remover logicamente servico da oficina.
-- Consultar servicos da oficina.
+- Consultar serviços da oficina.
 
 ### Eventos
 
