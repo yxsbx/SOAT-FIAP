@@ -1044,6 +1044,168 @@ textarea:focus-visible {
   min-width: 0;
 }
 
+.order-flow-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 12px;
+}
+
+.order-flow-stats article {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  background: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.order-flow-stats strong {
+  color: #102a43;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.order-flow-stats span {
+  color: #506982;
+  font-weight: 900;
+}
+
+.order-stepper {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.order-stepper button,
+.scenario-grid button {
+  min-width: 0;
+  border: 1px solid #d8e7f3;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.order-stepper button {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 8px 10px;
+  color: #506982;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-align: left;
+}
+
+.order-stepper button span {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: #0f5f8a;
+  background: #e0f2fe;
+}
+
+.order-stepper button.active,
+.order-stepper button.done,
+.scenario-grid button.active {
+  border-color: rgba(14, 165, 233, 0.45);
+  color: #0f2f4a;
+  background: #f0f9ff;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.scenario-grid button {
+  display: grid;
+  gap: 8px;
+  min-height: 112px;
+  border-radius: 16px;
+  padding: 16px;
+  text-align: left;
+}
+
+.scenario-grid strong,
+.selected-record strong,
+.order-review strong {
+  color: #102a43;
+}
+
+.scenario-grid span,
+.selected-record span,
+.selected-record small,
+.order-review span {
+  color: #506982;
+  font-weight: 800;
+}
+
+.wizard-panel {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+
+.wizard-panel > select,
+.wizard-panel > textarea {
+  width: 100%;
+  border: 1px solid #cbdcec;
+  border-radius: 14px;
+  color: #102a43;
+  background: #ffffff;
+}
+
+.wizard-panel > select {
+  min-height: 42px;
+  padding: 0 12px;
+}
+
+.wizard-panel > textarea {
+  min-height: 120px;
+  padding: 12px;
+  resize: vertical;
+}
+
+.selected-record,
+.order-review,
+.check-row {
+  min-width: 0;
+  border: 1px solid #d8e7f3;
+  border-radius: 16px;
+  padding: 14px;
+  background: #ffffff;
+}
+
+.selected-record,
+.order-review {
+  display: grid;
+  gap: 5px;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #17344f;
+  font-weight: 900;
+}
+
+.wizard-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
 .home-toolbar {
   display: flex;
   align-items: center;
@@ -3135,6 +3297,8 @@ textarea:focus-visible {
   .command-groups,
   .status-grid,
   .run-guide,
+  .order-stepper,
+  .scenario-grid,
   .form-grid,
   .form-grid.compact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3399,6 +3563,8 @@ textarea:focus-visible {
   .command-groups,
   .status-grid,
   .run-guide,
+  .order-stepper,
+  .scenario-grid,
   .form-grid,
   .form-grid.compact {
     grid-template-columns: 1fr;

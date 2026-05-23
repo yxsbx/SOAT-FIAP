@@ -54,7 +54,7 @@ public class SecurityConfig {
                         org.springframework.http.HttpMethod.GET,
                         "/api/v1/customers",
                         "/api/v1/customers/*")
-                    .hasAuthority("ROLE_ADMIN")
+                    .hasAnyRole("ADMIN", "EMPLOYEE")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.GET,
                         "/api/v1/vehicles",
@@ -70,11 +70,14 @@ public class SecurityConfig {
                     .hasAuthority("ROLE_ADMIN")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.POST,
-                        "/api/v1/customers",
-                        "/api/v1/vehicles",
                         "/api/v1/workshop-services",
                         "/api/v1/parts")
                     .hasAuthority("ROLE_ADMIN")
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.POST,
+                        "/api/v1/customers",
+                        "/api/v1/vehicles")
+                    .hasAnyRole("ADMIN", "EMPLOYEE")
                     .requestMatchers(
                         org.springframework.http.HttpMethod.POST, "/api/v1/service-orders")
                     .hasAnyRole("ADMIN", "EMPLOYEE")

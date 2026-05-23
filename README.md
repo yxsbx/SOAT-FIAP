@@ -226,13 +226,16 @@ Use o campo `accessToken` retornado como Bearer token nas demais chamadas.
 O Flyway tambem carrega uma massa de dados demonstrativa para uso no frontend:
 
 ```text
-Administrador: admin@autocarehub.com / autocare123
-Funcionario: funcionario@autocarehub.com / autocare123
-Cliente: cliente@autocarehub.com / autocare123
+Admin Master: master@autocarehub.com / autocare123
+Admin de oficina: oficina.admin@autocarehub.com / autocare123
+Admin de loja de pecas: loja.admin@autocarehub.com / autocare123
+Funcionario de oficina: oficina.funcionario@autocarehub.com / autocare123
+Funcionario de loja de pecas: loja.funcionario@autocarehub.com / autocare123
+Cliente final: cliente@autocarehub.com / autocare123
 ```
 
 A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, pecas em estoque,
-pecas abaixo do minimo, serviços da oficina e ordens de servico com notas de diagnóstico em diferentes status.
+pecas abaixo do minimo, serviços da oficina e ordens de servico com historico de uso em diferentes status.
 
 ## Principais Endpoints
 

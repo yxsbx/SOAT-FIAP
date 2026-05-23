@@ -58,13 +58,40 @@ const homePreferences = reactive({
 const statuses = ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'];
 
 const statusLabels = {
-  RECEIVED: 'Recebido',
-  IN_DIAGNOSIS: 'Diagnóstico',
-  WAITING_APPROVAL: 'Aprovação',
+  RECEIVED: 'Orçamento pendente',
+  IN_DIAGNOSIS: 'Em diagnóstico',
+  WAITING_APPROVAL: 'Orçamento enviado',
   IN_PROGRESS: 'Em execução',
-  FINISHED: 'Finalizado',
+  FINISHED: 'Pronto para retirada',
   DELIVERED: 'Entregue',
 };
+
+const orderScenarios = [
+  {
+    id: 'existing-customer-vehicle',
+    label: 'Cliente e veículo cadastrados',
+    text: 'Selecione cliente e veículo já existentes.',
+  },
+  {
+    id: 'new-customer',
+    label: 'Novo cliente',
+    text: 'Cadastre cliente, veículo e abra a ordem.',
+  },
+  {
+    id: 'existing-customer-new-vehicle',
+    label: 'Cliente existente, veículo novo',
+    text: 'Confirme o cliente e cadastre o veículo.',
+  },
+];
+
+const orderSteps = [
+  'Cenário',
+  'Cliente',
+  'Veículo',
+  'Defeitos',
+  'Valores',
+  'Finalização',
+];
 
 const data = reactive({
   customers: [],
@@ -128,6 +155,41 @@ const forms = reactive({
     customerDocument: '',
     vehicleId: '',
     diagnosticNotes: '',
+  },
+  orderWizard: {
+    scenario: 'existing-customer-vehicle',
+    step: 0,
+    customerId: '',
+    vehicleId: '',
+    defects: '',
+    initialValueNotes: '',
+    serviceId: '',
+    serviceQuantity: 1,
+    partId: '',
+    partQuantity: 1,
+    contactRequested: false,
+    customer: {
+      name: '',
+      document: '',
+      phone: '',
+      email: '',
+      address: {
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: 'SP',
+        zipCode: '',
+      },
+    },
+    vehicle: {
+      plate: '',
+      brand: '',
+      model: '',
+      year: new Date().getFullYear(),
+      mileage: 0,
+    },
   },
   stock: {
     partId: '',
@@ -260,6 +322,66 @@ const userInitials = computed(() => {
 const orderCountByStatus = (status) =>
   data.serviceOrders.filter((order) => order.status === status).length;
 
+const ordersWaitingContact = computed(() =>
+  data.serviceOrders.filter((order) => normalize(order.diagnosticNotes).includes('contato')).length,
+);
+
+const orderFlowStats = computed(() => [
+  {
+    label: 'Clientes ativos',
+    value: data.customers.length,
+  },
+  {
+    label: 'Veículos em andamento',
+    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
+      .length,
+  },
+  {
+    label: 'Clientes aguardando envio de orçamento',
+    value: orderCountByStatus('RECEIVED'),
+  },
+  {
+    label: 'Clientes que querem ser contatados',
+    value: ordersWaitingContact.value,
+  },
+]);
+
+const selectedOrderCustomer = computed(() =>
+  data.customers.find((customer) => customer.id === forms.orderWizard.customerId),
+);
+
+const orderCustomerVehicles = computed(() =>
+  data.vehicles.filter((vehicle) => vehicle.customerId === forms.orderWizard.customerId),
+);
+
+const selectedOrderVehicle = computed(() =>
+  data.vehicles.find((vehicle) => vehicle.id === forms.orderWizard.vehicleId),
+);
+
+const selectedOrderService = computed(() =>
+  data.services.find((service) => service.id === forms.orderWizard.serviceId),
+);
+
+const selectedOrderPart = computed(() =>
+  data.parts.find((part) => part.id === forms.orderWizard.partId),
+);
+
+const estimatedOrderTotal = computed(() => {
+  const serviceTotal = selectedOrderService.value
+    ? Number(selectedOrderService.value.basePrice || 0) * Number(forms.orderWizard.serviceQuantity || 0)
+    : 0;
+  const partTotal = selectedOrderPart.value
+    ? Number(selectedOrderPart.value.unitPrice || 0) * Number(forms.orderWizard.partQuantity || 0)
+    : 0;
+  return serviceTotal + partTotal;
+});
+
+const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
+
+const needsNewVehicle = computed(() =>
+  ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
+);
+
 const homeWidgetDefinitions = computed(() => [
   {
     id: 'orders-progress',
@@ -325,20 +447,17 @@ const homeWidgetDefinitions = computed(() => [
   },
 ]);
 
-const visibleHomeWidgetIds = computed(() => {
-  const source = homePreferences.userWidgets.length
-    ? homePreferences.userWidgets
-    : homePreferences.globalWidgets;
-  return new Set(source);
-});
+const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets));
 
-const homeWidgets = computed(() =>
+const availableHomeWidgetDefinitions = computed(() =>
   homeWidgetDefinitions.value.filter(
     (widget) =>
-      visibleHomeWidgetIds.value.has(widget.id) &&
-      widget.roles.includes(auth.role) &&
-      (!widget.tabId || availableTabIds.value.has(widget.tabId)),
+      widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
   ),
+);
+
+const homeWidgets = computed(() =>
+  availableHomeWidgetDefinitions.value.filter((widget) => visibleHomeWidgetIds.value.has(widget.id)),
 );
 
 const vehicleStatusWidgets = computed(() => [
@@ -501,7 +620,7 @@ function loadHomePreferences() {
 
   homePreferences.globalWidgets = [...(globalConfig.widgets || defaultHomeWidgetIds)];
   homePreferences.showAlertsOnHome = Boolean(globalConfig.showAlertsOnHome);
-  homePreferences.userWidgets = [...(userConfig.widgets || homePreferences.globalWidgets)];
+  homePreferences.userWidgets = [...(userConfig.widgets ?? homePreferences.globalWidgets)];
 }
 
 function saveUserHomePreferences() {
@@ -522,7 +641,7 @@ function toggleHomeWidget(widgetId, scope = 'user') {
   const target = scope === 'global' ? homePreferences.globalWidgets : homePreferences.userWidgets;
   const index = target.indexOf(widgetId);
 
-  if (index >= 0 && target.length > 1) {
+  if (index >= 0) {
     target.splice(index, 1);
   } else if (index < 0) {
     target.push(widgetId);
@@ -564,7 +683,7 @@ async function loadDashboard() {
     }
 
     const requests = await Promise.allSettled([
-      auth.role === 'ADMIN' ? resources.customers(pagination.customers) : Promise.resolve(null),
+      auth.role !== 'CUSTOMER' ? resources.customers(pagination.customers) : Promise.resolve(null),
       resources.vehicles(pagination.vehicles),
       resources.services(pagination.services),
       resources.parts(pagination.parts),
@@ -613,6 +732,136 @@ async function runAction(action, message) {
     await loadDashboard();
   } catch (err) {
     error.value = err.message || 'Não foi possível concluir a operação.';
+  } finally {
+    saving.value = false;
+  }
+}
+
+function resetOrderWizard() {
+  Object.assign(forms.orderWizard, {
+    scenario: 'existing-customer-vehicle',
+    step: 0,
+    customerId: '',
+    vehicleId: '',
+    defects: '',
+    initialValueNotes: '',
+    serviceId: '',
+    serviceQuantity: 1,
+    partId: '',
+    partQuantity: 1,
+    contactRequested: false,
+    customer: {
+      name: '',
+      document: '',
+      phone: '',
+      email: '',
+      address: {
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: 'SP',
+        zipCode: '',
+      },
+    },
+    vehicle: {
+      plate: '',
+      brand: '',
+      model: '',
+      year: new Date().getFullYear(),
+      mileage: 0,
+    },
+  });
+}
+
+function selectOrderScenario(scenario) {
+  forms.orderWizard.scenario = scenario;
+  forms.orderWizard.customerId = '';
+  forms.orderWizard.vehicleId = '';
+  forms.orderWizard.step = 1;
+}
+
+function nextOrderStep() {
+  forms.orderWizard.step = Math.min(orderSteps.length - 1, forms.orderWizard.step + 1);
+}
+
+function previousOrderStep() {
+  forms.orderWizard.step = Math.max(0, forms.orderWizard.step - 1);
+}
+
+function buildOrderNotes() {
+  const notes = [`Defeitos percebidos: ${forms.orderWizard.defects.trim()}`];
+
+  if (forms.orderWizard.initialValueNotes.trim()) {
+    notes.push(`Valores iniciais previstos: ${forms.orderWizard.initialValueNotes.trim()}`);
+  }
+
+  if (estimatedOrderTotal.value > 0) {
+    notes.push(`Estimativa inicial cadastrada: R$ ${money(estimatedOrderTotal.value)}`);
+  }
+
+  if (forms.orderWizard.contactRequested) {
+    notes.push('Cliente solicitou contato antes do envio do orçamento.');
+  }
+
+  return notes.join('\n');
+}
+
+async function createOrderFromWizard(createBudgetNow) {
+  saving.value = true;
+  resetMessage();
+
+  try {
+    let customer = selectedOrderCustomer.value;
+    if (isNewCustomerScenario.value) {
+      customer = await resources.createCustomer(forms.orderWizard.customer);
+    }
+
+    let vehicle = selectedOrderVehicle.value;
+    if (needsNewVehicle.value) {
+      vehicle = await resources.createVehicle({
+        ...forms.orderWizard.vehicle,
+        customerId: customer.id,
+        year: Number(forms.orderWizard.vehicle.year),
+        mileage: Number(forms.orderWizard.vehicle.mileage),
+      });
+    }
+
+    const order = await resources.createServiceOrder({
+      customerDocument: customer.document,
+      vehicleId: vehicle.id,
+      diagnosticNotes: buildOrderNotes(),
+    });
+
+    if (forms.orderWizard.serviceId) {
+      await resources.addServiceToOrder(order.id, {
+        serviceId: forms.orderWizard.serviceId,
+        quantity: Number(forms.orderWizard.serviceQuantity),
+      });
+    }
+
+    if (forms.orderWizard.partId) {
+      await resources.addPartToOrder(order.id, {
+        partId: forms.orderWizard.partId,
+        quantity: Number(forms.orderWizard.partQuantity),
+      });
+    }
+
+    forms.orderAction.serviceOrderId = order.id;
+    if (createBudgetNow) {
+      await resources.generateBudget(order.id);
+      pagination.serviceOrders.status = 'WAITING_APPROVAL';
+      success.value = 'Ordem salva e orçamento gerado.';
+    } else {
+      pagination.serviceOrders.status = 'RECEIVED';
+      success.value = 'Ordem salva como orçamento pendente.';
+    }
+
+    resetOrderWizard();
+    await loadDashboard();
+  } catch (err) {
+    error.value = err.message || 'Não foi possível criar a ordem.';
   } finally {
     saving.value = false;
   }
@@ -920,7 +1169,7 @@ onMounted(() => {
             <div>
               <strong>Meus widgets</strong>
               <div class="home-option-grid">
-                <label v-for="widget in homeWidgetDefinitions" :key="widget.id">
+                <label v-for="widget in availableHomeWidgetDefinitions" :key="widget.id">
                   <input
                     type="checkbox"
                     :checked="homePreferences.userWidgets.includes(widget.id)"
@@ -941,7 +1190,7 @@ onMounted(() => {
                 <span>Exibir avisos críticos de estoque para a equipe</span>
               </label>
               <div class="home-option-grid">
-                <label v-for="widget in homeWidgetDefinitions" :key="`global-${widget.id}`">
+                <label v-for="widget in availableHomeWidgetDefinitions" :key="`global-${widget.id}`">
                   <input
                     type="checkbox"
                     :checked="homePreferences.globalWidgets.includes(widget.id)"
@@ -1223,37 +1472,181 @@ onMounted(() => {
         </section>
 
         <section v-if="activeTab === 'orders'" class="screen-stack">
-          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
-            <div class="section-heading">
-              <h2>Criar ordem de serviço</h2>
-              <span>Entrada do carro na oficina</span>
-            </div>
-            <form class="form-grid compact" @submit.prevent="createOrder">
-              <input v-model="forms.order.customerDocument" placeholder="CPF/CNPJ do cliente" required />
-              <select v-model="forms.order.vehicleId" required>
-                <option value="">Selecione o veículo</option>
-                <option v-for="vehicle in data.vehicles" :key="vehicle.id" :value="vehicle.id">
-                  {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
-                </option>
-              </select>
-              <textarea v-model="forms.order.diagnosticNotes" placeholder="Diagnóstico inicial" required></textarea>
-              <button class="primary-button" type="submit" :disabled="saving">
-                <Plus :size="18" />
-                <span>Criar ordem</span>
-              </button>
-            </form>
+          <section v-if="auth.role !== 'CUSTOMER'" class="order-flow-stats">
+            <article v-for="item in orderFlowStats" :key="item.label">
+              <strong>{{ item.value }}</strong>
+              <span>{{ item.label }}</span>
+            </article>
           </section>
 
           <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
             <div class="section-heading">
-              <h2>Operações da ordem</h2>
-              <span>Status, orçamento, peças e serviços</span>
+              <h2>Nova ordem de serviço</h2>
+              <span>{{ orderSteps[forms.orderWizard.step] }}</span>
+            </div>
+
+            <div class="order-stepper" aria-label="Etapas da ordem">
+              <button
+                v-for="(step, index) in orderSteps"
+                :key="step"
+                type="button"
+                :class="{ active: forms.orderWizard.step === index, done: forms.orderWizard.step > index }"
+                @click="forms.orderWizard.step = index"
+              >
+                <span>{{ index + 1 }}</span>
+                {{ step }}
+              </button>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 0" class="scenario-grid">
+              <button
+                v-for="scenario in orderScenarios"
+                :key="scenario.id"
+                type="button"
+                :class="{ active: forms.orderWizard.scenario === scenario.id }"
+                @click="selectOrderScenario(scenario.id)"
+              >
+                <strong>{{ scenario.label }}</strong>
+                <span>{{ scenario.text }}</span>
+              </button>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 1" class="wizard-panel">
+              <template v-if="isNewCustomerScenario">
+                <div class="form-grid">
+                  <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required />
+                  <input v-model="forms.orderWizard.customer.document" placeholder="CPF/CNPJ somente números" required />
+                  <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required />
+                  <input v-model="forms.orderWizard.customer.email" type="email" placeholder="E-mail" required />
+                  <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required />
+                  <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required />
+                  <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required />
+                  <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required />
+                  <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required />
+                  <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required />
+                  <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento" />
+                </div>
+              </template>
+              <template v-else>
+                <select v-model="forms.orderWizard.customerId" required>
+                  <option value="">Selecione o cliente</option>
+                  <option v-for="customer in data.customers" :key="customer.id" :value="customer.id">
+                    {{ customer.name }} - {{ customer.document }}
+                  </option>
+                </select>
+                <article v-if="selectedOrderCustomer" class="selected-record">
+                  <strong>{{ selectedOrderCustomer.name }}</strong>
+                  <span>{{ selectedOrderCustomer.email }} · {{ selectedOrderCustomer.phone }}</span>
+                  <small>{{ selectedOrderCustomer.document }}</small>
+                </article>
+              </template>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 2" class="wizard-panel">
+              <template v-if="needsNewVehicle">
+                <article v-if="selectedOrderCustomer" class="selected-record">
+                  <strong>{{ selectedOrderCustomer.name }}</strong>
+                  <span>Cliente confirmado para cadastro do veículo.</span>
+                </article>
+                <div class="form-grid compact">
+                  <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required />
+                  <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required />
+                  <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required />
+                  <input v-model.number="forms.orderWizard.vehicle.year" type="number" placeholder="Ano" required />
+                  <input v-model.number="forms.orderWizard.vehicle.mileage" type="number" placeholder="Km" required />
+                </div>
+              </template>
+              <template v-else>
+                <select v-model="forms.orderWizard.vehicleId" required>
+                  <option value="">Selecione o veículo</option>
+                  <option v-for="vehicle in orderCustomerVehicles" :key="vehicle.id" :value="vehicle.id">
+                    {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
+                  </option>
+                </select>
+                <article v-if="selectedOrderVehicle" class="selected-record">
+                  <strong>{{ selectedOrderVehicle.plate }}</strong>
+                  <span>{{ selectedOrderVehicle.brand }} {{ selectedOrderVehicle.model }}</span>
+                  <small>{{ selectedOrderVehicle.mileage }} km</small>
+                </article>
+                <p v-if="forms.orderWizard.customerId && !orderCustomerVehicles.length" class="empty-state">
+                  Este cliente ainda não possui veículos cadastrados. Volte e escolha o cenário de veículo novo.
+                </p>
+              </template>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 3" class="wizard-panel">
+              <textarea
+                v-model="forms.orderWizard.defects"
+                placeholder="Defeitos percebidos inicialmente, relatos do cliente, sintomas e observações da recepção"
+                required
+              ></textarea>
+              <label class="check-row">
+                <input v-model="forms.orderWizard.contactRequested" type="checkbox" />
+                <span>Cliente quer ser contatado antes do envio do orçamento</span>
+              </label>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 4" class="wizard-panel">
+              <div class="form-grid compact">
+                <select v-model="forms.orderWizard.serviceId">
+                  <option value="">Serviço inicial previsto</option>
+                  <option v-for="service in data.services" :key="service.id" :value="service.id">
+                    {{ service.name }} - R$ {{ money(service.basePrice) }}
+                  </option>
+                </select>
+                <input v-model.number="forms.orderWizard.serviceQuantity" type="number" min="1" placeholder="Qtd. serviço" />
+                <select v-model="forms.orderWizard.partId">
+                  <option value="">Peça inicial prevista</option>
+                  <option v-for="part in data.parts" :key="part.id" :value="part.id">
+                    {{ part.name }} - R$ {{ money(part.unitPrice) }}
+                  </option>
+                </select>
+                <input v-model.number="forms.orderWizard.partQuantity" type="number" min="1" placeholder="Qtd. peça" />
+                <textarea v-model="forms.orderWizard.initialValueNotes" placeholder="Observações de valores iniciais, se houver"></textarea>
+              </div>
+              <article class="selected-record">
+                <strong>R$ {{ money(estimatedOrderTotal) }}</strong>
+                <span>Estimativa inicial baseada nos itens selecionados.</span>
+              </article>
+            </div>
+
+            <div v-if="forms.orderWizard.step === 5" class="wizard-panel">
+              <article class="order-review">
+                <strong>Status ao salvar</strong>
+                <span>Sem orçamento agora: {{ statusLabels.RECEIVED }}.</span>
+                <span>Com orçamento agora: {{ statusLabels.WAITING_APPROVAL }}.</span>
+              </article>
+              <div class="wizard-actions">
+                <button class="secondary-button" type="button" :disabled="saving" @click="createOrderFromWizard(false)">
+                  Salvar como orçamento pendente
+                </button>
+                <button class="primary-button" type="button" :disabled="saving" @click="createOrderFromWizard(true)">
+                  <Plus :size="18" />
+                  <span>Salvar e criar orçamento agora</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="wizard-actions">
+              <button class="secondary-button" type="button" :disabled="forms.orderWizard.step === 0 || saving" @click="previousOrderStep">
+                Voltar
+              </button>
+              <button class="secondary-button" type="button" :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" @click="nextOrderStep">
+                Avançar
+              </button>
+            </div>
+          </section>
+
+          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
+            <div class="section-heading">
+              <h2>Orçamento e execução</h2>
+              <span>Criar agora ou depois</span>
             </div>
             <form class="form-grid" @submit.prevent="updateOrderStatus">
               <select v-model="forms.orderAction.serviceOrderId" required>
                 <option value="">Selecione a ordem</option>
                 <option v-for="order in data.serviceOrders" :key="order.id" :value="order.id">
-                  {{ order.status }} - {{ order.diagnosticNotes }}
+                  {{ statusLabels[order.status] || order.status }} - {{ order.diagnosticNotes }}
                 </option>
               </select>
               <select v-model="forms.orderAction.status">
@@ -1316,7 +1709,7 @@ onMounted(() => {
                 :key="order.id"
                 class="data-table-row orders-grid"
               >
-                <span class="badge">{{ order.status }}</span>
+                <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
                 <span>
                   {{ order.services?.length || 0 }} serviços
