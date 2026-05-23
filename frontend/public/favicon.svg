@@ -1,21 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="autocare-bg" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#064e9e" />
-      <stop offset="1" stop-color="#06b6d4" />
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="14" fill="url(#autocare-bg)" />
-  <path
-    d="M21.7 18.9c3.3-2.5 7.9-2.4 11 .3l-5.2 5.2 4.8 4.8 5.2-5.2c2.5 3.1 2.7 7.7.4 11.1-2.3 3.4-6.5 5-10.5 4l-9.1 9.1a4.5 4.5 0 0 1-6.4-6.4l9.1-9.1c-1.1-4 .5-8.4 3.9-10.8Z"
-    fill="#ffffff"
-  />
-  <path
-    d="M39.5 38.6h7.3l4.6 4.7v6.5H34.8v-6.5l4.7-4.7Z"
-    fill="#e0f7ff"
-  />
-  <path
-    d="M37.9 49.8a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Zm10.4 0a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Z"
-    fill="#064e9e"
-  />
+    <defs>
+        <linearGradient id="autocare-bg" x1="10" y1="8" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#064e9e"/>
+            <stop offset="1" stop-color="#06b6d4"/>
+        </linearGradient>
+    </defs>
+    <rect width="64" height="64" rx="14" fill="url(#autocare-bg)"/>
+    <path
+            d="M21.7 18.9c3.3-2.5 7.9-2.4 11 .3l-5.2 5.2 4.8 4.8 5.2-5.2c2.5 3.1 2.7 7.7.4 11.1-2.3 3.4-6.5 5-10.5 4l-9.1 9.1a4.5 4.5 0 0 1-6.4-6.4l9.1-9.1c-1.1-4 .5-8.4 3.9-10.8Z"
+            fill="#ffffff"
+    />
+    <path
+            d="M39.5 38.6h7.3l4.6 4.7v6.5H34.8v-6.5l4.7-4.7Z"
+            fill="#e0f7ff"
+    />
+    <path
+            d="M37.9 49.8a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Zm10.4 0a3.1 3.1 0 1 0 0-6.2 3.1 3.1 0 0 0 0 6.2Z"
+            fill="#064e9e"
+    />
 </svg>

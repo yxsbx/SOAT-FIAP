@@ -1,6 +1,6 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import {computed, onMounted, reactive, ref} from 'vue';
+import {useRouter} from 'vue-router';
 import {
   AlertTriangle,
   Car,
@@ -23,8 +23,8 @@ import {
   Wrench,
   X,
 } from 'lucide-vue-next';
-import { useAuthStore } from '@/stores/auth';
-import { resources } from '@/services/api';
+import {useAuthStore} from '@/stores/auth';
+import {resources} from '@/services/api';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -104,11 +104,11 @@ const data = reactive({
 });
 
 const pagination = reactive({
-  customers: { page: 0, size: 24, active: '' },
-  vehicles: { page: 0, size: 24, active: '' },
-  parts: { page: 0, size: 32, active: '', lowStock: '' },
-  serviceOrders: { page: 0, size: 32, status: '' },
-  services: { page: 0, size: 24, active: '' },
+  customers: {page: 0, size: 24, active: ''},
+  vehicles: {page: 0, size: 24, active: ''},
+  parts: {page: 0, size: 32, active: '', lowStock: ''},
+  serviceOrders: {page: 0, size: 32, status: ''},
+  services: {page: 0, size: 24, active: ''},
 });
 
 const forms = reactive({
@@ -308,22 +308,22 @@ const userInitials = computed(() => {
   const fallback = auth.user?.username || 'Usuario AutoCare';
   const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
   const parts = name
-    .replace(/[._-]+/g, ' ')
-    .split(' ')
-    .map((part) => part.trim())
-    .filter(Boolean);
+      .replace(/[._-]+/g, ' ')
+      .split(' ')
+      .map((part) => part.trim())
+      .filter(Boolean);
 
   return parts
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('');
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join('');
 });
 
 const orderCountByStatus = (status) =>
-  data.serviceOrders.filter((order) => order.status === status).length;
+    data.serviceOrders.filter((order) => order.status === status).length;
 
 const ordersWaitingContact = computed(() =>
-  data.serviceOrders.filter((order) => normalize(order.diagnosticNotes).includes('contato')).length,
+    data.serviceOrders.filter((order) => normalize(order.diagnosticNotes).includes('contato')).length,
 );
 
 const orderFlowStats = computed(() => [
@@ -334,7 +334,7 @@ const orderFlowStats = computed(() => [
   {
     label: 'Veículos em andamento',
     value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
-      .length,
+        .length,
   },
   {
     label: 'Clientes aguardando envio de orçamento',
@@ -347,39 +347,39 @@ const orderFlowStats = computed(() => [
 ]);
 
 const selectedOrderCustomer = computed(() =>
-  data.customers.find((customer) => customer.id === forms.orderWizard.customerId),
+    data.customers.find((customer) => customer.id === forms.orderWizard.customerId),
 );
 
 const orderCustomerVehicles = computed(() =>
-  data.vehicles.filter((vehicle) => vehicle.customerId === forms.orderWizard.customerId),
+    data.vehicles.filter((vehicle) => vehicle.customerId === forms.orderWizard.customerId),
 );
 
 const selectedOrderVehicle = computed(() =>
-  data.vehicles.find((vehicle) => vehicle.id === forms.orderWizard.vehicleId),
+    data.vehicles.find((vehicle) => vehicle.id === forms.orderWizard.vehicleId),
 );
 
 const selectedOrderService = computed(() =>
-  data.services.find((service) => service.id === forms.orderWizard.serviceId),
+    data.services.find((service) => service.id === forms.orderWizard.serviceId),
 );
 
 const selectedOrderPart = computed(() =>
-  data.parts.find((part) => part.id === forms.orderWizard.partId),
+    data.parts.find((part) => part.id === forms.orderWizard.partId),
 );
 
 const estimatedOrderTotal = computed(() => {
   const serviceTotal = selectedOrderService.value
-    ? Number(selectedOrderService.value.basePrice || 0) * Number(forms.orderWizard.serviceQuantity || 0)
-    : 0;
+      ? Number(selectedOrderService.value.basePrice || 0) * Number(forms.orderWizard.serviceQuantity || 0)
+      : 0;
   const partTotal = selectedOrderPart.value
-    ? Number(selectedOrderPart.value.unitPrice || 0) * Number(forms.orderWizard.partQuantity || 0)
-    : 0;
+      ? Number(selectedOrderPart.value.unitPrice || 0) * Number(forms.orderWizard.partQuantity || 0)
+      : 0;
   return serviceTotal + partTotal;
 });
 
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
-  ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
+    ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
 );
 
 const homeWidgetDefinitions = computed(() => [
@@ -387,7 +387,7 @@ const homeWidgetDefinitions = computed(() => [
     id: 'orders-progress',
     label: 'Ordens em andamento',
     value: data.serviceOrders.filter((order) =>
-      ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS'].includes(order.status),
+        ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS'].includes(order.status),
     ).length,
     icon: TrendingUp,
     tabId: 'orders',
@@ -413,7 +413,7 @@ const homeWidgetDefinitions = computed(() => [
     id: 'vehicles-in-service',
     label: 'Veículos em atendimento',
     value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
-      .length,
+        .length,
     icon: Car,
     tabId: 'vehicles',
     roles: ['ADMIN', 'EMPLOYEE'],
@@ -450,14 +450,14 @@ const homeWidgetDefinitions = computed(() => [
 const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets));
 
 const availableHomeWidgetDefinitions = computed(() =>
-  homeWidgetDefinitions.value.filter(
-    (widget) =>
-      widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
-  ),
+    homeWidgetDefinitions.value.filter(
+        (widget) =>
+            widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
+    ),
 );
 
 const homeWidgets = computed(() =>
-  availableHomeWidgetDefinitions.value.filter((widget) => visibleHomeWidgetIds.value.has(widget.id)),
+    availableHomeWidgetDefinitions.value.filter((widget) => visibleHomeWidgetIds.value.has(widget.id)),
 );
 
 const vehicleStatusWidgets = computed(() => [
@@ -546,19 +546,19 @@ const searchResults = computed(() => {
   ];
 
   return [...pageResults, ...entityResults]
-    .filter((item) => normalize(`${item.type} ${item.label} ${item.detail}`).includes(query))
-    .slice(0, 8);
+      .filter((item) => normalize(`${item.type} ${item.label} ${item.detail}`).includes(query))
+      .slice(0, 8);
 });
 
 const vehiclesWithCurrentStatus = computed(() =>
-  data.vehicles.map((vehicle) => {
-    const order = data.serviceOrders.find((item) => item.vehicleId === vehicle.id);
-    return {
-      ...vehicle,
-      currentStatus: order?.status || 'SEM_ORDEM',
-      diagnosticNotes: order?.diagnosticNotes || '',
-    };
-  }),
+    data.vehicles.map((vehicle) => {
+      const order = data.serviceOrders.find((item) => item.vehicleId === vehicle.id);
+      return {
+        ...vehicle,
+        currentStatus: order?.status || 'SEM_ORDEM',
+        diagnosticNotes: order?.diagnosticNotes || '',
+      };
+    }),
 );
 
 function listItems(payload) {
@@ -571,9 +571,9 @@ function money(value) {
 
 function normalize(value) {
   return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
 }
 
 function formatDuration(minutes) {
@@ -624,16 +624,16 @@ function loadHomePreferences() {
 }
 
 function saveUserHomePreferences() {
-  localStorage.setItem(userHomeKey(), JSON.stringify({ widgets: homePreferences.userWidgets }));
+  localStorage.setItem(userHomeKey(), JSON.stringify({widgets: homePreferences.userWidgets}));
 }
 
 function saveGlobalHomePreferences() {
   localStorage.setItem(
-    'autocare.home.workshop.global',
-    JSON.stringify({
-      widgets: homePreferences.globalWidgets,
-      showAlertsOnHome: homePreferences.showAlertsOnHome,
-    }),
+      'autocare.home.workshop.global',
+      JSON.stringify({
+        widgets: homePreferences.globalWidgets,
+        showAlertsOnHome: homePreferences.showAlertsOnHome,
+      }),
   );
 }
 
@@ -672,7 +672,7 @@ async function loadDashboard() {
       ]);
 
       data.serviceOrders =
-        serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
+          serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
       data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
 
       const failed = [serviceOrders, vehicles].filter((request) => request.status === 'rejected');
@@ -687,7 +687,7 @@ async function loadDashboard() {
       resources.vehicles(pagination.vehicles),
       resources.services(pagination.services),
       resources.parts(pagination.parts),
-      resources.lowStockParts({ size: 20 }),
+      resources.lowStockParts({size: 20}),
       resources.serviceOrders(pagination.serviceOrders),
       resources.averageExecutionTime(),
     ]);
@@ -695,13 +695,13 @@ async function loadDashboard() {
     const [customers, vehicles, services, parts, lowStockParts, serviceOrders, average] = requests;
 
     data.customers =
-      customers.status === 'fulfilled' && customers.value ? listItems(customers.value) : [];
+        customers.status === 'fulfilled' && customers.value ? listItems(customers.value) : [];
     data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
     data.services = services.status === 'fulfilled' ? listItems(services.value) : [];
     data.parts = parts.status === 'fulfilled' ? listItems(parts.value) : [];
     data.lowStockParts = lowStockParts.status === 'fulfilled' ? listItems(lowStockParts.value) : [];
     data.serviceOrders =
-      serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
+        serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
 
     const failed = requests.filter((request) => {
@@ -1028,7 +1028,7 @@ function showProfileAction(action) {
 function logout() {
   profileMenuOpen.value = false;
   auth.logout();
-  router.push({ name: 'login' });
+  router.push({name: 'login'});
 }
 
 onMounted(() => {
@@ -1038,21 +1038,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="app-shell" :class="{ 'mobile-sidebar-open': mobileMenuOpen }">
+  <main :class="{ 'mobile-sidebar-open': mobileMenuOpen }" class="app-shell">
     <header class="site-navbar">
       <div class="navbar-inner">
         <button
-          class="menu-button"
-          type="button"
-          title="Abrir menu"
-          @click="mobileMenuOpen = !mobileMenuOpen"
+            class="menu-button"
+            title="Abrir menu"
+            type="button"
+            @click="mobileMenuOpen = !mobileMenuOpen"
         >
-          <X v-if="mobileMenuOpen" :size="22" />
-          <Menu v-else :size="22" />
+          <X v-if="mobileMenuOpen" :size="22"/>
+          <Menu v-else :size="22"/>
         </button>
 
         <div class="navbar-brand">
-          <div class="brand-mark"><Wrench :size="22" /></div>
+          <div class="brand-mark">
+            <Wrench :size="22"/>
+          </div>
           <div>
             <strong>AutoCare Hub</strong>
             <span>{{ roleLabel }}</span>
@@ -1060,21 +1062,21 @@ onMounted(() => {
         </div>
 
         <div class="navbar-search">
-          <Search :size="17" />
+          <Search :size="17"/>
           <input
-            v-model="globalSearch"
-            type="search"
-            placeholder="Buscar clientes, placas, peças, ordens..."
-            aria-label="Busca global"
+              v-model="globalSearch"
+              aria-label="Busca global"
+              placeholder="Buscar clientes, placas, peças, ordens..."
+              type="search"
           />
           <div v-if="searchResults.length" class="search-popover">
             <button
-              v-for="result in searchResults"
-              :key="`${result.type}-${result.label}-${result.detail}`"
-              type="button"
-              @click="selectSearchResult(result)"
+                v-for="result in searchResults"
+                :key="`${result.type}-${result.label}-${result.detail}`"
+                type="button"
+                @click="selectSearchResult(result)"
             >
-              <component :is="result.icon" :size="17" />
+              <component :is="result.icon" :size="17"/>
               <span>
                 <strong>{{ result.label }}</strong>
                 <small>{{ result.type }} - {{ result.detail }}</small>
@@ -1086,26 +1088,26 @@ onMounted(() => {
         <div class="navbar-actions">
           <div class="profile-menu">
             <button
-              class="profile-trigger"
-              type="button"
-              title="Menu do usuário"
-              :aria-expanded="profileMenuOpen"
-              aria-haspopup="menu"
-              @click="profileMenuOpen = !profileMenuOpen"
+                :aria-expanded="profileMenuOpen"
+                aria-haspopup="menu"
+                class="profile-trigger"
+                title="Menu do usuário"
+                type="button"
+                @click="profileMenuOpen = !profileMenuOpen"
             >
               {{ userInitials }}
             </button>
             <div v-if="profileMenuOpen" class="profile-popover" role="menu">
-              <button type="button" role="menuitem" @click="showProfileAction('Editar informações do usuário')">
-                <UserCog :size="17" />
+              <button role="menuitem" type="button" @click="showProfileAction('Editar informações do usuário')">
+                <UserCog :size="17"/>
                 <span>Editar informações do usuário</span>
               </button>
-              <button type="button" role="menuitem" @click="showProfileAction('Alterar senha')">
-                <KeyRound :size="17" />
+              <button role="menuitem" type="button" @click="showProfileAction('Alterar senha')">
+                <KeyRound :size="17"/>
                 <span>Alterar senha</span>
               </button>
-              <button type="button" role="menuitem" @click="logout">
-                <LogOut :size="17" />
+              <button role="menuitem" type="button" @click="logout">
+                <LogOut :size="17"/>
                 <span>Sair</span>
               </button>
             </div>
@@ -1114,29 +1116,29 @@ onMounted(() => {
       </div>
     </header>
 
-    <div class="app-layout" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
-      <aside class="app-sidebar" :class="{ collapsed: sidebarCollapsed }">
+    <div :class="{ 'sidebar-collapsed': sidebarCollapsed }" class="app-layout">
+      <aside :class="{ collapsed: sidebarCollapsed }" class="app-sidebar">
         <button
-          class="sidebar-toggle"
-          type="button"
-          :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
-          @click="sidebarCollapsed = !sidebarCollapsed"
+            :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
+            class="sidebar-toggle"
+            type="button"
+            @click="sidebarCollapsed = !sidebarCollapsed"
         >
-          <ChevronRight v-if="sidebarCollapsed" :size="18" />
-          <ChevronLeft v-else :size="18" />
+          <ChevronRight v-if="sidebarCollapsed" :size="18"/>
+          <ChevronLeft v-else :size="18"/>
           <span>{{ sidebarCollapsed ? 'Expandir' : 'Recolher' }}</span>
         </button>
 
-        <nav class="side-nav" aria-label="Acessos principais">
+        <nav aria-label="Acessos principais" class="side-nav">
           <button
-            v-for="tab in availableTabs"
-            :key="tab.id"
-            type="button"
-            :class="{ active: activeTab === tab.id }"
-            :title="tab.label"
-            @click="selectTab(tab.id)"
+              v-for="tab in availableTabs"
+              :key="tab.id"
+              :class="{ active: activeTab === tab.id }"
+              :title="tab.label"
+              type="button"
+              @click="selectTab(tab.id)"
           >
-            <component :is="tab.icon" :size="20" />
+            <component :is="tab.icon" :size="20"/>
             <span>
               <strong>{{ tab.label }}</strong>
             </span>
@@ -1145,11 +1147,11 @@ onMounted(() => {
       </aside>
 
       <button
-        v-if="mobileMenuOpen"
-        class="sidebar-backdrop"
-        type="button"
-        aria-label="Fechar menu"
-        @click="mobileMenuOpen = false"
+          v-if="mobileMenuOpen"
+          aria-label="Fechar menu"
+          class="sidebar-backdrop"
+          type="button"
+          @click="mobileMenuOpen = false"
       ></button>
 
       <section class="content">
@@ -1158,9 +1160,9 @@ onMounted(() => {
 
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
-            <span><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
+            <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
             <button class="secondary-button" type="button" @click="homeSettingsOpen = !homeSettingsOpen">
-              <Plus :size="17" />
+              <Plus :size="17"/>
               Personalizar home
             </button>
           </div>
@@ -1171,9 +1173,9 @@ onMounted(() => {
               <div class="home-option-grid">
                 <label v-for="widget in availableHomeWidgetDefinitions" :key="widget.id">
                   <input
-                    type="checkbox"
-                    :checked="homePreferences.userWidgets.includes(widget.id)"
-                    @change="toggleHomeWidget(widget.id)"
+                      :checked="homePreferences.userWidgets.includes(widget.id)"
+                      type="checkbox"
+                      @change="toggleHomeWidget(widget.id)"
                   />
                   <span>{{ widget.label }}</span>
                 </label>
@@ -1183,18 +1185,18 @@ onMounted(() => {
               <strong>Configuração da oficina</strong>
               <label class="home-alert-toggle">
                 <input
-                  type="checkbox"
-                  :checked="homePreferences.showAlertsOnHome"
-                  @change="toggleHomeAlerts"
+                    :checked="homePreferences.showAlertsOnHome"
+                    type="checkbox"
+                    @change="toggleHomeAlerts"
                 />
                 <span>Exibir avisos críticos de estoque para a equipe</span>
               </label>
               <div class="home-option-grid">
                 <label v-for="widget in availableHomeWidgetDefinitions" :key="`global-${widget.id}`">
                   <input
-                    type="checkbox"
-                    :checked="homePreferences.globalWidgets.includes(widget.id)"
-                    @change="toggleHomeWidget(widget.id, 'global')"
+                      :checked="homePreferences.globalWidgets.includes(widget.id)"
+                      type="checkbox"
+                      @change="toggleHomeWidget(widget.id, 'global')"
                   />
                   <span>{{ widget.label }}</span>
                 </label>
@@ -1204,25 +1206,25 @@ onMounted(() => {
 
           <section class="home-summary-grid">
             <button
-              v-for="widget in homeWidgets"
-              :key="widget.id"
-              class="home-widget"
-              type="button"
-              @click="openHomeWidget(widget)"
+                v-for="widget in homeWidgets"
+                :key="widget.id"
+                class="home-widget"
+                type="button"
+                @click="openHomeWidget(widget)"
             >
-              <component :is="widget.icon" :size="22" />
+              <component :is="widget.icon" :size="22"/>
               <strong>{{ widget.value }}</strong>
               <span>{{ widget.label }}</span>
             </button>
           </section>
 
-          <section class="vehicle-status-grid" aria-label="Status atual dos veículos">
+          <section aria-label="Status atual dos veículos" class="vehicle-status-grid">
             <button
-              v-for="item in vehicleStatusWidgets"
-              :key="item.label"
-              class="status-widget"
-              type="button"
-              @click="openStatusWidget(item.statusFilter)"
+                v-for="item in vehicleStatusWidgets"
+                :key="item.label"
+                class="status-widget"
+                type="button"
+                @click="openStatusWidget(item.statusFilter)"
             >
               <strong>{{ item.value }}</strong>
               <span>{{ item.label }}</span>
@@ -1231,15 +1233,15 @@ onMounted(() => {
 
           <section v-if="showHomeAlerts && data.lowStockParts.length" class="home-alerts-panel">
             <div class="home-alerts-heading">
-              <AlertTriangle :size="22" />
+              <AlertTriangle :size="22"/>
               <strong>Atenção necessária</strong>
             </div>
             <div class="home-alert-list">
               <button
-                v-for="part in data.lowStockParts.slice(0, 4)"
-                :key="part.id"
-                type="button"
-                @click="selectTab('parts')"
+                  v-for="part in data.lowStockParts.slice(0, 4)"
+                  :key="part.id"
+                  type="button"
+                  @click="selectTab('parts')"
               >
                 <strong>{{ part.name }}</strong>
                 <span>{{ part.stockQuantity }} un. disponíveis · mínimo {{ part.minimumStock }}</span>
@@ -1255,19 +1257,19 @@ onMounted(() => {
               <span>Cria o cadastro base usado por veículos e ordens</span>
             </div>
             <form class="form-grid" @submit.prevent="createCustomer">
-              <input v-model="forms.customer.name" placeholder="Nome" required />
-              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente números" required />
-              <input v-model="forms.customer.phone" placeholder="Telefone" required />
-              <input v-model="forms.customer.email" placeholder="E-mail" type="email" required />
-              <input v-model="forms.customer.address.street" placeholder="Rua" required />
-              <input v-model="forms.customer.address.number" placeholder="Número" required />
-              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
-              <input v-model="forms.customer.address.city" placeholder="Cidade" required />
-              <input v-model="forms.customer.address.state" placeholder="UF" maxlength="2" required />
-              <input v-model="forms.customer.address.zipCode" placeholder="CEP" required />
-              <input v-model="forms.customer.address.complement" placeholder="Complemento" />
-              <button class="primary-button" type="submit" :disabled="saving">
-                <UserPlus :size="18" />
+              <input v-model="forms.customer.name" placeholder="Nome" required/>
+              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente números" required/>
+              <input v-model="forms.customer.phone" placeholder="Telefone" required/>
+              <input v-model="forms.customer.email" placeholder="E-mail" required type="email"/>
+              <input v-model="forms.customer.address.street" placeholder="Rua" required/>
+              <input v-model="forms.customer.address.number" placeholder="Número" required/>
+              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required/>
+              <input v-model="forms.customer.address.city" placeholder="Cidade" required/>
+              <input v-model="forms.customer.address.state" maxlength="2" placeholder="UF" required/>
+              <input v-model="forms.customer.address.zipCode" placeholder="CEP" required/>
+              <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <UserPlus :size="18"/>
                 <span>Cadastrar cliente</span>
               </button>
             </form>
@@ -1289,7 +1291,7 @@ onMounted(() => {
                 <option value="false">Inativos</option>
               </select>
               <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17" />
+                <Search :size="17"/>
                 Filtrar
               </button>
             </div>
@@ -1301,14 +1303,14 @@ onMounted(() => {
                 <span>Status</span>
               </div>
               <article
-                v-for="customer in data.customers"
-                :key="customer.id"
-                class="data-table-row customers-grid"
+                  v-for="customer in data.customers"
+                  :key="customer.id"
+                  class="data-table-row customers-grid"
               >
                 <strong>{{ customer.name }}</strong>
                 <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
                 <code>{{ customer.document }}</code>
-                <span class="badge"><CheckCircle2 :size="14" /> Ativo</span>
+                <span class="badge"><CheckCircle2 :size="14"/> Ativo</span>
               </article>
             </div>
             <div class="pager">
@@ -1325,14 +1327,14 @@ onMounted(() => {
               <span>Vinculado ao cliente</span>
             </div>
             <form class="form-grid compact" @submit.prevent="createVehicle">
-              <input v-model="forms.vehicle.customerId" placeholder="ID do cliente" required />
-              <input v-model="forms.vehicle.plate" placeholder="Placa ABC1D23" required />
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
-              <input v-model.number="forms.vehicle.year" type="number" placeholder="Ano" required />
-              <input v-model.number="forms.vehicle.mileage" type="number" placeholder="Km" required />
-              <button class="primary-button" type="submit" :disabled="saving">
-                <Plus :size="18" />
+              <input v-model="forms.vehicle.customerId" placeholder="ID do cliente" required/>
+              <input v-model="forms.vehicle.plate" placeholder="Placa ABC1D23" required/>
+              <input v-model="forms.vehicle.brand" placeholder="Marca" required/>
+              <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
+              <input v-model.number="forms.vehicle.year" placeholder="Ano" required type="number"/>
+              <input v-model.number="forms.vehicle.mileage" placeholder="Km" required type="number"/>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <Plus :size="18"/>
                 <span>Cadastrar veículo</span>
               </button>
             </form>
@@ -1350,7 +1352,7 @@ onMounted(() => {
                 <option value="false">Inativos</option>
               </select>
               <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17" />
+                <Search :size="17"/>
                 Filtrar
               </button>
             </div>
@@ -1362,9 +1364,9 @@ onMounted(() => {
                 <span>Status</span>
               </div>
               <article
-                v-for="vehicle in vehiclesWithCurrentStatus"
-                :key="vehicle.id"
-                class="data-table-row vehicles-grid"
+                  v-for="vehicle in vehiclesWithCurrentStatus"
+                  :key="vehicle.id"
+                  class="data-table-row vehicles-grid"
               >
                 <strong>{{ vehicle.plate }}</strong>
                 <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
@@ -1386,16 +1388,18 @@ onMounted(() => {
               <span>Catálogo e minimo de estoque</span>
             </div>
             <form class="form-grid" @submit.prevent="createPart">
-              <input v-model="forms.part.name" placeholder="Nome" required />
-              <input v-model="forms.part.sku" placeholder="SKU" required />
-              <input v-model="forms.part.category" placeholder="Categoria" required />
-              <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
-              <input v-model="forms.part.brand" placeholder="Marca" required />
-              <input v-model.number="forms.part.unitPrice" type="number" min="0" step="0.01" placeholder="Preço unitário" required />
-              <input v-model.number="forms.part.stockQuantity" type="number" min="0" placeholder="Estoque" required />
-              <input v-model.number="forms.part.minimumStock" type="number" min="0" placeholder="Estoque minimo" required />
-              <button class="primary-button" type="submit" :disabled="saving">
-                <Plus :size="18" />
+              <input v-model="forms.part.name" placeholder="Nome" required/>
+              <input v-model="forms.part.sku" placeholder="SKU" required/>
+              <input v-model="forms.part.category" placeholder="Categoria" required/>
+              <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
+              <input v-model="forms.part.brand" placeholder="Marca" required/>
+              <input v-model.number="forms.part.unitPrice" min="0" placeholder="Preço unitário" required
+                     step="0.01" type="number"/>
+              <input v-model.number="forms.part.stockQuantity" min="0" placeholder="Estoque" required type="number"/>
+              <input v-model.number="forms.part.minimumStock" min="0" placeholder="Estoque minimo" required
+                     type="number"/>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <Plus :size="18"/>
                 <span>Cadastrar peça</span>
               </button>
             </form>
@@ -1413,9 +1417,10 @@ onMounted(() => {
                   {{ part.name }} - {{ part.sku }}
                 </option>
               </select>
-              <input v-model.number="forms.stock.stockQuantity" type="number" min="0" placeholder="Nova quantidade" required />
-              <button class="primary-button" type="submit" :disabled="saving">
-                <Package :size="18" />
+              <input v-model.number="forms.stock.stockQuantity" min="0" placeholder="Nova quantidade" required
+                     type="number"/>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <Package :size="18"/>
                 <span>Atualizar</span>
               </button>
             </form>
@@ -1437,7 +1442,7 @@ onMounted(() => {
                 <option value="false">Inativos</option>
               </select>
               <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17" />
+                <Search :size="17"/>
                 Filtrar
               </button>
             </div>
@@ -1450,16 +1455,16 @@ onMounted(() => {
                 <span>Sinal</span>
               </div>
               <article
-                v-for="part in data.parts"
-                :key="part.id"
-                class="data-table-row parts-grid"
-                :class="{ danger: part.stockQuantity <= part.minimumStock }"
+                  v-for="part in data.parts"
+                  :key="part.id"
+                  :class="{ danger: part.stockQuantity <= part.minimumStock }"
+                  class="data-table-row parts-grid"
               >
                 <strong>{{ part.name }}<small>{{ part.sku }}</small></strong>
                 <span>{{ part.category }}<small>{{ part.brand }}</small></span>
                 <span>{{ part.stockQuantity }} un.<small>Min. {{ part.minimumStock }}</small></span>
                 <span>R$ {{ money(part.unitPrice) }}</span>
-                <span class="badge" :class="{ danger: part.stockQuantity <= part.minimumStock }">
+                <span :class="{ danger: part.stockQuantity <= part.minimumStock }" class="badge">
                   {{ part.stockQuantity <= part.minimumStock ? 'Comprar' : 'Ok' }}
                 </span>
               </article>
@@ -1485,13 +1490,13 @@ onMounted(() => {
               <span>{{ orderSteps[forms.orderWizard.step] }}</span>
             </div>
 
-            <div class="order-stepper" aria-label="Etapas da ordem">
+            <div aria-label="Etapas da ordem" class="order-stepper">
               <button
-                v-for="(step, index) in orderSteps"
-                :key="step"
-                type="button"
-                :class="{ active: forms.orderWizard.step === index, done: forms.orderWizard.step > index }"
-                @click="forms.orderWizard.step = index"
+                  v-for="(step, index) in orderSteps"
+                  :key="step"
+                  :class="{ active: forms.orderWizard.step === index, done: forms.orderWizard.step > index }"
+                  type="button"
+                  @click="forms.orderWizard.step = index"
               >
                 <span>{{ index + 1 }}</span>
                 {{ step }}
@@ -1500,11 +1505,11 @@ onMounted(() => {
 
             <div v-if="forms.orderWizard.step === 0" class="scenario-grid">
               <button
-                v-for="scenario in orderScenarios"
-                :key="scenario.id"
-                type="button"
-                :class="{ active: forms.orderWizard.scenario === scenario.id }"
-                @click="selectOrderScenario(scenario.id)"
+                  v-for="scenario in orderScenarios"
+                  :key="scenario.id"
+                  :class="{ active: forms.orderWizard.scenario === scenario.id }"
+                  type="button"
+                  @click="selectOrderScenario(scenario.id)"
               >
                 <strong>{{ scenario.label }}</strong>
                 <span>{{ scenario.text }}</span>
@@ -1514,17 +1519,17 @@ onMounted(() => {
             <div v-if="forms.orderWizard.step === 1" class="wizard-panel">
               <template v-if="isNewCustomerScenario">
                 <div class="form-grid">
-                  <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required />
-                  <input v-model="forms.orderWizard.customer.document" placeholder="CPF/CNPJ somente números" required />
-                  <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required />
-                  <input v-model="forms.orderWizard.customer.email" type="email" placeholder="E-mail" required />
-                  <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required />
-                  <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required />
-                  <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required />
-                  <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required />
-                  <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required />
-                  <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required />
-                  <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento" />
+                  <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required/>
+                  <input v-model="forms.orderWizard.customer.document" placeholder="CPF/CNPJ somente números" required/>
+                  <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required/>
+                  <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email"/>
+                  <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required/>
+                  <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required/>
+                  <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required/>
+                  <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required/>
+                  <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required/>
+                  <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required/>
+                  <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento"/>
                 </div>
               </template>
               <template v-else>
@@ -1549,11 +1554,11 @@ onMounted(() => {
                   <span>Cliente confirmado para cadastro do veículo.</span>
                 </article>
                 <div class="form-grid compact">
-                  <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required />
-                  <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required />
-                  <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required />
-                  <input v-model.number="forms.orderWizard.vehicle.year" type="number" placeholder="Ano" required />
-                  <input v-model.number="forms.orderWizard.vehicle.mileage" type="number" placeholder="Km" required />
+                  <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required/>
+                  <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required/>
+                  <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required/>
+                  <input v-model.number="forms.orderWizard.vehicle.year" placeholder="Ano" required type="number"/>
+                  <input v-model.number="forms.orderWizard.vehicle.mileage" placeholder="Km" required type="number"/>
                 </div>
               </template>
               <template v-else>
@@ -1576,12 +1581,12 @@ onMounted(() => {
 
             <div v-if="forms.orderWizard.step === 3" class="wizard-panel">
               <textarea
-                v-model="forms.orderWizard.defects"
-                placeholder="Defeitos percebidos inicialmente, relatos do cliente, sintomas e observações da recepção"
-                required
+                  v-model="forms.orderWizard.defects"
+                  placeholder="Defeitos percebidos inicialmente, relatos do cliente, sintomas e observações da recepção"
+                  required
               ></textarea>
               <label class="check-row">
-                <input v-model="forms.orderWizard.contactRequested" type="checkbox" />
+                <input v-model="forms.orderWizard.contactRequested" type="checkbox"/>
                 <span>Cliente quer ser contatado antes do envio do orçamento</span>
               </label>
             </div>
@@ -1594,15 +1599,17 @@ onMounted(() => {
                     {{ service.name }} - R$ {{ money(service.basePrice) }}
                   </option>
                 </select>
-                <input v-model.number="forms.orderWizard.serviceQuantity" type="number" min="1" placeholder="Qtd. serviço" />
+                <input v-model.number="forms.orderWizard.serviceQuantity" min="1" placeholder="Qtd. serviço"
+                       type="number"/>
                 <select v-model="forms.orderWizard.partId">
                   <option value="">Peça inicial prevista</option>
                   <option v-for="part in data.parts" :key="part.id" :value="part.id">
                     {{ part.name }} - R$ {{ money(part.unitPrice) }}
                   </option>
                 </select>
-                <input v-model.number="forms.orderWizard.partQuantity" type="number" min="1" placeholder="Qtd. peça" />
-                <textarea v-model="forms.orderWizard.initialValueNotes" placeholder="Observações de valores iniciais, se houver"></textarea>
+                <input v-model.number="forms.orderWizard.partQuantity" min="1" placeholder="Qtd. peça" type="number"/>
+                <textarea v-model="forms.orderWizard.initialValueNotes"
+                          placeholder="Observações de valores iniciais, se houver"></textarea>
               </div>
               <article class="selected-record">
                 <strong>R$ {{ money(estimatedOrderTotal) }}</strong>
@@ -1617,21 +1624,23 @@ onMounted(() => {
                 <span>Com orçamento agora: {{ statusLabels.WAITING_APPROVAL }}.</span>
               </article>
               <div class="wizard-actions">
-                <button class="secondary-button" type="button" :disabled="saving" @click="createOrderFromWizard(false)">
+                <button :disabled="saving" class="secondary-button" type="button" @click="createOrderFromWizard(false)">
                   Salvar como orçamento pendente
                 </button>
-                <button class="primary-button" type="button" :disabled="saving" @click="createOrderFromWizard(true)">
-                  <Plus :size="18" />
+                <button :disabled="saving" class="primary-button" type="button" @click="createOrderFromWizard(true)">
+                  <Plus :size="18"/>
                   <span>Salvar e criar orçamento agora</span>
                 </button>
               </div>
             </div>
 
             <div class="wizard-actions">
-              <button class="secondary-button" type="button" :disabled="forms.orderWizard.step === 0 || saving" @click="previousOrderStep">
+              <button :disabled="forms.orderWizard.step === 0 || saving" class="secondary-button" type="button"
+                      @click="previousOrderStep">
                 Voltar
               </button>
-              <button class="secondary-button" type="button" :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" @click="nextOrderStep">
+              <button :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" class="secondary-button"
+                      type="button" @click="nextOrderStep">
                 Avançar
               </button>
             </div>
@@ -1654,29 +1663,37 @@ onMounted(() => {
                   {{ statusLabels[status] || status }}
                 </option>
               </select>
-              <button class="primary-button" type="submit" :disabled="saving">Atualizar status</button>
-              <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="generateBudget">
+              <button :disabled="saving" class="primary-button" type="submit">Atualizar status</button>
+              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
+                      @click="generateBudget">
                 Gerar orçamento
               </button>
-              <button class="secondary-button" type="button" :disabled="saving || !forms.orderAction.serviceOrderId" @click="approveBudget">
+              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
+                      @click="approveBudget">
                 Aprovar orçamento
               </button>
             </form>
             <form class="form-grid compact" @submit.prevent="addServiceToOrder">
               <select v-model="forms.orderAction.serviceId" required>
                 <option value="">Serviço</option>
-                <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}</option>
+                <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}
+                </option>
               </select>
-              <input v-model.number="forms.orderAction.serviceQuantity" type="number" min="1" placeholder="Qtd." required />
-              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar serviço</button>
+              <input v-model.number="forms.orderAction.serviceQuantity" min="1" placeholder="Qtd." required
+                     type="number"/>
+              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="submit">
+                Adicionar serviço
+              </button>
             </form>
             <form class="form-grid compact" @submit.prevent="addPartToOrder">
               <select v-model="forms.orderAction.partId" required>
                 <option value="">Peça</option>
                 <option v-for="part in data.parts" :key="part.id" :value="part.id">{{ part.name }}</option>
               </select>
-              <input v-model.number="forms.orderAction.partQuantity" type="number" min="1" placeholder="Qtd." required />
-              <button class="secondary-button" type="submit" :disabled="saving || !forms.orderAction.serviceOrderId">Adicionar peça</button>
+              <input v-model.number="forms.orderAction.partQuantity" min="1" placeholder="Qtd." required type="number"/>
+              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="submit">
+                Adicionar peça
+              </button>
             </form>
           </section>
 
@@ -1693,7 +1710,7 @@ onMounted(() => {
                 </option>
               </select>
               <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17" />
+                <Search :size="17"/>
                 Filtrar
               </button>
             </div>
@@ -1705,9 +1722,9 @@ onMounted(() => {
                 <span>Total</span>
               </div>
               <article
-                v-for="order in data.serviceOrders"
-                :key="order.id"
-                class="data-table-row orders-grid"
+                  v-for="order in data.serviceOrders"
+                  :key="order.id"
+                  class="data-table-row orders-grid"
               >
                 <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
@@ -1733,12 +1750,14 @@ onMounted(() => {
               <span>Catálogo da oficina</span>
             </div>
             <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
-              <input v-model="forms.service.name" placeholder="Nome" required />
-              <input v-model.number="forms.service.basePrice" type="number" min="0" step="0.01" placeholder="Preço base" required />
-              <input v-model.number="forms.service.estimatedTimeInMinutes" type="number" min="1" placeholder="Tempo em minutos" required />
+              <input v-model="forms.service.name" placeholder="Nome" required/>
+              <input v-model.number="forms.service.basePrice" min="0" placeholder="Preço base" required step="0.01"
+                     type="number"/>
+              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" placeholder="Tempo em minutos"
+                     required type="number"/>
               <textarea v-model="forms.service.description" placeholder="Descrição" required></textarea>
-              <button class="primary-button" type="submit" :disabled="saving">
-                <Plus :size="18" />
+              <button :disabled="saving" class="primary-button" type="submit">
+                <Plus :size="18"/>
                 <span>Cadastrar serviço</span>
               </button>
             </form>
@@ -1756,9 +1775,9 @@ onMounted(() => {
                 <span>Preço base</span>
               </div>
               <article
-                v-for="service in data.services"
-                :key="service.id"
-                class="data-table-row services-grid"
+                  v-for="service in data.services"
+                  :key="service.id"
+                  class="data-table-row services-grid"
               >
                 <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
                 <span>{{ formatDuration(service.estimatedTimeInMinutes) }}</span>

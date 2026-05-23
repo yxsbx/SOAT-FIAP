@@ -1,65 +1,65 @@
 package br.com.autocarehub.domain;
 
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.Test;
-
 class WorkshopServiceTest {
 
-  @Test
-  void shouldNotAcceptPriceLessThanOrEqualToZero() {
-    assertThatThrownBy(
-            () -> new WorkshopService("Oil change", "Oil and filter replacement", Money.zero(), 60))
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Base price must be greater than zero");
-  }
+    private static WorkshopService service() {
+        return new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60);
+    }
 
-  @Test
-  void shouldNotAcceptEstimatedTimeLessThanOrEqualToZero() {
-    assertThatThrownBy(
-            () ->
-                new WorkshopService(
-                    "Oil change", "Oil and filter replacement", Money.of("100.00"), 0))
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Estimated time must be greater than zero");
-  }
+    @Test
+    void shouldNotAcceptPriceLessThanOrEqualToZero() {
+        assertThatThrownBy(
+                () -> new WorkshopService("Oil change", "Oil and filter replacement", Money.zero(), 60))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Base price must be greater than zero");
+    }
 
-  @Test
-  void shouldUpdateWorkshopService() {
-    WorkshopService service = service();
+    @Test
+    void shouldNotAcceptEstimatedTimeLessThanOrEqualToZero() {
+        assertThatThrownBy(
+                () ->
+                        new WorkshopService(
+                                "Oil change", "Oil and filter replacement", Money.of("100.00"), 0))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Estimated time must be greater than zero");
+    }
 
-    service.update("Brake repair", "Brake pad replacement", Money.of("250.00"), 120);
+    @Test
+    void shouldUpdateWorkshopService() {
+        WorkshopService service = service();
 
-    assertThat(service.name()).isEqualTo("Brake repair");
-    assertThat(service.description()).isEqualTo("Brake pad replacement");
-    assertThat(service.basePrice().value()).isEqualByComparingTo("250.00");
-    assertThat(service.estimatedTimeInMinutes()).isEqualTo(120);
-  }
+        service.update("Brake repair", "Brake pad replacement", Money.of("250.00"), 120);
 
-  @Test
-  void shouldActivateAndDeactivate() {
-    WorkshopService service = service();
+        assertThat(service.name()).isEqualTo("Brake repair");
+        assertThat(service.description()).isEqualTo("Brake pad replacement");
+        assertThat(service.basePrice().value()).isEqualByComparingTo("250.00");
+        assertThat(service.estimatedTimeInMinutes()).isEqualTo(120);
+    }
 
-    service.deactivate();
-    assertThat(service.active()).isFalse();
+    @Test
+    void shouldActivateAndDeactivate() {
+        WorkshopService service = service();
 
-    service.activate();
-    assertThat(service.active()).isTrue();
-  }
+        service.deactivate();
+        assertThat(service.active()).isFalse();
 
-  @Test
-  void shouldRejectBlankNameAndDescription() {
-    assertThatThrownBy(
-            () -> new WorkshopService(" ", "Oil and filter replacement", Money.of("100.00"), 60))
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Name is required");
-    assertThatThrownBy(() -> new WorkshopService("Oil change", " ", Money.of("100.00"), 60))
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Description is required");
-  }
+        service.activate();
+        assertThat(service.active()).isTrue();
+    }
 
-  private static WorkshopService service() {
-    return new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60);
-  }
+    @Test
+    void shouldRejectBlankNameAndDescription() {
+        assertThatThrownBy(
+                () -> new WorkshopService(" ", "Oil and filter replacement", Money.of("100.00"), 60))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Name is required");
+        assertThatThrownBy(() -> new WorkshopService("Oil change", " ", Money.of("100.00"), 60))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Description is required");
+    }
 }

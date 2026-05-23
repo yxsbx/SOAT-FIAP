@@ -6,13 +6,14 @@ import br.com.autocarehub.interfaces.rest.generated.model.LoginResponse;
 
 public final class AuthRestMapper {
 
-  private AuthRestMapper() {}
+    private AuthRestMapper() {
+    }
 
-  public static LoginUseCase.Command toCommand(LoginRequest request) {
-    return new LoginUseCase.Command(request.getUsername(), request.getPassword());
-  }
+    public static LoginUseCase.Command toCommand(LoginRequest request) {
+        return new LoginUseCase.Command(request.getUsername(), request.getPassword());
+    }
 
-  public static LoginResponse toResponse(LoginUseCase.Output output) {
-    return new LoginResponse(output.accessToken(), output.tokenType(), output.expiresIn());
-  }
+    public static LoginResponse toResponse(LoginUseCase.Output output) {
+        return new LoginResponse(output.accessToken(), output.tokenType(), output.expiresIn());
+    }
 }

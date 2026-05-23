@@ -1,6 +1,7 @@
 # Event Storming
 
-Este documento descreve os fluxos principais em formato textual. Ele separa comandos, eventos, atores, politicas e regras para deixar claro o comportamento do MVP.
+Este documento descreve os fluxos principais em formato textual. Ele separa comandos, eventos, atores, politicas e
+regras para deixar claro o comportamento do MVP.
 
 ## Fluxo de Criacao e Acompanhamento da Ordem de Servico
 
@@ -53,7 +54,8 @@ Este documento descreve os fluxos principais em formato textual. Ele separa coma
 - Uma ordem so pode iniciar execucao depois do orcamento gerado e aprovado.
 - Uma ordem so pode ser finalizada quando estiver em execucao.
 - Uma ordem so pode ser entregue depois de finalizada.
-- Itens da ordem nao podem ser alterados depois que a ordem estiver aguardando aprovacao, em execucao, finalizada ou entregue.
+- Itens da ordem nao podem ser alterados depois que a ordem estiver aguardando aprovacao, em execucao, finalizada ou
+  entregue.
 
 ## Fluxo de Gestao de Pecas e Insumos
 

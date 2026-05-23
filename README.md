@@ -1,10 +1,13 @@
 # AutoCare Hub API
 
-API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, serviços de oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
+API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, serviços de
+oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
 
 ## Objetivo Academico
 
-Este projeto foi desenvolvido como MVP academico para demonstrar a construcao de uma API backend usando arquitetura em camadas, DDD, contrato OpenAPI First, persistencia relacional, migrations versionadas, autenticacao JWT e conteinerizacao com Docker.
+Este projeto foi desenvolvido como MVP academico para demonstrar a construcao de uma API backend usando arquitetura em
+camadas, DDD, contrato OpenAPI First, persistencia relacional, migrations versionadas, autenticacao JWT e
+conteinerizacao com Docker.
 
 ## Stack Utilizada
 
@@ -291,24 +294,34 @@ Ordens de servico:
 
 ## OpenAPI First
 
-O contrato da API e definido antes da implementacao em `docs/openapi/openapi.yaml`. A partir desse contrato, o OpenAPI Generator cria interfaces Java e DTOs em `target/generated-sources/openapi`.
+O contrato da API e definido antes da implementacao em `docs/openapi/openapi.yaml`. A partir desse contrato, o OpenAPI
+Generator cria interfaces Java e DTOs em `target/generated-sources/openapi`.
 
-Os controllers manuais implementam as interfaces geradas e convertem os DTOs gerados para commands e queries da camada de application. Isso reduz divergencia entre documentacao e implementacao, facilita validacao do contrato e torna o Swagger uma representacao direta da API publica.
+Os controllers manuais implementam as interfaces geradas e convertem os DTOs gerados para commands e queries da camada
+de application. Isso reduz divergencia entre documentacao e implementacao, facilita validacao do contrato e torna o
+Swagger uma representacao direta da API publica.
 
 ## DDD
 
-O projeto usa conceitos de Domain-Driven Design para isolar o conhecimento de negocio no dominio. Entidades como `Customer`, `Vehicle`, `Part`, `WorkshopService` e `ServiceOrder` concentram regras e invariantes. A camada de application coordena casos de uso e depende de portas de repositorio, sem conhecer detalhes de JPA ou HTTP.
+O projeto usa conceitos de Domain-Driven Design para isolar o conhecimento de negocio no dominio. Entidades
+como `Customer`, `Vehicle`, `Part`, `WorkshopService` e `ServiceOrder` concentram regras e invariantes. A camada de
+application coordena casos de uso e depende de portas de repositorio, sem conhecer detalhes de JPA ou HTTP.
 
 Essa abordagem mantem controllers, DTOs gerados, repositories Spring Data e entidades JPA fora do nucleo de negocio.
 
 ## Justificativa do PostgreSQL
 
-PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, serviços e pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
+PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o
+dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, serviços e
+pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
 
 O uso de PostgreSQL tambem combina bem com Flyway, JPA e execucao via Docker Compose.
 
 ## Justificativa do Monolito em Camadas
 
-Para o escopo academico e para um MVP, um monolito em camadas oferece menor complexidade operacional, deploy simples e boa separacao interna de responsabilidades. A aplicacao ainda mantem fronteiras claras entre dominio, casos de uso, infraestrutura e interface REST, permitindo evolucao futura sem introduzir a complexidade de microsservicos antes de haver necessidade real.
+Para o escopo academico e para um MVP, um monolito em camadas oferece menor complexidade operacional, deploy simples e
+boa separacao interna de responsabilidades. A aplicacao ainda mantem fronteiras claras entre dominio, casos de uso,
+infraestrutura e interface REST, permitindo evolucao futura sem introduzir a complexidade de microsservicos antes de
+haver necessidade real.
 
 Essa escolha favorece clareza arquitetural, testabilidade e entrega incremental.

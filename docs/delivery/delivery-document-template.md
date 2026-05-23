@@ -10,8 +10,8 @@ Nome do aluno:
 
 Dados academicos:
 
-| Nome | RM | Discord |
-| --- | --- | --- |
+| Nome            | RM            | Discord            |
+|-----------------|---------------|--------------------|
 | [NOME_DO_ALUNO] | [RM_DO_ALUNO] | [DISCORD_DO_ALUNO] |
 
 ## Links
@@ -42,11 +42,14 @@ Relatorio de vulnerabilidades:
 
 ## Resumo do Projeto
 
-O AutoCare Hub API e um MVP academico para gerenciamento de uma oficina mecanica. A aplicacao oferece uma API REST para cadastro e consulta de clientes, veiculos, servicos, pecas, estoque e ordens de servico.
+O AutoCare Hub API e um MVP academico para gerenciamento de uma oficina mecanica. A aplicacao oferece uma API REST para
+cadastro e consulta de clientes, veiculos, servicos, pecas, estoque e ordens de servico.
 
-O fluxo principal do MVP permite registrar uma ordem de servico, associar serviços e pecas, gerar um orcamento, aprovar o orcamento e acompanhar a evolucao do status até a entrega.
+O fluxo principal do MVP permite registrar uma ordem de servico, associar serviços e pecas, gerar um orcamento, aprovar
+o orcamento e acompanhar a evolucao do status até a entrega.
 
-O projeto tambem demonstra praticas de arquitetura em camadas, DDD, contrato OpenAPI First, autenticacao com JWT, persistencia relacional, migrations com Flyway, testes automatizados, Docker e analise de vulnerabilidades.
+O projeto tambem demonstra praticas de arquitetura em camadas, DDD, contrato OpenAPI First, autenticacao com JWT,
+persistencia relacional, migrations com Flyway, testes automatizados, Docker e analise de vulnerabilidades.
 
 ## Stack Utilizada
 
@@ -77,7 +80,9 @@ O projeto foi implementado como um monolito em camadas:
 - `interfaces`: controllers REST manuais e mappers para DTOs gerados pelo OpenAPI.
 - `docs`: documentacao OpenAPI, DDD, seguranca e materiais de entrega.
 
-A separacao de camadas evita que controllers acessem diretamente repositories ou exponham entidades JPA. Os controllers recebem DTOs da interface REST, convertem para comandos ou entradas da application layer, chamam os casos de uso e retornam DTOs de resposta.
+A separacao de camadas evita que controllers acessem diretamente repositories ou exponham entidades JPA. Os controllers
+recebem DTOs da interface REST, convertem para comandos ou entradas da application layer, chamam os casos de uso e
+retornam DTOs de resposta.
 
 ## Documentacao DDD
 
@@ -91,7 +96,8 @@ A documentacao DDD esta organizada em:
 - `docs/ddd/06-context-map.md`
 - `docs/ddd/07-future-evolution.md`
 
-Ela descreve o contexto do produto, linguagem ubiqua, event storming, bounded contexts, agregados, regras de negocio, mapa de contexto e evolucoes futuras.
+Ela descreve o contexto do produto, linguagem ubiqua, event storming, bounded contexts, agregados, regras de negocio,
+mapa de contexto e evolucoes futuras.
 
 ## Relatorio de Vulnerabilidades
 

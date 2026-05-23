@@ -4,23 +4,23 @@ info:
     version: 1.0.0
     description: API para gerenciamento de clientes, veiculos, serviços, pecas, ordens de serviço, orcamentos, aprovacoes e acompanhamento de status de uma oficina mecanica.
 servers:
-    - url: http://localhost:8080
-      description: Ambiente local
+    -   url: http://localhost:8080
+        description: Ambiente local
 security:
-    - bearerAuth: []
+    -   bearerAuth: [ ]
 tags:
-    - name: Auth
-      description: Autenticacao e emissao de token JWT
-    - name: Customers
-      description: Cadastro e manutencao de clientes
-    - name: Vehicles
-      description: Cadastro e manutencao de veiculos
-    - name: Workshop Services
-      description: Cadastro e manutencao dos serviços oferecidos pela oficina
-    - name: Parts
-      description: Cadastro, manutencao e controle de estoque de pecas e insumos
-    - name: Service Orders
-      description: Criacao, composicao, orcamento, aprovacao e acompanhamento de ordens de servico
+    -   name: Auth
+        description: Autenticacao e emissao de token JWT
+    -   name: Customers
+        description: Cadastro e manutencao de clientes
+    -   name: Vehicles
+        description: Cadastro e manutencao de veiculos
+    -   name: Workshop Services
+        description: Cadastro e manutencao dos serviços oferecidos pela oficina
+    -   name: Parts
+        description: Cadastro, manutencao e controle de estoque de pecas e insumos
+    -   name: Service Orders
+        description: Criacao, composicao, orcamento, aprovacao e acompanhamento de ordens de servico
 paths:
     /api/v1/auth/login:
         post:
@@ -28,7 +28,7 @@ paths:
                 - Auth
             summary: Autentica um usuario
             operationId: login
-            security: []
+            security: [ ]
             requestBody:
                 required: true
                 content:
@@ -75,13 +75,13 @@ paths:
             summary: Lista clientes
             operationId: listCustomers
             parameters:
-                - $ref: "#/components/parameters/PageParam"
-                - $ref: "#/components/parameters/SizeParam"
-                - name: active
-                  in: query
-                  required: false
-                  schema:
-                      type: boolean
+                -   $ref: "#/components/parameters/PageParam"
+                -   $ref: "#/components/parameters/SizeParam"
+                -   name: active
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
             responses:
                 "200":
                     description: Clientes encontrados
@@ -98,7 +98,7 @@ paths:
             summary: Busca um cliente por id
             operationId: getCustomerById
             parameters:
-                - $ref: "#/components/parameters/CustomerIdPathParam"
+                -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "200":
                     description: Cliente encontrado
@@ -116,7 +116,7 @@ paths:
             summary: Atualiza um cliente
             operationId: updateCustomer
             parameters:
-                - $ref: "#/components/parameters/CustomerIdPathParam"
+                -   $ref: "#/components/parameters/CustomerIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -142,7 +142,7 @@ paths:
             summary: Remove logicamente um cliente
             operationId: deleteCustomer
             parameters:
-                - $ref: "#/components/parameters/CustomerIdPathParam"
+                -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "204":
                     description: Cliente removido
@@ -157,7 +157,7 @@ paths:
             summary: Lista veiculos de um cliente
             operationId: listVehiclesByCustomer
             parameters:
-                - $ref: "#/components/parameters/CustomerIdPathParam"
+                -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "200":
                     description: Veiculos encontrados
@@ -176,7 +176,7 @@ paths:
             summary: Lista ordens de servico de um cliente
             operationId: listServiceOrdersByCustomer
             parameters:
-                - $ref: "#/components/parameters/CustomerIdPathParam"
+                -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "200":
                     description: Ordens de servico encontradas
@@ -219,13 +219,13 @@ paths:
             summary: Lista veiculos
             operationId: listVehicles
             parameters:
-                - $ref: "#/components/parameters/PageParam"
-                - $ref: "#/components/parameters/SizeParam"
-                - name: active
-                  in: query
-                  required: false
-                  schema:
-                      type: boolean
+                -   $ref: "#/components/parameters/PageParam"
+                -   $ref: "#/components/parameters/SizeParam"
+                -   name: active
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
             responses:
                 "200":
                     description: Veiculos encontrados
@@ -242,7 +242,7 @@ paths:
             summary: Busca um veiculo por id
             operationId: getVehicleById
             parameters:
-                - $ref: "#/components/parameters/VehicleIdPathParam"
+                -   $ref: "#/components/parameters/VehicleIdPathParam"
             responses:
                 "200":
                     description: Veiculo encontrado
@@ -260,7 +260,7 @@ paths:
             summary: Atualiza um veiculo
             operationId: updateVehicle
             parameters:
-                - $ref: "#/components/parameters/VehicleIdPathParam"
+                -   $ref: "#/components/parameters/VehicleIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -286,7 +286,7 @@ paths:
             summary: Remove logicamente um veiculo
             operationId: deleteVehicle
             parameters:
-                - $ref: "#/components/parameters/VehicleIdPathParam"
+                -   $ref: "#/components/parameters/VehicleIdPathParam"
             responses:
                 "204":
                     description: Veiculo removido
@@ -323,13 +323,13 @@ paths:
             summary: Lista serviços da oficina
             operationId: listWorkshopServices
             parameters:
-                - $ref: "#/components/parameters/PageParam"
-                - $ref: "#/components/parameters/SizeParam"
-                - name: active
-                  in: query
-                  required: false
-                  schema:
-                      type: boolean
+                -   $ref: "#/components/parameters/PageParam"
+                -   $ref: "#/components/parameters/SizeParam"
+                -   name: active
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
             responses:
                 "200":
                     description: Servicos encontrados
@@ -346,7 +346,7 @@ paths:
             summary: Busca um servico da oficina por id
             operationId: getWorkshopServiceById
             parameters:
-                - $ref: "#/components/parameters/ServiceIdPathParam"
+                -   $ref: "#/components/parameters/ServiceIdPathParam"
             responses:
                 "200":
                     description: Servico encontrado
@@ -364,7 +364,7 @@ paths:
             summary: Atualiza um servico da oficina
             operationId: updateWorkshopService
             parameters:
-                - $ref: "#/components/parameters/ServiceIdPathParam"
+                -   $ref: "#/components/parameters/ServiceIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -390,7 +390,7 @@ paths:
             summary: Remove logicamente um servico da oficina
             operationId: deleteWorkshopService
             parameters:
-                - $ref: "#/components/parameters/ServiceIdPathParam"
+                -   $ref: "#/components/parameters/ServiceIdPathParam"
             responses:
                 "204":
                     description: Servico removido
@@ -427,18 +427,18 @@ paths:
             summary: Lista pecas e insumos
             operationId: listParts
             parameters:
-                - $ref: "#/components/parameters/PageParam"
-                - $ref: "#/components/parameters/SizeParam"
-                - name: active
-                  in: query
-                  required: false
-                  schema:
-                      type: boolean
-                - name: lowStock
-                  in: query
-                  required: false
-                  schema:
-                      type: boolean
+                -   $ref: "#/components/parameters/PageParam"
+                -   $ref: "#/components/parameters/SizeParam"
+                -   name: active
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
+                -   name: lowStock
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
             responses:
                 "200":
                     description: Pecas encontradas
@@ -455,7 +455,7 @@ paths:
             summary: Busca uma peca por id
             operationId: getPartById
             parameters:
-                - $ref: "#/components/parameters/PartIdPathParam"
+                -   $ref: "#/components/parameters/PartIdPathParam"
             responses:
                 "200":
                     description: Peca encontrada
@@ -473,7 +473,7 @@ paths:
             summary: Atualiza uma peca ou insumo
             operationId: updatePart
             parameters:
-                - $ref: "#/components/parameters/PartIdPathParam"
+                -   $ref: "#/components/parameters/PartIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -499,7 +499,7 @@ paths:
             summary: Remove logicamente uma peca ou insumo
             operationId: deletePart
             parameters:
-                - $ref: "#/components/parameters/PartIdPathParam"
+                -   $ref: "#/components/parameters/PartIdPathParam"
             responses:
                 "204":
                     description: Peca removida
@@ -514,7 +514,7 @@ paths:
             summary: Atualiza o estoque de uma peca ou insumo
             operationId: updatePartStock
             parameters:
-                - $ref: "#/components/parameters/PartIdPathParam"
+                -   $ref: "#/components/parameters/PartIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -565,13 +565,13 @@ paths:
             summary: Lista ordens de servico
             operationId: listServiceOrders
             parameters:
-                - $ref: "#/components/parameters/PageParam"
-                - $ref: "#/components/parameters/SizeParam"
-                - name: status
-                  in: query
-                  required: false
-                  schema:
-                      $ref: "#/components/schemas/ServiceOrderStatus"
+                -   $ref: "#/components/parameters/PageParam"
+                -   $ref: "#/components/parameters/SizeParam"
+                -   name: status
+                    in: query
+                    required: false
+                    schema:
+                        $ref: "#/components/schemas/ServiceOrderStatus"
             responses:
                 "200":
                     description: Ordens de servico encontradas
@@ -603,7 +603,7 @@ paths:
             summary: Busca uma ordem de servico por id
             operationId: getServiceOrderById
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
                     description: Ordem de servico encontrada
@@ -622,7 +622,7 @@ paths:
             summary: Adiciona um servico a uma ordem de servico
             operationId: addServiceToServiceOrder
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -649,7 +649,7 @@ paths:
             summary: Adiciona uma peca a uma ordem de servico
             operationId: addPartToServiceOrder
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -676,7 +676,7 @@ paths:
             summary: Gera o orcamento de uma ordem de servico
             operationId: generateServiceOrderBudget
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
                     description: Orcamento gerado
@@ -697,7 +697,7 @@ paths:
             summary: Aprova o orcamento de uma ordem de servico
             operationId: approveServiceOrderBudget
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
                     description: Orcamento aprovado
@@ -718,7 +718,7 @@ paths:
             summary: Atualiza o status de uma ordem de servico
             operationId: updateServiceOrderStatus
             parameters:
-                - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+                -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             requestBody:
                 required: true
                 content:
@@ -928,13 +928,13 @@ components:
                     $ref: "#/components/schemas/Address"
         UpdateCustomerRequest:
             allOf:
-                - $ref: "#/components/schemas/CreateCustomerRequest"
-                - type: object
-                  required:
-                      - active
-                  properties:
-                      active:
-                          type: boolean
+                -   $ref: "#/components/schemas/CreateCustomerRequest"
+                -   type: object
+                    required:
+                        - active
+                    properties:
+                        active:
+                            type: boolean
         CustomerResponse:
             type: object
             required:
@@ -1028,13 +1028,13 @@ components:
                     minimum: 0
         UpdateVehicleRequest:
             allOf:
-                - $ref: "#/components/schemas/CreateVehicleRequest"
-                - type: object
-                  required:
-                      - active
-                  properties:
-                      active:
-                          type: boolean
+                -   $ref: "#/components/schemas/CreateVehicleRequest"
+                -   type: object
+                    required:
+                        - active
+                    properties:
+                        active:
+                            type: boolean
         VehicleResponse:
             type: object
             required:
@@ -1099,13 +1099,13 @@ components:
                     minimum: 1
         UpdateWorkshopServiceRequest:
             allOf:
-                - $ref: "#/components/schemas/CreateWorkshopServiceRequest"
-                - type: object
-                  required:
-                      - active
-                  properties:
-                      active:
-                          type: boolean
+                -   $ref: "#/components/schemas/CreateWorkshopServiceRequest"
+                -   type: object
+                    required:
+                        - active
+                    properties:
+                        active:
+                            type: boolean
         WorkshopServiceResponse:
             type: object
             required:
@@ -1181,13 +1181,13 @@ components:
                     minimum: 0
         UpdatePartRequest:
             allOf:
-                - $ref: "#/components/schemas/CreatePartRequest"
-                - type: object
-                  required:
-                      - active
-                  properties:
-                      active:
-                          type: boolean
+                -   $ref: "#/components/schemas/CreatePartRequest"
+                -   type: object
+                    required:
+                        - active
+                    properties:
+                        active:
+                            type: boolean
         UpdatePartStockRequest:
             type: object
             required:

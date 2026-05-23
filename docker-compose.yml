@@ -1,38 +1,38 @@
 services:
-  postgres:
-    image: postgres:16
-    container_name: autocarehub-postgres
-    environment:
-      POSTGRES_DB: autocarehub
-      POSTGRES_USER: autocarehub
-      POSTGRES_PASSWORD: autocarehub
-    ports:
-      - "5432:5432"
-    volumes:
-      - autocarehub-postgres-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U autocarehub -d autocarehub"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    postgres:
+        image: postgres:16
+        container_name: autocarehub-postgres
+        environment:
+            POSTGRES_DB: autocarehub
+            POSTGRES_USER: autocarehub
+            POSTGRES_PASSWORD: autocarehub
+        ports:
+            - "5432:5432"
+        volumes:
+            - autocarehub-postgres-data:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U autocarehub -d autocarehub" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: autocarehub-api
-    environment:
-      DB_URL: jdbc:postgresql://postgres:5432/autocarehub
-      DB_USERNAME: autocarehub
-      DB_PASSWORD: autocarehub
-      JWT_SECRET: change-me-change-me-change-me-change-me
-      JWT_EXPIRATION_MINUTES: 60
-      SERVER_PORT: 8080
-    ports:
-      - "8080:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: autocarehub-api
+        environment:
+            DB_URL: jdbc:postgresql://postgres:5432/autocarehub
+            DB_USERNAME: autocarehub
+            DB_PASSWORD: autocarehub
+            JWT_SECRET: change-me-change-me-change-me-change-me
+            JWT_EXPIRATION_MINUTES: 60
+            SERVER_PORT: 8080
+        ports:
+            - "8080:8080"
+        depends_on:
+            postgres:
+                condition: service_healthy
 
 volumes:
-  autocarehub-postgres-data:
+    autocarehub-postgres-data:

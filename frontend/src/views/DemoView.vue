@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, ref } from 'vue';
+import {computed, reactive, ref} from 'vue';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -11,7 +11,7 @@ import {
   Plus,
   Wrench,
 } from 'lucide-vue-next';
-import { createDemoLead } from '@/services/api';
+import {createDemoLead} from '@/services/api';
 
 const leadRegistered = ref(false);
 const saving = ref(false);
@@ -32,21 +32,21 @@ const orderForm = reactive({
 });
 
 const customers = ref([
-  { id: '1', name: 'Marina Lopes', company: 'Frota Marina', vehicle: 'Honda Fit', plate: 'MRA2E19' },
-  { id: '2', name: 'Carlos Vieira', company: 'Vieira Log', vehicle: 'Fiat Strada', plate: 'VRA7B42' },
-  { id: '3', name: 'Aline Costa', company: 'Costa Eventos', vehicle: 'Jeep Renegade', plate: 'ALC4D08' },
+  {id: '1', name: 'Marina Lopes', company: 'Frota Marina', vehicle: 'Honda Fit', plate: 'MRA2E19'},
+  {id: '2', name: 'Carlos Vieira', company: 'Vieira Log', vehicle: 'Fiat Strada', plate: 'VRA7B42'},
+  {id: '3', name: 'Aline Costa', company: 'Costa Eventos', vehicle: 'Jeep Renegade', plate: 'ALC4D08'},
 ]);
 
 const orders = ref([
-  { id: 101, plate: 'MRA2E19', service: 'Troca de pastilhas', status: 'Em execução', eta: 'Hoje' },
-  { id: 102, plate: 'VRA7B42', service: 'Revisão preventiva', status: 'Recebido', eta: 'Amanhã' },
-  { id: 103, plate: 'ALC4D08', service: 'Diagnóstico elétrico', status: 'Aguardando aprovação', eta: '2 dias' },
+  {id: 101, plate: 'MRA2E19', service: 'Troca de pastilhas', status: 'Em execução', eta: 'Hoje'},
+  {id: 102, plate: 'VRA7B42', service: 'Revisão preventiva', status: 'Recebido', eta: 'Amanhã'},
+  {id: 103, plate: 'ALC4D08', service: 'Diagnóstico elétrico', status: 'Aguardando aprovação', eta: '2 dias'},
 ]);
 
 const parts = ref([
-  { id: 1, name: 'Pastilha de freio', stock: 18, min: 8 },
-  { id: 2, name: 'Filtro de óleo', stock: 6, min: 10 },
-  { id: 3, name: 'Correia dentada', stock: 14, min: 6 },
+  {id: 1, name: 'Pastilha de freio', stock: 18, min: 8},
+  {id: 2, name: 'Filtro de óleo', stock: 6, min: 10},
+  {id: 3, name: 'Correia dentada', stock: 14, min: 6},
 ]);
 
 const demoProfiles = [
@@ -109,7 +109,7 @@ async function submitLead() {
   saving.value = true;
 
   try {
-    await createDemoLead({ ...leadForm });
+    await createDemoLead({...leadForm});
     leadRegistered.value = true;
   } catch (requestError) {
     error.value = requestError.message || 'Não foi possível liberar a demo agora.';
@@ -149,10 +149,12 @@ function incrementPart(part, quantity) {
   <main class="demo-shell">
     <header class="demo-header">
       <RouterLink to="/preview">
-        <ArrowLeft :size="18" />
+        <ArrowLeft :size="18"/>
         Voltar
       </RouterLink>
-      <strong><Wrench :size="22" /> AutoCare Hub</strong>
+      <strong>
+        <Wrench :size="22"/>
+        AutoCare Hub</strong>
     </header>
 
     <section v-if="!leadRegistered" class="demo-gate">
@@ -168,11 +170,11 @@ function incrementPart(part, quantity) {
       <form class="demo-form" @submit.prevent="submitLead">
         <div class="demo-profile-picker span-2">
           <button
-            v-for="profile in demoProfiles"
-            :key="profile.id"
-            type="button"
-            :class="{ active: leadForm.demoProfile === profile.id }"
-            @click="leadForm.demoProfile = profile.id"
+              v-for="profile in demoProfiles"
+              :key="profile.id"
+              :class="{ active: leadForm.demoProfile === profile.id }"
+              type="button"
+              @click="leadForm.demoProfile = profile.id"
           >
             <strong>{{ profile.title }}</strong>
             <span>{{ profile.text }}</span>
@@ -180,32 +182,33 @@ function incrementPart(part, quantity) {
         </div>
         <label>
           Nome da pessoa
-          <input v-model.trim="leadForm.contactName" required maxlength="120" placeholder="Seu nome" />
+          <input v-model.trim="leadForm.contactName" maxlength="120" placeholder="Seu nome" required/>
         </label>
         <label>
           Nome da empresa
-          <input v-model.trim="leadForm.companyName" required maxlength="120" :placeholder="demoContext.companyPlaceholder" />
+          <input v-model.trim="leadForm.companyName" :placeholder="demoContext.companyPlaceholder" maxlength="120"
+                 required/>
         </label>
         <label>
           Email
-          <input v-model.trim="leadForm.email" required type="email" maxlength="160" placeholder="contato@empresa.com" />
+          <input v-model.trim="leadForm.email" maxlength="160" placeholder="contato@empresa.com" required type="email"/>
         </label>
         <label>
           Telefone
-          <input v-model.trim="leadForm.phone" required minlength="8" maxlength="30" placeholder="(11) 99999-9999" />
+          <input v-model.trim="leadForm.phone" maxlength="30" minlength="8" placeholder="(11) 99999-9999" required/>
         </label>
         <label class="span-2">
           CNPJ
           <input
-            v-model.trim="leadForm.cnpj"
-            required
-            maxlength="40"
-            placeholder="Pode conter letras e números"
-            :aria-invalid="leadForm.cnpj && !cnpjIsValid"
+              v-model.trim="leadForm.cnpj"
+              :aria-invalid="leadForm.cnpj && !cnpjIsValid"
+              maxlength="40"
+              placeholder="Pode conter letras e números"
+              required
           />
         </label>
         <p v-if="error" class="alert error span-2">{{ error }}</p>
-        <button class="primary-button span-2" :disabled="saving">
+        <button :disabled="saving" class="primary-button span-2">
           {{ saving ? 'Liberando demo...' : 'Acessar demo' }}
         </button>
       </form>
@@ -213,7 +216,7 @@ function incrementPart(part, quantity) {
 
     <section v-else class="demo-workspace">
       <div class="demo-alert">
-        <AlertTriangle :size="20" />
+        <AlertTriangle :size="20"/>
         <div>
           <strong>Apenas uma amostra do sistema</strong>
           <span>
@@ -231,17 +234,17 @@ function incrementPart(part, quantity) {
         </div>
         <div class="demo-kpis">
           <article>
-            <ClipboardList :size="21" />
+            <ClipboardList :size="21"/>
             <strong>{{ activeOrders }}</strong>
             <span>{{ demoContext.ordersLabel }}</span>
           </article>
           <article>
-            <Package :size="21" />
+            <Package :size="21"/>
             <strong>{{ lowStockCount }}</strong>
             <span>Itens em alerta</span>
           </article>
           <article>
-            <Car :size="21" />
+            <Car :size="21"/>
             <strong>{{ customers.length }}</strong>
             <span>{{ demoContext.customersLabel }}</span>
           </article>
@@ -255,7 +258,7 @@ function incrementPart(part, quantity) {
               <span>Atendimento</span>
               <h2>{{ demoContext.actionTitle }}</h2>
             </div>
-            <Plus :size="20" />
+            <Plus :size="20"/>
           </div>
           <form class="demo-inline-form" @submit.prevent="addOrder">
             <select v-model="orderForm.customerId">
@@ -263,7 +266,7 @@ function incrementPart(part, quantity) {
                 {{ customer.name }} - {{ customer.plate }}
               </option>
             </select>
-            <input v-model.trim="orderForm.service" required :placeholder="demoContext.servicePlaceholder" />
+            <input v-model.trim="orderForm.service" :placeholder="demoContext.servicePlaceholder" required/>
             <button class="primary-button">Adicionar</button>
           </form>
           <div class="demo-list">
@@ -282,7 +285,7 @@ function incrementPart(part, quantity) {
               <span>Estoque</span>
               <h2>{{ demoContext.stockTitle }}</h2>
             </div>
-            <Package :size="20" />
+            <Package :size="20"/>
           </div>
           <div class="demo-parts">
             <article v-for="part in parts" :key="part.id" :class="{ warning: part.stock < part.min }">
@@ -305,11 +308,11 @@ function incrementPart(part, quantity) {
               <span>Clientes</span>
               <h2>Carteira reduzida</h2>
             </div>
-            <Building2 :size="20" />
+            <Building2 :size="20"/>
           </div>
           <div class="demo-customers">
             <article v-for="customer in customers" :key="customer.id">
-              <CheckCircle2 :size="18" />
+              <CheckCircle2 :size="18"/>
               <div>
                 <strong>{{ customer.name }}</strong>
                 <span>{{ customer.company }} - {{ customer.vehicle }} - {{ customer.plate }}</span>

@@ -1,102 +1,102 @@
 package br.com.autocarehub.domain;
 
+import org.junit.jupiter.api.Test;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.Test;
-
 class ServiceOrderTest {
 
-  @Test
-  void shouldStartWithReceivedStatus() {
-    ServiceOrder serviceOrder = serviceOrder();
+    private static ServiceOrder serviceOrderWithItems() {
+        ServiceOrder serviceOrder = serviceOrder();
+        serviceOrder.addService(
+                new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60), 2);
+        serviceOrder.addPart(
+                new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2), 4);
+        return serviceOrder;
+    }
 
-    assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.RECEIVED);
-  }
+    private static ServiceOrder serviceOrder() {
+        return new ServiceOrder(
+                java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Initial diagnostic notes");
+    }
 
-  @Test
-  void shouldStartDiagnosisCorrectly() {
-    ServiceOrder serviceOrder = serviceOrder();
+    @Test
+    void shouldStartWithReceivedStatus() {
+        ServiceOrder serviceOrder = serviceOrder();
 
-    serviceOrder.startDiagnosis();
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.RECEIVED);
+    }
 
-    assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.IN_DIAGNOSIS);
-  }
+    @Test
+    void shouldStartDiagnosisCorrectly() {
+        ServiceOrder serviceOrder = serviceOrder();
 
-  @Test
-  void shouldGenerateBudgetWithServicesAndParts() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
+        serviceOrder.startDiagnosis();
 
-    Money total = serviceOrder.generateBudget();
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.IN_DIAGNOSIS);
+    }
 
-    assertThat(total.value()).isEqualByComparingTo("400.00");
-    assertThat(serviceOrder.totalAmount().value()).isEqualByComparingTo("400.00");
-  }
+    @Test
+    void shouldGenerateBudgetWithServicesAndParts() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
 
-  @Test
-  void shouldChangeToWaitingApprovalAfterGeneratingBudget() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
+        Money total = serviceOrder.generateBudget();
 
-    serviceOrder.generateBudget();
+        assertThat(total.value()).isEqualByComparingTo("400.00");
+        assertThat(serviceOrder.totalAmount().value()).isEqualByComparingTo("400.00");
+    }
 
-    assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.WAITING_APPROVAL);
-    assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
-  }
+    @Test
+    void shouldChangeToWaitingApprovalAfterGeneratingBudget() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
 
-  @Test
-  void shouldApproveBudget() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
-    serviceOrder.generateBudget();
+        serviceOrder.generateBudget();
 
-    serviceOrder.approveBudget();
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.WAITING_APPROVAL);
+        assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
+    }
 
-    assertThat(serviceOrder.approvedAt()).isNotNull();
-  }
+    @Test
+    void shouldApproveBudget() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
+        serviceOrder.generateBudget();
 
-  @Test
-  void shouldNotStartExecutionWithoutApproval() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
-    serviceOrder.generateBudget();
+        serviceOrder.approveBudget();
 
-    assertThatThrownBy(serviceOrder::startExecution)
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Execution cannot start without budget approval");
-  }
+        assertThat(serviceOrder.approvedAt()).isNotNull();
+    }
 
-  @Test
-  void shouldNotFinishWithoutBeingInProgress() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
-    serviceOrder.generateBudget();
-    serviceOrder.approveBudget();
+    @Test
+    void shouldNotStartExecutionWithoutApproval() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
+        serviceOrder.generateBudget();
 
-    assertThatThrownBy(serviceOrder::finish)
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Service order can only be finished while in progress");
-  }
+        assertThatThrownBy(serviceOrder::startExecution)
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Execution cannot start without budget approval");
+    }
 
-  @Test
-  void shouldNotDeliverWithoutBeingFinished() {
-    ServiceOrder serviceOrder = serviceOrderWithItems();
-    serviceOrder.generateBudget();
-    serviceOrder.approveBudget();
-    serviceOrder.startExecution();
+    @Test
+    void shouldNotFinishWithoutBeingInProgress() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
+        serviceOrder.generateBudget();
+        serviceOrder.approveBudget();
 
-    assertThatThrownBy(serviceOrder::deliver)
-        .isInstanceOf(DomainException.class)
-        .hasMessage("Service order can only be delivered after finished");
-  }
+        assertThatThrownBy(serviceOrder::finish)
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Service order can only be finished while in progress");
+    }
 
-  private static ServiceOrder serviceOrderWithItems() {
-    ServiceOrder serviceOrder = serviceOrder();
-    serviceOrder.addService(
-        new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60), 2);
-    serviceOrder.addPart(
-        new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2), 4);
-    return serviceOrder;
-  }
+    @Test
+    void shouldNotDeliverWithoutBeingFinished() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
+        serviceOrder.generateBudget();
+        serviceOrder.approveBudget();
+        serviceOrder.startExecution();
 
-  private static ServiceOrder serviceOrder() {
-    return new ServiceOrder(
-        java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Initial diagnostic notes");
-  }
+        assertThatThrownBy(serviceOrder::deliver)
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Service order can only be delivered after finished");
+    }
 }

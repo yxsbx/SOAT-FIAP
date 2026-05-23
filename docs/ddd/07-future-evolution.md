@@ -1,10 +1,12 @@
 # Future Evolution
 
-Este documento descreve possibilidades futuras. Os itens abaixo nao devem ser interpretados como funcionalidades ja implementadas no MVP.
+Este documento descreve possibilidades futuras. Os itens abaixo nao devem ser interpretados como funcionalidades ja
+implementadas no MVP.
 
 ## App do Cliente
 
-Evolucao futura para permitir que clientes acompanhem veiculos, ordens de servico, orcamentos e historico de atendimentos por aplicativo.
+Evolucao futura para permitir que clientes acompanhem veiculos, ordens de servico, orcamentos e historico de
+atendimentos por aplicativo.
 
 Possiveis capacidades:
 

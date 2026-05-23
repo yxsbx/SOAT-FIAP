@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController implements AuthApi {
 
-  private final LoginUseCase loginUseCase;
+    private final LoginUseCase loginUseCase;
 
-  public AuthController(LoginUseCase loginUseCase) {
-    this.loginUseCase = loginUseCase;
-  }
+    public AuthController(LoginUseCase loginUseCase) {
+        this.loginUseCase = loginUseCase;
+    }
 
-  @Override
-  public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
-    LoginUseCase.Output output = loginUseCase.execute(AuthRestMapper.toCommand(loginRequest));
-    return ResponseEntity.ok(AuthRestMapper.toResponse(output));
-  }
+    @Override
+    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
+        LoginUseCase.Output output = loginUseCase.execute(AuthRestMapper.toCommand(loginRequest));
+        return ResponseEntity.ok(AuthRestMapper.toResponse(output));
+    }
 }

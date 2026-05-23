@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import {ref} from 'vue';
 import {
   BarChart3,
   CalendarClock,
@@ -24,10 +24,10 @@ import {
 const activeAudience = ref('customer');
 
 const workshopStats = [
-  { label: 'O.S. em andamento', value: '25', tone: 'blue' },
-  { label: 'Entregas este mês', value: '55', tone: 'green' },
-  { label: 'Aguardando aprovação', value: '12', tone: 'amber' },
-  { label: 'Peças para comprar', value: '8', tone: 'slate' },
+  {label: 'O.S. em andamento', value: '25', tone: 'blue'},
+  {label: 'Entregas este mês', value: '55', tone: 'green'},
+  {label: 'Aguardando aprovação', value: '12', tone: 'amber'},
+  {label: 'Peças para comprar', value: '8', tone: 'slate'},
 ];
 
 const orderRows = [
@@ -97,20 +97,20 @@ const partnerDeliveries = [
 ];
 
 const mobileActions = [
-  { label: 'Status', icon: Car },
-  { label: 'Orçamento', icon: FileText },
-  { label: 'Peças', icon: Package },
-  { label: 'Mensagens', icon: MessageCircle },
+  {label: 'Status', icon: Car},
+  {label: 'Orçamento', icon: FileText},
+  {label: 'Peças', icon: Package},
+  {label: 'Mensagens', icon: MessageCircle},
 ];
 
 const mobileUpdates = [
-  { plate: 'MRA2E19', status: 'Em diagnóstico', note: 'Oficina analisando relato inicial' },
-  { plate: 'VRA7B42', status: 'Aprovar', note: 'Orçamento aguardando aceite' },
+  {plate: 'MRA2E19', status: 'Em diagnóstico', note: 'Oficina analisando relato inicial'},
+  {plate: 'VRA7B42', status: 'Aprovar', note: 'Orçamento aguardando aceite'},
 ];
 
 function switchAudience(audience) {
   activeAudience.value = audience;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function scrollToSection(id) {
@@ -128,24 +128,24 @@ function scrollToSection(id) {
 </script>
 
 <template>
-  <main class="preview-shell" :class="{ 'partner-mode': activeAudience === 'partner' }">
+  <main :class="{ 'partner-mode': activeAudience === 'partner' }" class="preview-shell">
     <header class="preview-header">
       <RouterLink class="preview-brand" to="/preview" @click="activeAudience = 'customer'">
-        <span><Wrench :size="24" /></span>
+        <span><Wrench :size="24"/></span>
         <strong>AutoCare Hub</strong>
       </RouterLink>
       <nav>
         <button
-          type="button"
-          :class="{ active: activeAudience === 'customer' }"
-          @click="switchAudience('customer')"
+            :class="{ active: activeAudience === 'customer' }"
+            type="button"
+            @click="switchAudience('customer')"
         >
           Para clientes
         </button>
         <button
-          type="button"
-          :class="{ active: activeAudience === 'partner' }"
-          @click="switchAudience('partner')"
+            :class="{ active: activeAudience === 'partner' }"
+            type="button"
+            @click="switchAudience('partner')"
         >
           Para parceiros
         </button>
@@ -154,7 +154,8 @@ function scrollToSection(id) {
         </a>
         <a v-else href="#diferenciais" @click.prevent="scrollToSection('diferenciais')">Diferenciais</a>
       </nav>
-      <RouterLink class="preview-login" to="/login">Já tenho acesso<ChevronRight :size="17" />
+      <RouterLink class="preview-login" to="/login">Já tenho acesso
+        <ChevronRight :size="17"/>
       </RouterLink>
     </header>
 
@@ -171,7 +172,7 @@ function scrollToSection(id) {
           <div class="preview-actions">
             <RouterLink class="preview-primary" to="/login">
               Entrar como cliente
-              <ChevronRight :size="18" />
+              <ChevronRight :size="18"/>
             </RouterLink>
             <a class="preview-secondary" href="#diagnostico" @click.prevent="scrollToSection('diagnostico')">
               Entender o diagnóstico
@@ -179,7 +180,7 @@ function scrollToSection(id) {
           </div>
         </div>
 
-        <div class="customer-app-preview" aria-label="Prévia da experiência do cliente">
+        <div aria-label="Prévia da experiência do cliente" class="customer-app-preview">
           <div class="customer-symptom-card">
             <span>Anamnese do veículo</span>
             <h2>Conte o que está acontecendo antes de sair de casa</h2>
@@ -190,12 +191,12 @@ function scrollToSection(id) {
             </div>
             <div class="customer-choice-row">
               <article>
-                <Wrench :size="18" />
+                <Wrench :size="18"/>
                 <strong>3 oficinas próximas</strong>
                 <small>Compare atendimento e disponibilidade</small>
               </article>
               <article>
-                <Store :size="18" />
+                <Store :size="18"/>
                 <strong>Comprar peças</strong>
                 <small>Na loja parceira ou direto com a oficina</small>
               </article>
@@ -204,7 +205,7 @@ function scrollToSection(id) {
         </div>
       </section>
 
-      <section class="preview-features" id="diagnostico">
+      <section id="diagnostico" class="preview-features">
         <div class="feature-intro">
           <span>Jornada do cliente</span>
           <h2>Menos deslocamento, mais clareza</h2>
@@ -216,14 +217,14 @@ function scrollToSection(id) {
 
         <div class="feature-list">
           <article v-for="feature in customerBenefits" :key="feature.title">
-            <component :is="feature.icon" :size="30" />
+            <component :is="feature.icon" :size="30"/>
             <h3>{{ feature.title }}</h3>
             <p>{{ feature.text }}</p>
           </article>
         </div>
       </section>
 
-      <section class="preview-views" id="localizacao">
+      <section id="localizacao" class="preview-views">
         <div class="feature-intro">
           <span>Após cadastro</span>
           <h2>Busca por CEP para encontrar atendimento perto de você</h2>
@@ -238,14 +239,14 @@ function scrollToSection(id) {
             <strong>01310-100</strong>
           </label>
           <article>
-            <MapPin :size="20" />
+            <MapPin :size="20"/>
             <div>
               <strong>Oficina Vila Auto</strong>
               <span>1,2 km - diagnóstico, freios e revisão</span>
             </div>
           </article>
           <article>
-            <Store :size="20" />
+            <Store :size="20"/>
             <div>
               <strong>Peças Centro Sul</strong>
               <span>2,4 km - filtros, óleo, pastilhas e bateria</span>
@@ -268,28 +269,38 @@ function scrollToSection(id) {
           <div class="preview-actions">
             <RouterLink class="preview-primary" to="/demo">
               Testar versão simplificada
-              <ChevronRight :size="18" />
+              <ChevronRight :size="18"/>
             </RouterLink>
             <RouterLink class="preview-secondary" to="/login">Já tenho cadastro</RouterLink>
           </div>
         </div>
 
-        <div class="device-showcase" aria-label="Prévia visual do sistema">
+        <div aria-label="Prévia visual do sistema" class="device-showcase">
           <div class="laptop-mockup">
             <div class="mockup-topbar">
               <div>
-                <Wrench :size="22" />
+                <Wrench :size="22"/>
                 <strong>AutoCare Hub</strong>
               </div>
-              <span><Search :size="14" /> Buscar clientes, placas, peças, ordens...</span>
+              <span><Search :size="14"/> Buscar clientes, placas, peças, ordens...</span>
             </div>
             <div class="mockup-body">
               <aside>
-                <i><Gauge :size="16" /></i>
-                <i><ClipboardList :size="16" /></i>
-                <i><Car :size="16" /></i>
-                <i><Package :size="16" /></i>
-                <i><Wrench :size="16" /></i>
+                <i>
+                  <Gauge :size="16"/>
+                </i>
+                <i>
+                  <ClipboardList :size="16"/>
+                </i>
+                <i>
+                  <Car :size="16"/>
+                </i>
+                <i>
+                  <Package :size="16"/>
+                </i>
+                <i>
+                  <Wrench :size="16"/>
+                </i>
               </aside>
               <section>
                 <div class="mockup-hero-card">
@@ -317,9 +328,9 @@ function scrollToSection(id) {
           <div class="phone-mockup">
             <div class="phone-screen">
               <header>
-                <Wrench :size="18" />
+                <Wrench :size="18"/>
                 <strong>AutoCare Hub</strong>
-                <Menu :size="16" />
+                <Menu :size="16"/>
               </header>
               <section>
                 <div>
@@ -329,12 +340,12 @@ function scrollToSection(id) {
                 <small>Hoje</small>
               </section>
               <div class="phone-alert">
-                <CheckCircle2 :size="15" />
+                <CheckCircle2 :size="15"/>
                 <span>App focado no que precisa de resposta rápida.</span>
               </div>
               <div class="phone-grid">
                 <article v-for="action in mobileActions" :key="action.label">
-                  <component :is="action.icon" :size="26" />
+                  <component :is="action.icon" :size="26"/>
                   <span>{{ action.label }}</span>
                 </article>
               </div>
@@ -355,7 +366,7 @@ function scrollToSection(id) {
         </div>
       </section>
 
-      <section class="preview-features" id="diferenciais">
+      <section id="diferenciais" class="preview-features">
         <div class="feature-intro">
           <span>Diferenciais para parceiros</span>
           <h2>Mais eficiência para oficina e mais demanda para lojas</h2>
@@ -367,14 +378,14 @@ function scrollToSection(id) {
 
         <div class="feature-list">
           <article v-for="feature in partnerBenefits" :key="feature.title">
-            <component :is="feature.icon" :size="30" />
+            <component :is="feature.icon" :size="30"/>
             <h3>{{ feature.title }}</h3>
             <p>{{ feature.text }}</p>
           </article>
         </div>
       </section>
 
-      <section class="preview-views" id="views">
+      <section id="views" class="preview-views">
         <div class="feature-intro">
           <span>Perfis no sistema</span>
           <h2>O que cada parceiro consegue fazer com AutoCare Hub</h2>
@@ -386,14 +397,14 @@ function scrollToSection(id) {
 
         <div class="platform-view-list">
           <article v-for="view in partnerDeliveries" :key="view.title">
-            <component :is="view.icon" :size="28" />
+            <component :is="view.icon" :size="28"/>
             <strong>{{ view.title }}</strong>
             <span>{{ view.text }}</span>
           </article>
         </div>
       </section>
 
-      <section class="preview-mobile-band" id="mobile">
+      <section id="mobile" class="preview-mobile-band">
         <div>
           <span>Responsivo</span>
           <h2>Mobile para respostas rápidas, desktop para gestão completa</h2>
@@ -404,17 +415,29 @@ function scrollToSection(id) {
         </div>
         <div class="mobile-experience-panel">
           <ul>
-            <li><CheckCircle2 :size="18" /> Status do cliente em tempo real</li>
-            <li><CheckCircle2 :size="18" /> Gestão de usuários e permissões</li>
-            <li><CheckCircle2 :size="18" /> Estoque, fornecedores e lojas parceiras</li>
-            <li><CalendarClock :size="18" /> Métricas, faturamento e prazo previsto x realizado</li>
+            <li>
+              <CheckCircle2 :size="18"/>
+              Status do cliente em tempo real
+            </li>
+            <li>
+              <CheckCircle2 :size="18"/>
+              Gestão de usuários e permissões
+            </li>
+            <li>
+              <CheckCircle2 :size="18"/>
+              Estoque, fornecedores e lojas parceiras
+            </li>
+            <li>
+              <CalendarClock :size="18"/>
+              Métricas, faturamento e prazo previsto x realizado
+            </li>
           </ul>
           <p>
             A demo pública é oferecida apenas para oficinas e lojas de peças. O cliente final acessa
             sua área depois do cadastro, com busca por CEP e acompanhamento do próprio veículo.
           </p>
         </div>
-        <Smartphone class="mobile-band-icon" :size="88" />
+        <Smartphone :size="88" class="mobile-band-icon"/>
       </section>
     </template>
   </main>
