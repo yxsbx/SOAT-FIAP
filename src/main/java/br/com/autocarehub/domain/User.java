@@ -1,6 +1,7 @@
 package br.com.autocarehub.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,6 +11,10 @@ public record User(
         String passwordHash,
         UserRole role,
         UUID customerId,
+        String fullName,
+        String profileType,
+        String employeeSubRole,
+        List<String> permissions,
         boolean active,
         LocalDateTime createdAt) {
 
@@ -18,12 +23,34 @@ public record User(
         username = requireText(username, "Username is required");
         passwordHash = requireText(passwordHash, "Password hash is required");
         Objects.requireNonNull(role, "role is required");
+        fullName = normalizeOptional(fullName, username);
+        profileType = normalizeOptional(profileType, role.name());
+        employeeSubRole = normalizeOptional(employeeSubRole, "");
+        permissions = permissions == null ? List.of() : List.copyOf(permissions);
         Objects.requireNonNull(createdAt, "createdAt is required");
+    }
+
+    public User(
+            UUID id,
+            String username,
+            String passwordHash,
+            UserRole role,
+            UUID customerId,
+            boolean active,
+            LocalDateTime createdAt) {
+        this(id, username, passwordHash, role, customerId, username, role.name(), "", List.of(), active, createdAt);
     }
 
     private static String requireText(String value, String message) {
         if (value == null || value.isBlank()) {
             throw new DomainException(message);
+        }
+        return value.trim();
+    }
+
+    private static String normalizeOptional(String value, String fallback) {
+        if (value == null || value.isBlank()) {
+            return fallback;
         }
         return value.trim();
     }

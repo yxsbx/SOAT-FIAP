@@ -29,8 +29,6 @@ public class AddPartToServiceOrderUseCase {
                         .findById(command.partId())
                         .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
         serviceOrder.addPart(part, command.quantity());
-        part.reduceStock(command.quantity());
-        partRepository.save(part);
         return serviceOrderRepository.save(serviceOrder);
     }
 

@@ -34,7 +34,7 @@ html {
 #localizacao,
 #views,
 #mobile {
-    scroll-margin-top: 28px;
+    scroll-margin-top: 88px;
 }
 
 * {
@@ -368,9 +368,11 @@ textarea:focus-visible {
 }
 
 .site-navbar {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 20;
+    left: 0;
+    right: 0;
+    z-index: 80;
     border-bottom: 1px solid rgba(207, 224, 220, 0.82);
     background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(18px);
@@ -393,7 +395,7 @@ textarea:focus-visible {
     max-width: 100%;
     min-height: calc(100vh - 76px);
     display: block;
-    padding: 22px 24px 42px 316px !important;
+    padding: 98px 24px 42px 316px !important;
     overflow-x: hidden;
     transition: padding-left 180ms ease;
 }
@@ -1561,6 +1563,10 @@ textarea:focus-visible {
     box-shadow: 0 10px 24px rgba(15, 47, 74, 0.07);
 }
 
+.clickable-row {
+    cursor: pointer;
+}
+
 .data-table-row.danger {
     border-color: #fecaca;
     background: #fff5f5;
@@ -1570,12 +1576,20 @@ textarea:focus-visible {
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(72px, 92px);
 }
 
+.users-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(90px, 120px) minmax(0, 1fr) minmax(78px, 96px) minmax(78px, 92px);
+}
+
+.employee-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(120px, 160px) minmax(100px, 130px) minmax(78px, 96px) minmax(78px, 92px);
+}
+
 .vehicles-grid {
     grid-template-columns: minmax(92px, 120px) minmax(0, 1.3fr) minmax(84px, 110px) minmax(100px, 150px);
 }
 
 .parts-grid {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(86px, 120px) minmax(76px, 100px) minmax(76px, 100px);
+  grid-template-columns: minmax(0, 1.4fr) minmax(96px, 120px) minmax(96px, 120px) minmax(120px, 150px) minmax(98px, 130px) minmax(78px, 92px);
 }
 
 .orders-grid {
@@ -1593,6 +1607,26 @@ textarea:focus-visible {
     margin-bottom: 14px;
 }
 
+.permission-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.permission-grid label {
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid #d8e7f3;
+    border-radius: 12px;
+    padding: 0 12px;
+    background: #ffffff;
+    color: #102a43;
+    font-weight: 850;
+}
+
 .form-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1606,9 +1640,10 @@ textarea:focus-visible {
 .form-grid input,
 .form-grid select,
 .form-grid textarea,
-.filters select {
-    width: 100%;
-    min-height: 42px;
+.filters select,
+.filters input {
+  width: 100%;
+  min-height: 42px;
     border: 1px solid #cbdcec;
     border-radius: 14px;
     padding: 0 12px;
@@ -1620,9 +1655,16 @@ textarea:focus-visible {
 .form-grid select:focus,
 .form-grid textarea:focus,
 .filters select:focus,
+.filters input:focus,
 .login-form input:focus {
     border-color: rgba(14, 165, 233, 0.55);
     box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+}
+
+.compact-action {
+  min-height: 34px;
+  padding: 0 12px;
+  font-size: 0.84rem;
 }
 
 .form-grid textarea {
@@ -1819,8 +1861,15 @@ textarea:focus-visible {
 .pager {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     gap: 8px;
     margin-top: 14px;
+}
+
+.pager span {
+    color: #506982;
+    font-size: 0.88rem;
+    font-weight: 800;
 }
 
 .pager button {
@@ -1831,6 +1880,131 @@ textarea:focus-visible {
     color: #17344f;
     background: #ffffff;
     cursor: pointer;
+}
+
+.pager button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.detail-drawer {
+    position: fixed;
+    top: 92px;
+    right: 18px;
+    z-index: 70;
+    width: min(420px, calc(100vw - 36px));
+    max-height: calc(100vh - 116px);
+    display: grid;
+    gap: 16px;
+    overflow: auto;
+    border: 1px solid #cbdcec;
+    border-radius: 18px;
+    padding: 18px;
+    background: #ffffff;
+    box-shadow: var(--shadow-lg);
+}
+
+.detail-drawer-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.detail-drawer-heading span {
+    color: #0ea5e9;
+    font-size: 0.78rem;
+    font-weight: 950;
+    text-transform: uppercase;
+}
+
+.detail-drawer-heading h2 {
+    margin: 4px 0 0;
+    font-size: 1.25rem;
+}
+
+.detail-drawer dl {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+}
+
+.detail-drawer dt {
+    color: #506982;
+    font-size: 0.74rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.detail-drawer dd {
+    min-width: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: #102a43;
+    font-weight: 800;
+}
+
+.detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.revenue-bars {
+    display: grid;
+    gap: 12px;
+}
+
+.revenue-bars > div {
+    display: grid;
+    grid-template-columns: 90px minmax(0, 1fr) 120px;
+    align-items: center;
+    gap: 12px;
+}
+
+.employee-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.employee-card {
+    display: grid;
+    gap: 14px;
+    border: 1px solid #d8e7f3;
+    border-radius: 14px;
+    padding: 16px;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(15, 47, 74, 0.05);
+}
+
+.employee-card > div {
+    display: grid;
+    gap: 4px;
+}
+
+.employee-card > div span {
+    color: #506982;
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.employee-card dl {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 12px;
+    margin: 0;
+}
+
+.employee-card dt {
+    color: #506982;
+    font-size: 0.82rem;
+}
+
+.employee-card dd {
+    margin: 0;
+    color: #102a43;
+    font-weight: 950;
 }
 
 .run-guide {
@@ -1876,6 +2050,7 @@ textarea:focus-visible {
 
 .preview-shell {
     min-height: 100vh;
+    padding-top: 70px;
     color: #102a43;
     background: radial-gradient(circle at 76% 18%, rgba(14, 165, 233, 0.13), transparent 24rem),
     radial-gradient(circle at 22% 72%, rgba(6, 182, 212, 0.16), transparent 28rem),
@@ -1883,21 +2058,23 @@ textarea:focus-visible {
 }
 
 .preview-header {
-    position: sticky;
-    top: 14px;
-    z-index: 20;
-    width: min(100% - 48px, 1420px);
-    min-height: 72px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 80;
+    width: 100%;
+    min-height: 64px;
     display: flex;
     align-items: center;
     gap: 18px;
-    margin: 14px auto 0;
-    border: 1px solid rgba(216, 231, 243, 0.9);
-    border-radius: 22px;
-    padding: 10px 12px;
+    margin: 0;
+    border-bottom: 1px solid rgba(216, 231, 243, 0.9);
+    border-radius: 0;
+    padding: 8px 24px;
     color: #102a43;
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: 0 18px 44px rgba(15, 47, 74, 0.09);
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 30px rgba(15, 47, 74, 0.08);
     backdrop-filter: blur(16px);
 }
 
@@ -1978,12 +2155,13 @@ textarea:focus-visible {
 
 .preview-hero {
     width: min(100% - 48px, 1420px);
+    min-height: calc(100vh - 70px);
     display: grid;
     grid-template-columns: minmax(320px, 0.82fr) minmax(560px, 1.18fr);
-    gap: 46px;
+    gap: 32px;
     align-items: center;
-    margin: 26px auto 0;
-    padding: 20px 0 58px;
+    margin: 0 auto;
+    padding: 24px 0;
 }
 
 .customer-hero {
@@ -1992,7 +2170,7 @@ textarea:focus-visible {
 
 .preview-copy {
     display: grid;
-    gap: 18px;
+    gap: 13px;
 }
 
 .preview-eyebrow,
@@ -2000,15 +2178,15 @@ textarea:focus-visible {
 .preview-mobile-band span {
     color: #0ea5e9;
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 0.86rem;
     text-transform: uppercase;
 }
 
 .preview-copy h1 {
     margin: 0;
     color: #102a43;
-    font-size: clamp(2.6rem, 5vw, 5.15rem);
-    line-height: 0.98;
+    font-size: clamp(2rem, 4vw, 3.7rem);
+    line-height: 1.03;
 }
 
 .preview-copy p,
@@ -2016,30 +2194,30 @@ textarea:focus-visible {
     max-width: 620px;
     margin: 0;
     color: #506982;
-    font-size: 1.08rem;
-    line-height: 1.7;
+    font-size: 0.98rem;
+    line-height: 1.55;
 }
 
 .preview-mobile-band p {
     max-width: 620px;
     margin: 0;
     color: rgba(255, 255, 255, 0.82);
-    font-size: 1.08rem;
-    line-height: 1.7;
+    font-size: 0.98rem;
+    line-height: 1.55;
 }
 
 .preview-actions {
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 4px;
 }
 
 .preview-primary {
-    min-height: 52px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     border-radius: 999px;
-    padding: 0 22px;
+    padding: 0 18px;
     color: #ffffff;
     background: linear-gradient(135deg, #0ea5e9, #2563eb);
     font-weight: 950;
@@ -2048,18 +2226,18 @@ textarea:focus-visible {
 }
 
 .preview-secondary {
-    min-height: 52px;
+    min-height: 44px;
     display: inline-flex;
     align-items: center;
     border: 1px solid #c9d9e8;
     border-radius: 999px;
-    padding: 0 20px;
+    padding: 0 16px;
     background: rgba(255, 255, 255, 0.72);
 }
 
 .device-showcase {
     position: relative;
-    min-height: 560px;
+    min-height: 440px;
 }
 
 .device-showcase::before {
@@ -2075,7 +2253,7 @@ textarea:focus-visible {
 
 .customer-app-preview {
     position: relative;
-    min-height: 520px;
+    min-height: 420px;
     display: grid;
     place-items: center;
 }
@@ -2476,20 +2654,24 @@ textarea:focus-visible {
 
 .preview-features {
     width: min(100% - 48px, 1420px);
+    min-height: calc(100vh - 70px);
     display: grid;
     grid-template-columns: minmax(280px, 0.65fr) minmax(0, 1.35fr);
-    gap: 44px;
+    gap: 30px;
+    align-items: center;
     margin: 0 auto;
-    padding: 52px 0;
+    padding: 24px 0;
 }
 
 .preview-views {
     width: min(100% - 48px, 1420px);
+    min-height: calc(100vh - 70px);
     display: grid;
     grid-template-columns: minmax(280px, 0.55fr) minmax(0, 1.45fr);
-    gap: 44px;
+    gap: 30px;
+    align-items: center;
     margin: 0 auto;
-    padding: 28px 0 58px;
+    padding: 24px 0;
 }
 
 .platform-view-list {
@@ -2500,17 +2682,17 @@ textarea:focus-visible {
 
 .platform-view-list article {
     position: relative;
-    min-height: 150px;
+    min-height: 122px;
     display: grid;
     align-content: start;
     gap: 10px;
     border: 1px solid #dbeaf6;
     border-radius: 12px;
-    padding: 20px;
+    padding: 16px;
     color: #102a43;
     background: rgba(255, 255, 255, 0.88);
     box-shadow: 0 18px 34px rgba(15, 47, 74, 0.08);
-    font-size: 1.3rem;
+    font-size: 1rem;
 }
 
 .platform-view-list article > svg {
@@ -2518,7 +2700,7 @@ textarea:focus-visible {
 }
 
 .platform-view-list strong {
-    font-size: 2rem;
+    font-size: 1.45rem;
 }
 
 .platform-view-list span {
@@ -2573,31 +2755,31 @@ textarea:focus-visible {
 }
 
 .feature-intro h2 {
-    margin: 8px 0 12px;
+    margin: 6px 0 10px;
     color: #102a43;
-    font-size: clamp(2rem, 3vw, 3.2rem);
+    font-size: clamp(1.55rem, 2.3vw, 2.35rem);
 }
 
 .preview-mobile-band h2 {
-    margin: 8px 0 12px;
+    margin: 6px 0 10px;
     color: #ffffff;
-    font-size: clamp(2rem, 3vw, 3.2rem);
+    font-size: clamp(1.55rem, 2.3vw, 2.35rem);
 }
 
 .feature-list {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
+    gap: 14px;
 }
 
 .feature-list article {
-    min-height: 240px;
+    min-height: 190px;
     display: grid;
     align-content: start;
-    gap: 14px;
+    gap: 10px;
     border: 1px solid #dbeaf6;
     border-radius: 8px;
-    padding: 24px;
+    padding: 18px;
     background: #ffffff;
     box-shadow: 0 18px 34px rgba(15, 47, 74, 0.08);
 }
@@ -2613,24 +2795,27 @@ textarea:focus-visible {
 
 .feature-list h3 {
     color: #17344f;
-    font-size: 1.28rem;
+    font-size: 1.08rem;
 }
 
 .feature-list p {
     color: #5c7186;
-    line-height: 1.62;
+    font-size: 0.92rem;
+    line-height: 1.45;
 }
 
 .preview-mobile-band {
     position: relative;
     width: min(100% - 48px, 1420px);
+    min-height: calc(100vh - 92px);
     display: grid;
     grid-template-columns: minmax(0, 0.8fr) minmax(320px, 1fr);
-    gap: 30px;
+    gap: 24px;
+    align-items: center;
     overflow: hidden;
-    margin: 0 auto 56px;
+    margin: 0 auto 24px;
     border-radius: 18px;
-    padding: 42px;
+    padding: 30px;
     color: #ffffff;
     background: linear-gradient(135deg, #064e9e, #06b6d4);
 }
@@ -3235,7 +3420,7 @@ textarea:focus-visible {
 
     .app-layout {
         display: block;
-        padding: 18px 16px 34px !important;
+        padding: 92px 16px 34px !important;
     }
 
     .app-sidebar,
@@ -3303,11 +3488,14 @@ textarea:focus-visible {
         grid-template-columns: 1fr;
     }
 
-    .preview-header,
     .preview-hero,
     .preview-features,
     .preview-mobile-band {
         width: min(100% - 32px, 720px);
+    }
+
+    .preview-header {
+        width: 100%;
     }
 
     .preview-header nav {
@@ -3323,7 +3511,7 @@ textarea:focus-visible {
     }
 
     .device-showcase {
-        min-height: 680px;
+        min-height: 460px;
     }
 
     .customer-app-preview {
@@ -3598,9 +3786,11 @@ textarea:focus-visible {
     }
 
     .preview-header {
-        top: 8px;
-        min-height: 72px;
-        flex-wrap: wrap;
+        top: 0;
+        min-height: 58px;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 7px 12px;
     }
 
     .preview-header nav {
@@ -3621,16 +3811,19 @@ textarea:focus-visible {
     }
 
     .preview-login {
+        min-height: 40px;
+        padding: 0 11px;
         font-size: 0.86rem;
     }
 
     .preview-hero {
-        gap: 28px;
-        padding-top: 18px;
+        gap: 22px;
+        min-height: calc(100vh - 64px);
+        padding: 18px 0;
     }
 
     .preview-copy h1 {
-        font-size: 2.45rem;
+        font-size: 1.95rem;
     }
 
     .preview-actions {
@@ -3639,7 +3832,7 @@ textarea:focus-visible {
     }
 
     .device-showcase {
-        min-height: 600px;
+        min-height: 380px;
     }
 
     .device-showcase::before {
@@ -3691,11 +3884,23 @@ textarea:focus-visible {
     }
 
     .preview-features {
-        padding: 30px 0;
+        min-height: calc(100vh - 64px);
+        padding: 18px 0;
+    }
+
+    .permission-grid,
+    .employee-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .revenue-bars > div {
+        grid-template-columns: 1fr;
+        gap: 6px;
     }
 
     .preview-mobile-band {
-        padding: 28px;
+        min-height: calc(100vh - 80px);
+        padding: 22px;
     }
 
     .persona-shell {

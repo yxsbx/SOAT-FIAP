@@ -7,12 +7,14 @@ import br.com.autocarehub.application.usecase.demo.ListDemoLeadsUseCase;
 import br.com.autocarehub.application.usecase.demo.RegisterDemoLeadUseCase;
 import br.com.autocarehub.application.usecase.part.*;
 import br.com.autocarehub.application.usecase.serviceorder.*;
+import br.com.autocarehub.application.usecase.user.*;
 import br.com.autocarehub.application.usecase.vehicle.*;
 import br.com.autocarehub.application.usecase.workshopservice.*;
 import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ApplicationUseCaseConfig {
@@ -30,6 +32,42 @@ public class ApplicationUseCaseConfig {
     @Bean
     ListDemoLeadsUseCase listDemoLeadsUseCase(DemoLeadRepository repository) {
         return new ListDemoLeadsUseCase(repository);
+    }
+
+    @Bean
+    GetUserUseCase getUserUseCase(UserRepository repository) {
+        return new GetUserUseCase(repository);
+    }
+
+    @Bean
+    ListUsersUseCase listUsersUseCase(UserRepository repository) {
+        return new ListUsersUseCase(repository);
+    }
+
+    @Bean
+    CreateUserUseCase createUserUseCase(UserRepository repository, PasswordEncoder passwordEncoder) {
+        return new CreateUserUseCase(repository, passwordEncoder);
+    }
+
+    @Bean
+    UpdateUserUseCase updateUserUseCase(UserRepository repository) {
+        return new UpdateUserUseCase(repository);
+    }
+
+    @Bean
+    ChangeUserPasswordUseCase changeUserPasswordUseCase(
+            UserRepository repository, PasswordEncoder passwordEncoder) {
+        return new ChangeUserPasswordUseCase(repository, passwordEncoder);
+    }
+
+    @Bean
+    GetUserPreferenceUseCase getUserPreferenceUseCase(UserPreferenceRepository repository) {
+        return new GetUserPreferenceUseCase(repository);
+    }
+
+    @Bean
+    SaveUserPreferenceUseCase saveUserPreferenceUseCase(UserPreferenceRepository repository) {
+        return new SaveUserPreferenceUseCase(repository);
     }
 
     @Bean
@@ -145,6 +183,17 @@ public class ApplicationUseCaseConfig {
     }
 
     @Bean
+    RegisterPartStockMovementUseCase registerPartStockMovementUseCase(
+            PartRepository partRepository, StockMovementRepository stockMovementRepository) {
+        return new RegisterPartStockMovementUseCase(partRepository, stockMovementRepository);
+    }
+
+    @Bean
+    ConfigurePartReservationUseCase configurePartReservationUseCase(PartRepository repository) {
+        return new ConfigurePartReservationUseCase(repository);
+    }
+
+    @Bean
     CreateServiceOrderUseCase createServiceOrderUseCase(
             ServiceOrderRepository serviceOrderRepository,
             CustomerRepository customerRepository,
@@ -178,14 +227,14 @@ public class ApplicationUseCaseConfig {
 
     @Bean
     GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase(
-            ServiceOrderRepository repository) {
-        return new GenerateServiceOrderBudgetUseCase(repository);
+            ServiceOrderRepository repository, PartRepository partRepository) {
+        return new GenerateServiceOrderBudgetUseCase(repository, partRepository);
     }
 
     @Bean
     ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase(
-            ServiceOrderRepository repository) {
-        return new ApproveServiceOrderBudgetUseCase(repository);
+            ServiceOrderRepository repository, PartRepository partRepository) {
+        return new ApproveServiceOrderBudgetUseCase(repository, partRepository);
     }
 
     @Bean

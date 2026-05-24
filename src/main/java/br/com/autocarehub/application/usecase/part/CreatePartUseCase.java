@@ -20,6 +20,7 @@ public class CreatePartUseCase {
                         command.category(),
                         command.subcategory(),
                         command.brand(),
+                        command.costPrice(),
                         command.unitPrice(),
                         command.stockQuantity(),
                         command.minimumStock());
@@ -32,6 +33,7 @@ public class CreatePartUseCase {
             String category,
             String subcategory,
             String brand,
+            Money costPrice,
             Money unitPrice,
             int stockQuantity,
             int minimumStock) {

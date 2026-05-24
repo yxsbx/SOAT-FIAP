@@ -24,6 +24,7 @@ public final class PartRestMapper {
                 request.getCategory(),
                 request.getSubcategory(),
                 request.getBrand(),
+                new Money(BigDecimal.valueOf(request.getCostPrice() == null ? 0 : request.getCostPrice())),
                 new Money(BigDecimal.valueOf(request.getUnitPrice())),
                 request.getStockQuantity(),
                 request.getMinimumStock());
@@ -37,6 +38,7 @@ public final class PartRestMapper {
                 request.getCategory(),
                 request.getSubcategory(),
                 request.getBrand(),
+                new Money(BigDecimal.valueOf(request.getCostPrice() == null ? 0 : request.getCostPrice())),
                 new Money(BigDecimal.valueOf(request.getUnitPrice())),
                 request.getMinimumStock(),
                 Boolean.TRUE.equals(request.getActive()));
@@ -59,10 +61,16 @@ public final class PartRestMapper {
                 part.category(),
                 part.brand(),
                 part.unitPrice().value().doubleValue(),
+                part.costPrice().value().doubleValue(),
                 part.stockQuantity(),
+                part.reservedQuantity(),
                 part.minimumStock(),
+                part.stockStatus(),
                 part.active())
-                .subcategory(part.subcategory());
+                .subcategory(part.subcategory())
+                .availableQuantity(part.availableQuantity())
+                .reservationDays(part.reservationDays())
+                .reservationExpiresAt(RestMapperSupport.toOffsetDateTime(part.reservationExpiresAt()));
     }
 
     public static PartListResponse toListResponse(List<Part> parts, Integer page, Integer size) {

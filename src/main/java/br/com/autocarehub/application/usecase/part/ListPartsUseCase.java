@@ -24,7 +24,7 @@ public class ListPartsUseCase {
                         part ->
                                 query.lowStock() == null
                                 || !query.lowStock()
-                                || part.stockQuantity() <= part.minimumStock())
+                                || part.availableQuantity() <= part.minimumStock())
                 .toList();
     }
 

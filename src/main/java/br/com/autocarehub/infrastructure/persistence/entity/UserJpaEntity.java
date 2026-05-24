@@ -27,6 +27,18 @@ public class UserJpaEntity {
     @Column(name = "customer_id")
     private UUID customerId;
 
+    @Column(name = "full_name", nullable = false, length = 160)
+    private String fullName;
+
+    @Column(name = "profile_type", nullable = false, length = 60)
+    private String profileType;
+
+    @Column(name = "employee_sub_role", nullable = false, length = 60)
+    private String employeeSubRole;
+
+    @Column(name = "permissions", nullable = false)
+    private String permissions;
+
     @Column(nullable = false)
     private boolean active;
 
@@ -74,6 +86,38 @@ public class UserJpaEntity {
 
     public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getProfileType() {
+        return profileType;
+    }
+
+    public void setProfileType(String profileType) {
+        this.profileType = profileType;
+    }
+
+    public String getEmployeeSubRole() {
+        return employeeSubRole;
+    }
+
+    public void setEmployeeSubRole(String employeeSubRole) {
+        this.employeeSubRole = employeeSubRole;
+    }
+
+    public String getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(String permissions) {
+        this.permissions = permissions;
     }
 
     public boolean isActive() {

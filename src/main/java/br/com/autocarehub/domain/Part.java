@@ -1,5 +1,6 @@
 package br.com.autocarehub.domain;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,9 +12,13 @@ public class Part {
     private String category;
     private String subcategory;
     private String brand;
+    private Money costPrice;
     private Money unitPrice;
     private int stockQuantity;
+    private int reservedQuantity;
     private int minimumStock;
+    private int reservationDays;
+    private LocalDateTime reservationExpiresAt;
     private boolean active;
 
     public Part(
@@ -25,6 +30,19 @@ public class Part {
             Money unitPrice,
             int stockQuantity,
             int minimumStock) {
+        this(name, sku, category, subcategory, brand, Money.zero(), unitPrice, stockQuantity, minimumStock);
+    }
+
+    public Part(
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock) {
         this(
                 UUID.randomUUID(),
                 name,
@@ -32,9 +50,13 @@ public class Part {
                 category,
                 subcategory,
                 brand,
+                costPrice,
                 unitPrice,
                 stockQuantity,
+                0,
                 minimumStock,
+                3,
+                null,
                 true);
     }
 
@@ -49,16 +71,63 @@ public class Part {
             int stockQuantity,
             int minimumStock,
             boolean active) {
+        this(
+                id,
+                name,
+                sku,
+                category,
+                subcategory,
+                brand,
+                Money.zero(),
+                unitPrice,
+                stockQuantity,
+                0,
+                minimumStock,
+                3,
+                null,
+                active);
+    }
+
+    public Part(
+            UUID id,
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int reservedQuantity,
+            int minimumStock,
+            int reservationDays,
+            LocalDateTime reservationExpiresAt,
+            boolean active) {
         this.id = Objects.requireNonNull(id, "id is required");
         this.name = requireText(name, "Name is required");
         this.sku = requireText(sku, "SKU is required");
         this.category = requireText(category, "Category is required");
         this.subcategory = subcategory == null ? null : subcategory.trim();
         this.brand = requireText(brand, "Brand is required");
+        this.costPrice = requireNonNegativeMoney(costPrice, "Cost price cannot be negative");
         this.unitPrice = requirePositiveMoney(unitPrice, "Unit price must be greater than zero");
         this.stockQuantity = requireNonNegative(stockQuantity, "Stock cannot be negative");
+        this.reservedQuantity = requireNonNegative(reservedQuantity, "Reserved stock cannot be negative");
+        if (reservedQuantity > stockQuantity) {
+            throw new DomainException("Reserved stock cannot be greater than stock");
+        }
         this.minimumStock = requireNonNegative(minimumStock, "Minimum stock cannot be negative");
+        this.reservationDays = reservationDays <= 0 ? 3 : reservationDays;
+        this.reservationExpiresAt = reservationExpiresAt;
         this.active = active;
+    }
+
+    private static Money requireNonNegativeMoney(Money money, String message) {
+        Money normalized = money == null ? Money.zero() : money;
+        if (normalized.value().signum() < 0) {
+            throw new DomainException(message);
+        }
+        return normalized;
     }
 
     private static Money requirePositiveMoney(Money money, String message) {
@@ -89,6 +158,7 @@ public class Part {
             String category,
             String subcategory,
             String brand,
+            Money costPrice,
             Money unitPrice,
             int minimumStock) {
         this.name = requireText(name, "Name is required");
@@ -96,8 +166,20 @@ public class Part {
         this.category = requireText(category, "Category is required");
         this.subcategory = subcategory == null ? null : subcategory.trim();
         this.brand = requireText(brand, "Brand is required");
+        this.costPrice = requireNonNegativeMoney(costPrice, "Cost price cannot be negative");
         this.unitPrice = requirePositiveMoney(unitPrice, "Unit price must be greater than zero");
         this.minimumStock = requireNonNegative(minimumStock, "Minimum stock cannot be negative");
+    }
+
+    public void update(
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money unitPrice,
+            int minimumStock) {
+        update(name, sku, category, subcategory, brand, this.costPrice, unitPrice, minimumStock);
     }
 
     public void increaseStock(int quantity) {
@@ -111,14 +193,89 @@ public class Part {
         if (quantity <= 0) {
             throw new DomainException("Quantity must be greater than zero");
         }
-        if (quantity > stockQuantity) {
+        if (quantity > availableQuantity()) {
             throw new DomainException("Insufficient stock");
         }
         this.stockQuantity -= quantity;
     }
 
     public boolean hasAvailableStock(int quantity) {
-        return quantity > 0 && stockQuantity >= quantity;
+        releaseExpiredReservation();
+        return quantity > 0 && availableQuantity() >= quantity;
+    }
+
+    public void reserveStock(int quantity) {
+        if (quantity <= 0) {
+            throw new DomainException("Quantity must be greater than zero");
+        }
+        releaseExpiredReservation();
+        if (quantity > availableQuantity()) {
+            throw new DomainException("Insufficient stock");
+        }
+        this.reservedQuantity += quantity;
+        this.reservationExpiresAt = LocalDateTime.now().plusDays(reservationDays);
+    }
+
+    public void commitReservedStock(int quantity) {
+        if (quantity <= 0) {
+            throw new DomainException("Quantity must be greater than zero");
+        }
+        releaseExpiredReservation();
+        int quantityToCommit = Math.min(quantity, reservedQuantity);
+        if (quantityToCommit <= 0) {
+            reduceStock(quantity);
+            return;
+        }
+        this.reservedQuantity -= quantityToCommit;
+        this.stockQuantity -= quantityToCommit;
+        if (reservedQuantity == 0) {
+            this.reservationExpiresAt = null;
+        }
+    }
+
+    public void releaseReservedStock(int quantity) {
+        if (quantity <= 0) {
+            throw new DomainException("Quantity must be greater than zero");
+        }
+        this.reservedQuantity = Math.max(0, reservedQuantity - quantity);
+        if (reservedQuantity == 0) {
+            this.reservationExpiresAt = null;
+        }
+    }
+
+    public void releaseExpiredReservation() {
+        if (reservationExpiresAt != null && reservationExpiresAt.isBefore(LocalDateTime.now())) {
+            reservedQuantity = 0;
+            reservationExpiresAt = null;
+        }
+    }
+
+    public void configureReservationDays(int reservationDays) {
+        if (reservationDays <= 0) {
+            throw new DomainException("Reservation days must be greater than zero");
+        }
+        this.reservationDays = reservationDays;
+    }
+
+    public int availableQuantity() {
+        releaseExpiredReservation();
+        return Math.max(0, stockQuantity - reservedQuantity);
+    }
+
+    public String stockStatus() {
+        if (!active) {
+            return "INACTIVE";
+        }
+        if (availableQuantity() <= 0) {
+            return "OUT_OF_STOCK";
+        }
+        if (availableQuantity() <= minimumStock) {
+            return "LOW_STOCK";
+        }
+        if (reservedQuantity > 0) {
+            return "RESERVED";
+        }
+        return "AVAILABLE";
     }
 
     public void activate() {
@@ -157,12 +314,28 @@ public class Part {
         return unitPrice;
     }
 
+    public Money costPrice() {
+        return costPrice;
+    }
+
     public int stockQuantity() {
         return stockQuantity;
     }
 
+    public int reservedQuantity() {
+        return reservedQuantity;
+    }
+
     public int minimumStock() {
         return minimumStock;
+    }
+
+    public int reservationDays() {
+        return reservationDays;
+    }
+
+    public LocalDateTime reservationExpiresAt() {
+        return reservationExpiresAt;
     }
 
     public boolean active() {

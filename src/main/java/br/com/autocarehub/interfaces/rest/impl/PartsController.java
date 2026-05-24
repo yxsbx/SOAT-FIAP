@@ -1,12 +1,20 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
 import br.com.autocarehub.application.usecase.part.*;
+import br.com.autocarehub.domain.Money;
 import br.com.autocarehub.domain.Part;
 import br.com.autocarehub.interfaces.rest.generated.api.PartsApi;
 import br.com.autocarehub.interfaces.rest.generated.model.*;
 import br.com.autocarehub.interfaces.rest.impl.mapper.PartRestMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
@@ -20,6 +28,8 @@ public class PartsController implements PartsApi {
     private final ListPartsUseCase listPartsUseCase;
     private final DeletePartUseCase deletePartUseCase;
     private final UpdatePartStockUseCase updatePartStockUseCase;
+    private final RegisterPartStockMovementUseCase registerPartStockMovementUseCase;
+    private final ConfigurePartReservationUseCase configurePartReservationUseCase;
 
     public PartsController(
             CreatePartUseCase createPartUseCase,
@@ -27,13 +37,17 @@ public class PartsController implements PartsApi {
             FindPartUseCase findPartUseCase,
             ListPartsUseCase listPartsUseCase,
             DeletePartUseCase deletePartUseCase,
-            UpdatePartStockUseCase updatePartStockUseCase) {
+            UpdatePartStockUseCase updatePartStockUseCase,
+            RegisterPartStockMovementUseCase registerPartStockMovementUseCase,
+            ConfigurePartReservationUseCase configurePartReservationUseCase) {
         this.createPartUseCase = createPartUseCase;
         this.updatePartUseCase = updatePartUseCase;
         this.findPartUseCase = findPartUseCase;
         this.listPartsUseCase = listPartsUseCase;
         this.deletePartUseCase = deletePartUseCase;
         this.updatePartStockUseCase = updatePartStockUseCase;
+        this.registerPartStockMovementUseCase = registerPartStockMovementUseCase;
+        this.configurePartReservationUseCase = configurePartReservationUseCase;
     }
 
     @Override
@@ -74,4 +88,37 @@ public class PartsController implements PartsApi {
                 updatePartStockUseCase.execute(PartRestMapper.toCommand(partId, updatePartStockRequest));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
+
+    @PatchMapping("/api/v1/parts/{partId}/stock-movement")
+    public ResponseEntity<PartResponse> registerStockMovement(
+            @PathVariable UUID partId, @Valid @RequestBody StockMovementRequest request) {
+        Part part =
+                registerPartStockMovementUseCase.execute(
+                        new RegisterPartStockMovementUseCase.Command(
+                                partId,
+                                RegisterPartStockMovementUseCase.MovementType.valueOf(request.type()),
+                                request.quantity(),
+                                request.unitCost() == null ? null : new Money(request.unitCost()),
+                                request.unitPrice() == null ? null : new Money(request.unitPrice()),
+                                request.reason()));
+        return ResponseEntity.ok(PartRestMapper.toResponse(part));
+    }
+
+    @PatchMapping("/api/v1/parts/{partId}/reservation")
+    public ResponseEntity<PartResponse> configureReservation(
+            @PathVariable UUID partId, @Valid @RequestBody ReservationRequest request) {
+        Part part =
+                configurePartReservationUseCase.execute(
+                        new ConfigurePartReservationUseCase.Command(partId, request.reservationDays()));
+        return ResponseEntity.ok(PartRestMapper.toResponse(part));
+    }
+
+    public record StockMovementRequest(
+            @NotBlank String type,
+            @Min(1) int quantity,
+            BigDecimal unitCost,
+            BigDecimal unitPrice,
+            String reason) {}
+
+    public record ReservationRequest(@Min(1) int reservationDays) {}
 }

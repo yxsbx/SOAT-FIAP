@@ -1,0 +1,54 @@
+package br.com.autocarehub.application.usecase.user;
+
+import br.com.autocarehub.application.ResourceNotFoundException;
+import br.com.autocarehub.application.repository.UserRepository;
+import br.com.autocarehub.domain.User;
+import br.com.autocarehub.domain.UserRole;
+
+import java.util.UUID;
+
+public class UpdateUserUseCase {
+
+    private final UserRepository userRepository;
+
+    public UpdateUserUseCase(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User execute(Command command) {
+        User current =
+                userRepository
+                        .findById(command.userId())
+                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User updated =
+                new User(
+                        current.id(),
+                        command.username() == null || command.username().isBlank()
+                                ? current.username()
+                                : command.username(),
+                        current.passwordHash(),
+                        command.role() == null || command.role().isBlank()
+                                ? current.role()
+                                : UserRole.valueOf(command.role()),
+                        command.customerId(),
+                        command.fullName(),
+                        command.profileType(),
+                        command.employeeSubRole(),
+                        command.permissions(),
+                        command.active(),
+                        current.createdAt());
+        return userRepository.save(updated);
+    }
+
+    public record Command(
+            UUID userId,
+            String username,
+            String role,
+            UUID customerId,
+            String fullName,
+            String profileType,
+            String employeeSubRole,
+            java.util.List<String> permissions,
+            boolean active) {
+    }
+}

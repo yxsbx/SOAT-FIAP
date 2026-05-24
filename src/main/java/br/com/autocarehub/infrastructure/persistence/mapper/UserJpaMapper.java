@@ -4,6 +4,9 @@ import br.com.autocarehub.domain.User;
 import br.com.autocarehub.domain.UserRole;
 import br.com.autocarehub.infrastructure.persistence.entity.UserJpaEntity;
 
+import java.util.Arrays;
+import java.util.List;
+
 public final class UserJpaMapper {
 
     private UserJpaMapper() {
@@ -16,7 +19,37 @@ public final class UserJpaMapper {
                 entity.getPasswordHash(),
                 UserRole.valueOf(entity.getRole()),
                 entity.getCustomerId(),
+                entity.getFullName(),
+                entity.getProfileType(),
+                entity.getEmployeeSubRole(),
+                toPermissions(entity.getPermissions()),
                 entity.isActive(),
                 entity.getCreatedAt());
+    }
+
+    public static UserJpaEntity toEntity(User user) {
+        UserJpaEntity entity = new UserJpaEntity();
+        entity.setId(user.id());
+        entity.setUsername(user.username());
+        entity.setPasswordHash(user.passwordHash());
+        entity.setRole(user.role().name());
+        entity.setCustomerId(user.customerId());
+        entity.setFullName(user.fullName());
+        entity.setProfileType(user.profileType());
+        entity.setEmployeeSubRole(user.employeeSubRole());
+        entity.setPermissions(String.join(",", user.permissions()));
+        entity.setActive(user.active());
+        entity.setCreatedAt(user.createdAt());
+        return entity;
+    }
+
+    private static List<String> toPermissions(String value) {
+        if (value == null || value.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(value.split(","))
+                .map(String::trim)
+                .filter(item -> !item.isBlank())
+                .toList();
     }
 }

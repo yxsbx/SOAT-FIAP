@@ -26,6 +26,7 @@ public class UpdatePartUseCase {
                 command.category(),
                 command.subcategory(),
                 command.brand(),
+                command.costPrice(),
                 command.unitPrice(),
                 command.minimumStock());
         if (command.active()) {
@@ -43,6 +44,7 @@ public class UpdatePartUseCase {
             String category,
             String subcategory,
             String brand,
+            Money costPrice,
             Money unitPrice,
             int minimumStock,
             boolean active) {

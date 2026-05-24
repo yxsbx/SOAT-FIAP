@@ -17,9 +17,13 @@ public final class PartJpaMapper {
         entity.setCategory(part.category());
         entity.setSubcategory(part.subcategory());
         entity.setBrand(part.brand());
+        entity.setCostPrice(part.costPrice().value());
         entity.setUnitPrice(part.unitPrice().value());
         entity.setStockQuantity(part.stockQuantity());
+        entity.setReservedQuantity(part.reservedQuantity());
         entity.setMinimumStock(part.minimumStock());
+        entity.setReservationDays(part.reservationDays());
+        entity.setReservationExpiresAt(part.reservationExpiresAt());
         entity.setActive(part.active());
         return entity;
     }
@@ -32,9 +36,13 @@ public final class PartJpaMapper {
                 entity.getCategory(),
                 entity.getSubcategory(),
                 entity.getBrand(),
+                new Money(entity.getCostPrice()),
                 new Money(entity.getUnitPrice()),
                 entity.getStockQuantity(),
+                entity.getReservedQuantity(),
                 entity.getMinimumStock(),
+                entity.getReservationDays(),
+                entity.getReservationExpiresAt(),
                 entity.isActive());
     }
 }

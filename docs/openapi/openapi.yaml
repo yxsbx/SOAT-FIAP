@@ -1173,6 +1173,10 @@ components:
                     type: number
                     format: double
                     minimum: 0
+                costPrice:
+                    type: number
+                    format: double
+                    minimum: 0
                 stockQuantity:
                     type: integer
                     minimum: 0
@@ -1205,8 +1209,11 @@ components:
                 - category
                 - brand
                 - unitPrice
+                - costPrice
                 - stockQuantity
+                - reservedQuantity
                 - minimumStock
+                - stockStatus
                 - active
             properties:
                 id:
@@ -1225,10 +1232,24 @@ components:
                 unitPrice:
                     type: number
                     format: double
+                costPrice:
+                    type: number
+                    format: double
                 stockQuantity:
+                    type: integer
+                reservedQuantity:
+                    type: integer
+                availableQuantity:
                     type: integer
                 minimumStock:
                     type: integer
+                reservationDays:
+                    type: integer
+                reservationExpiresAt:
+                    type: string
+                    format: date-time
+                stockStatus:
+                    type: string
                 active:
                     type: boolean
         PartListResponse:

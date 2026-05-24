@@ -60,9 +60,57 @@ export function createDemoLead(payload) {
 }
 
 export const resources = {
+    currentUser: () => apiRequest('/api/v1/users/me'),
+    updateCurrentUser: (payload) =>
+        apiRequest('/api/v1/users/me', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
+    changeCurrentPassword: (payload) =>
+        apiRequest('/api/v1/users/me/password', {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+        }),
+    homePreferences: () => apiRequest('/api/v1/users/me/preferences/home'),
+    saveHomePreferences: (payload) =>
+        apiRequest('/api/v1/users/me/preferences/home', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
+    users: (params) => apiRequest(`/api/v1/users${toQueryString(params)}`),
+    createUser: (payload) =>
+        apiRequest('/api/v1/users', {
+            method: 'POST',
+            body: JSON.stringify(payload),
+        }),
+    updateUser: (userId, payload) =>
+        apiRequest(`/api/v1/users/${userId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
+    resetUserPassword: (userId, newPassword) =>
+        apiRequest(`/api/v1/users/${userId}/password`, {
+            method: 'PATCH',
+            body: JSON.stringify({newPassword}),
+        }),
     customers: (params) => apiRequest(`/api/v1/customers${toQueryString(params)}`),
+    updateCustomer: (customerId, payload) =>
+        apiRequest(`/api/v1/customers/${customerId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
     vehicles: (params) => apiRequest(`/api/v1/vehicles${toQueryString(params)}`),
+    updateVehicle: (vehicleId, payload) =>
+        apiRequest(`/api/v1/vehicles/${vehicleId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
     services: (params) => apiRequest(`/api/v1/workshop-services${toQueryString(params)}`),
+    updateWorkshopService: (serviceId, payload) =>
+        apiRequest(`/api/v1/workshop-services/${serviceId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
     parts: (params) => apiRequest(`/api/v1/parts${toQueryString(params)}`),
     lowStockParts: (params = {}) => apiRequest(`/api/v1/parts${toQueryString({...params, lowStock: true})}`),
     serviceOrders: (params) => apiRequest(`/api/v1/service-orders${toQueryString(params)}`),
@@ -85,10 +133,25 @@ export const resources = {
             method: 'POST',
             body: JSON.stringify(payload),
         }),
+    updatePart: (partId, payload) =>
+        apiRequest(`/api/v1/parts/${partId}`, {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+        }),
     updatePartStock: (partId, stockQuantity) =>
         apiRequest(`/api/v1/parts/${partId}/stock`, {
             method: 'PATCH',
             body: JSON.stringify({stockQuantity: Number(stockQuantity)}),
+        }),
+    registerStockMovement: (partId, payload) =>
+        apiRequest(`/api/v1/parts/${partId}/stock-movement`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+        }),
+    configurePartReservation: (partId, reservationDays) =>
+        apiRequest(`/api/v1/parts/${partId}/reservation`, {
+            method: 'PATCH',
+            body: JSON.stringify({reservationDays: Number(reservationDays)}),
         }),
     createWorkshopService: (payload) =>
         apiRequest('/api/v1/workshop-services', {

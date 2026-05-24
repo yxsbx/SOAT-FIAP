@@ -3,11 +3,14 @@ import {computed, onMounted, reactive, ref} from 'vue';
 import {useRouter} from 'vue-router';
 import {
   AlertTriangle,
+  BadgePercent,
+  BarChart3,
   Car,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   ClipboardList,
+  DollarSign,
   Gauge,
   KeyRound,
   LogOut,
@@ -38,6 +41,9 @@ const sidebarCollapsed = ref(true);
 const profileMenuOpen = ref(false);
 const globalSearch = ref('');
 const homeSettingsOpen = ref(false);
+const selectedRecord = ref(null);
+const selectedRecordType = ref('');
+const currentUser = ref(null);
 
 const defaultHomeWidgetIds = [
   'orders-progress',
@@ -48,6 +54,23 @@ const defaultHomeWidgetIds = [
   'waiting-contact',
   'ready-pickup',
 ];
+
+const permissionDefinitions = [
+  {id: 'VIEW_BILLING', label: 'Ver faturamento'},
+  {id: 'CREATE_ORDER', label: 'Criar ordem'},
+  {id: 'EDIT_ORDER', label: 'Editar ordem'},
+  {id: 'MANAGE_STOCK', label: 'Gerenciar estoque'},
+  {id: 'CREATE_BUDGET', label: 'Criar orçamento'},
+  {id: 'EDIT_EMPLOYEES', label: 'Editar funcionários'},
+  {id: 'VIEW_STATS', label: 'Ver estatísticas'},
+];
+
+const employeeSubRoleLabels = {
+  MECHANIC: 'Mecânico',
+  ATTENDANT: 'Atendente',
+  UNSPECIFIED: 'Funcionário sem especificação',
+  '': 'Funcionário sem especificação',
+};
 
 const homePreferences = reactive({
   userWidgets: [...defaultHomeWidgetIds],
@@ -94,6 +117,7 @@ const orderSteps = [
 ];
 
 const data = reactive({
+  users: [],
   customers: [],
   vehicles: [],
   services: [],
@@ -104,15 +128,17 @@ const data = reactive({
 });
 
 const pagination = reactive({
-  customers: {page: 0, size: 24, active: ''},
-  vehicles: {page: 0, size: 24, active: ''},
-  parts: {page: 0, size: 32, active: '', lowStock: ''},
-  serviceOrders: {page: 0, size: 32, status: ''},
-  services: {page: 0, size: 24, active: ''},
+  users: {page: 0, size: 10, active: '', role: '', profileType: '', search: '', sortBy: 'fullName', sortDir: 'asc'},
+  customers: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
+  vehicles: {page: 0, size: 10, active: '', search: '', sortBy: 'plate', sortDir: 'asc'},
+  parts: {page: 0, size: 10, active: '', lowStock: '', search: '', sortBy: 'name', sortDir: 'asc'},
+  serviceOrders: {page: 0, size: 10, status: '', search: '', sortBy: 'createdAt', sortDir: 'desc'},
+  services: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
 });
 
 const forms = reactive({
   customer: {
+    id: '',
     name: '',
     document: '',
     phone: '',
@@ -126,30 +152,66 @@ const forms = reactive({
       state: 'SP',
       zipCode: '',
     },
+    active: true,
   },
   vehicle: {
+    id: '',
     customerId: '',
     plate: '',
     brand: '',
     model: '',
     year: new Date().getFullYear(),
     mileage: 0,
+    active: true,
   },
   part: {
+    id: '',
     name: '',
     sku: '',
     category: '',
     subcategory: '',
     brand: '',
+    costPrice: 0,
     unitPrice: 0,
     stockQuantity: 0,
     minimumStock: 1,
+    active: true,
+    reservationDays: 3,
+  },
+  stockMovement: {
+    partId: '',
+    type: 'ENTRY',
+    quantity: 1,
+    unitCost: 0,
+    unitPrice: 0,
+    reason: '',
   },
   service: {
+    id: '',
     name: '',
     description: '',
     basePrice: 0,
     estimatedTimeInMinutes: 60,
+    active: true,
+  },
+  user: {
+    id: '',
+    fullName: '',
+    username: '',
+    password: '123456',
+    role: 'EMPLOYEE',
+    profileType: 'WORKSHOP_EMPLOYEE',
+    employeeSubRole: 'UNSPECIFIED',
+    permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
+    customerId: '',
+    active: true,
+  },
+  account: {
+    fullName: '',
+  },
+  password: {
+    currentPassword: '',
+    newPassword: '',
   },
   order: {
     customerDocument: '',
@@ -209,27 +271,27 @@ const demoProfile = computed(() => {
   const profiles = {
     'master@autocarehub.com': {
       label: 'Admin Master',
-      tabs: ['overview', 'orders', 'customers', 'vehicles', 'parts', 'services'],
+      tabs: ['overview', 'users', 'orders', 'customers', 'vehicles', 'parts', 'services'],
     },
     'oficina.admin@autocarehub.com': {
       label: 'Admin de oficina',
-      tabs: ['overview', 'orders', 'customers', 'vehicles', 'parts', 'services'],
+      tabs: ['overview', 'billing', 'employees', 'users', 'orders', 'customers', 'vehicles', 'parts', 'services'],
     },
     'loja.admin@autocarehub.com': {
       label: 'Admin de loja de peças',
-      tabs: ['overview', 'orders', 'parts', 'services'],
+      tabs: ['overview', 'users', 'orders', 'parts', 'services'],
     },
     'oficina.funcionario@autocarehub.com': {
       label: 'Funcionário de oficina',
-      tabs: ['overview', 'orders', 'vehicles', 'parts', 'services'],
+      tabs: ['overview', 'users', 'orders', 'vehicles', 'parts', 'services'],
     },
     'loja.funcionario@autocarehub.com': {
       label: 'Funcionário de loja de peças',
-      tabs: ['overview', 'parts', 'services'],
+      tabs: ['overview', 'users', 'parts', 'services'],
     },
     'cliente@autocarehub.com': {
       label: 'Cliente final',
-      tabs: ['overview', 'orders'],
+      tabs: ['overview', 'users', 'orders'],
     },
   };
 
@@ -249,6 +311,16 @@ const roleLabel = computed(() => {
   return labels[auth.role] || auth.role;
 });
 
+const isWorkshopAdmin = computed(() =>
+    auth.role === 'ADMIN' && currentUser.value?.profileType === 'WORKSHOP_ADMIN',
+);
+
+const userPermissions = computed(() => currentUser.value?.permissions || []);
+
+function can(permission) {
+  return isWorkshopAdmin.value || userPermissions.value.includes(permission);
+}
+
 const availableTabs = computed(() => {
   const tabs = [
     {
@@ -256,6 +328,29 @@ const availableTabs = computed(() => {
       label: 'Painel',
       description: 'Visão geral operacional',
       icon: Gauge,
+      roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
+    },
+    {
+      id: 'billing',
+      label: 'Faturamento',
+      description: 'Receita, taxa e tiers',
+      icon: DollarSign,
+      roles: ['ADMIN'],
+      workshopAdminOnly: true,
+    },
+    {
+      id: 'employees',
+      label: 'Funcionários',
+      description: 'Equipe, permissões e metas',
+      icon: UserCog,
+      roles: ['ADMIN'],
+      workshopAdminOnly: true,
+    },
+    {
+      id: 'users',
+      label: 'Conta',
+      description: 'Dados do usuário e permissões',
+      icon: UserCog,
       roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
     },
     {
@@ -298,14 +393,15 @@ const availableTabs = computed(() => {
   return tabs.filter((tab) => {
     const allowedByRole = tab.roles.includes(auth.role);
     const allowedByProfile = !demoProfile.value || demoProfile.value.tabs.includes(tab.id);
-    return allowedByRole && allowedByProfile;
+    const allowedByAdminType = !tab.workshopAdminOnly || isWorkshopAdmin.value;
+    return allowedByRole && allowedByProfile && allowedByAdminType;
   });
 });
 
 const availableTabIds = computed(() => new Set(availableTabs.value.map((tab) => tab.id)));
 
 const userInitials = computed(() => {
-  const fallback = auth.user?.username || 'Usuario AutoCare';
+  const fallback = currentUser.value?.fullName || auth.user?.username || 'Usuario AutoCare';
   const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
   const parts = name
       .replace(/[._-]+/g, ' ')
@@ -379,8 +475,24 @@ const estimatedOrderTotal = computed(() => {
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
-    ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
+  ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
 );
+
+const criticalParts = computed(() =>
+  data.parts.filter((part) => (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock),
+);
+
+const reservedParts = computed(() =>
+  data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0),
+);
+
+const stockStatusLabels = {
+  AVAILABLE: 'Disponível',
+  RESERVED: 'Com reserva',
+  LOW_STOCK: 'Baixo estoque',
+  OUT_OF_STOCK: 'Sem estoque',
+  INACTIVE: 'Inativa',
+};
 
 const homeWidgetDefinitions = computed(() => [
   {
@@ -498,6 +610,78 @@ const vehicleStatusWidgets = computed(() => [
   },
 ]);
 
+const billingSummary = computed(() => {
+  const orders = data.serviceOrders;
+  const gross = orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
+  const sentBudgets = orders.filter((order) => order.budgetGeneratedAt || ['WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
+  const approvedBudgets = orders.filter((order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
+  const completed = orders.filter((order) => ['FINISHED', 'DELIVERED'].includes(order.status)).length;
+  const ticket = approvedBudgets ? gross / approvedBudgets : 0;
+  const tiers = [
+    {limit: 10000, fee: 0.08, label: '8%'},
+    {limit: 25000, fee: 0.06, label: '6%'},
+    {limit: Infinity, fee: 0.045, label: '4,5%'},
+  ];
+  const currentTier = tiers.find((tier) => gross < tier.limit) || tiers.at(-1);
+  const nextTier = tiers.find((tier) => tier.limit > gross && tier.limit !== Infinity);
+  const feeAmount = gross * currentTier.fee;
+  return {
+    gross,
+    feeRate: currentTier.label,
+    feeAmount,
+    net: gross - feeAmount,
+    sentBudgets,
+    approvedBudgets,
+    completed,
+    ticket,
+    nextTierGap: nextTier ? Math.max(0, nextTier.limit - gross) : 0,
+    nextTierLabel: nextTier ? `${(nextTier.fee * 100).toFixed(0)}%` : 'menor taxa ativa',
+  };
+});
+
+const monthlyRevenue = computed(() => {
+  const months = new Map();
+  data.serviceOrders.forEach((order) => {
+    const date = order.createdAt ? new Date(order.createdAt) : new Date();
+    const key = date.toLocaleDateString('pt-BR', {month: 'short', year: '2-digit'});
+    months.set(key, (months.get(key) || 0) + Number(order.totalAmount || 0));
+  });
+  return [...months.entries()].slice(-6).map(([month, value]) => ({month, value}));
+});
+
+const workshopEmployees = computed(() =>
+    data.users.filter((user) => user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE'),
+);
+
+function employeeMetrics(user) {
+  const index = Math.max(1, workshopEmployees.value.findIndex((employee) => employee.id === user.id) + 1);
+  const approved = data.serviceOrders.filter((order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
+  const sent = data.serviceOrders.filter((order) => order.budgetGeneratedAt || order.status === 'WAITING_APPROVAL').length || approved;
+  const completed = data.serviceOrders.filter((order) => ['FINISHED', 'DELIVERED'].includes(order.status)).length;
+  if (user.employeeSubRole === 'ATTENDANT') {
+    return [
+      {label: 'Clientes contatados', value: ordersWaitingContact.value + index * 3},
+      {label: 'Orçamentos enviados', value: sent},
+      {label: 'Orçamentos aprovados', value: approved},
+      {label: 'Taxa de conversão', value: `${sent ? Math.round((approved / sent) * 100) : 0}%`},
+    ];
+  }
+  if (user.employeeSubRole === 'MECHANIC') {
+    return [
+      {label: 'Veículos atendidos', value: completed + index},
+      {label: 'Serviços concluídos', value: completed},
+      {label: 'Tempo médio', value: formatDuration(data.averageExecutionTime?.averageExecutionTimeInMinutes || 0)},
+      {label: 'Meta concluídos', value: `${Math.min(100, Math.round(((completed + index) / 12) * 100))}%`},
+    ];
+  }
+  return [
+    {label: 'Ordens em aberto', value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length},
+    {label: 'Orçamentos enviados', value: sent},
+    {label: 'Serviços concluídos', value: completed},
+    {label: 'Permissões ativas', value: user.permissions?.length || 0},
+  ];
+}
+
 const showHomeAlerts = computed(() => homePreferences.showAlertsOnHome);
 
 const searchResults = computed(() => {
@@ -561,6 +745,64 @@ const vehiclesWithCurrentStatus = computed(() =>
     }),
 );
 
+const listSources = computed(() => ({
+  users: data.users,
+  customers: data.customers,
+  vehicles: vehiclesWithCurrentStatus.value,
+  parts: data.parts,
+  serviceOrders: data.serviceOrders,
+  services: data.services,
+}));
+
+const listSearchFields = {
+  users: ['fullName', 'username', 'role', 'profileType'],
+  customers: ['name', 'email', 'phone', 'document'],
+  vehicles: ['plate', 'brand', 'model', 'currentStatus'],
+  parts: ['name', 'sku', 'category', 'brand', 'stockStatus'],
+  serviceOrders: ['status', 'diagnosticNotes', 'id'],
+  services: ['name', 'description'],
+};
+
+function listRows(resource) {
+  const config = pagination[resource];
+  const query = normalize(config.search || '');
+  const fields = listSearchFields[resource] || [];
+  const rows = [...(listSources.value[resource] || [])]
+      .filter((item) => {
+        if (!query) {
+          return true;
+        }
+        return fields.some((field) => normalize(item[field]).includes(query));
+      })
+      .sort((a, b) => {
+        const left = a[config.sortBy];
+        const right = b[config.sortBy];
+        const direction = config.sortDir === 'desc' ? -1 : 1;
+        if (typeof left === 'number' || typeof right === 'number') {
+          return (Number(left || 0) - Number(right || 0)) * direction;
+        }
+        return String(left || '').localeCompare(String(right || ''), 'pt-BR') * direction;
+      });
+  const start = config.page * config.size;
+  return rows.slice(start, start + config.size);
+}
+
+function listTotal(resource) {
+  const config = pagination[resource];
+  const query = normalize(config.search || '');
+  const fields = listSearchFields[resource] || [];
+  return (listSources.value[resource] || []).filter((item) => {
+    if (!query) {
+      return true;
+    }
+    return fields.some((field) => normalize(item[field]).includes(query));
+  }).length;
+}
+
+function listTotalPages(resource) {
+  return Math.max(1, Math.ceil(listTotal(resource) / pagination[resource].size));
+}
+
 function listItems(payload) {
   return payload?.items || [];
 }
@@ -609,7 +851,7 @@ function readStoredJson(key, fallback) {
   }
 }
 
-function loadHomePreferences() {
+async function loadHomePreferences() {
   const globalConfig = readStoredJson('autocare.home.workshop.global', {
     widgets: defaultHomeWidgetIds,
     showAlertsOnHome: false,
@@ -621,10 +863,26 @@ function loadHomePreferences() {
   homePreferences.globalWidgets = [...(globalConfig.widgets || defaultHomeWidgetIds)];
   homePreferences.showAlertsOnHome = Boolean(globalConfig.showAlertsOnHome);
   homePreferences.userWidgets = [...(userConfig.widgets ?? homePreferences.globalWidgets)];
+
+  try {
+    const preference = await resources.homePreferences();
+    homePreferences.userWidgets = [...(preference.widgets || defaultHomeWidgetIds)];
+    homePreferences.showAlertsOnHome = Boolean(preference.showAlertsOnHome);
+  } catch {
+    saveUserHomePreferences();
+  }
 }
 
-function saveUserHomePreferences() {
+async function saveUserHomePreferences() {
   localStorage.setItem(userHomeKey(), JSON.stringify({widgets: homePreferences.userWidgets}));
+  try {
+    await resources.saveHomePreferences({
+      widgets: homePreferences.userWidgets,
+      showAlertsOnHome: homePreferences.showAlertsOnHome,
+    });
+  } catch (err) {
+    error.value = err.message || 'Preferências salvas apenas localmente.';
+  }
 }
 
 function saveGlobalHomePreferences() {
@@ -649,6 +907,7 @@ function toggleHomeWidget(widgetId, scope = 'user') {
 
   if (scope === 'global') {
     saveGlobalHomePreferences();
+    saveUserHomePreferences();
     return;
   }
 
@@ -658,6 +917,7 @@ function toggleHomeWidget(widgetId, scope = 'user') {
 function toggleHomeAlerts() {
   homePreferences.showAlertsOnHome = !homePreferences.showAlertsOnHome;
   saveGlobalHomePreferences();
+  saveUserHomePreferences();
 }
 
 async function loadDashboard() {
@@ -666,16 +926,21 @@ async function loadDashboard() {
 
   try {
     if (auth.role === 'CUSTOMER' && auth.customerId) {
-      const [serviceOrders, vehicles] = await Promise.allSettled([
+      const [serviceOrders, vehicles, user] = await Promise.allSettled([
         resources.customerServiceOrders(auth.customerId),
         resources.customerVehicles(auth.customerId),
+        resources.currentUser(),
       ]);
 
       data.serviceOrders =
           serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
       data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
+      currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
+      if (currentUser.value) {
+        forms.account.fullName = currentUser.value.fullName;
+      }
 
-      const failed = [serviceOrders, vehicles].filter((request) => request.status === 'rejected');
+      const failed = [serviceOrders, vehicles, user].filter((request) => request.status === 'rejected');
       if (failed.length) {
         error.value = failed.map((request) => request.reason.message).join(' | ');
       }
@@ -683,17 +948,24 @@ async function loadDashboard() {
     }
 
     const requests = await Promise.allSettled([
-      auth.role !== 'CUSTOMER' ? resources.customers(pagination.customers) : Promise.resolve(null),
-      resources.vehicles(pagination.vehicles),
-      resources.services(pagination.services),
-      resources.parts(pagination.parts),
+      resources.currentUser(),
+      auth.role === 'ADMIN' ? resources.users({active: pagination.users.active, role: pagination.users.role, profileType: pagination.users.profileType, search: pagination.users.search}) : Promise.resolve(null),
+      auth.role !== 'CUSTOMER' ? resources.customers({active: pagination.customers.active, size: 500}) : Promise.resolve(null),
+      resources.vehicles({active: pagination.vehicles.active, size: 500}),
+      resources.services({active: pagination.services.active, size: 500}),
+      resources.parts({active: pagination.parts.active, lowStock: pagination.parts.lowStock, size: 500}),
       resources.lowStockParts({size: 20}),
-      resources.serviceOrders(pagination.serviceOrders),
+      resources.serviceOrders({status: pagination.serviceOrders.status, size: 500}),
       resources.averageExecutionTime(),
     ]);
 
-    const [customers, vehicles, services, parts, lowStockParts, serviceOrders, average] = requests;
+    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average] = requests;
 
+    currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
+    if (currentUser.value) {
+      forms.account.fullName = currentUser.value.fullName;
+    }
+    data.users = users.status === 'fulfilled' && users.value ? listItems(users.value) : [];
     data.customers =
         customers.status === 'fulfilled' && customers.value ? listItems(customers.value) : [];
     data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
@@ -869,8 +1141,13 @@ async function createOrderFromWizard(createBudgetNow) {
 
 function createCustomer() {
   return runAction(async () => {
-    await resources.createCustomer(forms.customer);
+    if (forms.customer.id) {
+      await resources.updateCustomer(forms.customer.id, forms.customer);
+    } else {
+      await resources.createCustomer(forms.customer);
+    }
     forms.customer.name = '';
+    forms.customer.id = '';
     forms.customer.document = '';
     forms.customer.phone = '';
     forms.customer.email = '';
@@ -883,60 +1160,125 @@ function createCustomer() {
       state: 'SP',
       zipCode: '',
     };
-  }, 'Cliente cadastrado.');
+    forms.customer.active = true;
+  }, forms.customer.id ? 'Cliente atualizado.' : 'Cliente cadastrado.');
 }
 
 function createVehicle() {
   return runAction(async () => {
-    await resources.createVehicle({
+    const payload = {
       ...forms.vehicle,
       year: Number(forms.vehicle.year),
       mileage: Number(forms.vehicle.mileage),
-    });
+    };
+    if (forms.vehicle.id) {
+      await resources.updateVehicle(forms.vehicle.id, payload);
+    } else {
+      await resources.createVehicle(payload);
+    }
+    forms.vehicle.id = '';
     forms.vehicle.customerId = '';
     forms.vehicle.plate = '';
     forms.vehicle.brand = '';
     forms.vehicle.model = '';
     forms.vehicle.year = new Date().getFullYear();
     forms.vehicle.mileage = 0;
-  }, 'Veículo cadastrado.');
+    forms.vehicle.active = true;
+  }, forms.vehicle.id ? 'Veículo atualizado.' : 'Veículo cadastrado.');
 }
 
 function createPart() {
   return runAction(async () => {
-    await resources.createPart({
+    const payload = {
       ...forms.part,
+      costPrice: Number(forms.part.costPrice),
       unitPrice: Number(forms.part.unitPrice),
       stockQuantity: Number(forms.part.stockQuantity),
       minimumStock: Number(forms.part.minimumStock),
-    });
+    };
+    if (forms.part.id) {
+      await resources.updatePart(forms.part.id, payload);
+      await resources.configurePartReservation(forms.part.id, forms.part.reservationDays);
+    } else {
+      const part = await resources.createPart(payload);
+      await resources.configurePartReservation(part.id, forms.part.reservationDays);
+    }
     Object.assign(forms.part, {
+      id: '',
       name: '',
       sku: '',
       category: '',
       subcategory: '',
       brand: '',
+      costPrice: 0,
       unitPrice: 0,
       stockQuantity: 0,
       minimumStock: 1,
+      active: true,
+      reservationDays: 3,
     });
-  }, 'Peça cadastrada.');
+  }, forms.part.id ? 'Peça atualizada.' : 'Peça cadastrada.');
+}
+
+function editPart(part) {
+  Object.assign(forms.part, {
+    id: part.id,
+    name: part.name,
+    sku: part.sku,
+    category: part.category,
+    subcategory: part.subcategory || '',
+    brand: part.brand,
+    costPrice: Number(part.costPrice || 0),
+    unitPrice: Number(part.unitPrice || 0),
+    stockQuantity: Number(part.stockQuantity || 0),
+    minimumStock: Number(part.minimumStock || 0),
+    active: Boolean(part.active),
+    reservationDays: Number(part.reservationDays || 3),
+  });
+  selectTab('parts');
+}
+
+function registerStockMovement() {
+  return runAction(async () => {
+    await resources.registerStockMovement(forms.stockMovement.partId, {
+      type: forms.stockMovement.type,
+      quantity: Number(forms.stockMovement.quantity),
+      unitCost: Number(forms.stockMovement.unitCost || 0),
+      unitPrice: Number(forms.stockMovement.unitPrice || 0),
+      reason: forms.stockMovement.reason,
+    });
+    Object.assign(forms.stockMovement, {
+      partId: '',
+      type: 'ENTRY',
+      quantity: 1,
+      unitCost: 0,
+      unitPrice: 0,
+      reason: '',
+    });
+  }, 'Movimentação registrada.');
 }
 
 function createWorkshopService() {
   return runAction(async () => {
-    await resources.createWorkshopService({
+    const payload = {
       ...forms.service,
       basePrice: Number(forms.service.basePrice),
       estimatedTimeInMinutes: Number(forms.service.estimatedTimeInMinutes),
-    });
+    };
+    if (forms.service.id) {
+      await resources.updateWorkshopService(forms.service.id, payload);
+    } else {
+      await resources.createWorkshopService(payload);
+    }
     Object.assign(forms.service, {
+      id: '',
       name: '',
       description: '',
       basePrice: 0,
       estimatedTimeInMinutes: 60,
+      active: true,
     });
-  }, 'Serviço cadastrado.');
+  }, forms.service.id ? 'Serviço atualizado.' : 'Serviço cadastrado.');
 }
 
 function createOrder() {
@@ -993,8 +1335,125 @@ function addPartToOrder() {
 }
 
 function changePage(resource, direction) {
-  pagination[resource].page = Math.max(0, pagination[resource].page + direction);
-  loadDashboard();
+  pagination[resource].page = Math.min(
+      listTotalPages(resource) - 1,
+      Math.max(0, pagination[resource].page + direction),
+  );
+}
+
+function resetListPage(resource) {
+  pagination[resource].page = 0;
+}
+
+function openRecord(type, record) {
+  selectedRecordType.value = type;
+  selectedRecord.value = record;
+}
+
+function editCustomer(customer) {
+  Object.assign(forms.customer, {
+    ...customer,
+    address: {...(customer.address || forms.customer.address)},
+    active: customer.active !== false,
+  });
+  selectTab('customers');
+}
+
+function editVehicle(vehicle) {
+  Object.assign(forms.vehicle, {
+    id: vehicle.id,
+    customerId: vehicle.customerId,
+    plate: vehicle.plate,
+    brand: vehicle.brand,
+    model: vehicle.model,
+    year: vehicle.year,
+    mileage: vehicle.mileage,
+    active: vehicle.active !== false,
+  });
+  selectTab('vehicles');
+}
+
+function editService(service) {
+  Object.assign(forms.service, {
+    id: service.id,
+    name: service.name,
+    description: service.description,
+    basePrice: Number(service.basePrice || 0),
+    estimatedTimeInMinutes: Number(service.estimatedTimeInMinutes || 60),
+    active: service.active !== false,
+  });
+  selectTab('services');
+}
+
+function editUser(user) {
+  Object.assign(forms.user, {
+    id: user.id,
+    fullName: user.fullName,
+    username: user.username,
+    password: '123456',
+    role: user.role,
+    profileType: user.profileType,
+    employeeSubRole: user.employeeSubRole || 'UNSPECIFIED',
+    permissions: [...(user.permissions || [])],
+    customerId: user.customerId || '',
+    active: user.active,
+  });
+  selectTab(user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE' ? 'employees' : 'users');
+}
+
+function toggleUserPermission(permissionId) {
+  const index = forms.user.permissions.indexOf(permissionId);
+  if (index >= 0) {
+    forms.user.permissions.splice(index, 1);
+    return;
+  }
+  forms.user.permissions.push(permissionId);
+}
+
+function saveUser() {
+  return runAction(async () => {
+    const payload = {
+      fullName: forms.user.fullName,
+      username: forms.user.username,
+      role: forms.user.role,
+      profileType: forms.user.profileType,
+      employeeSubRole: forms.user.employeeSubRole,
+      permissions: forms.user.permissions,
+      customerId: forms.user.customerId || null,
+      active: forms.user.active,
+    };
+    if (forms.user.id) {
+      await resources.updateUser(forms.user.id, payload);
+    } else {
+      await resources.createUser({...payload, password: forms.user.password});
+    }
+    Object.assign(forms.user, {
+      id: '',
+      fullName: '',
+      username: '',
+      password: '123456',
+      role: 'EMPLOYEE',
+      profileType: 'WORKSHOP_EMPLOYEE',
+      employeeSubRole: 'UNSPECIFIED',
+      permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
+      customerId: '',
+      active: true,
+    });
+  }, forms.user.id ? 'Usuário atualizado.' : 'Usuário criado.');
+}
+
+function saveAccount() {
+  return runAction(async () => {
+    currentUser.value = await resources.updateCurrentUser({fullName: forms.account.fullName});
+  }, 'Dados do usuário atualizados.');
+}
+
+function changePassword() {
+  return runAction(async () => {
+    await resources.changeCurrentPassword(forms.password);
+    forms.password.currentPassword = '';
+    forms.password.newPassword = '';
+  }, 'Senha alterada.');
 }
 
 function selectTab(tabId) {
@@ -1022,7 +1481,13 @@ function selectSearchResult(result) {
 
 function showProfileAction(action) {
   profileMenuOpen.value = false;
-  success.value = `${action} estará disponível quando o backend expuser esse fluxo.`;
+  if (action === 'Editar informações do usuário') {
+    activeTab.value = 'users';
+    return;
+  }
+  if (action === 'Alterar senha') {
+    activeTab.value = 'users';
+  }
 }
 
 function logout() {
@@ -1031,8 +1496,8 @@ function logout() {
   router.push({name: 'login'});
 }
 
-onMounted(() => {
-  loadHomePreferences();
+onMounted(async () => {
+  await loadHomePreferences();
   loadDashboard();
 });
 </script>
@@ -1250,6 +1715,275 @@ onMounted(() => {
           </section>
         </section>
 
+        <section v-if="activeTab === 'billing' && isWorkshopAdmin" class="screen-stack">
+          <section class="order-flow-stats">
+            <article>
+              <strong>R$ {{ money(billingSummary.gross) }}</strong>
+              <span>Faturamento bruto</span>
+            </article>
+            <article>
+              <strong>{{ billingSummary.feeRate }}</strong>
+              <span>Taxa AutoCare Hub</span>
+            </article>
+            <article>
+              <strong>R$ {{ money(billingSummary.net) }}</strong>
+              <span>Faturamento líquido estimado</span>
+            </article>
+            <article>
+              <strong>R$ {{ money(billingSummary.ticket) }}</strong>
+              <span>Ticket médio</span>
+            </article>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Resumo financeiro</h2>
+              <span>Receita, conversão e serviços concluídos</span>
+            </div>
+            <div class="analytics-grid">
+              <article class="metric-card">
+                <BadgePercent :size="22"/>
+                <strong>{{ billingSummary.sentBudgets }}</strong>
+                <span>Orçamentos enviados</span>
+              </article>
+              <article class="metric-card">
+                <CheckCircle2 :size="22"/>
+                <strong>{{ billingSummary.approvedBudgets }}</strong>
+                <span>Orçamentos aprovados</span>
+              </article>
+              <article class="metric-card">
+                <Wrench :size="22"/>
+                <strong>{{ billingSummary.completed }}</strong>
+                <span>Serviços concluídos</span>
+              </article>
+              <article class="metric-card">
+                <DollarSign :size="22"/>
+                <strong>R$ {{ money(billingSummary.feeAmount) }}</strong>
+                <span>Taxa estimada da plataforma</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Evolução mensal</h2>
+              <span>Faturamento por mês nas ordens carregadas</span>
+            </div>
+            <div class="comparison-bars revenue-bars">
+              <div v-for="month in monthlyRevenue" :key="month.month">
+                <span>{{ month.month }}</span>
+                <div>
+                  <b :style="{ width: `${Math.max(6, (month.value / Math.max(1, billingSummary.gross)) * 100)}%` }"></b>
+                </div>
+                <strong>R$ {{ money(month.value) }}</strong>
+              </div>
+            </div>
+            <article class="selected-record">
+              <BarChart3 :size="20"/>
+              <strong>
+                {{ billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor tier atingida' }}
+              </strong>
+              <span>
+                {{ billingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.' }}
+              </span>
+            </article>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'employees' && isWorkshopAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>{{ forms.user.id ? 'Editar funcionário' : 'Novo funcionário' }}</h2>
+              <span>Role geral, subrole e permissões da oficina</span>
+            </div>
+            <form class="form-grid" @submit.prevent="forms.user.role = 'EMPLOYEE'; forms.user.profileType = 'WORKSHOP_EMPLOYEE'; saveUser()">
+              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
+              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <select v-model="forms.user.employeeSubRole">
+                <option value="MECHANIC">Mecânico</option>
+                <option value="ATTENDANT">Atendente</option>
+                <option value="UNSPECIFIED">Funcionário sem especificação</option>
+              </select>
+              <label class="check-row">
+                <input v-model="forms.user.active" type="checkbox"/>
+                <span>Funcionário ativo</span>
+              </label>
+              <div class="permission-grid">
+                <label v-for="permission in permissionDefinitions" :key="permission.id">
+                  <input
+                      :checked="forms.user.permissions.includes(permission.id)"
+                      type="checkbox"
+                      @change="toggleUserPermission(permission.id)"
+                  />
+                  <span>{{ permission.label }}</span>
+                </label>
+              </div>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <UserPlus :size="18"/>
+                <span>{{ forms.user.id ? 'Salvar funcionário' : 'Criar funcionário' }}</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Funcionários</h2>
+              <span>{{ workshopEmployees.length }} pessoas na oficina</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header employee-grid">
+                <span>Funcionário</span>
+                <span>Subrole</span>
+                <span>Permissões</span>
+                <span>Status</span>
+                <span>Ação</span>
+              </div>
+              <article
+                  v-for="employee in workshopEmployees"
+                  :key="employee.id"
+                  class="data-table-row employee-grid clickable-row"
+                  @click="openRecord('Funcionário', employee)"
+              >
+                <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
+                <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
+                <span>{{ employee.permissions?.length || 0 }} permissões</span>
+                <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Métricas por funcionário</h2>
+              <span>Indicadores por subrole</span>
+            </div>
+            <div class="employee-metrics-grid">
+              <article v-for="employee in workshopEmployees" :key="`metrics-${employee.id}`" class="employee-card">
+                <div>
+                  <strong>{{ employee.fullName }}</strong>
+                  <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
+                </div>
+                <dl>
+                  <template v-for="metric in employeeMetrics(employee)" :key="metric.label">
+                    <dt>{{ metric.label }}</dt>
+                    <dd>{{ metric.value }}</dd>
+                  </template>
+                </dl>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'users'" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Minha conta</h2>
+              <span>{{ currentUser?.username }}</span>
+            </div>
+            <form class="form-grid compact" @submit.prevent="saveAccount">
+              <input v-model="forms.account.fullName" placeholder="Nome completo" required/>
+              <button :disabled="saving" class="primary-button" type="submit">Salvar dados</button>
+            </form>
+            <form class="form-grid compact" @submit.prevent="changePassword">
+              <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
+              <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required type="password"/>
+              <button :disabled="saving" class="secondary-button" type="submit">Alterar senha</button>
+            </form>
+          </section>
+
+          <section v-if="auth.role === 'ADMIN'" class="section-block">
+            <div class="section-heading">
+              <h2>{{ forms.user.id ? 'Editar usuário' : 'Criar nova conta' }}</h2>
+              <span>Perfis e permissões dos funcionários</span>
+            </div>
+            <form class="form-grid" @submit.prevent="saveUser">
+              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
+              <input v-model="forms.user.username" placeholder="E-mail de login" required type="email"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <select v-model="forms.user.role">
+                <option value="ADMIN">Administrador</option>
+                <option value="EMPLOYEE">Funcionário</option>
+                <option value="CUSTOMER">Cliente</option>
+              </select>
+              <select v-model="forms.user.profileType">
+                <option value="MASTER_ADMIN">Admin Master</option>
+                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
+                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
+                <option value="WORKSHOP_EMPLOYEE">Funcionário de oficina</option>
+                <option value="PARTS_STORE_EMPLOYEE">Funcionário de loja de peças</option>
+                <option value="CUSTOMER_OWNER">Cliente final</option>
+              </select>
+              <input v-model="forms.user.customerId" placeholder="ID do cliente, se for conta de cliente"/>
+              <label class="check-row">
+                <input v-model="forms.user.active" type="checkbox"/>
+                <span>Usuário ativo</span>
+              </label>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <UserPlus :size="18"/>
+                <span>{{ forms.user.id ? 'Salvar usuário' : 'Criar conta' }}</span>
+              </button>
+            </form>
+          </section>
+
+          <section v-if="auth.role === 'ADMIN'" class="section-block">
+            <div class="section-heading">
+              <h2>Usuários</h2>
+              <span>{{ listTotal('users') }} contas</span>
+            </div>
+            <div class="filters">
+              <input v-model="pagination.users.search" placeholder="Buscar usuário" type="search" @input="resetListPage('users')"/>
+              <select v-model.number="pagination.users.size" @change="resetListPage('users')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.users.role" @change="resetListPage('users'); loadDashboard()">
+                <option value="">Todos os perfis</option>
+                <option value="ADMIN">Administradores</option>
+                <option value="EMPLOYEE">Funcionários</option>
+                <option value="CUSTOMER">Clientes</option>
+              </select>
+              <select v-model="pagination.users.sortBy">
+                <option value="fullName">Ordenar por nome</option>
+                <option value="username">Ordenar por e-mail</option>
+                <option value="role">Ordenar por permissão</option>
+              </select>
+              <select v-model="pagination.users.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header users-grid">
+                <span>Usuário</span>
+                <span>Permissão</span>
+                <span>Perfil</span>
+                <span>Status</span>
+                <span>Ação</span>
+              </div>
+              <article
+                  v-for="user in listRows('users')"
+                  :key="user.id"
+                  class="data-table-row users-grid clickable-row"
+                  @click="openRecord('Usuário', user)"
+              >
+                <strong>{{ user.fullName }}<small>{{ user.username }}</small></strong>
+                <span>{{ user.role }}</span>
+                <span>{{ user.profileType }}</span>
+                <span class="badge">{{ user.active ? 'Ativo' : 'Inativo' }}</span>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(user)">Editar</button>
+              </article>
+            </div>
+            <div class="pager">
+              <button :disabled="pagination.users.page === 0" type="button" @click="changePage('users', -1)">Anterior</button>
+              <span>Página {{ pagination.users.page + 1 }} de {{ listTotalPages('users') }}</span>
+              <button :disabled="pagination.users.page + 1 >= listTotalPages('users')" type="button" @click="changePage('users', 1)">Próxima</button>
+            </div>
+          </section>
+        </section>
+
         <section v-if="activeTab === 'customers'" class="screen-stack">
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
@@ -1268,32 +2002,43 @@ onMounted(() => {
               <input v-model="forms.customer.address.state" maxlength="2" placeholder="UF" required/>
               <input v-model="forms.customer.address.zipCode" placeholder="CEP" required/>
               <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
+              <label class="check-row">
+                <input v-model="forms.customer.active" type="checkbox"/>
+                <span>Cliente ativo</span>
+              </label>
               <button :disabled="saving" class="primary-button" type="submit">
                 <UserPlus :size="18"/>
-                <span>Cadastrar cliente</span>
+                <span>{{ forms.customer.id ? 'Salvar cliente' : 'Cadastrar cliente' }}</span>
               </button>
             </form>
-            <p class="hint">
-              O backend atual ainda não expõe criação de credenciais para login de cliente; este fluxo
-              cria o cadastro do cliente na API.
-            </p>
           </section>
 
           <section class="section-block">
             <div class="section-heading">
               <h2>Clientes</h2>
-              <span>Página {{ pagination.customers.page + 1 }}</span>
+              <span>{{ listTotal('customers') }} registros</span>
             </div>
             <div class="filters">
-              <select v-model="pagination.customers.active">
+              <input v-model="pagination.customers.search" placeholder="Buscar cliente, e-mail ou documento" type="search" @input="resetListPage('customers')"/>
+              <select v-model.number="pagination.customers.size" @change="resetListPage('customers')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.customers.active" @change="resetListPage('customers')">
                 <option value="">Todos</option>
                 <option value="true">Ativos</option>
                 <option value="false">Inativos</option>
               </select>
-              <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17"/>
-                Filtrar
-              </button>
+              <select v-model="pagination.customers.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="email">Ordenar por e-mail</option>
+                <option value="document">Ordenar por documento</option>
+              </select>
+              <select v-model="pagination.customers.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header customers-grid">
@@ -1303,19 +2048,21 @@ onMounted(() => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="customer in data.customers"
+                  v-for="customer in listRows('customers')"
                   :key="customer.id"
-                  class="data-table-row customers-grid"
+                  class="data-table-row customers-grid clickable-row"
+                  @click="openRecord('Cliente', customer)"
               >
                 <strong>{{ customer.name }}</strong>
                 <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
                 <code>{{ customer.document }}</code>
-                <span class="badge"><CheckCircle2 :size="14"/> Ativo</span>
+                <span class="badge"><CheckCircle2 :size="14"/> {{ customer.active ? 'Ativo' : 'Inativo' }}</span>
               </article>
             </div>
             <div class="pager">
-              <button type="button" @click="changePage('customers', -1)">Anterior</button>
-              <button type="button" @click="changePage('customers', 1)">Próxima</button>
+              <button :disabled="pagination.customers.page === 0" type="button" @click="changePage('customers', -1)">Anterior</button>
+              <span>Página {{ pagination.customers.page + 1 }} de {{ listTotalPages('customers') }}</span>
+              <button :disabled="pagination.customers.page + 1 >= listTotalPages('customers')" type="button" @click="changePage('customers', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1333,9 +2080,13 @@ onMounted(() => {
               <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
               <input v-model.number="forms.vehicle.year" placeholder="Ano" required type="number"/>
               <input v-model.number="forms.vehicle.mileage" placeholder="Km" required type="number"/>
+              <label class="check-row">
+                <input v-model="forms.vehicle.active" type="checkbox"/>
+                <span>Veículo ativo</span>
+              </label>
               <button :disabled="saving" class="primary-button" type="submit">
                 <Plus :size="18"/>
-                <span>Cadastrar veículo</span>
+                <span>{{ forms.vehicle.id ? 'Salvar veículo' : 'Cadastrar veículo' }}</span>
               </button>
             </form>
           </section>
@@ -1343,18 +2094,30 @@ onMounted(() => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Status dos veículos</h2>
-              <span>Página {{ pagination.vehicles.page + 1 }}</span>
+              <span>{{ listTotal('vehicles') }} registros</span>
             </div>
             <div class="filters">
-              <select v-model="pagination.vehicles.active">
+              <input v-model="pagination.vehicles.search" placeholder="Buscar placa, marca ou status" type="search" @input="resetListPage('vehicles')"/>
+              <select v-model.number="pagination.vehicles.size" @change="resetListPage('vehicles')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.vehicles.active" @change="resetListPage('vehicles')">
                 <option value="">Todos</option>
                 <option value="true">Ativos</option>
                 <option value="false">Inativos</option>
               </select>
-              <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17"/>
-                Filtrar
-              </button>
+              <select v-model="pagination.vehicles.sortBy">
+                <option value="plate">Ordenar por placa</option>
+                <option value="brand">Ordenar por marca</option>
+                <option value="mileage">Ordenar por km</option>
+                <option value="currentStatus">Ordenar por status</option>
+              </select>
+              <select v-model="pagination.vehicles.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header vehicles-grid">
@@ -1364,9 +2127,10 @@ onMounted(() => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="vehicle in vehiclesWithCurrentStatus"
+                  v-for="vehicle in listRows('vehicles')"
                   :key="vehicle.id"
-                  class="data-table-row vehicles-grid"
+                  class="data-table-row vehicles-grid clickable-row"
+                  @click="openRecord('Veículo', vehicle)"
               >
                 <strong>{{ vehicle.plate }}</strong>
                 <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
@@ -1375,17 +2139,37 @@ onMounted(() => {
               </article>
             </div>
             <div class="pager">
-              <button type="button" @click="changePage('vehicles', -1)">Anterior</button>
-              <button type="button" @click="changePage('vehicles', 1)">Próxima</button>
+              <button :disabled="pagination.vehicles.page === 0" type="button" @click="changePage('vehicles', -1)">Anterior</button>
+              <span>Página {{ pagination.vehicles.page + 1 }} de {{ listTotalPages('vehicles') }}</span>
+              <button :disabled="pagination.vehicles.page + 1 >= listTotalPages('vehicles')" type="button" @click="changePage('vehicles', 1)">Próxima</button>
             </div>
           </section>
         </section>
 
         <section v-if="activeTab === 'parts'" class="screen-stack">
-          <section v-if="auth.role === 'ADMIN'" class="section-block">
+          <section class="order-flow-stats">
+            <article>
+              <strong>{{ data.parts.length }}</strong>
+              <span>Peças cadastradas</span>
+            </article>
+            <article>
+              <strong>{{ criticalParts.length }}</strong>
+              <span>Peças críticas</span>
+            </article>
+            <article>
+              <strong>{{ reservedParts.length }}</strong>
+              <span>Peças com reserva</span>
+            </article>
+            <article>
+              <strong>{{ data.lowStockParts.length }}</strong>
+              <span>Avisos de compra</span>
+            </article>
+          </section>
+
+          <section v-if="auth.role === 'ADMIN' || can('MANAGE_STOCK')" class="section-block">
             <div class="section-heading">
-              <h2>Cadastro de peças</h2>
-              <span>Catálogo e minimo de estoque</span>
+              <h2>{{ forms.part.id ? 'Editar peça' : 'Cadastro de peças' }}</h2>
+              <span>Catálogo, custo, venda e reserva</span>
             </div>
             <form class="form-grid" @submit.prevent="createPart">
               <input v-model="forms.part.name" placeholder="Nome" required/>
@@ -1393,85 +2177,132 @@ onMounted(() => {
               <input v-model="forms.part.category" placeholder="Categoria" required/>
               <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
               <input v-model="forms.part.brand" placeholder="Marca" required/>
-              <input v-model.number="forms.part.unitPrice" min="0" placeholder="Preço unitário" required
+              <input v-model.number="forms.part.costPrice" min="0" placeholder="Valor de custo" required
+                     step="0.01" type="number"/>
+              <input v-model.number="forms.part.unitPrice" min="0" placeholder="Valor de venda" required
                      step="0.01" type="number"/>
               <input v-model.number="forms.part.stockQuantity" min="0" placeholder="Estoque" required type="number"/>
               <input v-model.number="forms.part.minimumStock" min="0" placeholder="Estoque minimo" required
                      type="number"/>
+              <input v-model.number="forms.part.reservationDays" min="1" placeholder="Dias de bloqueio" required
+                     type="number"/>
               <button :disabled="saving" class="primary-button" type="submit">
                 <Plus :size="18"/>
-                <span>Cadastrar peça</span>
+                <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
               </button>
             </form>
           </section>
 
-          <section class="section-block">
+          <section v-if="can('MANAGE_STOCK')" class="section-block">
             <div class="section-heading">
-              <h2>Atualizar estoque</h2>
-              <span>Reposição ou ajuste</span>
+              <h2>Movimentar estoque</h2>
+              <span>Entrada, saída ou venda avulsa</span>
             </div>
-            <form class="form-grid compact" @submit.prevent="updateStock">
-              <select v-model="forms.stock.partId" required>
+            <form class="form-grid" @submit.prevent="registerStockMovement">
+              <select v-model="forms.stockMovement.partId" required>
                 <option value="">Selecione uma peça</option>
                 <option v-for="part in data.parts" :key="part.id" :value="part.id">
                   {{ part.name }} - {{ part.sku }}
                 </option>
               </select>
-              <input v-model.number="forms.stock.stockQuantity" min="0" placeholder="Nova quantidade" required
+              <select v-model="forms.stockMovement.type" required>
+                <option value="ENTRY">Entrada de estoque</option>
+                <option value="EXIT">Saída de estoque</option>
+                <option value="SALE">Venda avulsa</option>
+              </select>
+              <input v-model.number="forms.stockMovement.quantity" min="1" placeholder="Quantidade" required
                      type="number"/>
+              <input v-model.number="forms.stockMovement.unitCost" min="0" placeholder="Custo unitário"
+                     step="0.01" type="number"/>
+              <input v-model.number="forms.stockMovement.unitPrice" min="0" placeholder="Venda unitária"
+                     step="0.01" type="number"/>
+              <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação"/>
               <button :disabled="saving" class="primary-button" type="submit">
                 <Package :size="18"/>
-                <span>Atualizar</span>
+                <span>Registrar</span>
               </button>
             </form>
           </section>
 
           <section class="section-block">
             <div class="section-heading">
-              <h2>Estoque</h2>
-              <span>{{ data.lowStockParts.length }} avisos de compra</span>
+              <h2>Acompanhamento de estoque</h2>
+              <span>{{ criticalParts.length }} peças críticas</span>
             </div>
             <div class="filters">
-              <select v-model="pagination.parts.lowStock">
+              <input v-model="pagination.parts.search" placeholder="Buscar peça, SKU, categoria ou marca" type="search" @input="resetListPage('parts')"/>
+              <select v-model.number="pagination.parts.size" @change="resetListPage('parts')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.parts.lowStock" @change="resetListPage('parts'); loadDashboard()">
                 <option value="">Todos</option>
                 <option value="true">Somente baixo estoque</option>
               </select>
-              <select v-model="pagination.parts.active">
+              <select v-model="pagination.parts.active" @change="resetListPage('parts'); loadDashboard()">
                 <option value="">Todos</option>
                 <option value="true">Ativos</option>
                 <option value="false">Inativos</option>
               </select>
-              <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17"/>
-                Filtrar
-              </button>
+              <select v-model="pagination.parts.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="stockQuantity">Ordenar por estoque</option>
+                <option value="reservedQuantity">Ordenar por reserva</option>
+                <option value="unitPrice">Ordenar por preço</option>
+              </select>
+              <select v-model="pagination.parts.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header parts-grid">
                 <span>Peça</span>
-                <span>Categoria</span>
-                <span>Estoque</span>
-                <span>Preço</span>
-                <span>Sinal</span>
+                <span>Disponível</span>
+                <span>Reservado</span>
+                <span>Valores</span>
+                <span>Status</span>
+                <span>Ação</span>
               </div>
               <article
-                  v-for="part in data.parts"
+                  v-for="part in listRows('parts')"
                   :key="part.id"
-                  :class="{ danger: part.stockQuantity <= part.minimumStock }"
-                  class="data-table-row parts-grid"
+                  :class="{ danger: (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock }"
+                  class="data-table-row parts-grid clickable-row"
+                  @click="openRecord('Peça', part)"
               >
-                <strong>{{ part.name }}<small>{{ part.sku }}</small></strong>
-                <span>{{ part.category }}<small>{{ part.brand }}</small></span>
-                <span>{{ part.stockQuantity }} un.<small>Min. {{ part.minimumStock }}</small></span>
-                <span>R$ {{ money(part.unitPrice) }}</span>
-                <span :class="{ danger: part.stockQuantity <= part.minimumStock }" class="badge">
-                  {{ part.stockQuantity <= part.minimumStock ? 'Comprar' : 'Ok' }}
+                <strong>
+                  {{ part.name }}
+                  <small>{{ part.sku }} · {{ part.category }} · {{ part.brand }}</small>
+                </strong>
+                <span>
+                  {{ part.availableQuantity ?? part.stockQuantity }} un.
+                  <small>Total {{ part.stockQuantity }} · Min. {{ part.minimumStock }}</small>
                 </span>
+                <span>
+                  {{ part.reservedQuantity || 0 }} un.
+                  <small>{{ part.reservationExpiresAt ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}` : `${part.reservationDays || 3} dias` }}</small>
+                </span>
+                <span>
+                  Venda R$ {{ money(part.unitPrice) }}
+                  <small>Custo R$ {{ money(part.costPrice) }}</small>
+                </span>
+                <span
+                    :class="{ danger: ['LOW_STOCK', 'OUT_OF_STOCK'].includes(part.stockStatus) }"
+                    class="badge"
+                >
+                  {{ stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível' }}
+                </span>
+                <button v-if="auth.role === 'ADMIN'" class="secondary-button compact-action" type="button" @click.stop="editPart(part)">
+                  Editar
+                </button>
               </article>
             </div>
             <div class="pager">
-              <button type="button" @click="changePage('parts', -1)">Anterior</button>
-              <button type="button" @click="changePage('parts', 1)">Próxima</button>
+              <button :disabled="pagination.parts.page === 0" type="button" @click="changePage('parts', -1)">Anterior</button>
+              <span>Página {{ pagination.parts.page + 1 }} de {{ listTotalPages('parts') }}</span>
+              <button :disabled="pagination.parts.page + 1 >= listTotalPages('parts')" type="button" @click="changePage('parts', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1484,7 +2315,7 @@ onMounted(() => {
             </article>
           </section>
 
-          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
+          <section v-if="auth.role !== 'CUSTOMER' && can('CREATE_ORDER')" class="section-block">
             <div class="section-heading">
               <h2>Nova ordem de serviço</h2>
               <span>{{ orderSteps[forms.orderWizard.step] }}</span>
@@ -1646,7 +2477,7 @@ onMounted(() => {
             </div>
           </section>
 
-          <section v-if="auth.role !== 'CUSTOMER'" class="section-block">
+          <section v-if="auth.role !== 'CUSTOMER' && (can('EDIT_ORDER') || can('CREATE_BUDGET'))" class="section-block">
             <div class="section-heading">
               <h2>Orçamento e execução</h2>
               <span>Criar agora ou depois</span>
@@ -1700,19 +2531,30 @@ onMounted(() => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Ordens de serviço</h2>
-              <span>Status atual dos veículos</span>
+              <span>{{ listTotal('serviceOrders') }} registros</span>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
-              <select v-model="pagination.serviceOrders.status">
+              <input v-model="pagination.serviceOrders.search" placeholder="Buscar status, nota ou ID" type="search" @input="resetListPage('serviceOrders')"/>
+              <select v-model.number="pagination.serviceOrders.size" @change="resetListPage('serviceOrders')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.serviceOrders.status" @change="resetListPage('serviceOrders'); loadDashboard()">
                 <option value="">Todos os status</option>
                 <option v-for="status in statuses" :key="status" :value="status">
                   {{ statusLabels[status] || status }}
                 </option>
               </select>
-              <button class="secondary-button" type="button" @click="loadDashboard">
-                <Search :size="17"/>
-                Filtrar
-              </button>
+              <select v-model="pagination.serviceOrders.sortBy">
+                <option value="createdAt">Ordenar por data</option>
+                <option value="status">Ordenar por status</option>
+                <option value="totalAmount">Ordenar por total</option>
+              </select>
+              <select v-model="pagination.serviceOrders.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header orders-grid">
@@ -1722,9 +2564,10 @@ onMounted(() => {
                 <span>Total</span>
               </div>
               <article
-                  v-for="order in data.serviceOrders"
+                  v-for="order in listRows('serviceOrders')"
                   :key="order.id"
-                  class="data-table-row orders-grid"
+                  class="data-table-row orders-grid clickable-row"
+                  @click="openRecord('Ordem de serviço', order)"
               >
                 <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
@@ -1734,11 +2577,12 @@ onMounted(() => {
                 </span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
-              <p v-if="!data.serviceOrders.length && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
+              <p v-if="!listTotal('serviceOrders') && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="pager">
-              <button type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
-              <button type="button" @click="changePage('serviceOrders', 1)">Próxima</button>
+              <button :disabled="pagination.serviceOrders.page === 0" type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
+              <span>Página {{ pagination.serviceOrders.page + 1 }} de {{ listTotalPages('serviceOrders') }}</span>
+              <button :disabled="pagination.serviceOrders.page + 1 >= listTotalPages('serviceOrders')" type="button" @click="changePage('serviceOrders', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -1756,9 +2600,13 @@ onMounted(() => {
               <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" placeholder="Tempo em minutos"
                      required type="number"/>
               <textarea v-model="forms.service.description" placeholder="Descrição" required></textarea>
+              <label class="check-row">
+                <input v-model="forms.service.active" type="checkbox"/>
+                <span>Serviço ativo</span>
+              </label>
               <button :disabled="saving" class="primary-button" type="submit">
                 <Plus :size="18"/>
-                <span>Cadastrar serviço</span>
+                <span>{{ forms.service.id ? 'Salvar serviço' : 'Cadastrar serviço' }}</span>
               </button>
             </form>
           </section>
@@ -1766,7 +2614,24 @@ onMounted(() => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Serviços cadastrados</h2>
-              <span>Página {{ pagination.services.page + 1 }}</span>
+              <span>{{ listTotal('services') }} registros</span>
+            </div>
+            <div class="filters">
+              <input v-model="pagination.services.search" placeholder="Buscar serviço" type="search" @input="resetListPage('services')"/>
+              <select v-model.number="pagination.services.size" @change="resetListPage('services')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.services.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="basePrice">Ordenar por preço</option>
+                <option value="estimatedTimeInMinutes">Ordenar por prazo</option>
+              </select>
+              <select v-model="pagination.services.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header services-grid">
@@ -1775,9 +2640,10 @@ onMounted(() => {
                 <span>Preço base</span>
               </div>
               <article
-                  v-for="service in data.services"
+                  v-for="service in listRows('services')"
                   :key="service.id"
-                  class="data-table-row services-grid"
+                  class="data-table-row services-grid clickable-row"
+                  @click="openRecord('Serviço', service)"
               >
                 <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
                 <span>{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
@@ -1785,11 +2651,49 @@ onMounted(() => {
               </article>
             </div>
             <div class="pager">
-              <button type="button" @click="changePage('services', -1)">Anterior</button>
-              <button type="button" @click="changePage('services', 1)">Próxima</button>
+              <button :disabled="pagination.services.page === 0" type="button" @click="changePage('services', -1)">Anterior</button>
+              <span>Página {{ pagination.services.page + 1 }} de {{ listTotalPages('services') }}</span>
+              <button :disabled="pagination.services.page + 1 >= listTotalPages('services')" type="button" @click="changePage('services', 1)">Próxima</button>
             </div>
           </section>
         </section>
+
+        <aside v-if="selectedRecord" class="detail-drawer">
+          <div class="detail-drawer-heading">
+            <div>
+              <span>{{ selectedRecordType }}</span>
+              <h2>
+                {{ selectedRecord.name || selectedRecord.fullName || selectedRecord.plate || selectedRecord.status }}
+              </h2>
+            </div>
+            <button class="icon-button" type="button" @click="selectedRecord = null">
+              <X :size="18"/>
+            </button>
+          </div>
+          <dl>
+            <template v-for="(value, key) in selectedRecord" :key="key">
+              <dt>{{ key }}</dt>
+              <dd>{{ typeof value === 'object' ? JSON.stringify(value) : value }}</dd>
+            </template>
+          </dl>
+          <div class="detail-actions">
+            <button v-if="selectedRecordType === 'Cliente'" class="secondary-button" type="button" @click="editCustomer(selectedRecord)">
+              Editar cliente
+            </button>
+            <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button" @click="editVehicle(selectedRecord)">
+              Editar veículo
+            </button>
+            <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button" @click="editPart(selectedRecord)">
+              Editar peça
+            </button>
+            <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button" @click="editService(selectedRecord)">
+              Editar serviço
+            </button>
+            <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+              Editar usuário
+            </button>
+          </div>
+        </aside>
 
         <div v-if="loading" class="loading-bar">Carregando dados...</div>
       </section>
