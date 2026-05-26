@@ -166,7 +166,7 @@ function incrementPart(part, quantity) {
         <span class="preview-eyebrow">Demo simplificada</span>
         <h1>{{ demoContext.title }}</h1>
         <p>
-          A AutoCare Hub conecta oficinas e lojas de peças a clientes finais, com ferramentas para
+          A AutoCare Hub conecta oficinas e lojas de peças a clientes, com ferramentas para
           receber contatos, montar orçamentos, controlar estoque, acompanhar vendas e organizar a operação.
         </p>
         <div class="partner-benefits">

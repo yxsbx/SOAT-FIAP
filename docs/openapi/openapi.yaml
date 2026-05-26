@@ -10,15 +10,15 @@ security:
     -   bearerAuth: [ ]
 tags:
     -   name: Auth
-        description: Autenticacao e emissao de token JWT
+        description: Autenticação e emissao de token JWT
     -   name: Customers
-        description: Cadastro e manutencao de clientes
+        description: Cadastro e manutenção de clientes
     -   name: Vehicles
-        description: Cadastro e manutencao de veiculos
+        description: Cadastro e manutenção de veiculos
     -   name: Workshop Services
-        description: Cadastro e manutencao dos serviços oferecidos pela oficina
+        description: Cadastro e manutenção dos serviços oferecidos pela oficina
     -   name: Parts
-        description: Cadastro, manutencao e controle de estoque de pecas e insumos
+        description: Cadastro, manutenção e controle de estoque de pecas e insumos
     -   name: Service Orders
         description: Criacao, composicao, orcamento, aprovacao e acompanhamento de ordens de servico
 paths:

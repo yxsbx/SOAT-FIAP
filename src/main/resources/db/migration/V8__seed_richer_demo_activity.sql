@@ -61,16 +61,16 @@ VALUES ('20000000-0000-0000-0000-000000000009', '10000000-0000-0000-0000-0000000
 INSERT INTO workshop_services (id, name, description, base_price, estimated_time_in_minutes, active)
 VALUES ('30000000-0000-0000-0000-000000000009', 'Revisao de motocicleta',
         'Checklist de freios, relacao, pneus, fluidos e sistema eletrico para motocicletas.', 280.00, 150, TRUE),
-       ('30000000-0000-0000-0000-000000000010', 'Manutencao de frota leve',
+       ('30000000-0000-0000-0000-000000000010', 'Manutenção de frota leve',
         'Inspecao preventiva para vans, utilitarios e veiculos comerciais.', 640.00, 300, TRUE),
-       ('30000000-0000-0000-0000-000000000011', 'Diagnostico diesel',
+       ('30000000-0000-0000-0000-000000000011', 'Diagnóstico diesel',
         'Scanner, avaliacao de alimentacao, sensores e sistema de emissao para veiculos diesel.', 420.00, 180, TRUE),
        ('30000000-0000-0000-0000-000000000012', 'Troca de pneus e geometria',
         'Substituicao, balanceamento, alinhamento e calibragem com relatorio.', 340.00, 120, TRUE),
        ('30000000-0000-0000-0000-000000000013', 'Revisao eletrica completa',
         'Teste de bateria, alternador, partida, chicotes e pontos de consumo.', 360.00, 180, TRUE),
-       ('30000000-0000-0000-0000-000000000014', 'Manutencao de arrefecimento',
-        'Limpeza, teste de estanqueidade, troca de aditivo e avaliacao de mangueiras.', 260.00, 120,
+       ('30000000-0000-0000-0000-000000000014', 'Manutenção de arrefecimento',
+        'Limpeza, teste de estanqueidade, troca de aditivo e avaliação de mangueiras.', 260.00, 120,
         TRUE) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO parts (id, name, sku, category, subcategory, brand, unit_price, stock_quantity, minimum_stock, active)
@@ -128,7 +128,7 @@ VALUES ('50000000-0000-0000-0000-000000000008', '10000000-0000-0000-0000-0000000
         CURRENT_TIMESTAMP - INTERVAL '21 days', CURRENT_TIMESTAMP - INTERVAL '20 days'),
        ('50000000-0000-0000-0000-000000000014', '10000000-0000-0000-0000-000000000010',
         '20000000-0000-0000-0000-000000000013', 'IN_PROGRESS',
-        'Van de entrega em manutencao preventiva. Prioridade alta para retorno a operacao amanha.', 2324.00,
+        'Van de entrega em manutenção preventiva. Prioridade alta para retorno a operacao amanha.', 2324.00,
         CURRENT_TIMESTAMP - INTERVAL '6 days', CURRENT_TIMESTAMP - INTERVAL '5 days',
         CURRENT_TIMESTAMP - INTERVAL '5 days', CURRENT_TIMESTAMP - INTERVAL '4 days', NULL, NULL),
        ('50000000-0000-0000-0000-000000000015', '10000000-0000-0000-0000-000000000010',
@@ -168,15 +168,15 @@ VALUES ('60000000-0000-0000-0000-000000000008', '50000000-0000-0000-0000-0000000
        ('60000000-0000-0000-0000-000000000012', '50000000-0000-0000-0000-000000000013',
         '30000000-0000-0000-0000-000000000012', 'Troca de pneus e geometria', 1, 340.00, 340.00),
        ('60000000-0000-0000-0000-000000000013', '50000000-0000-0000-0000-000000000014',
-        '30000000-0000-0000-0000-000000000010', 'Manutencao de frota leve', 1, 640.00, 640.00),
+        '30000000-0000-0000-0000-000000000010', 'Manutenção de frota leve', 1, 640.00, 640.00),
        ('60000000-0000-0000-0000-000000000014', '50000000-0000-0000-0000-000000000016',
         '30000000-0000-0000-0000-000000000011', 'Diagnostico diesel', 1, 420.00, 420.00),
        ('60000000-0000-0000-0000-000000000015', '50000000-0000-0000-0000-000000000017',
-        '30000000-0000-0000-0000-000000000014', 'Manutencao de arrefecimento', 1, 260.00, 260.00),
+        '30000000-0000-0000-0000-000000000014', 'Manutenção de arrefecimento', 1, 260.00, 260.00),
        ('60000000-0000-0000-0000-000000000016', '50000000-0000-0000-0000-000000000018',
         '30000000-0000-0000-0000-000000000008', 'Diagnostico de suspensao', 1, 140.00, 140.00),
        ('60000000-0000-0000-0000-000000000017', '50000000-0000-0000-0000-000000000019',
-        '30000000-0000-0000-0000-000000000010', 'Manutencao de frota leve', 1, 640.00,
+        '30000000-0000-0000-0000-000000000010', 'Manutenção de frota leve', 1, 640.00,
         640.00) ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO service_order_parts (id, service_order_id, part_id, name, sku, quantity, unit_price, total_price)

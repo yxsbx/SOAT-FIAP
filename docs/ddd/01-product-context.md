@@ -7,8 +7,8 @@ de status. Quando esses dados ficam em planilhas, mensagens ou controles manuais
 perda de historico, dificuldade para controlar estoque e pouca clareza para o cliente sobre o andamento da ordem de
 servico.
 
-O problema central do dominio e organizar o ciclo de atendimento da oficina desde o cadastro do cliente e do veiculo ate
-a criacao, composicao, orcamento, aprovacao, execucao e entrega da ordem de servico.
+O problema central do dominio e organizar o ciclo de atendimento da oficina desde o cadastro do cliente e do veículo até
+a criação, composição, orçamento, aprovação, execução e entrega da ordem de servico.
 
 ## Objetivo do MVP
 
@@ -16,16 +16,16 @@ O MVP do AutoCare Hub tem como objetivo oferecer uma API REST para centralizar o
 operacionais de uma oficina mecanica.
 
 O foco do MVP e backend: disponibilizar casos de uso essenciais por API, com contrato OpenAPI, persistencia relacional,
-autenticacao JWT, controle basico de perfis e migrations versionadas.
+autenticação JWT, controle basico de perfis e migrations versionadas.
 
 ## Escopo Incluido no MVP
 
-- Autenticacao com JWT.
+- Autenticação com JWT.
 - Perfis `ADMIN`, `EMPLOYEE` e `CUSTOMER`.
-- Cadastro e manutencao de clientes.
-- Cadastro e manutencao de veículos.
-- Cadastro e manutencao de serviços oferecidos pela oficina.
-- Cadastro e manutencao de pecas e insumos.
+- Cadastro e manutenção de clientes.
+- Cadastro e manutenção de veículos.
+- Cadastro e manutenção de serviços oferecidos pela oficina.
+- Cadastro e manutenção de pecas e insumos.
 - Controle simples de estoque de pecas.
 - Criacao de ordem de servico.
 - Associacao de serviços e pecas a uma ordem de servico.

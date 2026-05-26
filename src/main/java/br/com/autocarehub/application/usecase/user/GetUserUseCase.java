@@ -3,20 +3,19 @@ package br.com.autocarehub.application.usecase.user;
 import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.UserRepository;
 import br.com.autocarehub.domain.User;
-
 import java.util.UUID;
 
 public class GetUserUseCase {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public GetUserUseCase(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  public GetUserUseCase(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-    public User execute(UUID userId) {
-        return userRepository
-                .findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-    }
+  public User execute(UUID userId) {
+    return userRepository
+        .findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+  }
 }

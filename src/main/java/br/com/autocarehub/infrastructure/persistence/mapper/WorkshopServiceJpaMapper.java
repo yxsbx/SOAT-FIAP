@@ -6,27 +6,26 @@ import br.com.autocarehub.infrastructure.persistence.entity.WorkshopServiceJpaEn
 
 public final class WorkshopServiceJpaMapper {
 
-    private WorkshopServiceJpaMapper() {
-    }
+  private WorkshopServiceJpaMapper() {}
 
-    public static WorkshopServiceJpaEntity toEntity(WorkshopService workshopService) {
-        WorkshopServiceJpaEntity entity = new WorkshopServiceJpaEntity();
-        entity.setId(workshopService.id());
-        entity.setName(workshopService.name());
-        entity.setDescription(workshopService.description());
-        entity.setBasePrice(workshopService.basePrice().value());
-        entity.setEstimatedTimeInMinutes(workshopService.estimatedTimeInMinutes());
-        entity.setActive(workshopService.active());
-        return entity;
-    }
+  public static WorkshopServiceJpaEntity toEntity(WorkshopService workshopService) {
+    WorkshopServiceJpaEntity entity = new WorkshopServiceJpaEntity();
+    entity.setId(workshopService.id());
+    entity.setName(workshopService.name());
+    entity.setDescription(workshopService.description());
+    entity.setBasePrice(workshopService.basePrice().value());
+    entity.setEstimatedTimeInMinutes(workshopService.estimatedTimeInMinutes());
+    entity.setActive(workshopService.active());
+    return entity;
+  }
 
-    public static WorkshopService toDomain(WorkshopServiceJpaEntity entity) {
-        return new WorkshopService(
-                entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                new Money(entity.getBasePrice()),
-                entity.getEstimatedTimeInMinutes(),
-                entity.isActive());
-    }
+  public static WorkshopService toDomain(WorkshopServiceJpaEntity entity) {
+    return new WorkshopService(
+        entity.getId(),
+        entity.getName(),
+        entity.getDescription(),
+        new Money(entity.getBasePrice()),
+        entity.getEstimatedTimeInMinutes(),
+        entity.isActive());
+  }
 }

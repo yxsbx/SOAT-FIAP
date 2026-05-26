@@ -1,13 +1,13 @@
 # AutoCare Hub API
 
-API REST para gerenciamento de uma oficina mecanica. O sistema cobre cadastro de clientes, veiculos, serviços de
-oficina, pecas, estoque, ordens de servico, orcamento, aprovacao e acompanhamento de status.
+API REST para gerenciamento de uma oficina mecânica. O sistema cobre cadastro de clientes, veículos, serviços de
+oficina, peças, estoque, ordens de servico, orçamento, aprovação e acompanhamento de status.
 
 ## Objetivo Academico
 
-Este projeto foi desenvolvido como MVP academico para demonstrar a construcao de uma API backend usando arquitetura em
-camadas, DDD, contrato OpenAPI First, persistencia relacional, migrations versionadas, autenticacao JWT e
-conteinerizacao com Docker.
+Este projeto foi desenvolvido como MVP academico para demonstrar a construção de uma API backend usando arquitetura em
+camadas, DDD, contrato OpenAPI First, persistencia relacional, migrations versionadas, autenticação JWT e
+conteinerização com Docker.
 
 ## Stack Utilizada
 
@@ -36,7 +36,7 @@ O projeto segue um monolito em camadas:
 - `interfaces`: controllers REST manuais e mappers para DTOs gerados pelo OpenAPI.
 - `docs/openapi`: contrato OpenAPI que define os endpoints e DTOs publicos.
 
-Essa organizacao separa regra de negocio, orquestracao de casos de uso, detalhes tecnicos e interface HTTP.
+Essa organização separa regra de negócio, orquestração de casos de uso, detalhes tecnicos e interface HTTP.
 
 ## Como Rodar Localmente
 
@@ -52,7 +52,7 @@ Suba apenas o banco:
 docker compose up -d postgres
 ```
 
-Execute a aplicacao localmente:
+Execute a aplicação localmente:
 
 ```bash
 mvn spring-boot:run
@@ -232,14 +232,14 @@ O Flyway tambem carrega uma massa de dados demonstrativa para uso no frontend:
 ```text
 Admin Master: master@autocarehub.com / autocare123
 Admin de oficina: oficina.admin@autocarehub.com / autocare123
-Admin de loja de pecas: loja.admin@autocarehub.com / autocare123
+Admin de loja de peças: loja.admin@autocarehub.com / autocare123
 Funcionario de oficina: oficina.funcionario@autocarehub.com / autocare123
-Funcionario de loja de pecas: loja.funcionario@autocarehub.com / autocare123
-Cliente final: cliente@autocarehub.com / autocare123
+Funcionario de loja de peças: loja.funcionario@autocarehub.com / autocare123
+Cliente: cliente@autocarehub.com / autocare123
 ```
 
-A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, pecas em estoque,
-pecas abaixo do minimo, serviços da oficina e ordens de servico com historico de uso em diferentes status.
+A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, peças em estoque,
+peças abaixo do minimo, serviços da oficina e ordens de servico com historico de uso em diferentes status.
 
 ## Principais Endpoints
 
@@ -272,7 +272,7 @@ serviços da oficina:
 - `PUT /api/v1/workshop-services/{serviceId}`
 - `DELETE /api/v1/workshop-services/{serviceId}`
 
-Pecas:
+Peças:
 
 - `GET /api/v1/parts`
 - `POST /api/v1/parts`
@@ -300,7 +300,7 @@ Ordens de servico:
 
 ## Regra de Estoque e Orcamento
 
-Pecas podem ser cadastradas, atualizadas, movimentadas por entrada/saida/venda e reservadas para orcamentos. A reserva
+Peças podem ser cadastradas, atualizadas, movimentadas por entrada/saida/venda e reservadas para orcamentos. A reserva
 reduz a quantidade disponivel, mas nao reduz o estoque total. Quando o orcamento e aprovado ou a reserva e confirmada,
 a quantidade reservada e baixada definitivamente do estoque. Se a reserva for liberada, a quantidade volta a ficar
 disponivel.

@@ -3,23 +3,22 @@ package br.com.autocarehub.application.usecase.part;
 import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.PartRepository;
 import br.com.autocarehub.domain.Part;
-
 import java.util.UUID;
 
 public class DeletePartUseCase {
 
-    private final PartRepository partRepository;
+  private final PartRepository partRepository;
 
-    public DeletePartUseCase(PartRepository partRepository) {
-        this.partRepository = partRepository;
-    }
+  public DeletePartUseCase(PartRepository partRepository) {
+    this.partRepository = partRepository;
+  }
 
-    public void execute(UUID partId) {
-        Part part =
-                partRepository
-                        .findById(partId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-        part.deactivate();
-        partRepository.save(part);
-    }
+  public void execute(UUID partId) {
+    Part part =
+        partRepository
+            .findById(partId)
+            .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+    part.deactivate();
+    partRepository.save(part);
+  }
 }

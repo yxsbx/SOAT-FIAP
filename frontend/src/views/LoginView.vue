@@ -55,7 +55,7 @@ const demoProfiles = [
   },
   {
     id: 'customer',
-    label: 'Cliente final',
+    label: 'Cliente',
     subtitle: 'Dono de veículo',
     username: 'cliente@autocarehub.com',
     password: 'autocare123',

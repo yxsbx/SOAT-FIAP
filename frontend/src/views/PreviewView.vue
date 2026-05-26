@@ -260,7 +260,7 @@ function scrollToSection(id) {
       <section class="preview-hero partner-hero">
         <div class="preview-copy">
           <span class="preview-eyebrow">Para oficinas e lojas de peças</span>
-          <h1>Venda mais, organize a operação e aproxime oficina, loja e cliente final.</h1>
+          <h1>Venda mais, organize a operação e aproxime oficina, loja e cliente.</h1>
           <p>
             Oficinas ganham gestão completa, permissões, orçamento, estoque e métricas. Lojas de
             peças se conectam a oficinas, acompanham pedidos e ajudam a reduzir atrasos de peças
@@ -433,7 +433,7 @@ function scrollToSection(id) {
             </li>
           </ul>
           <p>
-            A demo pública é oferecida apenas para oficinas e lojas de peças. O cliente final acessa
+            A demo pública é oferecida apenas para oficinas e lojas de peças. O cliente acessa
             sua área depois do cadastro, com busca por CEP e acompanhamento do próprio veículo.
           </p>
         </div>

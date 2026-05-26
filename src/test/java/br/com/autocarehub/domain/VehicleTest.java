@@ -1,89 +1,88 @@
 package br.com.autocarehub.domain;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+
 class VehicleTest {
 
-    private static Vehicle vehicle() {
-        return new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 30000);
-    }
+  private static Vehicle vehicle() {
+    return new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 30000);
+  }
 
-    @Test
-    void shouldValidatePlate() {
-        Vehicle vehicle =
-                new Vehicle(UUID.randomUUID(), new Plate("abc-1d23"), "Honda", "Civic", 2020, 30000);
+  @Test
+  void shouldValidatePlate() {
+    Vehicle vehicle =
+        new Vehicle(UUID.randomUUID(), new Plate("abc-1d23"), "Honda", "Civic", 2020, 30000);
 
-        assertThat(vehicle.plate().value()).isEqualTo("ABC1D23");
-    }
+    assertThat(vehicle.plate().value()).isEqualTo("ABC1D23");
+  }
 
-    @Test
-    void shouldRejectInvalidPlate() {
-        assertThatThrownBy(
-                () ->
-                        new Vehicle(UUID.randomUUID(), new Plate("ABC123"), "Honda", "Civic", 2020, 30000))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Invalid plate");
-    }
+  @Test
+  void shouldRejectInvalidPlate() {
+    assertThatThrownBy(
+            () ->
+                new Vehicle(UUID.randomUUID(), new Plate("ABC123"), "Honda", "Civic", 2020, 30000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid plate");
+  }
 
-    @Test
-    void shouldUpdateVehicle() {
-        Vehicle vehicle = vehicle();
+  @Test
+  void shouldUpdateVehicle() {
+    Vehicle vehicle = vehicle();
 
-        vehicle.update(new Plate("DEF2G34"), "Toyota", "Corolla", 2021, 35000);
+    vehicle.update(new Plate("DEF2G34"), "Toyota", "Corolla", 2021, 35000);
 
-        assertThat(vehicle.plate().value()).isEqualTo("DEF2G34");
-        assertThat(vehicle.brand()).isEqualTo("Toyota");
-        assertThat(vehicle.model()).isEqualTo("Corolla");
-        assertThat(vehicle.year()).isEqualTo(2021);
-        assertThat(vehicle.mileage()).isEqualTo(35000);
-    }
+    assertThat(vehicle.plate().value()).isEqualTo("DEF2G34");
+    assertThat(vehicle.brand()).isEqualTo("Toyota");
+    assertThat(vehicle.model()).isEqualTo("Corolla");
+    assertThat(vehicle.year()).isEqualTo(2021);
+    assertThat(vehicle.mileage()).isEqualTo(35000);
+  }
 
-    @Test
-    void shouldUpdateMileageOnlyWhenItDoesNotDecrease() {
-        Vehicle vehicle = vehicle();
+  @Test
+  void shouldUpdateMileageOnlyWhenItDoesNotDecrease() {
+    Vehicle vehicle = vehicle();
 
-        vehicle.updateMileage(35000);
+    vehicle.updateMileage(35000);
 
-        assertThat(vehicle.mileage()).isEqualTo(35000);
-        assertThatThrownBy(() -> vehicle.updateMileage(10000))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Mileage cannot decrease");
-    }
+    assertThat(vehicle.mileage()).isEqualTo(35000);
+    assertThatThrownBy(() -> vehicle.updateMileage(10000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Mileage cannot decrease");
+  }
 
-    @Test
-    void shouldActivateAndDeactivate() {
-        Vehicle vehicle = vehicle();
+  @Test
+  void shouldActivateAndDeactivate() {
+    Vehicle vehicle = vehicle();
 
-        vehicle.deactivate();
-        assertThat(vehicle.active()).isFalse();
+    vehicle.deactivate();
+    assertThat(vehicle.active()).isFalse();
 
-        vehicle.activate();
-        assertThat(vehicle.active()).isTrue();
-    }
+    vehicle.activate();
+    assertThat(vehicle.active()).isTrue();
+  }
 
-    @Test
-    void shouldRejectInvalidVehicleData() {
-        assertThatThrownBy(
-                () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), " ", "Civic", 2020, 30000))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Brand is required");
-        assertThatThrownBy(
-                () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", " ", 2020, 30000))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Model is required");
-        assertThatThrownBy(
-                () ->
-                        new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 1899, 30000))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Invalid year");
-        assertThatThrownBy(
-                () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2020, -1))
-                .isInstanceOf(DomainException.class)
-                .hasMessage("Mileage cannot be negative");
-    }
+  @Test
+  void shouldRejectInvalidVehicleData() {
+    assertThatThrownBy(
+            () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), " ", "Civic", 2020, 30000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Brand is required");
+    assertThatThrownBy(
+            () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", " ", 2020, 30000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Model is required");
+    assertThatThrownBy(
+            () ->
+                new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 1899, 30000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid year");
+    assertThatThrownBy(
+            () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2020, -1))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Mileage cannot be negative");
+  }
 }

@@ -28,7 +28,7 @@ Admin de oficina: oficina.admin@autocarehub.com / autocare123
 Admin de loja de peças: loja.admin@autocarehub.com / autocare123
 Funcionário de oficina: oficina.funcionario@autocarehub.com / autocare123
 Funcionário de loja de peças: loja.funcionario@autocarehub.com / autocare123
-Cliente final: cliente@autocarehub.com / autocare123
+Cliente: cliente@autocarehub.com / autocare123
 ```
 
 ## Scripts uteis

@@ -332,7 +332,7 @@ const demoProfile = computed(() => {
       tabs: ['overview', 'store-quotes', 'parts', 'users'],
     },
     'cliente@autocarehub.com': {
-      label: 'Cliente final',
+      label: 'Cliente',
       tabs: ['overview', 'customer-partners', 'customer-parts', 'customer-cart', 'orders', 'users'],
     },
   };
@@ -398,7 +398,7 @@ const availableTabs = computed(() => {
     },
     {
       id: 'master-customers',
-      label: 'Clientes finais',
+      label: 'Clientes',
       description: 'Gastos, veículos e frequência',
       icon: Users,
       roles: ['ADMIN'],
@@ -2583,7 +2583,7 @@ onMounted(async () => {
             <button class="home-widget" type="button" @click="selectTab('master-customers')">
               <Users :size="22"/>
               <strong>{{ masterSummary.customers }}</strong>
-              <span>Clientes finais cadastrados</span>
+              <span>Clientes cadastrados</span>
             </button>
             <button class="home-widget" type="button" @click="selectTab('master-workshops')">
               <Wrench :size="22"/>
@@ -2647,7 +2647,7 @@ onMounted(async () => {
                 </dl>
               </article>
               <article class="employee-card">
-                <div><strong>Maior número de veículos</strong><span>Clientes finais</span></div>
+                <div><strong>Maior número de veículos</strong><span>Clientes</span></div>
                 <dl>
                   <template v-for="customer in masterVehicleOwners" :key="`vehicles-${customer.id}`">
                     <dt>{{ customer.name }}</dt>
@@ -3202,7 +3202,7 @@ onMounted(async () => {
         <section v-if="activeTab === 'master-customers' && isMasterAdmin" class="screen-stack">
           <section class="section-block">
             <div class="section-heading">
-              <h2>Clientes finais</h2>
+              <h2>Clientes</h2>
               <span>Veículos, gastos, frequência e parceiros acessados</span>
             </div>
             <div class="data-table">
@@ -3216,7 +3216,7 @@ onMounted(async () => {
                   v-for="customer in masterCustomers"
                   :key="customer.id"
                   class="data-table-row customers-grid clickable-row"
-                  @click="openRecord('Cliente final', customer)"
+                  @click="openRecord('Cliente', customer)"
               >
                 <strong>{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong>
                 <span>{{ customer.vehiclesCount }}</span>
@@ -3539,7 +3539,7 @@ onMounted(async () => {
                 <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
                 <option value="WORKSHOP_EMPLOYEE">Funcionário de oficina</option>
                 <option value="PARTS_STORE_EMPLOYEE">Funcionário de loja de peças</option>
-                <option value="CUSTOMER_OWNER">Cliente final</option>
+                <option value="CUSTOMER_OWNER">Cliente</option>
               </select>
               <input v-model="forms.user.customerId" placeholder="ID do cliente, se for conta de cliente"/>
               <label class="check-row">

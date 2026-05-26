@@ -8,26 +8,24 @@ import org.springframework.security.core.Authentication;
 
 public class LoginUseCase {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
 
-    public LoginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-    }
+  public LoginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
+    this.authenticationManager = authenticationManager;
+    this.jwtService = jwtService;
+  }
 
-    public Output execute(Command command) {
-        Authentication authentication =
-                authenticationManager.authenticate(
-                        new UsernamePasswordAuthenticationToken(command.username(), command.password()));
-        JwtService.IssuedToken token =
-                jwtService.generateToken((AuthenticatedUser) authentication.getPrincipal());
-        return new Output(token.accessToken(), token.tokenType(), token.expiresIn());
-    }
+  public Output execute(Command command) {
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(command.username(), command.password()));
+    JwtService.IssuedToken token =
+        jwtService.generateToken((AuthenticatedUser) authentication.getPrincipal());
+    return new Output(token.accessToken(), token.tokenType(), token.expiresIn());
+  }
 
-    public record Command(String username, String password) {
-    }
+  public record Command(String username, String password) {}
 
-    public record Output(String accessToken, String tokenType, long expiresIn) {
-    }
+  public record Output(String accessToken, String tokenType, long expiresIn) {}
 }

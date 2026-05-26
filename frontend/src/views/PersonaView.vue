@@ -168,7 +168,7 @@ const nearbyPlaces = computed(() => {
         <MapPin :size="28"/>
         <h2>Busca por CEP após cadastro</h2>
         <p>
-          O cliente final não acessa uma demo pública. Depois do cadastro, ele informa o CEP para
+          O cliente não acessa uma demo pública. Depois do cadastro, ele informa o CEP para
           encontrar oficinas e lojas próximas e acompanhar atendimentos vinculados ao seu veículo.
         </p>
         <label>

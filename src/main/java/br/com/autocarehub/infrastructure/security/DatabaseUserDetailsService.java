@@ -10,19 +10,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class DatabaseUserDetailsService implements UserDetailsService {
 
-    private final UserJpaRepository userJpaRepository;
+  private final UserJpaRepository userJpaRepository;
 
-    public DatabaseUserDetailsService(UserJpaRepository userJpaRepository) {
-        this.userJpaRepository = userJpaRepository;
-    }
+  public DatabaseUserDetailsService(UserJpaRepository userJpaRepository) {
+    this.userJpaRepository = userJpaRepository;
+  }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) {
-        return userJpaRepository
-                .findByUsername(username)
-                .filter(user -> user.isActive())
-                .map(UserJpaMapper::toDomain)
-                .map(AuthenticatedUser::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
+  @Override
+  public UserDetails loadUserByUsername(String username) {
+    return userJpaRepository
+        .findByUsername(username)
+        .filter(user -> user.isActive())
+        .map(UserJpaMapper::toDomain)
+        .map(AuthenticatedUser::new)
+        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+  }
 }
