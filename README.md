@@ -326,7 +326,7 @@ Essa abordagem mantem controllers, DTOs gerados, repositories Spring Data e enti
 
 PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o
 dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, serviços e
-pecas, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
+peças, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
 
 O uso de PostgreSQL tambem combina bem com Flyway, JPA e execucao via Docker Compose.
 
