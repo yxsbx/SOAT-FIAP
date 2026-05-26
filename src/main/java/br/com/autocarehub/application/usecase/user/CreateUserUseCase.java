@@ -34,6 +34,8 @@ public class CreateUserUseCase {
                         command.customerId(),
                         command.fullName(),
                         command.profileType(),
+                        command.companyName(),
+                        command.companyType(),
                         command.employeeSubRole(),
                         command.permissions(),
                         command.active(),
@@ -48,6 +50,8 @@ public class CreateUserUseCase {
             UUID customerId,
             String fullName,
             String profileType,
+            String companyName,
+            String companyType,
             String employeeSubRole,
             java.util.List<String> permissions,
             boolean active) {

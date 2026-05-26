@@ -20,6 +20,7 @@ public final class PartRestMapper {
     public static CreatePartUseCase.Command toCommand(CreatePartRequest request) {
         return new CreatePartUseCase.Command(
                 request.getName(),
+                request.getDescription(),
                 request.getSku(),
                 request.getCategory(),
                 request.getSubcategory(),
@@ -34,6 +35,7 @@ public final class PartRestMapper {
         return new UpdatePartUseCase.Command(
                 partId,
                 request.getName(),
+                request.getDescription(),
                 request.getSku(),
                 request.getCategory(),
                 request.getSubcategory(),
@@ -57,6 +59,7 @@ public final class PartRestMapper {
         return new PartResponse(
                 part.id(),
                 part.name(),
+                part.description(),
                 part.sku(),
                 part.category(),
                 part.brand(),

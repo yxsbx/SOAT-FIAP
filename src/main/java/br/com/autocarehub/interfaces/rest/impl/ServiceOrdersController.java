@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @RestController
@@ -26,6 +27,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
     private final GetAverageServiceOrderExecutionTimeUseCase
             getAverageServiceOrderExecutionTimeUseCase;
+    private final TrackServiceOrderUseCase trackServiceOrderUseCase;
 
     public ServiceOrdersController(
             CreateServiceOrderUseCase createServiceOrderUseCase,
@@ -37,7 +39,8 @@ public class ServiceOrdersController implements ServiceOrdersApi {
             ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase,
             UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase,
             ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase,
-            GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase) {
+            GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase,
+            TrackServiceOrderUseCase trackServiceOrderUseCase) {
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.findServiceOrderUseCase = findServiceOrderUseCase;
         this.listServiceOrdersUseCase = listServiceOrdersUseCase;
@@ -48,6 +51,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
         this.updateServiceOrderStatusUseCase = updateServiceOrderStatusUseCase;
         this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
         this.getAverageServiceOrderExecutionTimeUseCase = getAverageServiceOrderExecutionTimeUseCase;
+        this.trackServiceOrderUseCase = trackServiceOrderUseCase;
     }
 
     @Override
@@ -110,10 +114,20 @@ public class ServiceOrdersController implements ServiceOrdersApi {
 
     @Override
     public ResponseEntity<ServiceOrderListResponse> listServiceOrders(
-            Integer page, Integer size, ServiceOrderStatus status) {
+            Integer page,
+            Integer size,
+            ServiceOrderStatus status,
+            UUID customerId,
+            UUID vehicleId,
+            OffsetDateTime createdFrom,
+            OffsetDateTime createdTo) {
         return ResponseEntity.ok(
                 ServiceOrderRestMapper.toListResponse(
-                        listServiceOrdersUseCase.execute(ServiceOrderRestMapper.toQuery(status)), page, size));
+                        listServiceOrdersUseCase.execute(
+                                ServiceOrderRestMapper.toQuery(
+                                        status, customerId, vehicleId, createdFrom, createdTo)),
+                        page,
+                        size));
     }
 
     @Override
@@ -132,5 +146,15 @@ public class ServiceOrdersController implements ServiceOrdersApi {
                 updateServiceOrderStatusUseCase.execute(
                         ServiceOrderRestMapper.toCommand(serviceOrderId, updateServiceOrderStatusRequest));
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
+    }
+
+    @Override
+    public ResponseEntity<ServiceOrderTrackingListResponse> trackServiceOrders(
+            UUID serviceOrderId, String customerDocument, String plate) {
+        return ResponseEntity.ok(
+                ServiceOrderRestMapper.toTrackingListResponse(
+                        trackServiceOrderUseCase.execute(
+                                new TrackServiceOrderUseCase.Query(
+                                        serviceOrderId, customerDocument, plate))));
     }
 }

@@ -11,5 +11,7 @@ public record DemoLead(
         String email,
         String phone,
         String cnpj,
+        String city,
+        String message,
         LocalDateTime createdAt) {
 }

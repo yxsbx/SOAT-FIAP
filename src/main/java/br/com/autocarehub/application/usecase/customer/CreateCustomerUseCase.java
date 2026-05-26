@@ -1,5 +1,6 @@
 package br.com.autocarehub.application.usecase.customer;
 
+import br.com.autocarehub.application.ApplicationException;
 import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.domain.Address;
 import br.com.autocarehub.domain.Customer;
@@ -14,10 +15,17 @@ public class CreateCustomerUseCase {
     }
 
     public Customer execute(Command command) {
+        Document document = Document.from(command.document());
+        customerRepository
+                .findByDocument(document)
+                .ifPresent(
+                        customer -> {
+                            throw new ApplicationException("Customer document already exists");
+                        });
         Customer customer =
                 new Customer(
                         command.name(),
-                        Document.from(command.document()),
+                        document,
                         command.phone(),
                         command.email(),
                         command.address());

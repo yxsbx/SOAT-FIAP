@@ -20,7 +20,7 @@ public final class ServiceOrderJpaMapper {
         entity.setId(serviceOrder.id());
         entity.setCustomerId(serviceOrder.customerId());
         entity.setVehicleId(serviceOrder.vehicleId());
-        entity.setStatus(serviceOrder.status().name());
+        entity.setStatus(serviceOrder.status().externalCode());
         entity.setDiagnosticNotes(serviceOrder.diagnosticNotes());
         entity.setTotalAmount(serviceOrder.totalAmount().value());
         entity.setCreatedAt(serviceOrder.createdAt());
@@ -45,7 +45,7 @@ public final class ServiceOrderJpaMapper {
                 entity.getId(),
                 entity.getCustomerId(),
                 entity.getVehicleId(),
-                ServiceOrderStatus.valueOf(entity.getStatus()),
+                ServiceOrderStatus.fromExternalCode(entity.getStatus()),
                 entity.getDiagnosticNotes(),
                 services,
                 parts,

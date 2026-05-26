@@ -4,7 +4,9 @@ import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.domain.ServiceOrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class ListServiceOrdersUseCase {
 
@@ -18,19 +20,32 @@ public class ListServiceOrdersUseCase {
         return serviceOrderRepository.findAll();
     }
 
-    public List<ServiceOrder> execute(ServiceOrderStatus status) {
-        if (status == null) {
-            return execute();
-        }
+    public List<ServiceOrder> execute(Query query) {
         return serviceOrderRepository.findAll().stream()
-                .filter(serviceOrder -> serviceOrder.status() == status)
+                .filter(serviceOrder -> query.status() == null || serviceOrder.status() == query.status())
+                .filter(
+                        serviceOrder ->
+                                query.customerId() == null
+                                        || serviceOrder.customerId().equals(query.customerId()))
+                .filter(
+                        serviceOrder ->
+                                query.vehicleId() == null || serviceOrder.vehicleId().equals(query.vehicleId()))
+                .filter(
+                        serviceOrder ->
+                                query.createdFrom() == null
+                                        || !serviceOrder.createdAt().isBefore(query.createdFrom()))
+                .filter(
+                        serviceOrder ->
+                                query.createdTo() == null
+                                        || !serviceOrder.createdAt().isAfter(query.createdTo()))
                 .toList();
     }
 
-    public List<ServiceOrder> execute(Query query) {
-        return execute(query.status());
-    }
-
-    public record Query(ServiceOrderStatus status) {
+    public record Query(
+            ServiceOrderStatus status,
+            UUID customerId,
+            UUID vehicleId,
+            LocalDateTime createdFrom,
+            LocalDateTime createdTo) {
     }
 }

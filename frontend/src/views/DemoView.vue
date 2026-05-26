@@ -24,6 +24,8 @@ const leadForm = reactive({
   email: '',
   phone: '',
   cnpj: '',
+  city: '',
+  message: '',
 });
 
 const orderForm = reactive({
@@ -66,7 +68,7 @@ const demoContext = computed(() => {
   if (leadForm.demoProfile === 'partsStore') {
     return {
       eyebrow: 'Demo para loja de peças',
-      title: 'Teste uma amostra controlada do fluxo de loja parceira.',
+      title: 'Sua loja de peças pode vender mais com atendimento organizado.',
       companyPlaceholder: 'Loja de Peças Exemplo',
       servicePlaceholder: 'Pedido ou peça',
       heroLabel: 'Visão resumida da loja',
@@ -76,12 +78,13 @@ const demoContext = computed(() => {
       actionTitle: 'Criar pedido rápido',
       listTitle: 'Pedidos em acompanhamento',
       stockTitle: 'Estoque da loja',
+      partnerTypeLabel: 'loja de peças',
     };
   }
 
   return {
     eyebrow: 'Demo para oficina',
-    title: 'Teste uma amostra controlada do fluxo da oficina.',
+    title: 'Sua oficina pode receber clientes e gerenciar orçamentos em um só lugar.',
     companyPlaceholder: 'Oficina Exemplo',
     servicePlaceholder: 'Serviço',
     heroLabel: 'Visão resumida da oficina',
@@ -91,6 +94,7 @@ const demoContext = computed(() => {
     actionTitle: 'Criar ordem rápida',
     listTitle: 'Ordens em acompanhamento',
     stockTitle: 'Estoque da oficina',
+    partnerTypeLabel: 'oficina',
   };
 });
 
@@ -162,9 +166,17 @@ function incrementPart(part, quantity) {
         <span class="preview-eyebrow">Demo simplificada</span>
         <h1>{{ demoContext.title }}</h1>
         <p>
-          Escolha se quer testar como oficina ou loja de peças. A demo pública não existe para
-          cliente final; esse acesso depende de cadastro para usar busca por CEP e acompanhamento.
+          A AutoCare Hub conecta oficinas e lojas de peças a clientes finais, com ferramentas para
+          receber contatos, montar orçamentos, controlar estoque, acompanhar vendas e organizar a operação.
         </p>
+        <div class="partner-benefits">
+          <span><CheckCircle2 :size="16"/> Receber clientes</span>
+          <span><CheckCircle2 :size="16"/> Gerenciar orçamentos</span>
+          <span><CheckCircle2 :size="16"/> Controlar estoque</span>
+          <span><CheckCircle2 :size="16"/> Acompanhar vendas</span>
+          <span><CheckCircle2 :size="16"/> Organizar ordens de serviço</span>
+          <span><CheckCircle2 :size="16"/> Ver faturamento</span>
+        </div>
       </div>
 
       <form class="demo-form" @submit.prevent="submitLead">
@@ -197,6 +209,10 @@ function incrementPart(part, quantity) {
           Telefone
           <input v-model.trim="leadForm.phone" maxlength="30" minlength="8" placeholder="(11) 99999-9999" required/>
         </label>
+        <label>
+          Cidade
+          <input v-model.trim="leadForm.city" maxlength="120" placeholder="São Paulo - SP"/>
+        </label>
         <label class="span-2">
           CNPJ
           <input
@@ -207,9 +223,20 @@ function incrementPart(part, quantity) {
               required
           />
         </label>
+        <label class="span-2">
+          Mensagem
+          <textarea
+              v-model.trim="leadForm.message"
+              maxlength="500"
+              :placeholder="`Conte rapidamente como sua ${demoContext.partnerTypeLabel} quer usar a AutoCare Hub`"
+          ></textarea>
+        </label>
         <p v-if="error" class="alert error span-2">{{ error }}</p>
-        <button :disabled="saving" class="primary-button span-2">
-          {{ saving ? 'Liberando demo...' : 'Acessar demo' }}
+        <button :disabled="saving" class="primary-button">
+          {{ saving ? 'Registrando contato...' : 'Quero ser parceiro' }}
+        </button>
+        <button :disabled="saving" class="secondary-button" type="submit">
+          Solicitar demonstração
         </button>
       </form>
     </section>

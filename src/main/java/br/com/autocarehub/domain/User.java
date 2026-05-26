@@ -13,6 +13,8 @@ public record User(
         UUID customerId,
         String fullName,
         String profileType,
+        String companyName,
+        String companyType,
         String employeeSubRole,
         List<String> permissions,
         boolean active,
@@ -25,6 +27,8 @@ public record User(
         Objects.requireNonNull(role, "role is required");
         fullName = normalizeOptional(fullName, username);
         profileType = normalizeOptional(profileType, role.name());
+        companyName = normalizeOptional(companyName, "");
+        companyType = normalizeOptional(companyType, "");
         employeeSubRole = normalizeOptional(employeeSubRole, "");
         permissions = permissions == null ? List.of() : List.copyOf(permissions);
         Objects.requireNonNull(createdAt, "createdAt is required");
@@ -38,7 +42,7 @@ public record User(
             UUID customerId,
             boolean active,
             LocalDateTime createdAt) {
-        this(id, username, passwordHash, role, customerId, username, role.name(), "", List.of(), active, createdAt);
+        this(id, username, passwordHash, role, customerId, username, role.name(), "", "", "", List.of(), active, createdAt);
     }
 
     private static String requireText(String value, String message) {

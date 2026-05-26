@@ -22,6 +22,7 @@ public class UpdatePartUseCase {
                         .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
         part.update(
                 command.name(),
+                command.description(),
                 command.sku(),
                 command.category(),
                 command.subcategory(),
@@ -40,6 +41,7 @@ public class UpdatePartUseCase {
     public record Command(
             UUID partId,
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,

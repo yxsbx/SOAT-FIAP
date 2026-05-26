@@ -8,6 +8,7 @@ public class Part {
 
     private final UUID id;
     private String name;
+    private String description;
     private String sku;
     private String category;
     private String subcategory;
@@ -23,6 +24,7 @@ public class Part {
 
     public Part(
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,
@@ -30,11 +32,24 @@ public class Part {
             Money unitPrice,
             int stockQuantity,
             int minimumStock) {
-        this(name, sku, category, subcategory, brand, Money.zero(), unitPrice, stockQuantity, minimumStock);
+        this(name, description, sku, category, subcategory, brand, Money.zero(), unitPrice, stockQuantity, minimumStock);
     }
 
     public Part(
             String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock) {
+        this(name, name, sku, category, subcategory, brand, unitPrice, stockQuantity, minimumStock);
+    }
+
+    public Part(
+            String name,
+            String description,
             String sku,
             String category,
             String subcategory,
@@ -46,6 +61,7 @@ public class Part {
         this(
                 UUID.randomUUID(),
                 name,
+                description,
                 sku,
                 category,
                 subcategory,
@@ -61,8 +77,22 @@ public class Part {
     }
 
     public Part(
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock) {
+        this(name, name, sku, category, subcategory, brand, costPrice, unitPrice, stockQuantity, minimumStock);
+    }
+
+    public Part(
             UUID id,
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,
@@ -74,6 +104,7 @@ public class Part {
         this(
                 id,
                 name,
+                description,
                 sku,
                 category,
                 subcategory,
@@ -95,6 +126,21 @@ public class Part {
             String category,
             String subcategory,
             String brand,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock,
+            boolean active) {
+        this(id, name, name, sku, category, subcategory, brand, unitPrice, stockQuantity, minimumStock, active);
+    }
+
+    public Part(
+            UUID id,
+            String name,
+            String description,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
             Money costPrice,
             Money unitPrice,
             int stockQuantity,
@@ -105,6 +151,7 @@ public class Part {
             boolean active) {
         this.id = Objects.requireNonNull(id, "id is required");
         this.name = requireText(name, "Name is required");
+        this.description = requireText(description, "Description is required");
         this.sku = requireText(sku, "SKU is required");
         this.category = requireText(category, "Category is required");
         this.subcategory = subcategory == null ? null : subcategory.trim();
@@ -154,6 +201,7 @@ public class Part {
 
     public void update(
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,
@@ -162,6 +210,7 @@ public class Part {
             Money unitPrice,
             int minimumStock) {
         this.name = requireText(name, "Name is required");
+        this.description = requireText(description, "Description is required");
         this.sku = requireText(sku, "SKU is required");
         this.category = requireText(category, "Category is required");
         this.subcategory = subcategory == null ? null : subcategory.trim();
@@ -173,13 +222,37 @@ public class Part {
 
     public void update(
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,
             String brand,
             Money unitPrice,
             int minimumStock) {
-        update(name, sku, category, subcategory, brand, this.costPrice, unitPrice, minimumStock);
+        update(name, description, sku, category, subcategory, brand, this.costPrice, unitPrice, minimumStock);
+    }
+
+    public void update(
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money unitPrice,
+            int minimumStock) {
+        update(name, name, sku, category, subcategory, brand, this.costPrice, unitPrice, minimumStock);
+    }
+
+    public void update(
+            String name,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money costPrice,
+            Money unitPrice,
+            int minimumStock) {
+        update(name, name, sku, category, subcategory, brand, costPrice, unitPrice, minimumStock);
     }
 
     public void increaseStock(int quantity) {
@@ -292,6 +365,10 @@ public class Part {
 
     public String name() {
         return name;
+    }
+
+    public String description() {
+        return description;
     }
 
     public String sku() {

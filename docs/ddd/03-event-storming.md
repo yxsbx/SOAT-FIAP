@@ -41,7 +41,9 @@ regras para deixar claro o comportamento do MVP.
 
 ### Politicas
 
-- Ao adicionar uma peca a ordem de servico, o estoque da peca e reduzido.
+- Ao vincular uma peca a um orcamento, a peca pode ser reservada para impedir venda duplicada.
+- Ao aprovar um orcamento, a reserva das pecas e convertida em baixa definitiva de estoque.
+- Se uma reserva for liberada, a quantidade volta a ficar disponivel no estoque.
 - Um cliente autenticado so pode consultar ordens vinculadas ao seu proprio `customerId`.
 - Um cliente autenticado so pode aprovar orcamento de ordem vinculada ao seu proprio `customerId`.
 - `ADMIN` e `EMPLOYEE` podem executar o fluxo operacional da oficina.
@@ -69,6 +71,10 @@ regras para deixar claro o comportamento do MVP.
 - Criar peca ou insumo.
 - Atualizar peca ou insumo.
 - Atualizar estoque.
+- Registrar entrada, saida ou venda isolada.
+- Reservar peca para orcamento.
+- Liberar reserva de peca.
+- Confirmar reserva como baixa definitiva.
 - Remover logicamente peca ou insumo.
 - Consultar pecas.
 - Listar pecas com filtro de baixo estoque.
@@ -78,6 +84,10 @@ regras para deixar claro o comportamento do MVP.
 - Peca criada.
 - Peca atualizada.
 - Estoque atualizado.
+- Movimento de estoque registrado.
+- Estoque reservado.
+- Reserva liberada.
+- Reserva confirmada como venda ou consumo.
 - Peca desativada.
 - Estoque reduzido por uso em ordem de servico.
 

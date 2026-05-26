@@ -41,27 +41,27 @@ Representa o atendimento da oficina para um veiculo de um cliente.
 - Ordem deve estar vinculada a um cliente.
 - Ordem deve estar vinculada a um veiculo.
 - Veiculo informado deve pertencer ao cliente informado.
-- Ordem inicia com status `RECEIVED`.
-- Diagnostico pode iniciar a partir de `RECEIVED`.
+- Ordem inicia com status `RECEBIDA`.
+- Diagnostico pode iniciar a partir de `RECEBIDA`.
 - Itens da ordem podem ser alterados antes do orcamento ser gerado.
-- Itens nao podem ser alterados nos status `WAITING_APPROVAL`, `IN_PROGRESS`, `FINISHED` ou `DELIVERED`.
+- Itens nao podem ser alterados nos status `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` ou `ENTREGUE`.
 
 ### Regras de Orcamento
 
 - Orcamento exige pelo menos um servico ou uma peca.
 - Total do orcamento e calculado pela soma dos servicos e pecas.
-- Ao gerar orcamento, status muda para `WAITING_APPROVAL`.
-- Aprovacao so pode ocorrer quando a ordem estiver em `WAITING_APPROVAL`.
+- Ao gerar orcamento, status muda para `AGUARDANDO_APROVACAO`.
+- Aprovacao so pode ocorrer quando a ordem estiver em `AGUARDANDO_APROVACAO`.
 - Aprovacao exige que o orcamento tenha sido gerado.
 
 ### Regras de Status
 
-- `RECEIVED` pode ir para `IN_DIAGNOSIS`.
-- `WAITING_APPROVAL` e definido ao gerar orcamento.
-- `IN_PROGRESS` exige orcamento aprovado.
-- `FINISHED` exige status `IN_PROGRESS`.
-- `DELIVERED` exige status `FINISHED`.
-- Ordem nao pode retornar para `RECEIVED` via atualizacao de status.
+- `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
+- `AGUARDANDO_APROVACAO` e definido ao gerar orcamento.
+- `EM_EXECUCAO` exige orcamento aprovado.
+- `FINALIZADA` exige status `EM_EXECUCAO`.
+- `ENTREGUE` exige status `FINALIZADA`.
+- Ordem nao pode retornar para `RECEBIDA` via atualizacao de status.
 
 ## Part
 
@@ -73,9 +73,14 @@ Representa uma peca ou insumo usado pela oficina.
 
 - Estoque nao pode ser negativo.
 - Estoque minimo nao pode ser negativo.
+- Quantidade reservada nao pode ser maior que o estoque total.
 - Quantidade de movimentacao deve ser maior que zero.
 - Nao e permitido reduzir estoque acima da quantidade disponivel.
 - Peca deve informar se ha estoque disponivel para uma quantidade solicitada.
+- Reserva de estoque reduz a quantidade disponivel, mas nao reduz o estoque total.
+- Confirmar uma reserva reduz o estoque total e a quantidade reservada.
+- Liberar uma reserva devolve a quantidade para o estoque disponivel.
+- Reserva expirada pode ser liberada automaticamente quando a peca e consultada ou movimentada.
 - Peca pode ser ativada ou desativada.
 
 ### Regras Comerciais

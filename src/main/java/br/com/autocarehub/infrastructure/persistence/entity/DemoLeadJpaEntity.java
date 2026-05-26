@@ -33,6 +33,12 @@ public class DemoLeadJpaEntity {
     @Column(nullable = false, length = 40)
     private String cnpj;
 
+    @Column(nullable = false, length = 120)
+    private String city;
+
+    @Column(nullable = false, length = 500)
+    private String message;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -90,6 +96,22 @@ public class DemoLeadJpaEntity {
 
     public void setCnpj(String cnpj) {
         this.cnpj = cnpj;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public LocalDateTime getCreatedAt() {

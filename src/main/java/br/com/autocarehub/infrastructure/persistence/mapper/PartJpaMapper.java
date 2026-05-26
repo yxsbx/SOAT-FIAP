@@ -13,6 +13,7 @@ public final class PartJpaMapper {
         PartJpaEntity entity = new PartJpaEntity();
         entity.setId(part.id());
         entity.setName(part.name());
+        entity.setDescription(part.description());
         entity.setSku(part.sku());
         entity.setCategory(part.category());
         entity.setSubcategory(part.subcategory());
@@ -32,6 +33,7 @@ public final class PartJpaMapper {
         return new Part(
                 entity.getId(),
                 entity.getName(),
+                entity.getDescription(),
                 entity.getSku(),
                 entity.getCategory(),
                 entity.getSubcategory(),

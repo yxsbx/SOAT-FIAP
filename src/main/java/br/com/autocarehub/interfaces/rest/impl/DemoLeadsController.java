@@ -49,11 +49,13 @@ public class DemoLeadsController {
             @NotBlank @Pattern(regexp = "^(workshop|partsStore)$") String demoProfile,
             @NotBlank @Email @Size(max = 160) String email,
             @NotBlank @Size(min = 8, max = 30) String phone,
-            @NotBlank @Size(min = 6, max = 40) @Pattern(regexp = "^[A-Za-z0-9./-]+$") String cnpj) {
+            @NotBlank @Size(min = 6, max = 40) @Pattern(regexp = "^[A-Za-z0-9./-]+$") String cnpj,
+            @Size(max = 120) String city,
+            @Size(max = 500) String message) {
 
         RegisterDemoLeadUseCase.Command toCommand() {
             return new RegisterDemoLeadUseCase.Command(
-                    contactName, companyName, demoProfile, email, phone, cnpj);
+                    contactName, companyName, demoProfile, email, phone, cnpj, city, message);
         }
     }
 
@@ -65,6 +67,8 @@ public class DemoLeadsController {
             String email,
             String phone,
             String cnpj,
+            String city,
+            String message,
             LocalDateTime createdAt) {
 
         static DemoLeadResponse from(DemoLead demoLead) {
@@ -76,6 +80,8 @@ public class DemoLeadsController {
                     demoLead.email(),
                     demoLead.phone(),
                     demoLead.cnpj(),
+                    demoLead.city(),
+                    demoLead.message(),
                     demoLead.createdAt());
         }
     }

@@ -75,6 +75,8 @@ public class UsersController {
                                 current.customerId(),
                                 request.fullName(),
                                 current.profileType(),
+                                current.companyName(),
+                                current.companyType(),
                                 current.employeeSubRole(),
                                 current.permissions(),
                                 current.active()));
@@ -124,6 +126,17 @@ public class UsersController {
         return ResponseEntity.ok(new UserListResponse(items));
     }
 
+    @GetMapping("/partners")
+    public ResponseEntity<UserListResponse> listPartners() {
+        List<UserResponse> items =
+                listUsersUseCase.execute(new ListUsersUseCase.Query(true, "ADMIN", null, null)).stream()
+                        .filter(user -> user.profileType().equals("WORKSHOP_ADMIN")
+                                || user.profileType().equals("PARTS_STORE_ADMIN"))
+                        .map(UsersController::toResponse)
+                        .toList();
+        return ResponseEntity.ok(new UserListResponse(items));
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
@@ -136,6 +149,8 @@ public class UsersController {
                                 request.customerId(),
                                 request.fullName(),
                                 request.profileType(),
+                                request.companyName(),
+                                request.companyType(),
                                 request.employeeSubRole(),
                                 request.permissions(),
                                 request.active()));
@@ -155,6 +170,8 @@ public class UsersController {
                                 request.customerId(),
                                 request.fullName(),
                                 request.profileType(),
+                                request.companyName(),
+                                request.companyType(),
                                 request.employeeSubRole(),
                                 request.permissions(),
                                 request.active()));
@@ -178,6 +195,8 @@ public class UsersController {
                 user.customerId(),
                 user.fullName(),
                 user.profileType(),
+                user.companyName(),
+                user.companyType(),
                 user.employeeSubRole(),
                 user.permissions(),
                 user.active());
@@ -215,6 +234,8 @@ public class UsersController {
             UUID customerId,
             String fullName,
             String profileType,
+            String companyName,
+            String companyType,
             String employeeSubRole,
             List<String> permissions,
             boolean active) {
@@ -230,6 +251,8 @@ public class UsersController {
             UUID customerId,
             @NotBlank String fullName,
             @NotBlank String profileType,
+            String companyName,
+            String companyType,
             String employeeSubRole,
             List<String> permissions,
             boolean active) {
@@ -241,6 +264,8 @@ public class UsersController {
             UUID customerId,
             @NotBlank String fullName,
             @NotBlank String profileType,
+            String companyName,
+            String companyType,
             String employeeSubRole,
             List<String> permissions,
             boolean active) {

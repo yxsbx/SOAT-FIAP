@@ -32,7 +32,9 @@ Possiveis capacidades:
 - Cadastro assistido de clientes e veiculos.
 - Acompanhamento visual de status.
 
-No MVP, nao ha frontend implementado.
+O MVP avaliado permanece focado no backend. Existe um frontend demonstrativo no repositorio para apoiar apresentacao e
+validacao visual, mas a entrega obrigatoria do Tech Challenge deve ser avaliada pelas APIs, contrato OpenAPI, testes e
+documentacao backend.
 
 ## Marketplace de Lojas de Pecas
 

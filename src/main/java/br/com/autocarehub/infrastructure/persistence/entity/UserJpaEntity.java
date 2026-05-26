@@ -33,6 +33,12 @@ public class UserJpaEntity {
     @Column(name = "profile_type", nullable = false, length = 60)
     private String profileType;
 
+    @Column(name = "company_name", nullable = false, length = 160)
+    private String companyName;
+
+    @Column(name = "company_type", nullable = false, length = 60)
+    private String companyType;
+
     @Column(name = "employee_sub_role", nullable = false, length = 60)
     private String employeeSubRole;
 
@@ -102,6 +108,22 @@ public class UserJpaEntity {
 
     public void setProfileType(String profileType) {
         this.profileType = profileType;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyType() {
+        return companyType;
+    }
+
+    public void setCompanyType(String companyType) {
+        this.companyType = companyType;
     }
 
     public String getEmployeeSubRole() {

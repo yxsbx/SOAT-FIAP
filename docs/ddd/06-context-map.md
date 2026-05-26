@@ -36,8 +36,8 @@ compor os itens da ordem.
 
 Service Order Management depende de Inventory Management para adicionar pecas a uma ordem de servico e baixar estoque.
 
-No MVP, ao adicionar uma peca a ordem, a peca precisa existir e ter estoque disponivel. O estoque e reduzido como parte
-do caso de uso.
+No MVP, ao adicionar uma peca a ordem, a peca precisa existir e ter quantidade disponivel. A peca pode ser reservada
+durante o orcamento e a baixa definitiva acontece quando a reserva e confirmada ou quando o orcamento e aprovado.
 
 ## Future Marketplace -> Inventory Management
 

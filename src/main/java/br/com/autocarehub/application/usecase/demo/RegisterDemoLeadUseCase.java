@@ -24,6 +24,8 @@ public class RegisterDemoLeadUseCase {
                         command.email().trim().toLowerCase(),
                         command.phone().trim(),
                         command.cnpj().trim().toUpperCase(),
+                        normalize(command.city()),
+                        normalize(command.message()),
                         LocalDateTime.now());
 
         return repository.save(demoLead);
@@ -35,6 +37,12 @@ public class RegisterDemoLeadUseCase {
             String demoProfile,
             String email,
             String phone,
-            String cnpj) {
+            String cnpj,
+            String city,
+            String message) {
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.trim();
     }
 }

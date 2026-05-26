@@ -37,7 +37,7 @@ Video de apresentacao:
 Relatorio de vulnerabilidades:
 
 ```text
-[LINK_OU_CAMINHO_DO_RELATORIO_DE_VULNERABILIDADES]
+docs/security/vulnerability-analysis.md
 ```
 
 ## Resumo do Projeto
@@ -67,7 +67,7 @@ persistencia relacional, migrations com Flyway, testes automatizados, Docker e a
 - Docker e Docker Compose
 - JUnit 5
 - Mockito
-- H2 para testes automatizados
+- Testcontainers com PostgreSQL para testes automatizados
 - OWASP Dependency-Check
 
 ## Arquitetura
@@ -128,19 +128,22 @@ target/dependency-check
 Resumo da analise:
 
 ```text
-[PREENCHER_APOS_EXECUTAR_O_SCAN]
+Relatorio disponivel de 2026-05-16: 118 dependencias analisadas, 13 dependencias com vulnerabilidades e 49
+vulnerabilidades identificadas. Maior severidade: CRITICAL. Maior CVSS: 9.8.
 ```
 
 Vulnerabilidades encontradas:
 
 ```text
-[PREENCHER_APOS_EXECUTAR_O_SCAN]
+CVE criticas e altas foram apontadas principalmente em spring-boot-3.5.13, spring-boot-starter-web-3.5.13,
+tomcat-embed-core-10.1.53 e postgresql-42.7.10. A lista detalhada esta em docs/security/vulnerability-analysis.md.
 ```
 
 Plano de correcao:
 
 ```text
-[PREENCHER_APOS_EXECUTAR_O_SCAN]
+Atualizar Spring Boot, Tomcat embarcado e PostgreSQL JDBC para versoes corrigidas; reexecutar
+mvn dependency-check:check; usar suppressions apenas para falso positivo documentado.
 ```
 
 ## Instrucoes de Execucao

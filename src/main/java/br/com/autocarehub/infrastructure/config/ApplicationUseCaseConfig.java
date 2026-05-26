@@ -194,12 +194,34 @@ public class ApplicationUseCaseConfig {
     }
 
     @Bean
+    ReservePartStockUseCase reservePartStockUseCase(PartRepository repository) {
+        return new ReservePartStockUseCase(repository);
+    }
+
+    @Bean
+    ReleasePartReservationUseCase releasePartReservationUseCase(PartRepository repository) {
+        return new ReleasePartReservationUseCase(repository);
+    }
+
+    @Bean
+    CommitPartReservationUseCase commitPartReservationUseCase(
+            PartRepository partRepository, StockMovementRepository stockMovementRepository) {
+        return new CommitPartReservationUseCase(partRepository, stockMovementRepository);
+    }
+
+    @Bean
     CreateServiceOrderUseCase createServiceOrderUseCase(
             ServiceOrderRepository serviceOrderRepository,
             CustomerRepository customerRepository,
-            VehicleRepository vehicleRepository) {
+            VehicleRepository vehicleRepository,
+            WorkshopServiceRepository workshopServiceRepository,
+            PartRepository partRepository) {
         return new CreateServiceOrderUseCase(
-                serviceOrderRepository, customerRepository, vehicleRepository);
+                serviceOrderRepository,
+                customerRepository,
+                vehicleRepository,
+                workshopServiceRepository,
+                partRepository);
     }
 
     @Bean
@@ -253,5 +275,14 @@ public class ApplicationUseCaseConfig {
     GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase(
             ServiceOrderRepository serviceOrderRepository) {
         return new GetAverageServiceOrderExecutionTimeUseCase(serviceOrderRepository);
+    }
+
+    @Bean
+    TrackServiceOrderUseCase trackServiceOrderUseCase(
+            ServiceOrderRepository serviceOrderRepository,
+            CustomerRepository customerRepository,
+            VehicleRepository vehicleRepository) {
+        return new TrackServiceOrderUseCase(
+                serviceOrderRepository, customerRepository, vehicleRepository);
     }
 }

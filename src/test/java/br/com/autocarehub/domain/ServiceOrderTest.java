@@ -25,7 +25,7 @@ class ServiceOrderTest {
     void shouldStartWithReceivedStatus() {
         ServiceOrder serviceOrder = serviceOrder();
 
-        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.RECEIVED);
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.RECEBIDA);
     }
 
     @Test
@@ -34,7 +34,7 @@ class ServiceOrderTest {
 
         serviceOrder.startDiagnosis();
 
-        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.IN_DIAGNOSIS);
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.EM_DIAGNOSTICO);
     }
 
     @Test
@@ -53,7 +53,7 @@ class ServiceOrderTest {
 
         serviceOrder.generateBudget();
 
-        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.WAITING_APPROVAL);
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.AGUARDANDO_APROVACAO);
         assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
     }
 
@@ -98,5 +98,24 @@ class ServiceOrderTest {
         assertThatThrownBy(serviceOrder::deliver)
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Service order can only be delivered after finished");
+    }
+
+    @Test
+    void shouldFollowCompleteStatusFlow() {
+        ServiceOrder serviceOrder = serviceOrderWithItems();
+
+        serviceOrder.startDiagnosis();
+        serviceOrder.generateBudget();
+        serviceOrder.approveBudget();
+        serviceOrder.startExecution();
+        serviceOrder.finish();
+        serviceOrder.deliver();
+
+        assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.ENTREGUE);
+        assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
+        assertThat(serviceOrder.approvedAt()).isNotNull();
+        assertThat(serviceOrder.startedAt()).isNotNull();
+        assertThat(serviceOrder.finishedAt()).isNotNull();
+        assertThat(serviceOrder.deliveredAt()).isNotNull();
     }
 }

@@ -1596,6 +1596,109 @@ textarea:focus-visible {
     grid-template-columns: minmax(108px, 150px) minmax(0, 1.5fr) minmax(96px, 130px) minmax(88px, 120px);
 }
 
+.partner-grid {
+    grid-template-columns: minmax(0, 1.35fr) minmax(130px, 170px) minmax(70px, 90px) minmax(120px, 150px) minmax(86px, 110px);
+}
+
+.leads-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.3fr) minmax(110px, 150px) minmax(92px, 120px);
+}
+
+.customer-price-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(92px, 120px) minmax(110px, 150px) minmax(150px, 210px);
+}
+
+.customer-home-grid,
+.customer-partner-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.customer-vehicle-list,
+.customer-alert-list,
+.customer-part-grid,
+.customer-partner-grid article {
+    display: grid;
+    gap: 10px;
+}
+
+.customer-vehicle-list button,
+.customer-alert-list button,
+.customer-part-grid button,
+.customer-partner-grid article > button {
+    width: 100%;
+    min-height: 62px;
+    border: 1px solid #d8e7f3;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #082f55;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    text-align: left;
+}
+
+.customer-vehicle-list button,
+.customer-alert-list button {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.customer-vehicle-list small,
+.customer-alert-list small,
+.customer-part-grid small,
+.customer-partner-grid small {
+    display: block;
+    color: #5e7892;
+    font-weight: 650;
+    margin-top: 3px;
+}
+
+.customer-partner-grid h3 {
+    margin: 0 0 4px;
+    color: #082f55;
+}
+
+.customer-partner-grid b,
+.customer-part-grid b {
+    margin-left: auto;
+    color: #0a8bb8;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.store-quotes-grid {
+    grid-template-columns: minmax(116px, 150px) minmax(0, 1.35fr) minmax(104px, 140px) minmax(92px, 120px) minmax(180px, 250px);
+}
+
+.row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quote-items {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.quote-items button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border: 1px solid #d8e7f3;
+    border-radius: 12px;
+    background: #f8fbff;
+    color: #072f57;
+    padding: 10px 12px;
+    text-align: left;
+}
+
 .services-grid {
     grid-template-columns: minmax(0, 1.6fr) minmax(110px, 150px) minmax(96px, 130px);
 }
@@ -2977,6 +3080,7 @@ textarea:focus-visible {
 }
 
 .demo-form input,
+.demo-form textarea,
 .demo-inline-form input,
 .demo-inline-form select {
     width: 100%;
@@ -2989,12 +3093,39 @@ textarea:focus-visible {
     font: inherit;
 }
 
+.demo-form textarea {
+    min-height: 92px;
+    padding: 12px 13px;
+    resize: vertical;
+}
+
 .demo-form input:focus,
+.demo-form textarea:focus,
 .demo-inline-form input:focus,
 .demo-inline-form select:focus {
     border-color: rgba(14, 165, 233, 0.55);
     box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
     outline: none;
+}
+
+.partner-benefits {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.partner-benefits span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 38px;
+    border: 1px solid #dbeaf6;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.74);
+    padding: 0 12px;
+    color: #082f55;
+    font-weight: 850;
 }
 
 .span-2 {
@@ -3528,6 +3659,8 @@ textarea:focus-visible {
 
     .platform-view-list,
     .customer-choice-row,
+    .customer-home-grid,
+    .customer-partner-grid,
     .persona-hero,
     .persona-grid,
     .persona-stats,
@@ -3547,6 +3680,10 @@ textarea:focus-visible {
     }
 
     .demo-inline-form {
+        grid-template-columns: 1fr;
+    }
+
+    .partner-benefits {
         grid-template-columns: 1fr;
     }
 

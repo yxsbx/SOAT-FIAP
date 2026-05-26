@@ -39,6 +39,8 @@ public class DemoLeadRepositoryAdapter implements DemoLeadRepository {
         entity.setEmail(demoLead.email());
         entity.setPhone(demoLead.phone());
         entity.setCnpj(demoLead.cnpj());
+        entity.setCity(demoLead.city());
+        entity.setMessage(demoLead.message());
         entity.setCreatedAt(demoLead.createdAt());
         return entity;
     }
@@ -52,6 +54,8 @@ public class DemoLeadRepositoryAdapter implements DemoLeadRepository {
                 entity.getEmail(),
                 entity.getPhone(),
                 entity.getCnpj(),
+                entity.getCity(),
+                entity.getMessage(),
                 entity.getCreatedAt());
     }
 }

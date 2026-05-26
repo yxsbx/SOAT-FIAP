@@ -16,6 +16,7 @@ public class CreatePartUseCase {
         Part part =
                 new Part(
                         command.name(),
+                        command.description(),
                         command.sku(),
                         command.category(),
                         command.subcategory(),
@@ -29,6 +30,7 @@ public class CreatePartUseCase {
 
     public record Command(
             String name,
+            String description,
             String sku,
             String category,
             String subcategory,

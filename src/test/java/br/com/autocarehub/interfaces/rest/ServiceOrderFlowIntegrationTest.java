@@ -34,7 +34,7 @@ class ServiceOrderFlowIntegrationTest {
         UUID vehicleId = createVehicle(token, customerId);
         UUID partId = createPart(token);
         UUID serviceId = createWorkshopService(token);
-        UUID serviceOrderId = createServiceOrder(token, customerId, vehicleId);
+        UUID serviceOrderId = createServiceOrder(token, customerId, vehicleId, serviceId);
 
         addServiceToServiceOrder(token, serviceOrderId, serviceId);
         addPartToServiceOrder(token, serviceOrderId, partId);
@@ -175,7 +175,8 @@ class ServiceOrderFlowIntegrationTest {
         return uuid(response);
     }
 
-    private UUID createServiceOrder(String token, UUID customerId, UUID vehicleId) throws Exception {
+    private UUID createServiceOrder(String token, UUID customerId, UUID vehicleId, UUID serviceId)
+            throws Exception {
         String response =
                 mockMvc
                         .perform(
@@ -187,7 +188,17 @@ class ServiceOrderFlowIntegrationTest {
                                                         Map.of(
                                                                 "customerDocument", "52998224725",
                                                                 "vehicleId", vehicleId,
-                                                                "diagnosticNotes", "Customer reports engine noise"))))
+                                                                "diagnosticNotes",
+                                                                "Customer reports engine noise",
+                                                                "services",
+                                                                java.util.List.of(
+                                                                        Map.of(
+                                                                                "serviceId",
+                                                                                serviceId,
+                                                                                "quantity",
+                                                                                1)),
+                                                                "generateBudget",
+                                                                false))))
                         .andExpect(status().isCreated())
                         .andExpect(jsonPath("$.status").value("RECEIVED"))
                         .andReturn()
@@ -227,7 +238,9 @@ class ServiceOrderFlowIntegrationTest {
                                 .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("WAITING_APPROVAL"))
-                .andExpect(jsonPath("$.totalAmount").value(400.00));
+                .andExpect(jsonPath("$.servicesTotal").value(300.00))
+                .andExpect(jsonPath("$.partsTotal").value(200.00))
+                .andExpect(jsonPath("$.totalAmount").value(500.00));
     }
 
     private void approveBudget(String token, UUID serviceOrderId) throws Exception {

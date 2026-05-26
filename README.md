@@ -24,7 +24,7 @@ conteinerizacao com Docker.
 - JWT com JJWT
 - Docker e Docker Compose
 - JUnit e Spring Boot Test
-- H2 para testes automatizados
+- Testcontainers com PostgreSQL para testes automatizados
 
 ## Arquitetura
 
@@ -157,7 +157,8 @@ Execute:
 mvn test
 ```
 
-Os testes usam H2 em memoria com Flyway habilitado.
+Os testes usam Testcontainers com PostgreSQL 16 e Flyway habilitado. Isso valida as migrations no mesmo tipo de banco
+usado pela aplicacao local e pelo Docker Compose.
 
 ## Analise de Vulnerabilidades
 
@@ -279,6 +280,11 @@ Pecas:
 - `PUT /api/v1/parts/{partId}`
 - `DELETE /api/v1/parts/{partId}`
 - `PATCH /api/v1/parts/{partId}/stock`
+- `PATCH /api/v1/parts/{partId}/stock-movement`
+- `PATCH /api/v1/parts/{partId}/reservation`
+- `PATCH /api/v1/parts/{partId}/reserve`
+- `PATCH /api/v1/parts/{partId}/release-reservation`
+- `PATCH /api/v1/parts/{partId}/commit-reservation`
 
 Ordens de servico:
 
@@ -291,6 +297,13 @@ Ordens de servico:
 - `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`
 - `PATCH /api/v1/service-orders/{serviceOrderId}/status`
 - `GET /api/v1/customers/{customerId}/service-orders`
+
+## Regra de Estoque e Orcamento
+
+Pecas podem ser cadastradas, atualizadas, movimentadas por entrada/saida/venda e reservadas para orcamentos. A reserva
+reduz a quantidade disponivel, mas nao reduz o estoque total. Quando o orcamento e aprovado ou a reserva e confirmada,
+a quantidade reservada e baixada definitivamente do estoque. Se a reserva for liberada, a quantidade volta a ficar
+disponivel.
 
 ## OpenAPI First
 

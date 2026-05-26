@@ -30,8 +30,9 @@ SKU, categoria, marca, preco unitario, quantidade em estoque, estoque minimo e s
 
 ## Estoque
 
-Quantidade disponivel de uma peca ou insumo. No MVP, o estoque e reduzido quando uma peca e adicionada a uma ordem de
-servico e pode ser atualizado por endpoint proprio.
+Quantidade disponivel de uma peca ou insumo. No MVP, o estoque pode ser movimentado por entrada, saida ou venda isolada.
+Pecas vinculadas a orcamentos podem ficar reservadas; a baixa definitiva ocorre quando a reserva e confirmada ou quando
+o orcamento e aprovado.
 
 ## Diagnostico
 
@@ -50,21 +51,24 @@ permite que a ordem avance para execucao.
 
 ## Execucao
 
-Momento em que a oficina inicia a realizacao dos serviços aprovados. No MVP, a execucao corresponde ao
-status `IN_PROGRESS`.
+Momento em que a oficina inicia a realizacao dos serviços aprovados. No dominio, a execucao corresponde ao status
+`EM_EXECUCAO`.
 
 ## Entrega
 
-Etapa final em que o veiculo e entregue apos a conclusao da ordem de servico. No MVP, a entrega corresponde ao
-status `DELIVERED`.
+Etapa final em que o veiculo e entregue apos a conclusao da ordem de servico. No dominio, a entrega corresponde ao
+status `ENTREGUE`.
 
 ## Status da Ordem de Servico
 
 Estados controlados da ordem de servico no MVP:
 
-- `RECEIVED`: ordem recebida.
-- `IN_DIAGNOSIS`: diagnostico iniciado.
-- `WAITING_APPROVAL`: orcamento gerado e aguardando aprovacao.
-- `IN_PROGRESS`: execucao iniciada.
-- `FINISHED`: servico finalizado.
-- `DELIVERED`: veiculo entregue.
+- `RECEBIDA`: ordem recebida.
+- `EM_DIAGNOSTICO`: diagnostico iniciado.
+- `AGUARDANDO_APROVACAO`: orcamento gerado e aguardando aprovacao.
+- `EM_EXECUCAO`: execucao iniciada.
+- `FINALIZADA`: servico finalizado.
+- `ENTREGUE`: veiculo entregue.
+
+Na interface REST, esses estados continuam mapeados para os codigos externos em ingles para preservar compatibilidade
+com o contrato publicado.

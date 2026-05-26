@@ -19,6 +19,7 @@ import {
   Plus,
   Search,
   ShieldCheck,
+  ShoppingCart,
   TrendingUp,
   UserCog,
   UserPlus,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-vue-next';
 import {useAuthStore} from '@/stores/auth';
 import {resources} from '@/services/api';
+import {calculatePlatformFee} from '@/utils/platformFee';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -44,6 +46,10 @@ const homeSettingsOpen = ref(false);
 const selectedRecord = ref(null);
 const selectedRecordType = ref('');
 const currentUser = ref(null);
+const customerPartnerSearch = ref('');
+const customerPartSearch = ref('');
+const selectedCustomerPart = ref(null);
+const API_MAX_PAGE_SIZE = 100;
 
 const defaultHomeWidgetIds = [
   'orders-progress',
@@ -53,6 +59,16 @@ const defaultHomeWidgetIds = [
   'pending-budgets',
   'waiting-contact',
   'ready-pickup',
+];
+
+const defaultStoreHomeWidgetIds = [
+  'store-month-sales',
+  'store-pending-quotes',
+  'store-sent-carts',
+  'store-parts-stock',
+  'store-low-stock',
+  'store-waiting-contact',
+  'store-active-orders',
 ];
 
 const permissionDefinitions = [
@@ -124,8 +140,12 @@ const data = reactive({
   parts: [],
   lowStockParts: [],
   serviceOrders: [],
+  demoLeads: [],
   averageExecutionTime: null,
 });
+
+const storeQuotes = ref([]);
+const storeQuotesInitialized = ref(false);
 
 const pagination = reactive({
   users: {page: 0, size: 10, active: '', role: '', profileType: '', search: '', sortBy: 'fullName', sortDir: 'asc'},
@@ -167,6 +187,7 @@ const forms = reactive({
   part: {
     id: '',
     name: '',
+    description: '',
     sku: '',
     category: '',
     subcategory: '',
@@ -201,6 +222,8 @@ const forms = reactive({
     password: '123456',
     role: 'EMPLOYEE',
     profileType: 'WORKSHOP_EMPLOYEE',
+    companyName: '',
+    companyType: '',
     employeeSubRole: 'UNSPECIFIED',
     permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
     customerId: '',
@@ -265,13 +288,32 @@ const forms = reactive({
     partId: '',
     partQuantity: 1,
   },
+  storeQuote: {
+    id: '',
+    customerName: '',
+    customerContact: '',
+    status: 'DRAFT',
+    contactRequested: false,
+    partId: '',
+    quantity: 1,
+    quotedPrice: 0,
+    items: [],
+  },
+  customerQuote: {
+    storeName: '',
+    storeContact: '',
+    workshopName: '',
+    vehicleId: '',
+    problemDescription: '',
+    items: [],
+  },
 });
 
 const demoProfile = computed(() => {
   const profiles = {
     'master@autocarehub.com': {
       label: 'Admin Master',
-      tabs: ['overview', 'users', 'orders', 'customers', 'vehicles', 'parts', 'services'],
+      tabs: ['overview', 'master-customers', 'master-workshops', 'master-stores', 'master-leads', 'master-admins', 'users'],
     },
     'oficina.admin@autocarehub.com': {
       label: 'Admin de oficina',
@@ -279,7 +321,7 @@ const demoProfile = computed(() => {
     },
     'loja.admin@autocarehub.com': {
       label: 'Admin de loja de peças',
-      tabs: ['overview', 'users', 'orders', 'parts', 'services'],
+      tabs: ['overview', 'store-billing', 'store-employees', 'store-quotes', 'parts', 'users'],
     },
     'oficina.funcionario@autocarehub.com': {
       label: 'Funcionário de oficina',
@@ -287,11 +329,11 @@ const demoProfile = computed(() => {
     },
     'loja.funcionario@autocarehub.com': {
       label: 'Funcionário de loja de peças',
-      tabs: ['overview', 'users', 'parts', 'services'],
+      tabs: ['overview', 'store-quotes', 'parts', 'users'],
     },
     'cliente@autocarehub.com': {
       label: 'Cliente final',
-      tabs: ['overview', 'users', 'orders'],
+      tabs: ['overview', 'customer-partners', 'customer-parts', 'customer-cart', 'orders', 'users'],
     },
   };
 
@@ -313,6 +355,22 @@ const roleLabel = computed(() => {
 
 const isWorkshopAdmin = computed(() =>
     auth.role === 'ADMIN' && currentUser.value?.profileType === 'WORKSHOP_ADMIN',
+);
+
+const isMasterAdmin = computed(() =>
+    auth.role === 'ADMIN' && currentUser.value?.profileType === 'MASTER_ADMIN',
+);
+
+const isPartsStoreAdmin = computed(() =>
+    auth.role === 'ADMIN' && currentUser.value?.profileType === 'PARTS_STORE_ADMIN',
+);
+
+const isPartsStoreProfile = computed(() =>
+    ['PARTS_STORE_ADMIN', 'PARTS_STORE_EMPLOYEE'].includes(currentUser.value?.profileType),
+);
+
+const isCustomerProfile = computed(() =>
+    auth.role === 'CUSTOMER' || currentUser.value?.profileType === 'CUSTOMER_OWNER',
 );
 
 const userPermissions = computed(() => currentUser.value?.permissions || []);
@@ -339,6 +397,46 @@ const availableTabs = computed(() => {
       workshopAdminOnly: true,
     },
     {
+      id: 'master-customers',
+      label: 'Clientes finais',
+      description: 'Gastos, veículos e frequência',
+      icon: Users,
+      roles: ['ADMIN'],
+      masterOnly: true,
+    },
+    {
+      id: 'master-workshops',
+      label: 'Oficinas',
+      description: 'Parceiros e faturamento',
+      icon: Wrench,
+      roles: ['ADMIN'],
+      masterOnly: true,
+    },
+    {
+      id: 'master-stores',
+      label: 'Lojas',
+      description: 'Peças, vendas e receita',
+      icon: Package,
+      roles: ['ADMIN'],
+      masterOnly: true,
+    },
+    {
+      id: 'master-leads',
+      label: 'Interessados',
+      description: 'Leads e parceiros potenciais',
+      icon: TrendingUp,
+      roles: ['ADMIN'],
+      masterOnly: true,
+    },
+    {
+      id: 'master-admins',
+      label: 'Admins parceiros',
+      description: 'Cadastrar admins de oficina e loja',
+      icon: UserPlus,
+      roles: ['ADMIN'],
+      masterOnly: true,
+    },
+    {
       id: 'employees',
       label: 'Funcionários',
       description: 'Equipe, permissões e metas',
@@ -347,11 +445,59 @@ const availableTabs = computed(() => {
       workshopAdminOnly: true,
     },
     {
+      id: 'store-billing',
+      label: 'Faturamento',
+      description: 'Receita, taxa e vendas da loja',
+      icon: DollarSign,
+      roles: ['ADMIN'],
+      partsStoreAdminOnly: true,
+    },
+    {
+      id: 'store-employees',
+      label: 'Funcionários',
+      description: 'Equipe comercial e permissões',
+      icon: UserCog,
+      roles: ['ADMIN'],
+      partsStoreAdminOnly: true,
+    },
+    {
+      id: 'store-quotes',
+      label: 'Carrinhos',
+      description: 'Orçamentos de peças e vendas',
+      icon: ShoppingCart,
+      roles: ['ADMIN', 'EMPLOYEE'],
+      partsStoreOnly: true,
+    },
+    {
       id: 'users',
       label: 'Conta',
       description: 'Dados do usuário e permissões',
       icon: UserCog,
       roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
+    },
+    {
+      id: 'customer-partners',
+      label: 'Oficinas e lojas',
+      description: 'Parceiros para contato e orçamento',
+      icon: Wrench,
+      roles: ['CUSTOMER'],
+      customerOnly: true,
+    },
+    {
+      id: 'customer-parts',
+      label: 'Buscar peças',
+      description: 'Peças, preços e disponibilidade',
+      icon: Package,
+      roles: ['CUSTOMER'],
+      customerOnly: true,
+    },
+    {
+      id: 'customer-cart',
+      label: 'Solicitações',
+      description: 'Carrinho e pedidos de orçamento',
+      icon: ShoppingCart,
+      roles: ['CUSTOMER'],
+      customerOnly: true,
     },
     {
       id: 'orders',
@@ -394,7 +540,11 @@ const availableTabs = computed(() => {
     const allowedByRole = tab.roles.includes(auth.role);
     const allowedByProfile = !demoProfile.value || demoProfile.value.tabs.includes(tab.id);
     const allowedByAdminType = !tab.workshopAdminOnly || isWorkshopAdmin.value;
-    return allowedByRole && allowedByProfile && allowedByAdminType;
+    const allowedByStoreAdminType = !tab.partsStoreAdminOnly || isPartsStoreAdmin.value;
+    const allowedByStoreType = !tab.partsStoreOnly || isPartsStoreProfile.value;
+    const allowedByMasterType = !tab.masterOnly || isMasterAdmin.value;
+    const allowedByCustomerType = !tab.customerOnly || isCustomerProfile.value;
+    return allowedByRole && allowedByProfile && allowedByAdminType && allowedByStoreAdminType && allowedByStoreType && allowedByMasterType && allowedByCustomerType;
   });
 });
 
@@ -562,7 +712,7 @@ const homeWidgetDefinitions = computed(() => [
 const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets));
 
 const availableHomeWidgetDefinitions = computed(() =>
-    homeWidgetDefinitions.value.filter(
+    (isPartsStoreProfile.value ? storeHomeWidgetDefinitions.value : homeWidgetDefinitions.value).filter(
         (widget) =>
             widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
     ),
@@ -617,25 +767,19 @@ const billingSummary = computed(() => {
   const approvedBudgets = orders.filter((order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
   const completed = orders.filter((order) => ['FINISHED', 'DELIVERED'].includes(order.status)).length;
   const ticket = approvedBudgets ? gross / approvedBudgets : 0;
-  const tiers = [
-    {limit: 10000, fee: 0.08, label: '8%'},
-    {limit: 25000, fee: 0.06, label: '6%'},
-    {limit: Infinity, fee: 0.045, label: '4,5%'},
-  ];
-  const currentTier = tiers.find((tier) => gross < tier.limit) || tiers.at(-1);
-  const nextTier = tiers.find((tier) => tier.limit > gross && tier.limit !== Infinity);
-  const feeAmount = gross * currentTier.fee;
+  const fee = calculatePlatformFee(gross);
   return {
     gross,
-    feeRate: currentTier.label,
-    feeAmount,
-    net: gross - feeAmount,
+    feeRate: fee.feeRate,
+    feeRateLabel: fee.feeRateLabel,
+    feeAmount: fee.feeAmount,
+    net: fee.net,
     sentBudgets,
     approvedBudgets,
     completed,
     ticket,
-    nextTierGap: nextTier ? Math.max(0, nextTier.limit - gross) : 0,
-    nextTierLabel: nextTier ? `${(nextTier.fee * 100).toFixed(0)}%` : 'menor taxa ativa',
+    nextTierGap: fee.nextTierGap,
+    nextTierLabel: fee.nextTierLabel,
   };
 });
 
@@ -649,9 +793,284 @@ const monthlyRevenue = computed(() => {
   return [...months.entries()].slice(-6).map(([month, value]) => ({month, value}));
 });
 
+const storeQuoteStatusLabels = {
+  DRAFT: 'Em montagem',
+  SENT: 'Enviado ao cliente',
+  APPROVED: 'Aprovado',
+  REFUSED: 'Recusado',
+  EXPIRED: 'Expirado',
+};
+
+const storeSales = computed(() =>
+    storeQuotes.value.filter((quote) => quote.status === 'APPROVED'),
+);
+
+const storePendingQuotes = computed(() =>
+    storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status)),
+);
+
+const storeActiveOrders = computed(() =>
+    storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status)),
+);
+
+const storeWaitingContact = computed(() =>
+    storeQuotes.value.filter((quote) => quote.contactRequested && quote.status !== 'APPROVED'),
+);
+
+const storeRevenueGross = computed(() =>
+    storeSales.value.reduce((total, quote) => total + storeQuoteTotal(quote), 0),
+);
+
+const storeBillingSummary = computed(() => {
+  const gross = storeRevenueGross.value;
+  const sentQuotes = storeQuotes.value.filter((quote) => ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)).length;
+  const approvedQuotes = storeSales.value.length;
+  const ticket = approvedQuotes ? gross / approvedQuotes : 0;
+  const fee = calculatePlatformFee(gross);
+  return {
+    gross,
+    feeRate: fee.feeRate,
+    feeRateLabel: fee.feeRateLabel,
+    feeAmount: fee.feeAmount,
+    net: fee.net,
+    nextTierGap: fee.nextTierGap,
+    nextTierLabel: fee.nextTierLabel,
+    sentQuotes,
+    approvedQuotes,
+    conversion: sentQuotes ? Math.round((approvedQuotes / sentQuotes) * 100) : 0,
+    ticket,
+  };
+});
+
+const storeMonthlyRevenue = computed(() => {
+  const months = new Map();
+  storeSales.value.forEach((quote) => {
+    const date = quote.updatedAt ? new Date(quote.updatedAt) : new Date();
+    const key = date.toLocaleDateString('pt-BR', {month: 'short', year: '2-digit'});
+    months.set(key, (months.get(key) || 0) + storeQuoteTotal(quote));
+  });
+  return [...months.entries()].slice(-6).map(([month, value]) => ({month, value}));
+});
+
+const storeTopProducts = computed(() => {
+  const products = new Map();
+  storeSales.value.forEach((quote) => {
+    quote.items.forEach((item) => {
+      const current = products.get(item.partId) || {name: item.name, quantity: 0, total: 0};
+      current.quantity += Number(item.quantity || 0);
+      current.total += Number(item.quantity || 0) * Number(item.quotedPrice || 0);
+      products.set(item.partId, current);
+    });
+  });
+  return [...products.values()].sort((a, b) => b.quantity - a.quantity).slice(0, 5);
+});
+
+const storeFrequentCustomers = computed(() => {
+  const customers = new Map();
+  storeSales.value.forEach((quote) => {
+    const current = customers.get(quote.customerName) || {name: quote.customerName, count: 0, total: 0};
+    current.count += 1;
+    current.total += storeQuoteTotal(quote);
+    customers.set(quote.customerName, current);
+  });
+  return [...customers.values()].sort((a, b) => b.count - a.count).slice(0, 5);
+});
+
+const storeEmployees = computed(() =>
+    data.users.filter((user) =>
+        ['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType),
+    ),
+);
+
+const masterCustomers = computed(() =>
+    data.customers.map((customer) => {
+      const vehicles = data.vehicles.filter((vehicle) => vehicle.customerId === customer.id);
+      const orders = data.serviceOrders.filter((order) => order.customerId === customer.id);
+      const spent = orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
+      const partners = new Set(
+          [
+            ...orders.map(() => 'Oficina Central AutoCare'),
+            ...storeQuotes.value
+                .filter((quote) => normalize(quote.customerName).includes(normalize(customer.name)))
+                .map(() => 'Loja Pecas Prime'),
+          ],
+      );
+      return {
+        ...customer,
+        vehiclesCount: vehicles.length,
+        spent,
+        frequency: orders.length,
+        partners: [...partners],
+      };
+    }),
+);
+
+const workshopPartners = computed(() => {
+  const admins = data.users.filter((user) => user.profileType === 'WORKSHOP_ADMIN');
+  return admins.map((admin) => {
+    const gross = data.serviceOrders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
+    const fee = calculatePlatformFee(gross);
+    return {
+      id: admin.id,
+      name: admin.companyName || admin.fullName,
+      adminName: admin.fullName,
+      gross,
+      feeRate: fee.feeRate,
+      feeRateLabel: fee.feeRateLabel,
+      feeAmount: fee.feeAmount,
+      net: fee.net,
+      nextTierGap: fee.nextTierGap,
+      nextTierLabel: fee.nextTierLabel,
+      customersServed: new Set(data.serviceOrders.map((order) => order.customerId).filter(Boolean)).size,
+      vehiclesServed: new Set(data.serviceOrders.map((order) => order.vehicleId).filter(Boolean)).size,
+      status: admin.active ? 'Ativa' : 'Inativa',
+    };
+  });
+});
+
+const storePartners = computed(() => {
+  const admins = data.users.filter((user) => user.profileType === 'PARTS_STORE_ADMIN');
+  return admins.map((admin) => {
+    const gross = storeRevenueGross.value;
+    const fee = calculatePlatformFee(gross);
+    return {
+      id: admin.id,
+      name: admin.companyName || admin.fullName,
+      adminName: admin.fullName,
+      gross,
+      feeRate: fee.feeRate,
+      feeRateLabel: fee.feeRateLabel,
+      feeAmount: fee.feeAmount,
+      net: fee.net,
+      nextTierGap: fee.nextTierGap,
+      nextTierLabel: fee.nextTierLabel,
+      salesCount: storeSales.value.length,
+      topProducts: storeTopProducts.value.map((product) => product.name).join(', ') || 'Sem vendas',
+      status: admin.active ? 'Ativa' : 'Inativa',
+    };
+  });
+});
+
+const masterSummary = computed(() => {
+  const workshopGross = workshopPartners.value.reduce((total, partner) => total + partner.gross, 0);
+  const storeGross = storePartners.value.reduce((total, partner) => total + partner.gross, 0);
+  const workshopFee = workshopPartners.value.reduce((total, partner) => total + partner.feeAmount, 0);
+  const storeFee = storePartners.value.reduce((total, partner) => total + partner.feeAmount, 0);
+  return {
+    customers: data.customers.length,
+    workshops: workshopPartners.value.length,
+    stores: storePartners.value.length,
+    workshopGross,
+    storeGross,
+    workshopFee,
+    storeFee,
+    platformFee: workshopFee + storeFee,
+  };
+});
+
+const masterTopPlatformRevenuePartners = computed(() =>
+    [...workshopPartners.value, ...storePartners.value]
+        .sort((a, b) => b.feeAmount - a.feeAmount)
+        .slice(0, 5),
+);
+
+const masterFrequentCustomers = computed(() =>
+    [...masterCustomers.value].sort((a, b) => b.frequency - a.frequency).slice(0, 5),
+);
+
+const masterTopSpenders = computed(() =>
+    [...masterCustomers.value].sort((a, b) => b.spent - a.spent).slice(0, 5),
+);
+
+const masterVehicleOwners = computed(() =>
+    [...masterCustomers.value].sort((a, b) => b.vehiclesCount - a.vehiclesCount).slice(0, 5),
+);
+
+const masterPotentialPartners = computed(() =>
+    data.demoLeads.map((lead) => ({
+      ...lead,
+      potential:
+          lead.demoProfile === 'workshop'
+              ? data.serviceOrders.length + 12
+              : data.parts.length + storeQuotes.value.length,
+    })).sort((a, b) => b.potential - a.potential),
+);
+
+const storeHomeWidgetDefinitions = computed(() => [
+  {
+    id: 'store-month-sales',
+    label: 'Vendas do mês',
+    value: `R$ ${money(storeRevenueGross.value)}`,
+    icon: DollarSign,
+    tabId: 'store-billing',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'store-pending-quotes',
+    label: 'Orçamentos pendentes',
+    value: storePendingQuotes.value.length,
+    icon: ClipboardList,
+    tabId: 'store-quotes',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'store-sent-carts',
+    label: 'Carrinhos/orçamentos enviados',
+    value: storeQuotes.value.filter((quote) => quote.status === 'SENT').length,
+    icon: ShoppingCart,
+    tabId: 'store-quotes',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'store-parts-stock',
+    label: 'Peças em estoque',
+    value: data.parts.length,
+    icon: Package,
+    tabId: 'parts',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'store-low-stock',
+    label: 'Peças com estoque baixo',
+    value: data.lowStockParts.length,
+    icon: AlertTriangle,
+    tabId: 'parts',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'store-waiting-contact',
+    label: 'Clientes aguardando contato',
+    value: storeWaitingContact.value.length,
+    icon: Users,
+    tabId: 'store-quotes',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+  {
+    id: 'store-active-orders',
+    label: 'Pedidos em andamento',
+    value: storeActiveOrders.value.length,
+    icon: TrendingUp,
+    tabId: 'store-quotes',
+    roles: ['ADMIN', 'EMPLOYEE'],
+  },
+]);
+
 const workshopEmployees = computed(() =>
     data.users.filter((user) => user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE'),
 );
+
+function storeEmployeeMetrics(user) {
+  const employeeQuotes = storeQuotes.value.filter((quote) => quote.employeeId === user.id);
+  const sent = employeeQuotes.filter((quote) => ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)).length;
+  const approved = employeeQuotes.filter((quote) => quote.status === 'APPROVED');
+  const gross = approved.reduce((total, quote) => total + storeQuoteTotal(quote), 0);
+  return [
+    {label: 'Vendas', value: `R$ ${money(gross)}`},
+    {label: 'Orçamentos enviados', value: sent},
+    {label: 'Orçamentos aprovados', value: approved.length},
+    {label: 'Taxa de conversão', value: `${sent ? Math.round((approved.length / sent) * 100) : 0}%`},
+  ];
+}
 
 function employeeMetrics(user) {
   const index = Math.max(1, workshopEmployees.value.findIndex((employee) => employee.id === user.id) + 1);
@@ -727,6 +1146,13 @@ const searchResults = computed(() => {
       tabId: 'orders',
       icon: ClipboardList,
     })),
+    ...storeQuotes.value.map((quote) => ({
+      type: 'Carrinho',
+      label: quote.customerName,
+      detail: `${quote.id} - ${storeQuoteStatusLabels[quote.status] || quote.status}`,
+      tabId: 'store-quotes',
+      icon: ShoppingCart,
+    })),
   ];
 
   return [...pageResults, ...entityResults]
@@ -744,6 +1170,104 @@ const vehiclesWithCurrentStatus = computed(() =>
       };
     }),
 );
+
+const customerVehicles = computed(() => vehiclesWithCurrentStatus.value);
+
+const customerOrders = computed(() => data.serviceOrders);
+
+const customerBudgetAlerts = computed(() =>
+    customerOrders.value.filter((order) => order.status === 'WAITING_APPROVAL'),
+);
+
+const customerFinishedAlerts = computed(() =>
+    customerOrders.value.filter((order) => order.status === 'DELIVERED'),
+);
+
+const customerReadyAlerts = computed(() =>
+    customerOrders.value.filter((order) => order.status === 'FINISHED'),
+);
+
+const customerRecentHistory = computed(() =>
+    [...customerOrders.value]
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .slice(0, 5),
+);
+
+const workshopDirectory = computed(() =>
+    data.users
+        .filter((user) => user.profileType === 'WORKSHOP_ADMIN')
+        .map((user) => ({
+          ...user,
+          name: user.companyName || user.fullName,
+          location: 'São Paulo - SP',
+          specialty: 'Diagnóstico, revisão, manutenção preventiva e orçamento de veículos',
+        })),
+);
+
+const storeDirectory = computed(() =>
+    data.users
+        .filter((user) => user.profileType === 'PARTS_STORE_ADMIN')
+        .map((user) => ({
+          ...user,
+          name: user.companyName || user.fullName,
+          location: 'São Paulo - SP',
+          specialty: 'Peças, filtros, freios, suspensão, óleo e acessórios',
+        })),
+);
+
+const filteredWorkshopDirectory = computed(() =>
+    workshopDirectory.value.filter((partner) =>
+        smartMatch(
+            customerPartnerSearch.value,
+            [partner.name, partner.location, partner.specialty, partner.fullName],
+        ),
+    ),
+);
+
+const filteredStoreDirectory = computed(() =>
+    storeDirectory.value.filter((partner) =>
+        smartMatch(
+            customerPartnerSearch.value,
+            [partner.name, partner.location, partner.specialty, partner.fullName],
+        ),
+    ),
+);
+
+const uniqueCustomerParts = computed(() => {
+  const parts = new Map();
+  data.parts.forEach((part) => {
+    const key = normalize(`${part.name}-${part.brand}-${part.category}`);
+    if (!parts.has(key)) {
+      parts.set(key, part);
+    }
+  });
+  return [...parts.values()];
+});
+
+const filteredCustomerParts = computed(() => {
+  const vehicleTerms = customerVehicles.value
+      .map((vehicle) => `${vehicle.brand} ${vehicle.model} ${vehicle.plate}`)
+      .join(' ');
+  return uniqueCustomerParts.value.filter((part) =>
+      smartMatch(
+          customerPartSearch.value,
+          [part.name, part.brand, part.category, part.subcategory, part.sku, vehicleTerms],
+      ),
+  );
+});
+
+const selectedPartStores = computed(() => {
+  if (!selectedCustomerPart.value) {
+    return [];
+  }
+  return storeDirectory.value.map((store, index) => ({
+    ...store,
+    partId: selectedCustomerPart.value.id,
+    partName: selectedCustomerPart.value.name,
+    price: Number(selectedCustomerPart.value.unitPrice || 0) * (1 + index * 0.04),
+    availableQuantity: Math.max(0, Number(selectedCustomerPart.value.availableQuantity ?? selectedCustomerPart.value.stockQuantity) - index),
+  }));
+});
 
 const listSources = computed(() => ({
   users: data.users,
@@ -818,6 +1342,18 @@ function normalize(value) {
       .toLowerCase();
 }
 
+function smartMatch(query, values) {
+  const tokens = normalize(query)
+      .split(/\s+/)
+      .map((token) => token.trim())
+      .filter(Boolean);
+  if (!tokens.length) {
+    return true;
+  }
+  const haystack = normalize(values.filter(Boolean).join(' '));
+  return tokens.every((token) => haystack.includes(token));
+}
+
 function formatDuration(minutes) {
   const roundedMinutes = Math.max(0, Math.round(minutes || 0));
   const hours = roundedMinutes / 60;
@@ -843,6 +1379,13 @@ function userHomeKey() {
   return `autocare.home.${auth.user?.id || auth.user?.username || 'guest'}`;
 }
 
+function homeDefaultWidgetIds() {
+  const username = auth.user?.username || '';
+  return username.includes('loja.') || isPartsStoreProfile.value
+      ? defaultStoreHomeWidgetIds
+      : defaultHomeWidgetIds;
+}
+
 function readStoredJson(key, fallback) {
   try {
     return JSON.parse(localStorage.getItem(key)) || fallback;
@@ -852,21 +1395,23 @@ function readStoredJson(key, fallback) {
 }
 
 async function loadHomePreferences() {
+  const defaults = homeDefaultWidgetIds();
   const globalConfig = readStoredJson('autocare.home.workshop.global', {
-    widgets: defaultHomeWidgetIds,
+    widgets: defaults,
     showAlertsOnHome: false,
   });
   const userConfig = readStoredJson(userHomeKey(), {
-    widgets: globalConfig.widgets || defaultHomeWidgetIds,
+    widgets: globalConfig.widgets || defaults,
   });
 
-  homePreferences.globalWidgets = [...(globalConfig.widgets || defaultHomeWidgetIds)];
+  homePreferences.globalWidgets = [...(globalConfig.widgets || defaults)];
   homePreferences.showAlertsOnHome = Boolean(globalConfig.showAlertsOnHome);
   homePreferences.userWidgets = [...(userConfig.widgets ?? homePreferences.globalWidgets)];
 
   try {
     const preference = await resources.homePreferences();
-    homePreferences.userWidgets = [...(preference.widgets || defaultHomeWidgetIds)];
+    const preferredWidgets = preference.widgets?.length ? preference.widgets : defaults;
+    homePreferences.userWidgets = [...preferredWidgets];
     homePreferences.showAlertsOnHome = Boolean(preference.showAlertsOnHome);
   } catch {
     saveUserHomePreferences();
@@ -926,21 +1471,25 @@ async function loadDashboard() {
 
   try {
     if (auth.role === 'CUSTOMER' && auth.customerId) {
-      const [serviceOrders, vehicles, user] = await Promise.allSettled([
+      const [serviceOrders, vehicles, user, parts, partners] = await Promise.allSettled([
         resources.customerServiceOrders(auth.customerId),
         resources.customerVehicles(auth.customerId),
         resources.currentUser(),
+        resources.parts({active: true, size: API_MAX_PAGE_SIZE}),
+        resources.partners(),
       ]);
 
       data.serviceOrders =
           serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
       data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
       currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
+      data.parts = parts.status === 'fulfilled' ? listItems(parts.value) : [];
+      data.users = partners.status === 'fulfilled' ? listItems(partners.value) : [];
       if (currentUser.value) {
         forms.account.fullName = currentUser.value.fullName;
       }
 
-      const failed = [serviceOrders, vehicles, user].filter((request) => request.status === 'rejected');
+      const failed = [serviceOrders, vehicles, user, parts, partners].filter((request) => request.status === 'rejected');
       if (failed.length) {
         error.value = failed.map((request) => request.reason.message).join(' | ');
       }
@@ -950,16 +1499,17 @@ async function loadDashboard() {
     const requests = await Promise.allSettled([
       resources.currentUser(),
       auth.role === 'ADMIN' ? resources.users({active: pagination.users.active, role: pagination.users.role, profileType: pagination.users.profileType, search: pagination.users.search}) : Promise.resolve(null),
-      auth.role !== 'CUSTOMER' ? resources.customers({active: pagination.customers.active, size: 500}) : Promise.resolve(null),
-      resources.vehicles({active: pagination.vehicles.active, size: 500}),
-      resources.services({active: pagination.services.active, size: 500}),
-      resources.parts({active: pagination.parts.active, lowStock: pagination.parts.lowStock, size: 500}),
+      auth.role !== 'CUSTOMER' ? resources.customers({active: pagination.customers.active, size: API_MAX_PAGE_SIZE}) : Promise.resolve(null),
+      resources.vehicles({active: pagination.vehicles.active, size: API_MAX_PAGE_SIZE}),
+      resources.services({active: pagination.services.active, size: API_MAX_PAGE_SIZE}),
+      resources.parts({active: pagination.parts.active, lowStock: pagination.parts.lowStock, size: API_MAX_PAGE_SIZE}),
       resources.lowStockParts({size: 20}),
-      resources.serviceOrders({status: pagination.serviceOrders.status, size: 500}),
+      resources.serviceOrders({status: pagination.serviceOrders.status, size: API_MAX_PAGE_SIZE}),
       resources.averageExecutionTime(),
+      auth.role === 'ADMIN' ? resources.demoLeads() : Promise.resolve([]),
     ]);
 
-    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average] = requests;
+    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average, demoLeads] = requests;
 
     currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
     if (currentUser.value) {
@@ -975,6 +1525,8 @@ async function loadDashboard() {
     data.serviceOrders =
         serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
+    data.demoLeads = demoLeads.status === 'fulfilled' ? demoLeads.value || [] : [];
+    ensureStoreQuotes();
 
     const failed = requests.filter((request) => {
       if (request.status !== 'rejected') {
@@ -1085,6 +1637,10 @@ async function createOrderFromWizard(createBudgetNow) {
   resetMessage();
 
   try {
+    if (!forms.orderWizard.serviceId) {
+      throw new Error('Selecione ao menos um serviço para criar a ordem.');
+    }
+
     let customer = selectedOrderCustomer.value;
     if (isNewCustomerScenario.value) {
       customer = await resources.createCustomer(forms.orderWizard.customer);
@@ -1104,25 +1660,25 @@ async function createOrderFromWizard(createBudgetNow) {
       customerDocument: customer.document,
       vehicleId: vehicle.id,
       diagnosticNotes: buildOrderNotes(),
+      services: [
+        {
+          serviceId: forms.orderWizard.serviceId,
+          quantity: Number(forms.orderWizard.serviceQuantity),
+        },
+      ],
+      parts: forms.orderWizard.partId
+        ? [
+            {
+              partId: forms.orderWizard.partId,
+              quantity: Number(forms.orderWizard.partQuantity),
+            },
+          ]
+        : [],
+      generateBudget: createBudgetNow,
     });
-
-    if (forms.orderWizard.serviceId) {
-      await resources.addServiceToOrder(order.id, {
-        serviceId: forms.orderWizard.serviceId,
-        quantity: Number(forms.orderWizard.serviceQuantity),
-      });
-    }
-
-    if (forms.orderWizard.partId) {
-      await resources.addPartToOrder(order.id, {
-        partId: forms.orderWizard.partId,
-        quantity: Number(forms.orderWizard.partQuantity),
-      });
-    }
 
     forms.orderAction.serviceOrderId = order.id;
     if (createBudgetNow) {
-      await resources.generateBudget(order.id);
       pagination.serviceOrders.status = 'WAITING_APPROVAL';
       success.value = 'Ordem salva e orçamento gerado.';
     } else {
@@ -1206,6 +1762,7 @@ function createPart() {
     Object.assign(forms.part, {
       id: '',
       name: '',
+      description: '',
       sku: '',
       category: '',
       subcategory: '',
@@ -1224,6 +1781,7 @@ function editPart(part) {
   Object.assign(forms.part, {
     id: part.id,
     name: part.name,
+    description: part.description || '',
     sku: part.sku,
     category: part.category,
     subcategory: part.subcategory || '',
@@ -1256,6 +1814,248 @@ function registerStockMovement() {
       reason: '',
     });
   }, 'Movimentação registrada.');
+}
+
+function storeQuoteTotal(quote) {
+  return (quote.items || []).reduce(
+      (total, item) => total + Number(item.quantity || 0) * Number(item.quotedPrice || 0),
+      0,
+  );
+}
+
+function ensureStoreQuotes() {
+  if (storeQuotesInitialized.value || !data.parts.length) {
+    return;
+  }
+
+  const storedQuotes = readStoredJson('autocare.partsStore.quotes', []);
+  if (storedQuotes.length) {
+    storeQuotes.value = storedQuotes;
+    storeQuotesInitialized.value = true;
+    return;
+  }
+
+  const [firstPart, secondPart, thirdPart] = data.parts;
+  storeQuotes.value = [
+    {
+      id: 'CART-1001',
+      customerName: 'Oficina Avenida',
+      customerContact: 'compras@oficinaavenida.com',
+      status: 'SENT',
+      contactRequested: true,
+      employeeId: currentUser.value?.id || '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      items: [
+        {
+          partId: firstPart.id,
+          name: firstPart.name,
+          quantity: 2,
+          quotedPrice: Number(firstPart.unitPrice || 0),
+        },
+      ],
+    },
+    {
+      id: 'CART-1002',
+      customerName: 'Cliente Balcao',
+      customerContact: '11988887777',
+      status: 'APPROVED',
+      contactRequested: false,
+      employeeId: currentUser.value?.id || '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      items: [
+        {
+          partId: secondPart?.id || firstPart.id,
+          name: secondPart?.name || firstPart.name,
+          quantity: 1,
+          quotedPrice: Number(secondPart?.unitPrice || firstPart.unitPrice || 0),
+        },
+        {
+          partId: thirdPart?.id || firstPart.id,
+          name: thirdPart?.name || firstPart.name,
+          quantity: 3,
+          quotedPrice: Number(thirdPart?.unitPrice || firstPart.unitPrice || 0),
+        },
+      ],
+    },
+  ];
+  storeQuotesInitialized.value = true;
+  persistStoreQuotes();
+}
+
+function persistStoreQuotes() {
+  localStorage.setItem('autocare.partsStore.quotes', JSON.stringify(storeQuotes.value));
+}
+
+function resetStoreQuoteForm() {
+  Object.assign(forms.storeQuote, {
+    id: '',
+    customerName: '',
+    customerContact: '',
+    status: 'DRAFT',
+    contactRequested: false,
+    partId: '',
+    quantity: 1,
+    quotedPrice: 0,
+    items: [],
+  });
+}
+
+function addStoreQuoteItem() {
+  const part = data.parts.find((item) => item.id === forms.storeQuote.partId);
+  if (!part) {
+    error.value = 'Selecione uma peça para adicionar ao carrinho.';
+    return;
+  }
+
+  forms.storeQuote.items.push({
+    partId: part.id,
+    name: part.name,
+    quantity: Number(forms.storeQuote.quantity || 1),
+    quotedPrice: Number(forms.storeQuote.quotedPrice || part.unitPrice || 0),
+  });
+  forms.storeQuote.partId = '';
+  forms.storeQuote.quantity = 1;
+  forms.storeQuote.quotedPrice = 0;
+}
+
+function removeStoreQuoteItem(index) {
+  forms.storeQuote.items.splice(index, 1);
+}
+
+function saveStoreQuote() {
+  if (!forms.storeQuote.customerName || !forms.storeQuote.items.length) {
+    error.value = 'Informe o cliente e ao menos uma peça para salvar o carrinho.';
+    return;
+  }
+
+  const quote = {
+    id: forms.storeQuote.id || `CART-${Date.now().toString().slice(-6)}`,
+    customerName: forms.storeQuote.customerName,
+    customerContact: forms.storeQuote.customerContact,
+    status: forms.storeQuote.status || 'DRAFT',
+    contactRequested: forms.storeQuote.contactRequested,
+    employeeId: currentUser.value?.id || '',
+    createdAt: forms.storeQuote.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    items: [...forms.storeQuote.items],
+  };
+  const index = storeQuotes.value.findIndex((item) => item.id === quote.id);
+  if (index >= 0) {
+    storeQuotes.value[index] = quote;
+  } else {
+    storeQuotes.value.unshift(quote);
+  }
+  persistStoreQuotes();
+  resetStoreQuoteForm();
+  success.value = 'Carrinho salvo.';
+}
+
+function editStoreQuote(quote) {
+  Object.assign(forms.storeQuote, {
+    id: quote.id,
+    customerName: quote.customerName,
+    customerContact: quote.customerContact,
+    status: quote.status,
+    contactRequested: quote.contactRequested,
+    partId: '',
+    quantity: 1,
+    quotedPrice: 0,
+    items: quote.items.map((item) => ({...item})),
+  });
+  selectTab('store-quotes');
+}
+
+function updateStoreQuoteStatus(quote, status) {
+  return runAction(async () => {
+    if (status === 'SENT' && quote.status !== 'SENT') {
+      await Promise.all(
+          quote.items.map((item) => resources.reservePart(item.partId, Number(item.quantity))),
+      );
+    }
+    if (status === 'APPROVED') {
+      await Promise.all(
+          quote.items.map((item) =>
+              resources.commitPartReservation(item.partId, {
+                quantity: Number(item.quantity),
+                reason: `Carrinho ${quote.id} aprovado`,
+              }),
+          ),
+      );
+    }
+    if (['REFUSED', 'EXPIRED'].includes(status) && quote.status === 'SENT') {
+      await Promise.all(
+          quote.items.map((item) => resources.releasePartReservation(item.partId, Number(item.quantity))),
+      );
+    }
+    quote.status = status;
+    quote.updatedAt = new Date().toISOString();
+    persistStoreQuotes();
+  }, `Carrinho marcado como ${storeQuoteStatusLabels[status]}.`);
+}
+
+function selectCustomerPart(part) {
+  selectedCustomerPart.value = part;
+  openRecord('Peça para comparar', part);
+}
+
+function addCustomerPartRequest(part, store = null) {
+  const existing = forms.customerQuote.items.find((item) => item.partId === part.id && item.storeName === (store?.name || ''));
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    forms.customerQuote.items.push({
+      partId: part.id,
+      name: part.name,
+      quantity: 1,
+      estimatedPrice: Number(store?.price || part.unitPrice || 0),
+      storeName: store?.name || '',
+      storeContact: store?.username || '',
+    });
+  }
+  if (store) {
+    forms.customerQuote.storeName = store.name;
+    forms.customerQuote.storeContact = store.username;
+  }
+  success.value = 'Peça adicionada à solicitação.';
+}
+
+function removeCustomerQuoteItem(index) {
+  forms.customerQuote.items.splice(index, 1);
+}
+
+function requestStoreQuote(store = null) {
+  if (store) {
+    forms.customerQuote.storeName = store.name;
+    forms.customerQuote.storeContact = store.username;
+  }
+  selectTab('customer-cart');
+}
+
+function contactWorkshop(workshop) {
+  forms.customerQuote.workshopName = workshop.name;
+  selectTab('customer-cart');
+}
+
+function sendCustomerQuoteRequest() {
+  if (!forms.customerQuote.storeName && !forms.customerQuote.workshopName) {
+    error.value = 'Escolha uma loja ou oficina para enviar a solicitação.';
+    return;
+  }
+  if (!forms.customerQuote.items.length && !forms.customerQuote.problemDescription.trim()) {
+    error.value = 'Adicione uma peça ou descreva o problema do veículo.';
+    return;
+  }
+  success.value = 'Solicitação enviada. O parceiro poderá responder com um orçamento.';
+  forms.customerQuote = {
+    storeName: '',
+    storeContact: '',
+    workshopName: '',
+    vehicleId: '',
+    problemDescription: '',
+    items: [],
+  };
 }
 
 function createWorkshopService() {
@@ -1393,12 +2193,22 @@ function editUser(user) {
     password: '123456',
     role: user.role,
     profileType: user.profileType,
+    companyName: user.companyName || '',
+    companyType: user.companyType || '',
     employeeSubRole: user.employeeSubRole || 'UNSPECIFIED',
     permissions: [...(user.permissions || [])],
     customerId: user.customerId || '',
     active: user.active,
   });
-  selectTab(user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE' ? 'employees' : 'users');
+  if (user.profileType === 'WORKSHOP_EMPLOYEE') {
+    selectTab('employees');
+    return;
+  }
+  if (['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType)) {
+    selectTab('store-employees');
+    return;
+  }
+  selectTab('users');
 }
 
 function toggleUserPermission(permissionId) {
@@ -1417,6 +2227,8 @@ function saveUser() {
       username: forms.user.username,
       role: forms.user.role,
       profileType: forms.user.profileType,
+      companyName: forms.user.companyName,
+      companyType: forms.user.companyType,
       employeeSubRole: forms.user.employeeSubRole,
       permissions: forms.user.permissions,
       customerId: forms.user.customerId || null,
@@ -1434,12 +2246,23 @@ function saveUser() {
       password: '123456',
       role: 'EMPLOYEE',
       profileType: 'WORKSHOP_EMPLOYEE',
+      companyName: '',
+      companyType: '',
       employeeSubRole: 'UNSPECIFIED',
       permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
       customerId: '',
       active: true,
     });
   }, forms.user.id ? 'Usuário atualizado.' : 'Usuário criado.');
+}
+
+function saveStoreEmployee() {
+  forms.user.role = 'EMPLOYEE';
+  forms.user.profileType = 'PARTS_STORE_EMPLOYEE';
+  if (!forms.user.id && forms.user.permissions.includes('CREATE_ORDER')) {
+    forms.user.permissions = ['MANAGE_STOCK', 'CREATE_BUDGET', 'VIEW_STATS'];
+  }
+  return saveUser();
 }
 
 function saveAccount() {
@@ -1626,13 +2449,86 @@ onMounted(async () => {
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
             <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
-            <button class="secondary-button" type="button" @click="homeSettingsOpen = !homeSettingsOpen">
+            <button v-if="!isCustomerProfile" class="secondary-button" type="button" @click="homeSettingsOpen = !homeSettingsOpen">
               <Plus :size="17"/>
               Personalizar home
             </button>
           </div>
 
-          <section v-if="homeSettingsOpen" class="home-settings-panel">
+          <section v-if="isCustomerProfile" class="customer-home-grid">
+            <article class="section-block">
+              <div class="section-heading">
+                <h2>Meus veículos</h2>
+                <span>Status atual e últimas observações</span>
+              </div>
+              <div class="customer-vehicle-list">
+                <button
+                    v-for="vehicle in customerVehicles"
+                    :key="vehicle.id"
+                    type="button"
+                    @click="openRecord('Veículo', vehicle)"
+                >
+                  <strong>{{ vehicle.plate }} · {{ vehicle.brand }} {{ vehicle.model }}</strong>
+                  <span>{{ statusLabels[vehicle.currentStatus] || vehicle.currentStatus || 'Sem ordem ativa' }}</span>
+                  <small>{{ vehicle.diagnosticNotes || `${vehicle.year} · ${vehicle.mileage} km` }}</small>
+                </button>
+                <p v-if="!customerVehicles.length" class="empty-state">Nenhum veículo vinculado à sua conta.</p>
+              </div>
+            </article>
+
+            <article class="section-block">
+              <div class="section-heading">
+                <h2>Avisos</h2>
+                <span>Orçamentos e retirada</span>
+              </div>
+              <div class="customer-alert-list">
+                <button v-for="order in customerBudgetAlerts" :key="`budget-${order.id}`" type="button" @click="openRecord('Orçamento pendente', order)">
+                  <AlertTriangle :size="18"/>
+                  <span>Orçamento pendente de aprovação</span>
+                  <strong>R$ {{ money(order.totalAmount) }}</strong>
+                </button>
+                <button v-for="order in customerReadyAlerts" :key="`ready-${order.id}`" type="button" @click="openRecord('Veículo pronto', order)">
+                  <CheckCircle2 :size="18"/>
+                  <span>Veículo pronto para retirada</span>
+                  <strong>{{ statusLabels[order.status] }}</strong>
+                </button>
+                <button v-for="order in customerFinishedAlerts" :key="`finished-${order.id}`" type="button" @click="openRecord('Veículo concluído', order)">
+                  <CheckCircle2 :size="18"/>
+                  <span>Atendimento concluído</span>
+                  <strong>{{ statusLabels[order.status] }}</strong>
+                </button>
+                <p v-if="!customerBudgetAlerts.length && !customerReadyAlerts.length && !customerFinishedAlerts.length" class="empty-state">Nenhum alerta ativo.</p>
+              </div>
+            </article>
+          </section>
+
+          <section v-if="isCustomerProfile" class="section-block">
+            <div class="section-heading">
+              <h2>Histórico recente</h2>
+              <span>Últimos serviços e orçamentos</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header orders-grid">
+                <span>Status</span>
+                <span>Descrição</span>
+                <span>Itens</span>
+                <span>Total</span>
+              </div>
+              <article
+                  v-for="order in customerRecentHistory"
+                  :key="order.id"
+                  class="data-table-row orders-grid clickable-row"
+                  @click="openRecord('Histórico', order)"
+              >
+                <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
+                <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
+                <span>{{ order.services?.length || 0 }} serviços<small>{{ order.parts?.length || 0 }} peças</small></span>
+                <strong>R$ {{ money(order.totalAmount) }}</strong>
+              </article>
+            </div>
+          </section>
+
+          <section v-if="homeSettingsOpen && !isMasterAdmin" class="home-settings-panel">
             <div>
               <strong>Meus widgets</strong>
               <div class="home-option-grid">
@@ -1647,7 +2543,7 @@ onMounted(async () => {
               </div>
             </div>
             <div v-if="auth.role === 'ADMIN'">
-              <strong>Configuração da oficina</strong>
+              <strong>{{ isPartsStoreProfile ? 'Configuração da loja' : 'Configuração da oficina' }}</strong>
               <label class="home-alert-toggle">
                 <input
                     :checked="homePreferences.showAlertsOnHome"
@@ -1669,7 +2565,7 @@ onMounted(async () => {
             </div>
           </section>
 
-          <section class="home-summary-grid">
+          <section v-if="!isMasterAdmin && !isCustomerProfile" class="home-summary-grid">
             <button
                 v-for="widget in homeWidgets"
                 :key="widget.id"
@@ -1683,7 +2579,133 @@ onMounted(async () => {
             </button>
           </section>
 
-          <section aria-label="Status atual dos veículos" class="vehicle-status-grid">
+          <section v-if="isMasterAdmin" class="home-summary-grid">
+            <button class="home-widget" type="button" @click="selectTab('master-customers')">
+              <Users :size="22"/>
+              <strong>{{ masterSummary.customers }}</strong>
+              <span>Clientes finais cadastrados</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
+              <Wrench :size="22"/>
+              <strong>{{ masterSummary.workshops }}</strong>
+              <span>Oficinas parceiras</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-stores')">
+              <Package :size="22"/>
+              <strong>{{ masterSummary.stores }}</strong>
+              <span>Lojas de peças</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
+              <DollarSign :size="22"/>
+              <strong>R$ {{ money(masterSummary.workshopGross) }}</strong>
+              <span>Total faturado pelas oficinas</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-stores')">
+              <ShoppingCart :size="22"/>
+              <strong>R$ {{ money(masterSummary.storeGross) }}</strong>
+              <span>Total faturado pelas lojas</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-leads')">
+              <BadgePercent :size="22"/>
+              <strong>R$ {{ money(masterSummary.platformFee) }}</strong>
+              <span>Receita total AutoCare Hub</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
+              <BadgePercent :size="22"/>
+              <strong>R$ {{ money(masterSummary.workshopFee) }}</strong>
+              <span>Taxas recebidas de oficinas</span>
+            </button>
+            <button class="home-widget" type="button" @click="selectTab('master-stores')">
+              <BadgePercent :size="22"/>
+              <strong>R$ {{ money(masterSummary.storeFee) }}</strong>
+              <span>Taxas recebidas de lojas</span>
+            </button>
+          </section>
+
+          <section v-if="isMasterAdmin" class="section-block">
+            <div class="section-heading">
+              <h2>Ranking da plataforma</h2>
+              <span>Clientes, parceiros e potenciais comerciais</span>
+            </div>
+            <div class="employee-metrics-grid">
+              <article class="employee-card">
+                <div><strong>Clientes mais frequentes</strong><span>Serviços e compras</span></div>
+                <dl>
+                  <template v-for="customer in masterFrequentCustomers" :key="`freq-${customer.id}`">
+                    <dt>{{ customer.name }}</dt>
+                    <dd>{{ customer.frequency }}</dd>
+                  </template>
+                </dl>
+              </article>
+              <article class="employee-card">
+                <div><strong>Clientes que mais gastaram</strong><span>Valor acumulado</span></div>
+                <dl>
+                  <template v-for="customer in masterTopSpenders" :key="`spent-${customer.id}`">
+                    <dt>{{ customer.name }}</dt>
+                    <dd>R$ {{ money(customer.spent) }}</dd>
+                  </template>
+                </dl>
+              </article>
+              <article class="employee-card">
+                <div><strong>Maior número de veículos</strong><span>Clientes finais</span></div>
+                <dl>
+                  <template v-for="customer in masterVehicleOwners" :key="`vehicles-${customer.id}`">
+                    <dt>{{ customer.name }}</dt>
+                    <dd>{{ customer.vehiclesCount }}</dd>
+                  </template>
+                </dl>
+              </article>
+              <article class="employee-card">
+                <div><strong>Parceiros que mais geram receita</strong><span>Taxas para a plataforma</span></div>
+                <dl>
+                  <template v-for="partner in masterTopPlatformRevenuePartners" :key="`fee-${partner.id}`">
+                    <dt>{{ partner.name }}</dt>
+                    <dd>R$ {{ money(partner.feeAmount) }}</dd>
+                  </template>
+                </dl>
+              </article>
+              <article class="employee-card">
+                <div><strong>Parceiros com maior potencial</strong><span>Leads da demo</span></div>
+                <dl>
+                  <template v-for="lead in masterPotentialPartners.slice(0, 5)" :key="lead.id">
+                    <dt>{{ lead.companyName }}</dt>
+                    <dd>{{ lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja' }}</dd>
+                  </template>
+                </dl>
+              </article>
+            </div>
+          </section>
+
+          <section v-if="isPartsStoreProfile && !isMasterAdmin" class="section-block">
+            <div class="section-heading">
+              <h2>Resumo comercial</h2>
+              <span>Vendas, conversão e itens com maior giro</span>
+            </div>
+            <div class="analytics-grid">
+              <article class="metric-card">
+                <DollarSign :size="22"/>
+                <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
+                <span>Vendas aprovadas</span>
+              </article>
+              <article class="metric-card">
+                <BadgePercent :size="22"/>
+                <strong>{{ storeBillingSummary.conversion }}%</strong>
+                <span>Taxa de conversão</span>
+              </article>
+              <article class="metric-card">
+                <ShoppingCart :size="22"/>
+                <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
+                <span>Ticket médio</span>
+              </article>
+              <article class="metric-card">
+                <Package :size="22"/>
+                <strong>{{ storeTopProducts[0]?.name || 'Sem vendas' }}</strong>
+                <span>Produto mais vendido</span>
+              </article>
+            </div>
+          </section>
+
+          <section v-if="!isPartsStoreProfile && !isMasterAdmin && !isCustomerProfile" aria-label="Status atual dos veículos" class="vehicle-status-grid">
             <button
                 v-for="item in vehicleStatusWidgets"
                 :key="item.label"
@@ -1722,12 +2744,12 @@ onMounted(async () => {
               <span>Faturamento bruto</span>
             </article>
             <article>
-              <strong>{{ billingSummary.feeRate }}</strong>
+              <strong>{{ billingSummary.feeRateLabel }}</strong>
               <span>Taxa AutoCare Hub</span>
             </article>
             <article>
               <strong>R$ {{ money(billingSummary.net) }}</strong>
-              <span>Faturamento líquido estimado</span>
+              <span>Líquido estimado já com taxa AutoCare Hub descontada</span>
             </article>
             <article>
               <strong>R$ {{ money(billingSummary.ticket) }}</strong>
@@ -1873,6 +2895,610 @@ onMounted(async () => {
                 </dl>
               </article>
             </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'store-billing' && isPartsStoreAdmin" class="screen-stack">
+          <section class="order-flow-stats">
+            <article>
+              <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
+              <span>Faturamento bruto</span>
+            </article>
+            <article>
+              <strong>{{ storeBillingSummary.feeRateLabel }}</strong>
+              <span>Taxa AutoCare Hub</span>
+            </article>
+            <article>
+              <strong>R$ {{ money(storeBillingSummary.net) }}</strong>
+              <span>Líquido estimado já com taxa AutoCare Hub descontada</span>
+            </article>
+            <article>
+              <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
+              <span>Ticket médio</span>
+            </article>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Métricas comerciais</h2>
+              <span>Orçamentos, conversão e vendas de peças</span>
+            </div>
+            <div class="analytics-grid">
+              <article class="metric-card">
+                <ClipboardList :size="22"/>
+                <strong>{{ storeBillingSummary.sentQuotes }}</strong>
+                <span>Orçamentos enviados</span>
+              </article>
+              <article class="metric-card">
+                <CheckCircle2 :size="22"/>
+                <strong>{{ storeBillingSummary.approvedQuotes }}</strong>
+                <span>Orçamentos aprovados</span>
+              </article>
+              <article class="metric-card">
+                <BadgePercent :size="22"/>
+                <strong>{{ storeBillingSummary.conversion }}%</strong>
+                <span>Taxa de conversão</span>
+              </article>
+              <article class="metric-card">
+                <DollarSign :size="22"/>
+                <strong>R$ {{ money(storeBillingSummary.feeAmount) }}</strong>
+                <span>Taxa estimada da plataforma</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Evolução mensal</h2>
+              <span>Vendas aprovadas nos carrinhos da loja</span>
+            </div>
+            <div class="comparison-bars revenue-bars">
+              <div v-for="month in storeMonthlyRevenue" :key="month.month">
+                <span>{{ month.month }}</span>
+                <div>
+                  <b :style="{ width: `${Math.max(6, (month.value / Math.max(1, storeBillingSummary.gross)) * 100)}%` }"></b>
+                </div>
+                <strong>R$ {{ money(month.value) }}</strong>
+              </div>
+            </div>
+            <article class="selected-record">
+              <BarChart3 :size="20"/>
+              <strong>
+                {{ storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor tier atingida' }}
+              </strong>
+              <span>
+                {{ storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.' }}
+              </span>
+            </article>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Produtos e clientes</h2>
+              <span>Itens mais vendidos e clientes frequentes</span>
+            </div>
+            <div class="employee-metrics-grid">
+              <article class="employee-card">
+                <div>
+                  <strong>Produtos mais vendidos</strong>
+                  <span>{{ storeTopProducts.length }} itens com venda aprovada</span>
+                </div>
+                <dl>
+                  <template v-for="product in storeTopProducts" :key="product.name">
+                    <dt>{{ product.name }}</dt>
+                    <dd>{{ product.quantity }} un.</dd>
+                  </template>
+                </dl>
+              </article>
+              <article class="employee-card">
+                <div>
+                  <strong>Clientes mais frequentes</strong>
+                  <span>{{ storeFrequentCustomers.length }} clientes recorrentes</span>
+                </div>
+                <dl>
+                  <template v-for="customer in storeFrequentCustomers" :key="customer.name">
+                    <dt>{{ customer.name }}</dt>
+                    <dd>{{ customer.count }} compras</dd>
+                  </template>
+                </dl>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'store-employees' && isPartsStoreAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>{{ forms.user.id ? 'Editar funcionário da loja' : 'Novo funcionário da loja' }}</h2>
+              <span>Atendentes, admin e permissões comerciais</span>
+            </div>
+            <form class="form-grid" @submit.prevent="saveStoreEmployee">
+              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
+              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <select v-model="forms.user.employeeSubRole">
+                <option value="ATTENDANT">Atendente</option>
+                <option value="UNSPECIFIED">Funcionário sem especificação</option>
+              </select>
+              <label class="check-row">
+                <input v-model="forms.user.active" type="checkbox"/>
+                <span>Funcionário ativo</span>
+              </label>
+              <div class="permission-grid">
+                <label v-for="permission in permissionDefinitions" :key="permission.id">
+                  <input
+                      :checked="forms.user.permissions.includes(permission.id)"
+                      type="checkbox"
+                      @change="toggleUserPermission(permission.id)"
+                  />
+                  <span>{{ permission.label }}</span>
+                </label>
+              </div>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <UserPlus :size="18"/>
+                <span>{{ forms.user.id ? 'Salvar funcionário' : 'Criar funcionário' }}</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Equipe da loja</h2>
+              <span>{{ storeEmployees.length }} pessoas cadastradas</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header employee-grid">
+                <span>Funcionário</span>
+                <span>Subrole</span>
+                <span>Permissões</span>
+                <span>Status</span>
+                <span>Ação</span>
+              </div>
+              <article
+                  v-for="employee in storeEmployees"
+                  :key="employee.id"
+                  class="data-table-row employee-grid clickable-row"
+                  @click="openRecord('Funcionário da loja', employee)"
+              >
+                <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
+                <span>{{ employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole] }}</span>
+                <span>{{ employee.permissions?.length || 0 }} permissões</span>
+                <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar</button>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Métricas por funcionário</h2>
+              <span>Vendas e conversão da equipe comercial</span>
+            </div>
+            <div class="employee-metrics-grid">
+              <article v-for="employee in storeEmployees" :key="`store-metrics-${employee.id}`" class="employee-card">
+                <div>
+                  <strong>{{ employee.fullName }}</strong>
+                  <span>{{ employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole] }}</span>
+                </div>
+                <dl>
+                  <template v-for="metric in storeEmployeeMetrics(employee)" :key="metric.label">
+                    <dt>{{ metric.label }}</dt>
+                    <dd>{{ metric.value }}</dd>
+                  </template>
+                </dl>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'store-quotes' && isPartsStoreProfile" class="screen-stack">
+          <section class="order-flow-stats">
+            <article>
+              <strong>{{ storePendingQuotes.length }}</strong>
+              <span>Orçamentos pendentes</span>
+            </article>
+            <article>
+              <strong>{{ storeQuotes.filter((quote) => quote.status === 'SENT').length }}</strong>
+              <span>Carrinhos enviados</span>
+            </article>
+            <article>
+              <strong>{{ storeSales.length }}</strong>
+              <span>Vendas aprovadas</span>
+            </article>
+            <article>
+              <strong>{{ storeWaitingContact.length }}</strong>
+              <span>Clientes aguardando contato</span>
+            </article>
+          </section>
+
+          <section v-if="auth.role === 'ADMIN' || can('CREATE_BUDGET')" class="section-block">
+            <div class="section-heading">
+              <h2>{{ forms.storeQuote.id ? 'Editar carrinho' : 'Novo orçamento/carrinho' }}</h2>
+              <span>Monte o carrinho do cliente e ajuste preços quando necessário</span>
+            </div>
+            <form class="form-grid" @submit.prevent="saveStoreQuote">
+              <input v-model="forms.storeQuote.customerName" placeholder="Cliente" required/>
+              <input v-model="forms.storeQuote.customerContact" placeholder="Contato do cliente"/>
+              <select v-model="forms.storeQuote.status">
+                <option v-for="(label, status) in storeQuoteStatusLabels" :key="status" :value="status">
+                  {{ label }}
+                </option>
+              </select>
+              <label class="check-row">
+                <input v-model="forms.storeQuote.contactRequested" type="checkbox"/>
+                <span>Cliente quer ser contatado</span>
+              </label>
+              <select v-model="forms.storeQuote.partId">
+                <option value="">Selecione uma peça</option>
+                <option v-for="part in data.parts" :key="part.id" :value="part.id">
+                  {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{ part.availableQuantity ?? part.stockQuantity }} un.
+                </option>
+              </select>
+              <input v-model.number="forms.storeQuote.quantity" min="1" placeholder="Quantidade" type="number"/>
+              <input v-model.number="forms.storeQuote.quotedPrice" min="0" placeholder="Preço negociado" step="0.01" type="number"/>
+              <button class="secondary-button" type="button" @click="addStoreQuoteItem">
+                <Plus :size="18"/>
+                Adicionar peça
+              </button>
+              <div class="quote-items">
+                <button
+                    v-for="(item, index) in forms.storeQuote.items"
+                    :key="`${item.partId}-${index}`"
+                    type="button"
+                    @click="removeStoreQuoteItem(index)"
+                >
+                  <strong>{{ item.quantity }}x {{ item.name }}</strong>
+                  <span>R$ {{ money(item.quotedPrice) }}</span>
+                </button>
+              </div>
+              <article class="selected-record">
+                <strong>R$ {{ money(storeQuoteTotal(forms.storeQuote)) }}</strong>
+                <span>Total do carrinho atual.</span>
+              </article>
+              <button :disabled="saving" class="primary-button" type="submit">
+                <ShoppingCart :size="18"/>
+                <span>{{ forms.storeQuote.id ? 'Salvar carrinho' : 'Criar carrinho' }}</span>
+              </button>
+            </form>
+          </section>
+
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Carrinhos e orçamentos</h2>
+              <span>{{ storeQuotes.length }} registros comerciais</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header store-quotes-grid">
+                <span>Status</span>
+                <span>Cliente</span>
+                <span>Itens</span>
+                <span>Total</span>
+                <span>Ações</span>
+              </div>
+              <article
+                  v-for="quote in storeQuotes"
+                  :key="quote.id"
+                  class="data-table-row store-quotes-grid clickable-row"
+                  @click="openRecord('Carrinho da loja', quote)"
+              >
+                <span class="badge">{{ storeQuoteStatusLabels[quote.status] || quote.status }}</span>
+                <span>{{ quote.customerName }}<small>{{ quote.customerContact }} · {{ quote.id }}</small></span>
+                <span>
+                  {{ quote.items.length }} peças
+                  <small>{{ quote.contactRequested ? 'Aguardar contato' : 'Sem contato pendente' }}</small>
+                </span>
+                <strong>R$ {{ money(storeQuoteTotal(quote)) }}</strong>
+                <div class="row-actions">
+                  <button class="secondary-button compact-action" type="button" @click.stop="editStoreQuote(quote)">Editar</button>
+                  <button v-if="quote.status === 'DRAFT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'SENT')">Enviar</button>
+                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'APPROVED')">Aprovar</button>
+                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'REFUSED')">Recusar</button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'master-customers' && isMasterAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Clientes finais</h2>
+              <span>Veículos, gastos, frequência e parceiros acessados</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header customers-grid">
+                <span>Cliente</span>
+                <span>Veículos</span>
+                <span>Gasto total</span>
+                <span>Interações</span>
+              </div>
+              <article
+                  v-for="customer in masterCustomers"
+                  :key="customer.id"
+                  class="data-table-row customers-grid clickable-row"
+                  @click="openRecord('Cliente final', customer)"
+              >
+                <strong>{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong>
+                <span>{{ customer.vehiclesCount }}</span>
+                <strong>R$ {{ money(customer.spent) }}</strong>
+                <span>{{ customer.frequency }}<small>{{ customer.partners.join(', ') || 'Sem parceiro vinculado' }}</small></span>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'master-workshops' && isMasterAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Oficinas parceiras</h2>
+              <span>Faturamento, taxa e volume operacional</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header partner-grid">
+                <span>Oficina</span>
+                <span>Faturamento</span>
+                <span>Taxa</span>
+                <span>AutoCare Hub</span>
+                <span>Status</span>
+              </div>
+              <article
+                  v-for="partner in workshopPartners"
+                  :key="partner.id"
+                  class="data-table-row partner-grid clickable-row"
+                  @click="openRecord('Oficina parceira', partner)"
+              >
+                <strong>{{ partner.name }}<small>{{ partner.adminName }} · {{ partner.customersServed }} clientes · {{ partner.vehiclesServed }} veículos</small></strong>
+                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{ money(partner.net) }}</small></span>
+                <span>{{ partner.feeRateLabel }}<small>{{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}</small></span>
+                <strong>R$ {{ money(partner.feeAmount) }}</strong>
+                <span class="badge">{{ partner.status }}</span>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'master-stores' && isMasterAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Lojas de peças parceiras</h2>
+              <span>Vendas, peças mais vendidas e taxa da plataforma</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header partner-grid">
+                <span>Loja</span>
+                <span>Faturamento</span>
+                <span>Taxa</span>
+                <span>AutoCare Hub</span>
+                <span>Status</span>
+              </div>
+              <article
+                  v-for="partner in storePartners"
+                  :key="partner.id"
+                  class="data-table-row partner-grid clickable-row"
+                  @click="openRecord('Loja parceira', partner)"
+              >
+                <strong>{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{ partner.topProducts }}</small></strong>
+                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{ money(partner.net) }}</small></span>
+                <span>{{ partner.feeRateLabel }}<small>{{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}</small></span>
+                <strong>R$ {{ money(partner.feeAmount) }}</strong>
+                <span class="badge">{{ partner.status }}</span>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'master-leads' && isMasterAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Interessados e parceiros potenciais</h2>
+              <span>Empresas que pediram demo ou contato</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header leads-grid">
+                <span>Empresa</span>
+                <span>Contato</span>
+                <span>Tipo</span>
+                <span>Data</span>
+              </div>
+              <article
+                  v-for="lead in masterPotentialPartners"
+                  :key="lead.id"
+                  class="data-table-row leads-grid clickable-row"
+                  @click="openRecord('Interessado', lead)"
+              >
+                <strong>{{ lead.companyName }}<small>{{ lead.cnpj }} · {{ lead.city || 'Cidade não informada' }}</small></strong>
+                <span>{{ lead.contactName }}<small>{{ lead.email }} · {{ lead.phone }} · {{ lead.message || 'Sem mensagem' }}</small></span>
+                <span class="badge">{{ lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças' }}</span>
+                <span>{{ new Date(lead.createdAt).toLocaleDateString('pt-BR') }}</span>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'master-admins' && isMasterAdmin" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Cadastrar admin parceiro</h2>
+              <span>Crie acesso inicial para oficina ou loja de peças</span>
+            </div>
+            <form class="form-grid" @submit.prevent="saveUser">
+              <input v-model="forms.user.fullName" placeholder="Nome do admin" required/>
+              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <input v-model="forms.user.companyName" placeholder="Empresa vinculada" required/>
+              <select v-model="forms.user.profileType" @change="forms.user.companyType = forms.user.profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE'; forms.user.role = 'ADMIN'">
+                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
+                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
+              </select>
+              <select v-model="forms.user.companyType">
+                <option value="WORKSHOP">Oficina</option>
+                <option value="PARTS_STORE">Loja de peças</option>
+              </select>
+              <label class="check-row">
+                <input v-model="forms.user.active" type="checkbox"/>
+                <span>Admin ativo</span>
+              </label>
+              <div class="permission-grid">
+                <label v-for="permission in permissionDefinitions" :key="`master-${permission.id}`">
+                  <input
+                      :checked="forms.user.permissions.includes(permission.id)"
+                      type="checkbox"
+                      @change="toggleUserPermission(permission.id)"
+                  />
+                  <span>{{ permission.label }}</span>
+                </label>
+              </div>
+              <button
+                  :disabled="saving"
+                  class="primary-button"
+                  type="submit"
+                  @click="forms.user.role = 'ADMIN'; forms.user.employeeSubRole = ''; forms.user.permissions = forms.user.permissions.length ? forms.user.permissions : ['VIEW_BILLING','MANAGE_STOCK','CREATE_BUDGET','EDIT_EMPLOYEES','VIEW_STATS']"
+              >
+                <UserPlus :size="18"/>
+                <span>{{ forms.user.id ? 'Salvar admin' : 'Criar admin parceiro' }}</span>
+              </button>
+            </form>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'customer-partners' && isCustomerProfile" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Oficinas e lojas</h2>
+              <span>Busque por nome, localização, especialidade ou produto</span>
+            </div>
+            <div class="filters">
+              <input v-model="customerPartnerSearch" placeholder="Buscar parceiro" type="search"/>
+            </div>
+            <div class="customer-partner-grid">
+              <article>
+                <h3>Oficinas</h3>
+                <button
+                    v-for="workshop in filteredWorkshopDirectory"
+                    :key="workshop.id"
+                    type="button"
+                    @click="openRecord('Oficina', workshop)"
+                >
+                  <Wrench :size="20"/>
+                  <span>
+                    <strong>{{ workshop.name }}</strong>
+                    <small>{{ workshop.location }} · {{ workshop.specialty }}</small>
+                  </span>
+                  <b @click.stop="contactWorkshop(workshop)">Pedir orçamento</b>
+                </button>
+              </article>
+              <article>
+                <h3>Lojas de peças</h3>
+                <button
+                    v-for="store in filteredStoreDirectory"
+                    :key="store.id"
+                    type="button"
+                    @click="openRecord('Loja de peças', store)"
+                >
+                  <Package :size="20"/>
+                  <span>
+                    <strong>{{ store.name }}</strong>
+                    <small>{{ store.location }} · {{ store.specialty }}</small>
+                  </span>
+                  <b @click.stop="requestStoreQuote(store)">Solicitar orçamento</b>
+                </button>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'customer-parts' && isCustomerProfile" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Buscar peças</h2>
+              <span>Pesquise por nome, marca, categoria ou modelo do veículo</span>
+            </div>
+            <div class="filters">
+              <input v-model="customerPartSearch" placeholder="Ex.: filtro, freio, civic, onix" type="search"/>
+            </div>
+            <div class="customer-part-grid">
+              <button
+                  v-for="part in filteredCustomerParts"
+                  :key="part.id"
+                  type="button"
+                  @click="selectCustomerPart(part)"
+              >
+                <Package :size="20"/>
+                <span>
+                  <strong>{{ part.name }}</strong>
+                  <small>{{ part.brand }} · {{ part.category }} · R$ {{ money(part.unitPrice) }}</small>
+                </span>
+                <b>{{ part.availableQuantity ?? part.stockQuantity }} un.</b>
+              </button>
+              <p v-if="!filteredCustomerParts.length" class="empty-state">Nenhuma peça encontrada.</p>
+            </div>
+          </section>
+
+          <section v-if="selectedCustomerPart" class="section-block">
+            <div class="section-heading">
+              <h2>Comparar preço</h2>
+              <span>{{ selectedCustomerPart.name }}</span>
+            </div>
+            <div class="data-table">
+              <div class="data-table-header customer-price-grid">
+                <span>Loja</span>
+                <span>Preço</span>
+                <span>Disponibilidade</span>
+                <span>Ação</span>
+              </div>
+              <article
+                  v-for="store in selectedPartStores"
+                  :key="`${store.id}-${store.partId}`"
+                  class="data-table-row customer-price-grid"
+              >
+                <strong>{{ store.name }}<small>{{ store.location }}</small></strong>
+                <span>R$ {{ money(store.price) }}</span>
+                <span class="badge">{{ store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível' }}</span>
+                <div class="row-actions">
+                  <button class="secondary-button compact-action" type="button" @click="openRecord('Contato da loja', store)">Contato</button>
+                  <button class="secondary-button compact-action" type="button" @click="addCustomerPartRequest(selectedCustomerPart, store)">Solicitar</button>
+                </div>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section v-if="activeTab === 'customer-cart' && isCustomerProfile" class="screen-stack">
+          <section class="section-block">
+            <div class="section-heading">
+              <h2>Solicitação de orçamento</h2>
+              <span>Envie peças ou detalhes do problema para um parceiro</span>
+            </div>
+            <form class="form-grid" @submit.prevent="sendCustomerQuoteRequest">
+              <select v-model="forms.customerQuote.vehicleId">
+                <option value="">Veículo relacionado</option>
+                <option v-for="vehicle in customerVehicles" :key="vehicle.id" :value="vehicle.id">
+                  {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
+                </option>
+              </select>
+              <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada"/>
+              <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada"/>
+              <textarea v-model="forms.customerQuote.problemDescription" placeholder="Descreva o problema do veículo ou observações da compra"></textarea>
+              <div class="quote-items">
+                <button
+                    v-for="(item, index) in forms.customerQuote.items"
+                    :key="`${item.partId}-${index}`"
+                    type="button"
+                    @click="removeCustomerQuoteItem(index)"
+                >
+                  <strong>{{ item.quantity }}x {{ item.name }}</strong>
+                  <span>{{ item.storeName || 'Loja a definir' }} · R$ {{ money(item.estimatedPrice) }}</span>
+                </button>
+              </div>
+              <article class="selected-record">
+                <strong>R$ {{ money(forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0)) }}</strong>
+                <span>Simulação de compra. O parceiro pode responder com outro valor.</span>
+              </article>
+              <button class="primary-button" type="submit">
+                <ShoppingCart :size="18"/>
+                <span>Enviar solicitação</span>
+              </button>
+            </form>
           </section>
         </section>
 
@@ -2173,6 +3799,7 @@ onMounted(async () => {
             </div>
             <form class="form-grid" @submit.prevent="createPart">
               <input v-model="forms.part.name" placeholder="Nome" required/>
+              <input v-model="forms.part.description" placeholder="Descrição" required/>
               <input v-model="forms.part.sku" placeholder="SKU" required/>
               <input v-model="forms.part.category" placeholder="Categoria" required/>
               <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
@@ -2691,6 +4318,21 @@ onMounted(async () => {
             </button>
             <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
               Editar usuário
+            </button>
+            <button v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+              Editar funcionário
+            </button>
+            <button v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button" @click="editStoreQuote(selectedRecord)">
+              Editar carrinho
+            </button>
+            <button v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button" @click="addCustomerPartRequest(selectedRecord)">
+              Adicionar à solicitação
+            </button>
+            <button v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button" @click="requestStoreQuote(selectedRecord)">
+              Solicitar orçamento
+            </button>
+            <button v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button" @click="contactWorkshop(selectedRecord)">
+              Contatar oficina
             </button>
           </div>
         </aside>

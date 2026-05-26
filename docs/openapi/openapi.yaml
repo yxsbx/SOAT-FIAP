@@ -534,6 +534,141 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
                 "404":
                     $ref: "#/components/responses/NotFound"
+    /api/v1/parts/{partId}/stock-movement:
+        patch:
+            tags:
+                - Parts
+            summary: Registra entrada, saida ou venda isolada de uma peca
+            operationId: registerStockMovement
+            parameters:
+                -   $ref: "#/components/parameters/PartIdPathParam"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/StockMovementRequest"
+            responses:
+                "200":
+                    description: Movimento registrado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PartResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+    /api/v1/parts/{partId}/reservation:
+        patch:
+            tags:
+                - Parts
+            summary: Configura o prazo de reserva de estoque para orcamentos
+            operationId: configurePartReservation
+            parameters:
+                -   $ref: "#/components/parameters/PartIdPathParam"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ConfigurePartReservationRequest"
+            responses:
+                "200":
+                    description: Prazo de reserva configurado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PartResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+    /api/v1/parts/{partId}/reserve:
+        patch:
+            tags:
+                - Parts
+            summary: Bloqueia quantidade de uma peca para um orcamento
+            operationId: reservePart
+            parameters:
+                -   $ref: "#/components/parameters/PartIdPathParam"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PartQuantityRequest"
+            responses:
+                "200":
+                    description: Estoque reservado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PartResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+    /api/v1/parts/{partId}/release-reservation:
+        patch:
+            tags:
+                - Parts
+            summary: Libera quantidade previamente reservada
+            operationId: releaseReservation
+            parameters:
+                -   $ref: "#/components/parameters/PartIdPathParam"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/PartQuantityRequest"
+            responses:
+                "200":
+                    description: Reserva liberada
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PartResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+    /api/v1/parts/{partId}/commit-reservation:
+        patch:
+            tags:
+                - Parts
+            summary: Converte reserva em baixa definitiva de estoque
+            operationId: commitReservation
+            parameters:
+                -   $ref: "#/components/parameters/PartIdPathParam"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CommitPartReservationRequest"
+            responses:
+                "200":
+                    description: Reserva baixada do estoque
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/PartResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "404":
+                    $ref: "#/components/responses/NotFound"
     /api/v1/service-orders:
         post:
             tags:
@@ -572,6 +707,30 @@ paths:
                     required: false
                     schema:
                         $ref: "#/components/schemas/ServiceOrderStatus"
+                -   name: customerId
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        format: uuid
+                -   name: vehicleId
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        format: uuid
+                -   name: createdFrom
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
+                -   name: createdTo
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        format: date-time
             responses:
                 "200":
                     description: Ordens de servico encontradas
@@ -596,6 +755,45 @@ paths:
                                 $ref: "#/components/schemas/AverageExecutionTimeResponse"
                 "401":
                     $ref: "#/components/responses/Unauthorized"
+    /api/v1/service-orders/tracking:
+        get:
+            tags:
+                - Service Orders
+            summary: Acompanha o progresso de ordens de servico pelo cliente
+            description: Consulte por id da OS ou por CPF/CNPJ do cliente junto com a placa do veiculo.
+            operationId: trackServiceOrders
+            parameters:
+                -   name: serviceOrderId
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        format: uuid
+                -   name: customerDocument
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        minLength: 11
+                        maxLength: 14
+                -   name: plate
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        minLength: 7
+                        maxLength: 8
+            responses:
+                "200":
+                    description: Progresso da ordem encontrado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ServiceOrderTrackingListResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "404":
+                    $ref: "#/components/responses/NotFound"
     /api/v1/service-orders/{serviceOrderId}:
         get:
             tags:
@@ -1143,6 +1341,7 @@ components:
             type: object
             required:
                 - name
+                - description
                 - sku
                 - category
                 - brand
@@ -1154,6 +1353,10 @@ components:
                     type: string
                     minLength: 2
                     maxLength: 120
+                description:
+                    type: string
+                    minLength: 3
+                    maxLength: 500
                 sku:
                     type: string
                     minLength: 3
@@ -1200,11 +1403,62 @@ components:
                 stockQuantity:
                     type: integer
                     minimum: 0
+        StockMovementRequest:
+            type: object
+            required:
+                - type
+                - quantity
+            properties:
+                type:
+                    type: string
+                    enum:
+                        - ENTRY
+                        - EXIT
+                        - SALE
+                quantity:
+                    type: integer
+                    minimum: 1
+                unitCost:
+                    type: number
+                    format: double
+                    minimum: 0
+                unitPrice:
+                    type: number
+                    format: double
+                    minimum: 0
+                reason:
+                    type: string
+                    maxLength: 255
+        ConfigurePartReservationRequest:
+            type: object
+            required:
+                - reservationDays
+            properties:
+                reservationDays:
+                    type: integer
+                    minimum: 1
+        PartQuantityRequest:
+            type: object
+            required:
+                - quantity
+            properties:
+                quantity:
+                    type: integer
+                    minimum: 1
+        CommitPartReservationRequest:
+            allOf:
+                -   $ref: "#/components/schemas/PartQuantityRequest"
+                -   type: object
+                    properties:
+                        reason:
+                            type: string
+                            maxLength: 255
         PartResponse:
             type: object
             required:
                 - id
                 - name
+                - description
                 - sku
                 - category
                 - brand
@@ -1220,6 +1474,8 @@ components:
                     type: string
                     format: uuid
                 name:
+                    type: string
+                description:
                     type: string
                 sku:
                     type: string
@@ -1265,22 +1521,122 @@ components:
             type: object
             required:
                 - customerDocument
-                - vehicleId
                 - diagnosticNotes
+                - services
             properties:
                 customerDocument:
                     type: string
                     minLength: 11
                     maxLength: 14
                     example: "12345678909"
-                    description: CPF ou CNPJ do cliente contendo apenas numeros.
+                    description: CPF ou CNPJ do cliente contendo apenas numeros. Se o cliente nao existir, informe tambem customer.
+                customer:
+                    $ref: "#/components/schemas/CreateServiceOrderCustomerRequest"
                 vehicleId:
                     type: string
                     format: uuid
+                    description: Identificador de veiculo ja cadastrado. Se ausente, informe vehicle para cadastro ou vinculo por placa.
+                vehicle:
+                    $ref: "#/components/schemas/CreateServiceOrderVehicleRequest"
                 diagnosticNotes:
                     type: string
                     minLength: 5
                     maxLength: 2000
+                services:
+                    type: array
+                    minItems: 1
+                    items:
+                        $ref: "#/components/schemas/CreateServiceOrderServiceRequest"
+                    description: Servicos solicitados para compor automaticamente o orcamento.
+                parts:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/CreateServiceOrderPartRequest"
+                    description: Pecas ou insumos necessarios para compor automaticamente o orcamento.
+                generateBudget:
+                    type: boolean
+                    default: true
+                    description: Quando true, gera o orcamento automaticamente e deixa a OS aguardando aprovacao.
+        CreateServiceOrderCustomerRequest:
+            type: object
+            required:
+                - name
+                - phone
+                - email
+                - address
+            properties:
+                name:
+                    type: string
+                    minLength: 2
+                    maxLength: 120
+                phone:
+                    type: string
+                    minLength: 10
+                    maxLength: 20
+                email:
+                    type: string
+                    format: email
+                    maxLength: 120
+                address:
+                    $ref: "#/components/schemas/Address"
+        CreateServiceOrderVehicleRequest:
+            type: object
+            required:
+                - plate
+                - brand
+                - model
+                - year
+            properties:
+                plate:
+                    type: string
+                    minLength: 7
+                    maxLength: 8
+                    example: ABC1D23
+                brand:
+                    type: string
+                    minLength: 2
+                    maxLength: 80
+                    example: Honda
+                model:
+                    type: string
+                    minLength: 1
+                    maxLength: 80
+                    example: Civic
+                year:
+                    type: integer
+                    minimum: 1900
+                    example: 2020
+                mileage:
+                    type: integer
+                    minimum: 0
+                    default: 0
+                    example: 35000
+        CreateServiceOrderServiceRequest:
+            type: object
+            required:
+                - serviceId
+                - quantity
+            properties:
+                serviceId:
+                    type: string
+                    format: uuid
+                quantity:
+                    type: integer
+                    minimum: 1
+                    default: 1
+        CreateServiceOrderPartRequest:
+            type: object
+            required:
+                - partId
+                - quantity
+            properties:
+                partId:
+                    type: string
+                    format: uuid
+                quantity:
+                    type: integer
+                    minimum: 1
+                    default: 1
         AddServiceOrderServiceRequest:
             type: object
             required:
@@ -1375,6 +1731,8 @@ components:
                 - diagnosticNotes
                 - services
                 - parts
+                - servicesTotal
+                - partsTotal
                 - totalAmount
                 - createdAt
             properties:
@@ -1399,10 +1757,21 @@ components:
                     type: array
                     items:
                         $ref: "#/components/schemas/ServiceOrderPartItem"
+                servicesTotal:
+                    type: number
+                    format: double
+                    minimum: 0
+                    description: Valor total dos servicos do orcamento.
+                partsTotal:
+                    type: number
+                    format: double
+                    minimum: 0
+                    description: Valor total das pecas e insumos do orcamento.
                 totalAmount:
                     type: number
                     format: double
                     minimum: 0
+                    description: Valor total geral do orcamento.
                 createdAt:
                     type: string
                     format: date-time
@@ -1430,6 +1799,103 @@ components:
                     type: array
                     items:
                         $ref: "#/components/schemas/ServiceOrderResponse"
+        ServiceOrderTrackingListResponse:
+            type: object
+            required:
+                - items
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ServiceOrderTrackingResponse"
+        ServiceOrderTrackingResponse:
+            type: object
+            required:
+                - id
+                - customerId
+                - vehicle
+                - status
+                - diagnosticNotes
+                - services
+                - parts
+                - budget
+                - statusHistory
+                - createdAt
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                customerId:
+                    type: string
+                    format: uuid
+                vehicle:
+                    $ref: "#/components/schemas/VehicleResponse"
+                status:
+                    $ref: "#/components/schemas/ServiceOrderTrackingStatus"
+                diagnosticNotes:
+                    type: string
+                services:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ServiceOrderServiceItem"
+                parts:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ServiceOrderPartItem"
+                budget:
+                    $ref: "#/components/schemas/ServiceOrderBudgetTrackingResponse"
+                statusHistory:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ServiceOrderStatusHistoryItem"
+                createdAt:
+                    type: string
+                    format: date-time
+        ServiceOrderBudgetTrackingResponse:
+            type: object
+            required:
+                - generated
+                - approved
+                - servicesTotal
+                - partsTotal
+                - totalAmount
+            properties:
+                generated:
+                    type: boolean
+                approved:
+                    type: boolean
+                servicesTotal:
+                    type: number
+                    format: double
+                    minimum: 0
+                partsTotal:
+                    type: number
+                    format: double
+                    minimum: 0
+                totalAmount:
+                    type: number
+                    format: double
+                    minimum: 0
+                generatedAt:
+                    type: string
+                    format: date-time
+                approvedAt:
+                    type: string
+                    format: date-time
+        ServiceOrderStatusHistoryItem:
+            type: object
+            required:
+                - status
+                - occurredAt
+                - description
+            properties:
+                status:
+                    $ref: "#/components/schemas/ServiceOrderTrackingStatus"
+                occurredAt:
+                    type: string
+                    format: date-time
+                description:
+                    type: string
         AverageExecutionTimeResponse:
             type: object
             required:
@@ -1453,6 +1919,15 @@ components:
                 - IN_PROGRESS
                 - FINISHED
                 - DELIVERED
+        ServiceOrderTrackingStatus:
+            type: string
+            enum:
+                - RECEBIDA
+                - EM_DIAGNOSTICO
+                - AGUARDANDO_APROVACAO
+                - EM_EXECUCAO
+                - FINALIZADA
+                - ENTREGUE
         ErrorResponse:
             type: object
             required:

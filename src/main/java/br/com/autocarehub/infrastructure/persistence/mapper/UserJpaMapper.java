@@ -21,6 +21,8 @@ public final class UserJpaMapper {
                 entity.getCustomerId(),
                 entity.getFullName(),
                 entity.getProfileType(),
+                entity.getCompanyName(),
+                entity.getCompanyType(),
                 entity.getEmployeeSubRole(),
                 toPermissions(entity.getPermissions()),
                 entity.isActive(),
@@ -36,6 +38,8 @@ public final class UserJpaMapper {
         entity.setCustomerId(user.customerId());
         entity.setFullName(user.fullName());
         entity.setProfileType(user.profileType());
+        entity.setCompanyName(user.companyName());
+        entity.setCompanyType(user.companyType());
         entity.setEmployeeSubRole(user.employeeSubRole());
         entity.setPermissions(String.join(",", user.permissions()));
         entity.setActive(user.active());

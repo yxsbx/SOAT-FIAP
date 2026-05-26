@@ -25,7 +25,7 @@ public class ServiceOrder {
                 UUID.randomUUID(),
                 customerId,
                 vehicleId,
-                ServiceOrderStatus.RECEIVED,
+                ServiceOrderStatus.RECEBIDA,
                 diagnosticNotes,
                 List.of(),
                 List.of(),
@@ -77,8 +77,8 @@ public class ServiceOrder {
     }
 
     public void startDiagnosis() {
-        requireStatus(ServiceOrderStatus.RECEIVED, "Diagnosis can only start from received orders");
-        this.status = ServiceOrderStatus.IN_DIAGNOSIS;
+        requireStatus(ServiceOrderStatus.RECEBIDA, "Diagnosis can only start from received orders");
+        this.status = ServiceOrderStatus.EM_DIAGNOSTICO;
     }
 
     public void updateDiagnosticNotes(String diagnosticNotes) {
@@ -103,18 +103,17 @@ public class ServiceOrder {
     }
 
     public Money generateBudget() {
-        if (services.isEmpty() && parts.isEmpty()) {
-            throw new DomainException("Budget requires at least one service or part");
-        }
-        this.totalAmount = calculateTotalAmount();
+        Budget budget = createBudget();
+        this.totalAmount = budget.totalAmount();
         this.budgetGeneratedAt = LocalDateTime.now();
-        this.status = ServiceOrderStatus.WAITING_APPROVAL;
+        this.status = ServiceOrderStatus.AGUARDANDO_APROVACAO;
         return totalAmount;
     }
 
     public void approveBudget() {
         requireStatus(
-                ServiceOrderStatus.WAITING_APPROVAL, "Budget can only be approved while waiting approval");
+                ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                "Budget can only be approved while waiting approval");
         if (budgetGeneratedAt == null) {
             throw new DomainException("Budget must be generated before approval");
         }
@@ -123,25 +122,26 @@ public class ServiceOrder {
 
     public void startExecution() {
         requireStatus(
-                ServiceOrderStatus.WAITING_APPROVAL, "Execution can only start after budget generation");
+                ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                "Execution can only start after budget generation");
         if (approvedAt == null) {
             throw new DomainException("Execution cannot start without budget approval");
         }
-        this.status = ServiceOrderStatus.IN_PROGRESS;
+        this.status = ServiceOrderStatus.EM_EXECUCAO;
         this.startedAt = LocalDateTime.now();
     }
 
     public void finish() {
         requireStatus(
-                ServiceOrderStatus.IN_PROGRESS, "Service order can only be finished while in progress");
-        this.status = ServiceOrderStatus.FINISHED;
+                ServiceOrderStatus.EM_EXECUCAO, "Service order can only be finished while in progress");
+        this.status = ServiceOrderStatus.FINALIZADA;
         this.finishedAt = LocalDateTime.now();
     }
 
     public void deliver() {
         requireStatus(
-                ServiceOrderStatus.FINISHED, "Service order can only be delivered after finished");
-        this.status = ServiceOrderStatus.DELIVERED;
+                ServiceOrderStatus.FINALIZADA, "Service order can only be delivered after finished");
+        this.status = ServiceOrderStatus.ENTREGUE;
         this.deliveredAt = LocalDateTime.now();
     }
 
@@ -177,6 +177,16 @@ public class ServiceOrder {
         return totalAmount;
     }
 
+    public Money servicesTotal() {
+        return services.stream()
+                .map(ServiceOrderService::totalPrice)
+                .reduce(Money.zero(), Money::add);
+    }
+
+    public Money partsTotal() {
+        return parts.stream().map(ServiceOrderPart::totalPrice).reduce(Money.zero(), Money::add);
+    }
+
     public LocalDateTime createdAt() {
         return createdAt;
     }
@@ -201,26 +211,37 @@ public class ServiceOrder {
         return deliveredAt;
     }
 
-    private Money calculateTotalAmount() {
-        Money servicesTotal =
-                services.stream().map(ServiceOrderService::totalPrice).reduce(Money.zero(), Money::add);
-        Money partsTotal =
-                parts.stream().map(ServiceOrderPart::totalPrice).reduce(Money.zero(), Money::add);
-        return servicesTotal.add(partsTotal);
+    private Budget createBudget() {
+        List<BudgetItem> budgetItems = new ArrayList<>();
+        services.forEach(
+                service ->
+                        budgetItems.add(
+                                new BudgetItem(
+                                        service.serviceId(),
+                                        service.name(),
+                                        service.quantity(),
+                                        service.unitPrice())));
+        parts.forEach(
+                part ->
+                        budgetItems.add(
+                                new BudgetItem(
+                                        part.partId(), part.name(), part.quantity(), part.unitPrice())));
+        return new Budget(budgetItems);
     }
 
     private void ensureCanChangeBudgetItems() {
-        if (status == ServiceOrderStatus.WAITING_APPROVAL
-            || status == ServiceOrderStatus.IN_PROGRESS
-            || status == ServiceOrderStatus.FINISHED
-            || status == ServiceOrderStatus.DELIVERED) {
-            throw new DomainException("Service order items cannot be changed in current status");
+        if (status == ServiceOrderStatus.AGUARDANDO_APROVACAO
+            || status == ServiceOrderStatus.EM_EXECUCAO
+            || status == ServiceOrderStatus.FINALIZADA
+            || status == ServiceOrderStatus.ENTREGUE) {
+            throw new InvalidServiceOrderStatusTransitionException(
+                    "Service order items cannot be changed in current status");
         }
     }
 
     private void requireStatus(ServiceOrderStatus expected, String message) {
         if (status != expected) {
-            throw new DomainException(message);
+            throw new InvalidServiceOrderStatusTransitionException(message);
         }
     }
 

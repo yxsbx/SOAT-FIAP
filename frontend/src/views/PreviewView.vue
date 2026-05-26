@@ -68,7 +68,7 @@ const partnerBenefits = [
   },
   {
     title: 'Status em tempo real para o cliente',
-    text: 'O cliente acompanha o carro sem ligar várias vezes, e a oficina reduz retrabalho de comunicação.',
+    text: 'O cliente acompanha o veículo sem ligar várias vezes, e a oficina reduz retrabalho de comunicação.',
     icon: Smartphone,
   },
 ];
@@ -163,7 +163,7 @@ function scrollToSection(id) {
       <section class="preview-hero customer-hero">
         <div class="preview-copy">
           <span class="preview-eyebrow">Cuidado transparente para o seu veículo</span>
-          <h1>Diagnóstico, orçamento e status do carro sem idas desnecessárias à oficina.</h1>
+          <h1>Diagnóstico, orçamento e status do veículo sem idas desnecessárias à oficina.</h1>
           <p>
             A AutoCare Hub ajuda você a registrar os sintomas do veículo, escolher oficinas e lojas de
             peças com mais clareza e acompanhar tudo pelo site: comunicação, orçamento, aceite e

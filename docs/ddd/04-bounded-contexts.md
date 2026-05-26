@@ -48,8 +48,10 @@ Contexto responsavel por pecas, insumos e estoque.
 
 - Criar, atualizar, consultar, listar e desativar pecas.
 - Atualizar estoque.
+- Registrar entrada, saida e venda isolada.
+- Reservar e liberar pecas vinculadas a orcamentos.
 - Identificar baixo estoque por comparacao com estoque minimo.
-- Reduzir estoque ao adicionar peca a ordem de servico.
+- Baixar estoque quando uma reserva e confirmada ou quando o orcamento e aprovado.
 
 ### Fora do MVP
 
@@ -57,7 +59,7 @@ Contexto responsavel por pecas, insumos e estoque.
 - Lotes.
 - Fornecedores.
 - Cotacao automatica.
-- Reserva de estoque.
+- Lotes, fornecedores e rastreabilidade fiscal de entradas.
 
 ## Service Catalog Management
 

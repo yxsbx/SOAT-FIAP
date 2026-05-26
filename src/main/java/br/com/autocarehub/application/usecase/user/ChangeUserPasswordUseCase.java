@@ -36,6 +36,8 @@ public class ChangeUserPasswordUseCase {
                         current.customerId(),
                         current.fullName(),
                         current.profileType(),
+                        current.companyName(),
+                        current.companyType(),
                         current.employeeSubRole(),
                         current.permissions(),
                         current.active(),

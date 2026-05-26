@@ -72,12 +72,14 @@ export const resources = {
             body: JSON.stringify(payload),
         }),
     homePreferences: () => apiRequest('/api/v1/users/me/preferences/home'),
+    demoLeads: () => apiRequest('/api/v1/demo-leads'),
     saveHomePreferences: (payload) =>
         apiRequest('/api/v1/users/me/preferences/home', {
             method: 'PUT',
             body: JSON.stringify(payload),
         }),
     users: (params) => apiRequest(`/api/v1/users${toQueryString(params)}`),
+    partners: () => apiRequest('/api/v1/users/partners'),
     createUser: (payload) =>
         apiRequest('/api/v1/users', {
             method: 'POST',
@@ -152,6 +154,21 @@ export const resources = {
         apiRequest(`/api/v1/parts/${partId}/reservation`, {
             method: 'PATCH',
             body: JSON.stringify({reservationDays: Number(reservationDays)}),
+        }),
+    reservePart: (partId, quantity) =>
+        apiRequest(`/api/v1/parts/${partId}/reserve`, {
+            method: 'PATCH',
+            body: JSON.stringify({quantity: Number(quantity)}),
+        }),
+    releasePartReservation: (partId, quantity) =>
+        apiRequest(`/api/v1/parts/${partId}/release-reservation`, {
+            method: 'PATCH',
+            body: JSON.stringify({quantity: Number(quantity)}),
+        }),
+    commitPartReservation: (partId, payload) =>
+        apiRequest(`/api/v1/parts/${partId}/commit-reservation`, {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
         }),
     createWorkshopService: (payload) =>
         apiRequest('/api/v1/workshop-services', {
