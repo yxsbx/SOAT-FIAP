@@ -224,7 +224,7 @@ function scrollToSection(id) {
         </div>
       </section>
 
-      <section id="localizacao" class="preview-views">
+      <section id="localização" class="preview-views">
         <div class="feature-intro">
           <span>Após cadastro</span>
           <h2>Busca por CEP para encontrar atendimento perto de você</h2>

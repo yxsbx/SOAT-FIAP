@@ -2,33 +2,33 @@
 
 ## Customer and Vehicle Management
 
-Contexto responsavel por manter clientes e veiculos.
+Contexto responsavel por manter clientes e veículos.
 
 ### MVP
 
 - Criar, atualizar, consultar, listar e desativar clientes.
-- Criar, atualizar, consultar, listar e desativar veiculos.
-- Listar veiculos de um cliente.
+- Criar, atualizar, consultar, listar e desativar veículos.
+- Listar veículos de um cliente.
 - Validar documento do cliente.
-- Validar placa do veiculo.
+- Validar placa do veículo.
 
 ### Fora do MVP
 
-- Historico completo de propriedade de veiculos.
-- Multiplo proprietario por veiculo.
-- Integracao com bases externas de placa ou documento.
+- Historico completo de propriedade de veículos.
+- Multiplo proprietario por veículo.
+- Integração com bases externas de placa ou documento.
 
 ## Service Order Management
 
-Contexto responsavel pelo ciclo de vida da ordem de servico.
+Contexto responsavel pelo ciclo de vida da ordem de serviço.
 
 ### MVP
 
-- Criar ordem de servico.
+- Criar ordem de serviço.
 - Adicionar serviços.
-- Adicionar pecas.
-- Gerar orcamento.
-- Aprovar orcamento.
+- Adicionar peças.
+- Gerar orçamento.
+- Aprovar orçamento.
 - Atualizar status.
 - Consultar ordens.
 - Listar ordens por cliente.
@@ -38,27 +38,27 @@ Contexto responsavel pelo ciclo de vida da ordem de servico.
 - Timeline detalhada de eventos.
 - Comentarios e anexos.
 - Notificacoes ao cliente.
-- Assinatura digital de aprovacao.
+- Assinatura digital de aprovação.
 
 ## Inventory Management
 
-Contexto responsavel por pecas, insumos e estoque.
+Contexto responsavel por peças, insumos e estoque.
 
 ### MVP
 
-- Criar, atualizar, consultar, listar e desativar pecas.
+- Criar, atualizar, consultar, listar e desativar peças.
 - Atualizar estoque.
 - Registrar entrada, saida e venda isolada.
-- Reservar e liberar pecas vinculadas a orcamentos.
-- Identificar baixo estoque por comparacao com estoque minimo.
-- Baixar estoque quando uma reserva e confirmada ou quando o orcamento e aprovado.
+- Reservar e liberar peças vinculadas a orçamentos.
+- Identificar baixo estoque por comparação com estoque minimo.
+- Baixar estoque quando uma reserva e confirmada ou quando o orçamento e aprovado.
 
 ### Fora do MVP
 
 - Entrada fiscal.
 - Lotes.
 - Fornecedores.
-- Cotacao automatica.
+- Cotação automatica.
 - Lotes, fornecedores e rastreabilidade fiscal de entradas.
 
 ## Service Catalog Management
@@ -72,25 +72,25 @@ Contexto responsavel pelo catalogo de serviços oferecidos pela oficina.
 
 ### Fora do MVP
 
-- Precificacao dinamica.
+- Precificação dinamica.
 - Pacotes de serviços.
 - Promocoes.
-- Variacao de preco por modelo de veiculo.
+- Variação de preco por modelo de veículo.
 
 ## Future Marketplace
 
-Contexto futuro para conectar oficina, lojas de pecas e outros parceiros automotivos.
+Contexto futuro para conectar oficina, lojas de peças e outros parceiros automotivos.
 
 ### MVP
 
 Nao implementado.
 
-### Evolucao Futura
+### Evolução Futura
 
-- Marketplace de lojas de pecas.
+- Marketplace de lojas de peças.
 - Cupons.
-- Comparacao de precos.
-- Integracao com lava-jatos.
-- Servicos automotivos parceiros.
-- Servicos 24h.
+- Comparação de precos.
+- Integração com lava-jatos.
+- Serviços automotivos parceiros.
+- Serviços 24h.
 - Agendamento com parceiros.

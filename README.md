@@ -1,7 +1,7 @@
 # AutoCare Hub API
 
 API REST para gerenciamento de uma oficina mecânica. O sistema cobre cadastro de clientes, veículos, serviços de
-oficina, peças, estoque, ordens de servico, orçamento, aprovação e acompanhamento de status.
+oficina, peças, estoque, ordens de serviço, orçamento, aprovação e acompanhamento de status.
 
 ## Objetivo Academico
 
@@ -64,7 +64,7 @@ A API ficara disponivel em:
 http://localhost:8080
 ```
 
-Por padrao, a aplicacao usa:
+Por padrao, a aplicação usa:
 
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/autocarehub
@@ -76,7 +76,7 @@ JWT_EXPIRATION_MINUTES=60
 
 ## Como Rodar com Docker
 
-Suba a aplicacao e o PostgreSQL:
+Suba a aplicação e o PostgreSQL:
 
 ```bash
 docker compose up --build
@@ -158,7 +158,7 @@ mvn test
 ```
 
 Os testes usam Testcontainers com PostgreSQL 16 e Flyway habilitado. Isso valida as migrations no mesmo tipo de banco
-usado pela aplicacao local e pelo Docker Compose.
+usado pela aplicação local e pelo Docker Compose.
 
 ## Analise de Vulnerabilidades
 
@@ -176,7 +176,7 @@ Os relatorios sao gerados em:
 target/dependency-check
 ```
 
-A documentacao da analise fica em:
+A documentação da analise fica em:
 
 ```text
 docs/security/vulnerability-analysis.md
@@ -190,16 +190,16 @@ As migrations ficam em:
 src/main/resources/db/migration
 ```
 
-Ao iniciar a aplicacao, o Flyway executa automaticamente as migrations pendentes.
+Ao iniciar a aplicação, o Flyway executa automaticamente as migrations pendentes.
 
-Para aplicar migrations localmente, suba o PostgreSQL e inicie a aplicacao:
+Para aplicar migrations localmente, suba o PostgreSQL e inicie a aplicação:
 
 ```bash
 docker compose up -d postgres
 mvn spring-boot:run
 ```
 
-Com Docker Compose completo, as migrations tambem rodam no startup do container da aplicacao:
+Com Docker Compose completo, as migrations tambem rodam no startup do container da aplicação:
 
 ```bash
 docker compose up --build
@@ -238,12 +238,12 @@ Funcionario de loja de peças: loja.funcionario@autocarehub.com / autocare123
 Cliente: cliente@autocarehub.com / autocare123
 ```
 
-A base demo inclui clientes, clientes com mais de um veiculo, frota empresarial, peças em estoque,
-peças abaixo do minimo, serviços da oficina e ordens de servico com historico de uso em diferentes status.
+A base demo inclui clientes, clientes com mais de um veículo, frota empresarial, peças em estoque,
+peças abaixo do minimo, serviços da oficina e ordens de serviço com historico de uso em diferentes status.
 
 ## Principais Endpoints
 
-Autenticacao:
+Autenticação:
 
 - `POST /api/v1/auth/login`
 
@@ -255,7 +255,7 @@ Clientes:
 - `PUT /api/v1/customers/{customerId}`
 - `DELETE /api/v1/customers/{customerId}`
 
-Veiculos:
+Veículos:
 
 - `GET /api/v1/vehicles`
 - `POST /api/v1/vehicles`
@@ -286,7 +286,7 @@ Peças:
 - `PATCH /api/v1/parts/{partId}/release-reservation`
 - `PATCH /api/v1/parts/{partId}/commit-reservation`
 
-Ordens de servico:
+Ordens de serviço:
 
 - `GET /api/v1/service-orders`
 - `POST /api/v1/service-orders`
@@ -300,23 +300,23 @@ Ordens de servico:
 
 ## Regra de Estoque e Orcamento
 
-Peças podem ser cadastradas, atualizadas, movimentadas por entrada/saida/venda e reservadas para orcamentos. A reserva
-reduz a quantidade disponivel, mas nao reduz o estoque total. Quando o orcamento e aprovado ou a reserva e confirmada,
+Peças podem ser cadastradas, atualizadas, movimentadas por entrada/saida/venda e reservadas para orçamentos. A reserva
+reduz a quantidade disponivel, mas nao reduz o estoque total. Quando o orçamento e aprovado ou a reserva e confirmada,
 a quantidade reservada e baixada definitivamente do estoque. Se a reserva for liberada, a quantidade volta a ficar
 disponivel.
 
 ## OpenAPI First
 
-O contrato da API e definido antes da implementacao em `docs/openapi/openapi.yaml`. A partir desse contrato, o OpenAPI
+O contrato da API e definido antes da implementação em `docs/openapi/openapi.yaml`. A partir desse contrato, o OpenAPI
 Generator cria interfaces Java e DTOs em `target/generated-sources/openapi`.
 
 Os controllers manuais implementam as interfaces geradas e convertem os DTOs gerados para commands e queries da camada
-de application. Isso reduz divergencia entre documentacao e implementacao, facilita validacao do contrato e torna o
-Swagger uma representacao direta da API publica.
+de application. Isso reduz divergencia entre documentação e implementação, facilita validação do contrato e torna o
+Swagger uma representação direta da API publica.
 
 ## DDD
 
-O projeto usa conceitos de Domain-Driven Design para isolar o conhecimento de negocio no dominio. Entidades
+O projeto usa conceitos de Domain-Driven Design para isolar o conhecimento de negocio no domínio. Entidades
 como `Customer`, `Vehicle`, `Part`, `WorkshopService` e `ServiceOrder` concentram regras e invariantes. A camada de
 application coordena casos de uso e depende de portas de repositorio, sem conhecer detalhes de JPA ou HTTP.
 
@@ -325,16 +325,16 @@ Essa abordagem mantem controllers, DTOs gerados, repositories Spring Data e enti
 ## Justificativa do PostgreSQL
 
 PostgreSQL foi escolhido por ser um banco relacional robusto, amplamente usado em ambientes produtivos e adequado para o
-dominio da aplicacao. O sistema possui relacionamentos claros entre clientes, veiculos, ordens de servico, serviços e
-peças, alem de necessidade de consistencia transacional para operacoes como composicao de orcamento e baixa de estoque.
+domínio da aplicação. O sistema possui relacionamentos claros entre clientes, veículos, ordens de serviço, serviços e
+peças, alem de necessidade de consistencia transacional para operacoes como composição de orçamento e baixa de estoque.
 
-O uso de PostgreSQL tambem combina bem com Flyway, JPA e execucao via Docker Compose.
+O uso de PostgreSQL tambem combina bem com Flyway, JPA e execução via Docker Compose.
 
 ## Justificativa do Monolito em Camadas
 
 Para o escopo academico e para um MVP, um monolito em camadas oferece menor complexidade operacional, deploy simples e
-boa separacao interna de responsabilidades. A aplicacao ainda mantem fronteiras claras entre dominio, casos de uso,
-infraestrutura e interface REST, permitindo evolucao futura sem introduzir a complexidade de microsservicos antes de
+boa separação interna de responsabilidades. A aplicação ainda mantem fronteiras claras entre domínio, casos de uso,
+infraestrutura e interface REST, permitindo evolução futura sem introduzir a complexidade de microsservicos antes de
 haver necessidade real.
 
 Essa escolha favorece clareza arquitetural, testabilidade e entrega incremental.

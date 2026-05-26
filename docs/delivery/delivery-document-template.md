@@ -1,6 +1,6 @@
 # Documento de Entrega Academica
 
-## Identificacao
+## Identificação
 
 Nome do aluno:
 
@@ -16,7 +16,7 @@ Dados academicos:
 
 ## Links
 
-Documentacao DDD:
+Documentação DDD:
 
 ```text
 [LINK_DA_DOCUMENTACAO_DDD]
@@ -28,7 +28,7 @@ Repositorio privado:
 [LINK_DO_REPOSITORIO_PRIVADO]
 ```
 
-Video de apresentacao:
+Video de apresentação:
 
 ```text
 [LINK_DO_VIDEO]
@@ -42,13 +42,13 @@ docs/security/vulnerability-analysis.md
 
 ## Resumo do Projeto
 
-O AutoCare Hub API e um MVP academico para gerenciamento de uma oficina mecanica. A aplicacao oferece uma API REST para
-cadastro e consulta de clientes, veiculos, servicos, pecas, estoque e ordens de servico.
+O AutoCare Hub API e um MVP academico para gerenciamento de uma oficina mecânica. A aplicação oferece uma API REST para
+cadastro e consulta de clientes, veículos, serviços, peças, estoque e ordens de serviço.
 
-O fluxo principal do MVP permite registrar uma ordem de servico, associar serviços e pecas, gerar um orcamento, aprovar
-o orcamento e acompanhar a evolucao do status até a entrega.
+O fluxo principal do MVP permite registrar uma ordem de serviço, associar serviços e peças, gerar um orçamento, aprovar
+o orçamento e acompanhar a evolução do status até a entrega.
 
-O projeto tambem demonstra praticas de arquitetura em camadas, DDD, contrato OpenAPI First, autenticacao com JWT,
+O projeto tambem demonstra praticas de arquitetura em camadas, DDD, contrato OpenAPI First, autenticação com JWT,
 persistencia relacional, migrations com Flyway, testes automatizados, Docker e analise de vulnerabilidades.
 
 ## Stack Utilizada
@@ -78,15 +78,15 @@ O projeto foi implementado como um monolito em camadas:
 - `application`: casos de uso, comandos, entradas, saidas e portas.
 - `infrastructure`: persistencia JPA, configuracoes, seguranca, repositories e adapters.
 - `interfaces`: controllers REST manuais e mappers para DTOs gerados pelo OpenAPI.
-- `docs`: documentacao OpenAPI, DDD, seguranca e materiais de entrega.
+- `docs`: documentação OpenAPI, DDD, seguranca e materiais de entrega.
 
-A separacao de camadas evita que controllers acessem diretamente repositories ou exponham entidades JPA. Os controllers
+A separação de camadas evita que controllers acessem diretamente repositories ou exponham entidades JPA. Os controllers
 recebem DTOs da interface REST, convertem para comandos ou entradas da application layer, chamam os casos de uso e
 retornam DTOs de resposta.
 
-## Documentacao DDD
+## Documentação DDD
 
-A documentacao DDD esta organizada em:
+A documentação DDD esta organizada em:
 
 - `docs/ddd/01-product-context.md`
 - `docs/ddd/02-ubiquitous-language.md`
@@ -113,7 +113,7 @@ Comando para executar:
 mvn dependency-check:check
 ```
 
-Caminho da documentacao:
+Caminho da documentação:
 
 ```text
 docs/security/vulnerability-analysis.md
@@ -139,14 +139,14 @@ CVE criticas e altas foram apontadas principalmente em spring-boot-3.5.13, sprin
 tomcat-embed-core-10.1.53 e postgresql-42.7.10. A lista detalhada esta em docs/security/vulnerability-analysis.md.
 ```
 
-Plano de correcao:
+Plano de correção:
 
 ```text
 Atualizar Spring Boot, Tomcat embarcado e PostgreSQL JDBC para versoes corrigidas; reexecutar
 mvn dependency-check:check; usar suppressions apenas para falso positivo documentado.
 ```
 
-## Instrucoes de Execucao
+## Instrucoes de Execução
 
 ### Pre-requisitos
 
@@ -162,7 +162,7 @@ Subir o banco:
 docker compose up -d postgres
 ```
 
-Executar a aplicacao:
+Executar a aplicação:
 
 ```bash
 mvn spring-boot:run

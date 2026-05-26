@@ -72,7 +72,7 @@ class PartStockFlowIntegrationTest {
                                 "category",
                                 "Teste",
                                 "subcategory",
-                                "Integracao",
+                                "Integração",
                                 "brand",
                                 "AutoCare",
                                 "costPrice",

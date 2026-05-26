@@ -33,7 +33,7 @@ const router = createRouter({
             meta: {public: true},
         },
         {
-            path: '/loja-pecas',
+            path: '/loja-peças',
             name: 'parts-store-view',
             component: PersonaView,
             props: {persona: 'partsStore'},

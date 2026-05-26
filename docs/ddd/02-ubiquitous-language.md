@@ -1,74 +1,74 @@
 # Ubiquitous Language
 
-Este documento define a linguagem compartilhada do dominio. Os termos abaixo devem ser usados de forma consistente por
-negocio, desenvolvimento, documentacao e testes.
+Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por
+negocio, desenvolvimento, documentação e testes.
 
 ## Cliente
 
 Pessoa fisica ou juridica atendida pela oficina. No MVP, um cliente possui nome, documento, telefone, email, endereco e
 status ativo/inativo.
 
-## Veiculo
+## Veículo
 
-Automovel associado a um cliente. No MVP, um veiculo possui placa, marca, modelo, ano, quilometragem e status
+Automovel associado a um cliente. No MVP, um veículo possui placa, marca, modelo, ano, quilometragem e status
 ativo/inativo.
 
 ## Ordem de Servico
 
-Registro que representa um atendimento da oficina para um veiculo de um cliente. A ordem de servico concentra
-diagnostico, servicos, pecas, orcamento, status e datas relevantes do fluxo.
+Registro que representa um atendimento da oficina para um veículo de um cliente. A ordem de serviço concentra
+diagnostico, serviços, peças, orçamento, status e datas relevantes do fluxo.
 
 ## Servico
 
-Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o servico possui nome,
-descricao, preco base, tempo estimado e status ativo/inativo.
+Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome,
+descrição, preco base, tempo estimado e status ativo/inativo.
 
-## Peca/Insumo
+## Peça/Insumo
 
-Item fisico usado na execucao de um servico, como filtro, oleo, pastilha de freio ou fluido. No MVP, uma peca possui
+Item fisico usado na execução de um serviço, como filtro, oleo, pastilha de freio ou fluido. No MVP, uma peça possui
 SKU, categoria, marca, preco unitario, quantidade em estoque, estoque minimo e status ativo/inativo.
 
 ## Estoque
 
-Quantidade disponivel de uma peca ou insumo. No MVP, o estoque pode ser movimentado por entrada, saida ou venda isolada.
-Pecas vinculadas a orcamentos podem ficar reservadas; a baixa definitiva ocorre quando a reserva e confirmada ou quando
-o orcamento e aprovado.
+Quantidade disponivel de uma peça ou insumo. No MVP, o estoque pode ser movimentado por entrada, saida ou venda isolada.
+peças vinculadas a orçamentos podem ficar reservadas; a baixa definitiva ocorre quando a reserva e confirmada ou quando
+o orçamento e aprovado.
 
 ## Diagnostico
 
-Descricao inicial do problema informado ou observado no veiculo. No MVP, a ordem de servico nasce com notas de
+Descrição inicial do problema informado ou observado no veículo. No MVP, a ordem de serviço nasce com notas de
 diagnostico.
 
 ## Orcamento
 
-Valor calculado a partir dos serviços e pecas associados a uma ordem de servico. No MVP, o orcamento so pode ser gerado
-quando ha pelo menos um servico ou uma peca na ordem.
+Valor calculado a partir dos serviços e peças associados a uma ordem de serviço. No MVP, o orçamento so pode ser gerado
+quando ha pelo menos um serviço ou uma peça na ordem.
 
-## Aprovacao
+## Aprovação
 
-Confirmacao do cliente ou usuario autorizado para aceitar o orcamento. No MVP, a aprovacao registra data de aprovacao e
-permite que a ordem avance para execucao.
+Confirmação do cliente ou usuario autorizado para aceitar o orçamento. No MVP, a aprovação registra data de aprovação e
+permite que a ordem avance para execução.
 
-## Execucao
+## Execução
 
-Momento em que a oficina inicia a realizacao dos serviços aprovados. No dominio, a execucao corresponde ao status
+Momento em que a oficina inicia a realização dos serviços aprovados. No domínio, a execução corresponde ao status
 `EM_EXECUCAO`.
 
 ## Entrega
 
-Etapa final em que o veiculo e entregue apos a conclusao da ordem de servico. No dominio, a entrega corresponde ao
+Etapa final em que o veículo e entregue apos a conclusao da ordem de serviço. No domínio, a entrega corresponde ao
 status `ENTREGUE`.
 
 ## Status da Ordem de Servico
 
-Estados controlados da ordem de servico no MVP:
+Estados controlados da ordem de serviço no MVP:
 
 - `RECEBIDA`: ordem recebida.
 - `EM_DIAGNOSTICO`: diagnostico iniciado.
-- `AGUARDANDO_APROVACAO`: orcamento gerado e aguardando aprovacao.
-- `EM_EXECUCAO`: execucao iniciada.
-- `FINALIZADA`: servico finalizado.
-- `ENTREGUE`: veiculo entregue.
+- `AGUARDANDO_APROVACAO`: orçamento gerado e aguardando aprovação.
+- `EM_EXECUCAO`: execução iniciada.
+- `FINALIZADA`: serviço finalizado.
+- `ENTREGUE`: veículo entregue.
 
 Na interface REST, esses estados continuam mapeados para os codigos externos em ingles para preservar compatibilidade
 com o contrato publicado.

@@ -24,7 +24,7 @@ class ApproveServiceOrderBudgetUseCaseTest {
         new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
     serviceOrder.addService(
         new WorkshopService(
-            "Troca de oleo", "Substituicao de oleo e filtro", Money.of("100.00"), 60),
+            "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
         1);
     serviceOrder.addPart(part, 2);
     serviceOrderRepository.save(serviceOrder);

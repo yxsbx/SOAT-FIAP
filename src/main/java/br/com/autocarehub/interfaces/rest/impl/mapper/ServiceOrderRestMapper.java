@@ -155,7 +155,7 @@ public final class ServiceOrderRestMapper {
         statusHistoryItem(
             br.com.autocarehub.domain.ServiceOrderStatus.RECEBIDA,
             serviceOrder.createdAt(),
-            "Ordem de servico criada"));
+            "Ordem de serviço criada"));
     if (serviceOrder.status() == br.com.autocarehub.domain.ServiceOrderStatus.EM_DIAGNOSTICO) {
       history.add(
           statusHistoryItem(
@@ -173,7 +173,7 @@ public final class ServiceOrderRestMapper {
           statusHistoryItem(
               br.com.autocarehub.domain.ServiceOrderStatus.AGUARDANDO_APROVACAO,
               serviceOrder.budgetGeneratedAt(),
-              "Orcamento gerado e disponibilizado para aprovacao"));
+              "Orcamento gerado e disponibilizado para aprovação"));
     }
     if (serviceOrder.approvedAt() != null) {
       history.add(
@@ -187,7 +187,7 @@ public final class ServiceOrderRestMapper {
           statusHistoryItem(
               br.com.autocarehub.domain.ServiceOrderStatus.EM_EXECUCAO,
               serviceOrder.startedAt(),
-              "Execucao iniciada"));
+              "Execução iniciada"));
     }
     if (serviceOrder.finishedAt() != null) {
       history.add(
@@ -201,7 +201,7 @@ public final class ServiceOrderRestMapper {
           statusHistoryItem(
               br.com.autocarehub.domain.ServiceOrderStatus.ENTREGUE,
               serviceOrder.deliveredAt(),
-              "Veiculo entregue"));
+              "Veículo entregue"));
     }
     return history;
   }

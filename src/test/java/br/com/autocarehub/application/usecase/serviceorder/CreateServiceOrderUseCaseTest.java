@@ -36,7 +36,7 @@ class CreateServiceOrderUseCaseTest {
     WorkshopService service =
         workshopServiceRepository.save(
             new WorkshopService(
-                "Troca de oleo", "Substituicao de oleo do motor", Money.of("120.00"), 60));
+                "Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
     Part part =
         partRepository.save(
             new Part(

@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
     title: AutoCare Hub API
     version: 1.0.0
-    description: API para gerenciamento de clientes, veiculos, serviços, pecas, ordens de serviço, orcamentos, aprovacoes e acompanhamento de status de uma oficina mecanica.
+    description: API para gerenciamento de clientes, veículos, serviços, peças, ordens de serviço, orçamentos, aprovacoes e acompanhamento de status de uma oficina mecânica.
 servers:
     -   url: http://localhost:8080
         description: Ambiente local
@@ -14,13 +14,13 @@ tags:
     -   name: Customers
         description: Cadastro e manutenção de clientes
     -   name: Vehicles
-        description: Cadastro e manutenção de veiculos
+        description: Cadastro e manutenção de veículos
     -   name: Workshop Services
         description: Cadastro e manutenção dos serviços oferecidos pela oficina
     -   name: Parts
-        description: Cadastro, manutenção e controle de estoque de pecas e insumos
+        description: Cadastro, manutenção e controle de estoque de peças e insumos
     -   name: Service Orders
-        description: Criacao, composicao, orcamento, aprovacao e acompanhamento de ordens de servico
+        description: Criação, composição, orçamento, aprovação e acompanhamento de ordens de serviço
 paths:
     /api/v1/auth/login:
         post:
@@ -154,13 +154,13 @@ paths:
         get:
             tags:
                 - Vehicles
-            summary: Lista veiculos de um cliente
+            summary: Lista veículos de um cliente
             operationId: listVehiclesByCustomer
             parameters:
                 -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "200":
-                    description: Veiculos encontrados
+                    description: Veículos encontrados
                     content:
                         application/json:
                             schema:
@@ -173,13 +173,13 @@ paths:
         get:
             tags:
                 - Service Orders
-            summary: Lista ordens de servico de um cliente
+            summary: Lista ordens de serviço de um cliente
             operationId: listServiceOrdersByCustomer
             parameters:
                 -   $ref: "#/components/parameters/CustomerIdPathParam"
             responses:
                 "200":
-                    description: Ordens de servico encontradas
+                    description: Ordens de serviço encontradas
                     content:
                         application/json:
                             schema:
@@ -192,7 +192,7 @@ paths:
         post:
             tags:
                 - Vehicles
-            summary: Cria um veiculo
+            summary: Cria um veículo
             operationId: createVehicle
             requestBody:
                 required: true
@@ -202,7 +202,7 @@ paths:
                             $ref: "#/components/schemas/CreateVehicleRequest"
             responses:
                 "201":
-                    description: Veiculo criado
+                    description: Veículo criado
                     content:
                         application/json:
                             schema:
@@ -216,7 +216,7 @@ paths:
         get:
             tags:
                 - Vehicles
-            summary: Lista veiculos
+            summary: Lista veículos
             operationId: listVehicles
             parameters:
                 -   $ref: "#/components/parameters/PageParam"
@@ -228,7 +228,7 @@ paths:
                         type: boolean
             responses:
                 "200":
-                    description: Veiculos encontrados
+                    description: Veículos encontrados
                     content:
                         application/json:
                             schema:
@@ -239,13 +239,13 @@ paths:
         get:
             tags:
                 - Vehicles
-            summary: Busca um veiculo por id
+            summary: Busca um veículo por id
             operationId: getVehicleById
             parameters:
                 -   $ref: "#/components/parameters/VehicleIdPathParam"
             responses:
                 "200":
-                    description: Veiculo encontrado
+                    description: Veículo encontrado
                     content:
                         application/json:
                             schema:
@@ -257,7 +257,7 @@ paths:
         put:
             tags:
                 - Vehicles
-            summary: Atualiza um veiculo
+            summary: Atualiza um veículo
             operationId: updateVehicle
             parameters:
                 -   $ref: "#/components/parameters/VehicleIdPathParam"
@@ -269,7 +269,7 @@ paths:
                             $ref: "#/components/schemas/UpdateVehicleRequest"
             responses:
                 "200":
-                    description: Veiculo atualizado
+                    description: Veículo atualizado
                     content:
                         application/json:
                             schema:
@@ -283,13 +283,13 @@ paths:
         delete:
             tags:
                 - Vehicles
-            summary: Remove logicamente um veiculo
+            summary: Remove logicamente um veículo
             operationId: deleteVehicle
             parameters:
                 -   $ref: "#/components/parameters/VehicleIdPathParam"
             responses:
                 "204":
-                    description: Veiculo removido
+                    description: Veículo removido
                 "401":
                     $ref: "#/components/responses/Unauthorized"
                 "404":
@@ -298,7 +298,7 @@ paths:
         post:
             tags:
                 - Workshop Services
-            summary: Cria um servico da oficina
+            summary: Cria um serviço da oficina
             operationId: createWorkshopService
             requestBody:
                 required: true
@@ -332,7 +332,7 @@ paths:
                         type: boolean
             responses:
                 "200":
-                    description: Servicos encontrados
+                    description: Serviços encontrados
                     content:
                         application/json:
                             schema:
@@ -343,7 +343,7 @@ paths:
         get:
             tags:
                 - Workshop Services
-            summary: Busca um servico da oficina por id
+            summary: Busca um serviço da oficina por id
             operationId: getWorkshopServiceById
             parameters:
                 -   $ref: "#/components/parameters/ServiceIdPathParam"
@@ -361,7 +361,7 @@ paths:
         put:
             tags:
                 - Workshop Services
-            summary: Atualiza um servico da oficina
+            summary: Atualiza um serviço da oficina
             operationId: updateWorkshopService
             parameters:
                 -   $ref: "#/components/parameters/ServiceIdPathParam"
@@ -387,7 +387,7 @@ paths:
         delete:
             tags:
                 - Workshop Services
-            summary: Remove logicamente um servico da oficina
+            summary: Remove logicamente um serviço da oficina
             operationId: deleteWorkshopService
             parameters:
                 -   $ref: "#/components/parameters/ServiceIdPathParam"
@@ -402,7 +402,7 @@ paths:
         post:
             tags:
                 - Parts
-            summary: Cria uma peca ou insumo
+            summary: Cria uma peça ou insumo
             operationId: createPart
             requestBody:
                 required: true
@@ -412,7 +412,7 @@ paths:
                             $ref: "#/components/schemas/CreatePartRequest"
             responses:
                 "201":
-                    description: Peca criada
+                    description: Peça criada
                     content:
                         application/json:
                             schema:
@@ -424,7 +424,7 @@ paths:
         get:
             tags:
                 - Parts
-            summary: Lista pecas e insumos
+            summary: Lista peças e insumos
             operationId: listParts
             parameters:
                 -   $ref: "#/components/parameters/PageParam"
@@ -441,7 +441,7 @@ paths:
                         type: boolean
             responses:
                 "200":
-                    description: Pecas encontradas
+                    description: Peças encontradas
                     content:
                         application/json:
                             schema:
@@ -452,13 +452,13 @@ paths:
         get:
             tags:
                 - Parts
-            summary: Busca uma peca por id
+            summary: Busca uma peça por id
             operationId: getPartById
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
             responses:
                 "200":
-                    description: Peca encontrada
+                    description: Peça encontrada
                     content:
                         application/json:
                             schema:
@@ -470,7 +470,7 @@ paths:
         put:
             tags:
                 - Parts
-            summary: Atualiza uma peca ou insumo
+            summary: Atualiza uma peça ou insumo
             operationId: updatePart
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
@@ -482,7 +482,7 @@ paths:
                             $ref: "#/components/schemas/UpdatePartRequest"
             responses:
                 "200":
-                    description: Peca atualizada
+                    description: Peça atualizada
                     content:
                         application/json:
                             schema:
@@ -496,13 +496,13 @@ paths:
         delete:
             tags:
                 - Parts
-            summary: Remove logicamente uma peca ou insumo
+            summary: Remove logicamente uma peça ou insumo
             operationId: deletePart
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
             responses:
                 "204":
-                    description: Peca removida
+                    description: Peça removida
                 "401":
                     $ref: "#/components/responses/Unauthorized"
                 "404":
@@ -511,7 +511,7 @@ paths:
         patch:
             tags:
                 - Parts
-            summary: Atualiza o estoque de uma peca ou insumo
+            summary: Atualiza o estoque de uma peça ou insumo
             operationId: updatePartStock
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
@@ -538,7 +538,7 @@ paths:
         patch:
             tags:
                 - Parts
-            summary: Registra entrada, saida ou venda isolada de uma peca
+            summary: Registra entrada, saida ou venda isolada de uma peça
             operationId: registerStockMovement
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
@@ -565,7 +565,7 @@ paths:
         patch:
             tags:
                 - Parts
-            summary: Configura o prazo de reserva de estoque para orcamentos
+            summary: Configura o prazo de reserva de estoque para orçamentos
             operationId: configurePartReservation
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
@@ -592,7 +592,7 @@ paths:
         patch:
             tags:
                 - Parts
-            summary: Bloqueia quantidade de uma peca para um orcamento
+            summary: Bloqueia quantidade de uma peça para um orçamento
             operationId: reservePart
             parameters:
                 -   $ref: "#/components/parameters/PartIdPathParam"
@@ -673,7 +673,7 @@ paths:
         post:
             tags:
                 - Service Orders
-            summary: Cria uma ordem de servico identificando o cliente por CPF ou CNPJ
+            summary: Cria uma ordem de serviço identificando o cliente por CPF ou CNPJ
             operationId: createServiceOrder
             requestBody:
                 required: true
@@ -683,7 +683,7 @@ paths:
                             $ref: "#/components/schemas/CreateServiceOrderRequest"
             responses:
                 "201":
-                    description: Ordem de servico criada
+                    description: Ordem de serviço criada
                     content:
                         application/json:
                             schema:
@@ -697,7 +697,7 @@ paths:
         get:
             tags:
                 - Service Orders
-            summary: Lista ordens de servico
+            summary: Lista ordens de serviço
             operationId: listServiceOrders
             parameters:
                 -   $ref: "#/components/parameters/PageParam"
@@ -733,7 +733,7 @@ paths:
                         format: date-time
             responses:
                 "200":
-                    description: Ordens de servico encontradas
+                    description: Ordens de serviço encontradas
                     content:
                         application/json:
                             schema:
@@ -744,7 +744,7 @@ paths:
         get:
             tags:
                 - Service Orders
-            summary: Consulta o tempo medio de execucao das ordens de servico finalizadas
+            summary: Consulta o tempo medio de execução das ordens de serviço finalizadas
             operationId: getAverageServiceOrderExecutionTime
             responses:
                 "200":
@@ -759,8 +759,8 @@ paths:
         get:
             tags:
                 - Service Orders
-            summary: Acompanha o progresso de ordens de servico pelo cliente
-            description: Consulte por id da OS ou por CPF/CNPJ do cliente junto com a placa do veiculo.
+            summary: Acompanha o progresso de ordens de serviço pelo cliente
+            description: Consulte por id da OS ou por CPF/CNPJ do cliente junto com a placa do veículo.
             operationId: trackServiceOrders
             parameters:
                 -   name: serviceOrderId
@@ -798,13 +798,13 @@ paths:
         get:
             tags:
                 - Service Orders
-            summary: Busca uma ordem de servico por id
+            summary: Busca uma ordem de serviço por id
             operationId: getServiceOrderById
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
-                    description: Ordem de servico encontrada
+                    description: Ordem de serviço encontrada
                     content:
                         application/json:
                             schema:
@@ -817,7 +817,7 @@ paths:
         post:
             tags:
                 - Service Orders
-            summary: Adiciona um servico a uma ordem de servico
+            summary: Adiciona um serviço a uma ordem de serviço
             operationId: addServiceToServiceOrder
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
@@ -844,7 +844,7 @@ paths:
         post:
             tags:
                 - Service Orders
-            summary: Adiciona uma peca a uma ordem de servico
+            summary: Adiciona uma peça a uma ordem de serviço
             operationId: addPartToServiceOrder
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
@@ -856,7 +856,7 @@ paths:
                             $ref: "#/components/schemas/AddServiceOrderPartRequest"
             responses:
                 "200":
-                    description: Peca adicionada
+                    description: Peça adicionada
                     content:
                         application/json:
                             schema:
@@ -871,7 +871,7 @@ paths:
         post:
             tags:
                 - Service Orders
-            summary: Gera o orcamento de uma ordem de servico
+            summary: Gera o orçamento de uma ordem de serviço
             operationId: generateServiceOrderBudget
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
@@ -892,7 +892,7 @@ paths:
         post:
             tags:
                 - Service Orders
-            summary: Aprova o orcamento de uma ordem de servico
+            summary: Aprova o orçamento de uma ordem de serviço
             operationId: approveServiceOrderBudget
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
@@ -913,7 +913,7 @@ paths:
         patch:
             tags:
                 - Service Orders
-            summary: Atualiza o status de uma ordem de servico
+            summary: Atualiza o status de uma ordem de serviço
             operationId: updateServiceOrderStatus
             parameters:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
@@ -997,7 +997,7 @@ components:
                 format: uuid
     responses:
         BadRequest:
-            description: Requisicao invalida
+            description: Requisição invalida
             content:
                 application/json:
                     schema:
@@ -1535,7 +1535,7 @@ components:
                 vehicleId:
                     type: string
                     format: uuid
-                    description: Identificador de veiculo ja cadastrado. Se ausente, informe vehicle para cadastro ou vinculo por placa.
+                    description: Identificador de veículo ja cadastrado. Se ausente, informe vehicle para cadastro ou vinculo por placa.
                 vehicle:
                     $ref: "#/components/schemas/CreateServiceOrderVehicleRequest"
                 diagnosticNotes:
@@ -1547,16 +1547,16 @@ components:
                     minItems: 1
                     items:
                         $ref: "#/components/schemas/CreateServiceOrderServiceRequest"
-                    description: Servicos solicitados para compor automaticamente o orcamento.
+                    description: Serviços solicitados para compor automaticamente o orçamento.
                 parts:
                     type: array
                     items:
                         $ref: "#/components/schemas/CreateServiceOrderPartRequest"
-                    description: Pecas ou insumos necessarios para compor automaticamente o orcamento.
+                    description: Peças ou insumos necessarios para compor automaticamente o orçamento.
                 generateBudget:
                     type: boolean
                     default: true
-                    description: Quando true, gera o orcamento automaticamente e deixa a OS aguardando aprovacao.
+                    description: Quando true, gera o orçamento automaticamente e deixa a OS aguardando aprovação.
         CreateServiceOrderCustomerRequest:
             type: object
             required:
@@ -1761,17 +1761,17 @@ components:
                     type: number
                     format: double
                     minimum: 0
-                    description: Valor total dos servicos do orcamento.
+                    description: Valor total dos serviços do orçamento.
                 partsTotal:
                     type: number
                     format: double
                     minimum: 0
-                    description: Valor total das pecas e insumos do orcamento.
+                    description: Valor total das peças e insumos do orçamento.
                 totalAmount:
                     type: number
                     format: double
                     minimum: 0
-                    description: Valor total geral do orcamento.
+                    description: Valor total geral do orçamento.
                 createdAt:
                     type: string
                     format: date-time

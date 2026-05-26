@@ -5,9 +5,9 @@ ALTER TABLE users
 UPDATE users
 SET company_name = CASE
         WHEN profile_type = 'WORKSHOP_ADMIN' THEN 'Oficina Central AutoCare'
-        WHEN profile_type = 'PARTS_STORE_ADMIN' THEN 'Loja Pecas Prime'
+        WHEN profile_type = 'PARTS_STORE_ADMIN' THEN 'Loja peças Prime'
         WHEN profile_type = 'WORKSHOP_EMPLOYEE' THEN 'Oficina Central AutoCare'
-        WHEN profile_type = 'PARTS_STORE_EMPLOYEE' THEN 'Loja Pecas Prime'
+        WHEN profile_type = 'PARTS_STORE_EMPLOYEE' THEN 'Loja peças Prime'
         WHEN profile_type = 'MASTER_ADMIN' THEN 'AutoCare Hub'
         ELSE ''
     END,

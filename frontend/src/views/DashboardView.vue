@@ -45,6 +45,10 @@ const globalSearch = ref('');
 const homeSettingsOpen = ref(false);
 const selectedRecord = ref(null);
 const selectedRecordType = ref('');
+const modalDraft = reactive({
+  customer: {},
+  partner: {},
+});
 const currentUser = ref(null);
 const customerPartnerSearch = ref('');
 const customerPartSearch = ref('');
@@ -69,6 +73,17 @@ const defaultStoreHomeWidgetIds = [
   'store-low-stock',
   'store-waiting-contact',
   'store-active-orders',
+];
+
+const defaultMasterHomeWidgetIds = [
+  'master-customers',
+  'master-workshops',
+  'master-stores',
+  'master-workshop-gross',
+  'master-store-gross',
+  'master-platform-fee',
+  'master-workshop-fee',
+  'master-store-fee',
 ];
 
 const permissionDefinitions = [
@@ -154,6 +169,8 @@ const pagination = reactive({
   parts: {page: 0, size: 10, active: '', lowStock: '', search: '', sortBy: 'name', sortDir: 'asc'},
   serviceOrders: {page: 0, size: 10, status: '', search: '', sortBy: 'createdAt', sortDir: 'desc'},
   services: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
+  masterCustomers: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
+  masterWorkshops: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
 });
 
 const forms = reactive({
@@ -712,7 +729,11 @@ const homeWidgetDefinitions = computed(() => [
 const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets));
 
 const availableHomeWidgetDefinitions = computed(() =>
-    (isPartsStoreProfile.value ? storeHomeWidgetDefinitions.value : homeWidgetDefinitions.value).filter(
+    (isMasterAdmin.value
+      ? masterHomeWidgetDefinitions.value
+      : isPartsStoreProfile.value
+        ? storeHomeWidgetDefinitions.value
+        : homeWidgetDefinitions.value).filter(
         (widget) =>
             widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
     ),
@@ -892,7 +913,7 @@ const masterCustomers = computed(() =>
             ...orders.map(() => 'Oficina Central AutoCare'),
             ...storeQuotes.value
                 .filter((quote) => normalize(quote.customerName).includes(normalize(customer.name)))
-                .map(() => 'Loja Pecas Prime'),
+                .map(() => 'Loja Peças Prime'),
           ],
       );
       return {
@@ -967,6 +988,97 @@ const masterSummary = computed(() => {
     platformFee: workshopFee + storeFee,
   };
 });
+
+const masterHomeWidgetDefinitions = computed(() => [
+  {
+    id: 'master-customers',
+    category: 'platform',
+    tone: 'blue',
+    label: 'Clientes cadastrados',
+    value: masterSummary.value.customers,
+    icon: Users,
+    tabId: 'master-customers',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-workshops',
+    category: 'platform',
+    tone: 'cyan',
+    label: 'Oficinas parceiras',
+    value: masterSummary.value.workshops,
+    icon: Wrench,
+    tabId: 'master-workshops',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-stores',
+    category: 'platform',
+    tone: 'violet',
+    label: 'Lojas de peças',
+    value: masterSummary.value.stores,
+    icon: Package,
+    tabId: 'master-stores',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-workshop-gross',
+    category: 'finance',
+    tone: 'green',
+    label: 'Faturamento bruto das oficinas',
+    value: `R$ ${money(masterSummary.value.workshopGross)}`,
+    icon: DollarSign,
+    tabId: 'master-workshops',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-store-gross',
+    category: 'finance',
+    tone: 'amber',
+    label: 'Faturamento bruto das lojas',
+    value: `R$ ${money(masterSummary.value.storeGross)}`,
+    icon: ShoppingCart,
+    tabId: 'master-stores',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-platform-fee',
+    category: 'finance',
+    tone: 'rose',
+    label: 'Receita total AutoCare Hub',
+    value: `R$ ${money(masterSummary.value.platformFee)}`,
+    icon: BadgePercent,
+    tabId: 'master-leads',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-workshop-fee',
+    category: 'finance',
+    tone: 'indigo',
+    label: 'Taxas recebidas de oficinas',
+    value: `R$ ${money(masterSummary.value.workshopFee)}`,
+    icon: BadgePercent,
+    tabId: 'master-workshops',
+    roles: ['ADMIN'],
+  },
+  {
+    id: 'master-store-fee',
+    category: 'finance',
+    tone: 'teal',
+    label: 'Taxas recebidas de lojas',
+    value: `R$ ${money(masterSummary.value.storeFee)}`,
+    icon: BadgePercent,
+    tabId: 'master-stores',
+    roles: ['ADMIN'],
+  },
+]);
+
+const masterPlatformWidgets = computed(() =>
+    homeWidgets.value.filter((widget) => widget.category === 'platform'),
+);
+
+const masterFinancialWidgets = computed(() =>
+    homeWidgets.value.filter((widget) => widget.category === 'finance'),
+);
 
 const masterTopPlatformRevenuePartners = computed(() =>
     [...workshopPartners.value, ...storePartners.value]
@@ -1276,6 +1388,8 @@ const listSources = computed(() => ({
   parts: data.parts,
   serviceOrders: data.serviceOrders,
   services: data.services,
+  masterCustomers: masterCustomers.value,
+  masterWorkshops: workshopPartners.value,
 }));
 
 const listSearchFields = {
@@ -1285,6 +1399,8 @@ const listSearchFields = {
   parts: ['name', 'sku', 'category', 'brand', 'stockStatus'],
   serviceOrders: ['status', 'diagnosticNotes', 'id'],
   services: ['name', 'description'],
+  masterCustomers: ['name', 'email', 'phone', 'document', 'partners'],
+  masterWorkshops: ['name', 'adminName', 'status'],
 };
 
 function listRows(resource) {
@@ -1381,6 +1497,9 @@ function userHomeKey() {
 
 function homeDefaultWidgetIds() {
   const username = auth.user?.username || '';
+  if (isMasterAdmin.value || username.includes('master@')) {
+    return defaultMasterHomeWidgetIds;
+  }
   return username.includes('loja.') || isPartsStoreProfile.value
       ? defaultStoreHomeWidgetIds
       : defaultHomeWidgetIds;
@@ -1410,8 +1529,12 @@ async function loadHomePreferences() {
 
   try {
     const preference = await resources.homePreferences();
-    const preferredWidgets = preference.widgets?.length ? preference.widgets : defaults;
+    const validWidgetIds = new Set(availableHomeWidgetDefinitions.value.map((widget) => widget.id));
+    const preferredWidgets = (preference.widgets || []).filter((widgetId) => validWidgetIds.has(widgetId));
     homePreferences.userWidgets = [...preferredWidgets];
+    if (!homePreferences.userWidgets.length) {
+      homePreferences.userWidgets = [...defaults];
+    }
     homePreferences.showAlertsOnHome = Boolean(preference.showAlertsOnHome);
   } catch {
     saveUserHomePreferences();
@@ -1425,6 +1548,7 @@ async function saveUserHomePreferences() {
       widgets: homePreferences.userWidgets,
       showAlertsOnHome: homePreferences.showAlertsOnHome,
     });
+    success.value = 'Preferências da home salvas.';
   } catch (err) {
     error.value = err.message || 'Preferências salvas apenas localmente.';
   }
@@ -1857,7 +1981,7 @@ function ensureStoreQuotes() {
     },
     {
       id: 'CART-1002',
-      customerName: 'Cliente Balcao',
+      customerName: 'Cliente Balção',
       customerContact: '11988887777',
       status: 'APPROVED',
       contactRequested: false,
@@ -2145,9 +2269,104 @@ function resetListPage(resource) {
   pagination[resource].page = 0;
 }
 
+const isCustomerDetail = computed(() =>
+    selectedRecord.value && selectedRecordType.value === 'Cliente',
+);
+
+const isWorkshopDetail = computed(() =>
+    selectedRecord.value && ['Oficina', 'Oficina parceira'].includes(selectedRecordType.value),
+);
+
+const selectedPartnerUser = computed(() =>
+    data.users.find((user) => user.id === selectedRecord.value?.id),
+);
+
+const detailModalDirty = computed(() => {
+  if (isCustomerDetail.value) {
+    const original = selectedRecord.value;
+    const draft = modalDraft.customer;
+    return JSON.stringify({
+      name: original.name,
+      document: original.document,
+      phone: original.phone,
+      email: original.email,
+      address: original.address || {},
+      active: original.active !== false,
+    }) !== JSON.stringify(draft);
+  }
+
+  if (isWorkshopDetail.value) {
+    const user = selectedPartnerUser.value;
+    if (!user) {
+      return false;
+    }
+    return JSON.stringify({
+      companyName: user.companyName || '',
+      fullName: user.fullName || '',
+      active: user.active !== false,
+    }) !== JSON.stringify(modalDraft.partner);
+  }
+
+  return false;
+});
+
 function openRecord(type, record) {
   selectedRecordType.value = type;
   selectedRecord.value = record;
+  if (type === 'Cliente') {
+    Object.assign(modalDraft.customer, {
+      name: record.name || '',
+      document: record.document || '',
+      phone: record.phone || '',
+      email: record.email || '',
+      address: {...(record.address || forms.customer.address)},
+      active: record.active !== false,
+    });
+  }
+  if (['Oficina', 'Oficina parceira'].includes(type)) {
+    const user = data.users.find((item) => item.id === record.id) || record;
+    Object.assign(modalDraft.partner, {
+      companyName: user.companyName || record.name || '',
+      fullName: user.fullName || record.adminName || '',
+      active: user.active !== false && record.status !== 'Inativa',
+    });
+  }
+}
+
+function closeRecord() {
+  selectedRecord.value = null;
+  selectedRecordType.value = '';
+  Object.assign(modalDraft.customer, {});
+  Object.assign(modalDraft.partner, {});
+}
+
+async function saveDetailModal() {
+  if (isCustomerDetail.value) {
+    await runAction(async () => {
+      await resources.updateCustomer(selectedRecord.value.id, modalDraft.customer);
+      closeRecord();
+    }, 'Cliente atualizado.');
+    return;
+  }
+
+  if (isWorkshopDetail.value && selectedPartnerUser.value) {
+    const user = selectedPartnerUser.value;
+    await runAction(async () => {
+      await resources.updateUser(user.id, {
+        username: user.username,
+        role: user.role,
+        customerId: user.customerId || null,
+        fullName: modalDraft.partner.fullName,
+        profileType: user.profileType,
+        companyName: modalDraft.partner.companyName,
+        companyType: user.companyType || 'WORKSHOP',
+        employeeSubRole: user.employeeSubRole || '',
+        permissions: user.permissions || [],
+        active: modalDraft.partner.active,
+      });
+      closeRecord();
+    }, 'Oficina atualizada.');
+  }
 }
 
 function editCustomer(customer) {
@@ -2320,8 +2539,8 @@ function logout() {
 }
 
 onMounted(async () => {
+  await loadDashboard();
   await loadHomePreferences();
-  loadDashboard();
 });
 </script>
 
@@ -2528,7 +2747,7 @@ onMounted(async () => {
             </div>
           </section>
 
-          <section v-if="homeSettingsOpen && !isMasterAdmin" class="home-settings-panel">
+          <section v-if="homeSettingsOpen" class="home-settings-panel">
             <div>
               <strong>Meus widgets</strong>
               <div class="home-option-grid">
@@ -2579,47 +2798,47 @@ onMounted(async () => {
             </button>
           </section>
 
-          <section v-if="isMasterAdmin" class="home-summary-grid">
-            <button class="home-widget" type="button" @click="selectTab('master-customers')">
-              <Users :size="22"/>
-              <strong>{{ masterSummary.customers }}</strong>
-              <span>Clientes cadastrados</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
-              <Wrench :size="22"/>
-              <strong>{{ masterSummary.workshops }}</strong>
-              <span>Oficinas parceiras</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-stores')">
-              <Package :size="22"/>
-              <strong>{{ masterSummary.stores }}</strong>
-              <span>Lojas de peças</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
-              <DollarSign :size="22"/>
-              <strong>R$ {{ money(masterSummary.workshopGross) }}</strong>
-              <span>Total faturado pelas oficinas</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-stores')">
-              <ShoppingCart :size="22"/>
-              <strong>R$ {{ money(masterSummary.storeGross) }}</strong>
-              <span>Total faturado pelas lojas</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-leads')">
-              <BadgePercent :size="22"/>
-              <strong>R$ {{ money(masterSummary.platformFee) }}</strong>
-              <span>Receita total AutoCare Hub</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-workshops')">
-              <BadgePercent :size="22"/>
-              <strong>R$ {{ money(masterSummary.workshopFee) }}</strong>
-              <span>Taxas recebidas de oficinas</span>
-            </button>
-            <button class="home-widget" type="button" @click="selectTab('master-stores')">
-              <BadgePercent :size="22"/>
-              <strong>R$ {{ money(masterSummary.storeFee) }}</strong>
-              <span>Taxas recebidas de lojas</span>
-            </button>
+          <section v-if="isMasterAdmin" class="master-widget-sections">
+            <div v-if="masterPlatformWidgets.length" class="widget-group">
+              <div class="section-heading compact-heading">
+                <h2>Operação da plataforma</h2>
+                <span>Base ativa e parceiros cadastrados</span>
+              </div>
+              <div class="home-summary-grid">
+                <button
+                    v-for="widget in masterPlatformWidgets"
+                    :key="widget.id"
+                    :class="`tone-${widget.tone}`"
+                    class="home-widget"
+                    type="button"
+                    @click="openHomeWidget(widget)"
+                >
+                  <component :is="widget.icon" :size="22"/>
+                  <strong>{{ widget.value }}</strong>
+                  <span>{{ widget.label }}</span>
+                </button>
+              </div>
+            </div>
+            <div v-if="masterFinancialWidgets.length" class="widget-group">
+              <div class="section-heading compact-heading">
+                <h2>Financeiro</h2>
+                <span>Faturamento, taxas e receita da AutoCare Hub</span>
+              </div>
+              <div class="home-summary-grid">
+                <button
+                    v-for="widget in masterFinancialWidgets"
+                    :key="widget.id"
+                    :class="`tone-${widget.tone}`"
+                    class="home-widget"
+                    type="button"
+                    @click="openHomeWidget(widget)"
+                >
+                  <component :is="widget.icon" :size="22"/>
+                  <strong>{{ widget.value }}</strong>
+                  <span>{{ widget.label }}</span>
+                </button>
+              </div>
+            </div>
           </section>
 
           <section v-if="isMasterAdmin" class="section-block">
@@ -3203,7 +3422,25 @@ onMounted(async () => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Clientes</h2>
-              <span>Veículos, gastos, frequência e parceiros acessados</span>
+              <span>{{ listTotal('masterCustomers') }} clientes</span>
+            </div>
+            <div class="filters">
+              <input v-model="pagination.masterCustomers.search" placeholder="Buscar cliente, documento ou parceiro" type="search" @input="resetListPage('masterCustomers')"/>
+              <select v-model.number="pagination.masterCustomers.size" @change="resetListPage('masterCustomers')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.masterCustomers.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="spent">Ordenar por gasto</option>
+                <option value="frequency">Ordenar por frequência</option>
+                <option value="vehiclesCount">Ordenar por veículos</option>
+              </select>
+              <select v-model="pagination.masterCustomers.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header customers-grid">
@@ -3213,7 +3450,7 @@ onMounted(async () => {
                 <span>Interações</span>
               </div>
               <article
-                  v-for="customer in masterCustomers"
+                  v-for="customer in listRows('masterCustomers')"
                   :key="customer.id"
                   class="data-table-row customers-grid clickable-row"
                   @click="openRecord('Cliente', customer)"
@@ -3224,6 +3461,11 @@ onMounted(async () => {
                 <span>{{ customer.frequency }}<small>{{ customer.partners.join(', ') || 'Sem parceiro vinculado' }}</small></span>
               </article>
             </div>
+            <div class="pager">
+              <button :disabled="pagination.masterCustomers.page === 0" type="button" @click="changePage('masterCustomers', -1)">Anterior</button>
+              <span>Página {{ pagination.masterCustomers.page + 1 }} de {{ listTotalPages('masterCustomers') }}</span>
+              <button :disabled="pagination.masterCustomers.page + 1 >= listTotalPages('masterCustomers')" type="button" @click="changePage('masterCustomers', 1)">Próxima</button>
+            </div>
           </section>
         </section>
 
@@ -3231,7 +3473,24 @@ onMounted(async () => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Oficinas parceiras</h2>
-              <span>Faturamento, taxa e volume operacional</span>
+              <span>{{ listTotal('masterWorkshops') }} oficinas</span>
+            </div>
+            <div class="filters">
+              <input v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou admin" type="search" @input="resetListPage('masterWorkshops')"/>
+              <select v-model.number="pagination.masterWorkshops.size" @change="resetListPage('masterWorkshops')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.masterWorkshops.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="gross">Ordenar por faturamento</option>
+                <option value="feeAmount">Ordenar por taxa</option>
+              </select>
+              <select v-model="pagination.masterWorkshops.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
               <div class="data-table-header partner-grid">
@@ -3242,7 +3501,7 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="partner in workshopPartners"
+                  v-for="partner in listRows('masterWorkshops')"
                   :key="partner.id"
                   class="data-table-row partner-grid clickable-row"
                   @click="openRecord('Oficina parceira', partner)"
@@ -3253,6 +3512,11 @@ onMounted(async () => {
                 <strong>R$ {{ money(partner.feeAmount) }}</strong>
                 <span class="badge">{{ partner.status }}</span>
               </article>
+            </div>
+            <div class="pager">
+              <button :disabled="pagination.masterWorkshops.page === 0" type="button" @click="changePage('masterWorkshops', -1)">Anterior</button>
+              <span>Página {{ pagination.masterWorkshops.page + 1 }} de {{ listTotalPages('masterWorkshops') }}</span>
+              <button :disabled="pagination.masterWorkshops.page + 1 >= listTotalPages('masterWorkshops')" type="button" @click="changePage('masterWorkshops', 1)">Próxima</button>
             </div>
           </section>
         </section>
@@ -4285,57 +4549,97 @@ onMounted(async () => {
           </section>
         </section>
 
-        <aside v-if="selectedRecord" class="detail-drawer">
-          <div class="detail-drawer-heading">
-            <div>
-              <span>{{ selectedRecordType }}</span>
-              <h2>
-                {{ selectedRecord.name || selectedRecord.fullName || selectedRecord.plate || selectedRecord.status }}
-              </h2>
+        <div v-if="selectedRecord" class="detail-modal-backdrop" @click.self="closeRecord">
+          <section class="detail-modal" role="dialog" aria-modal="true">
+            <div class="detail-drawer-heading">
+              <div>
+                <span>{{ selectedRecordType }}</span>
+                <h2>
+                  {{ selectedRecord.name || selectedRecord.fullName || selectedRecord.plate || selectedRecord.status }}
+                </h2>
+              </div>
+              <button class="icon-button" type="button" @click="closeRecord">
+                <X :size="18"/>
+              </button>
             </div>
-            <button class="icon-button" type="button" @click="selectedRecord = null">
-              <X :size="18"/>
-            </button>
-          </div>
-          <dl>
-            <template v-for="(value, key) in selectedRecord" :key="key">
-              <dt>{{ key }}</dt>
-              <dd>{{ typeof value === 'object' ? JSON.stringify(value) : value }}</dd>
-            </template>
-          </dl>
-          <div class="detail-actions">
-            <button v-if="selectedRecordType === 'Cliente'" class="secondary-button" type="button" @click="editCustomer(selectedRecord)">
-              Editar cliente
-            </button>
-            <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button" @click="editVehicle(selectedRecord)">
-              Editar veículo
-            </button>
-            <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button" @click="editPart(selectedRecord)">
-              Editar peça
-            </button>
-            <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button" @click="editService(selectedRecord)">
-              Editar serviço
-            </button>
-            <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
-              Editar usuário
-            </button>
-            <button v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
-              Editar funcionário
-            </button>
-            <button v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button" @click="editStoreQuote(selectedRecord)">
-              Editar carrinho
-            </button>
-            <button v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button" @click="addCustomerPartRequest(selectedRecord)">
-              Adicionar à solicitação
-            </button>
-            <button v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button" @click="requestStoreQuote(selectedRecord)">
-              Solicitar orçamento
-            </button>
-            <button v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button" @click="contactWorkshop(selectedRecord)">
-              Contatar oficina
-            </button>
-          </div>
-        </aside>
+
+            <form v-if="isCustomerDetail" class="modal-form" @submit.prevent="saveDetailModal">
+              <input v-model="modalDraft.customer.name" placeholder="Nome"/>
+              <input v-model="modalDraft.customer.document" placeholder="CPF/CNPJ"/>
+              <input v-model="modalDraft.customer.phone" placeholder="Telefone"/>
+              <input v-model="modalDraft.customer.email" placeholder="E-mail" type="email"/>
+              <input v-model="modalDraft.customer.address.street" placeholder="Rua"/>
+              <input v-model="modalDraft.customer.address.number" placeholder="Número"/>
+              <input v-model="modalDraft.customer.address.neighborhood" placeholder="Bairro"/>
+              <input v-model="modalDraft.customer.address.city" placeholder="Cidade"/>
+              <input v-model="modalDraft.customer.address.state" maxlength="2" placeholder="UF"/>
+              <input v-model="modalDraft.customer.address.zipCode" placeholder="CEP"/>
+              <input v-model="modalDraft.customer.address.complement" placeholder="Complemento"/>
+              <label class="check-row">
+                <input v-model="modalDraft.customer.active" type="checkbox"/>
+                <span>Cliente ativo</span>
+              </label>
+              <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
+                Salvar alterações
+              </button>
+            </form>
+
+            <form v-else-if="isWorkshopDetail" class="modal-form" @submit.prevent="saveDetailModal">
+              <input v-model="modalDraft.partner.companyName" placeholder="Nome da oficina"/>
+              <input v-model="modalDraft.partner.fullName" placeholder="Responsável"/>
+              <label class="check-row">
+                <input v-model="modalDraft.partner.active" type="checkbox"/>
+                <span>Oficina ativa</span>
+              </label>
+              <div class="modal-readonly-grid">
+                <span>Faturamento bruto<strong>R$ {{ money(selectedRecord.gross) }}</strong></span>
+                <span>Taxa AutoCare Hub<strong>{{ selectedRecord.feeRateLabel || '-' }}</strong></span>
+                <span>Valor líquido<strong>R$ {{ money(selectedRecord.net) }}</strong></span>
+                <span>Status<strong>{{ selectedRecord.status || 'Ativa' }}</strong></span>
+              </div>
+              <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
+                Salvar alterações
+              </button>
+            </form>
+
+            <dl v-else>
+              <template v-for="(value, key) in selectedRecord" :key="key">
+                <dt>{{ key }}</dt>
+                <dd>{{ typeof value === 'object' ? JSON.stringify(value) : value }}</dd>
+              </template>
+            </dl>
+
+            <div class="detail-actions">
+              <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button" @click="editVehicle(selectedRecord)">
+                Editar veículo
+              </button>
+              <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button" @click="editPart(selectedRecord)">
+                Editar peça
+              </button>
+              <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button" @click="editService(selectedRecord)">
+                Editar serviço
+              </button>
+              <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+                Editar usuário
+              </button>
+              <button v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+                Editar funcionário
+              </button>
+              <button v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button" @click="editStoreQuote(selectedRecord)">
+                Editar carrinho
+              </button>
+              <button v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button" @click="addCustomerPartRequest(selectedRecord)">
+                Adicionar à solicitação
+              </button>
+              <button v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button" @click="requestStoreQuote(selectedRecord)">
+                Solicitar orçamento
+              </button>
+              <button v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button" @click="contactWorkshop(selectedRecord)">
+                Contatar oficina
+              </button>
+            </div>
+          </section>
+        </div>
 
         <div v-if="loading" class="loading-bar">Carregando dados...</div>
       </section>
