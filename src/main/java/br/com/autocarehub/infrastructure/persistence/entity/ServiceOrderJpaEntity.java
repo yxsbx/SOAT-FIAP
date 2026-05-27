@@ -21,30 +21,43 @@ public class ServiceOrderJpaEntity {
 
     @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<ServiceOrderServiceJpaEntity> services = new LinkedHashSet<>();
+
     @OneToMany(mappedBy = "serviceOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<ServiceOrderPartJpaEntity> parts = new LinkedHashSet<>();
+
     @Id
     private UUID id;
+
     @Column(name = "customer_id", nullable = false)
     private UUID customerId;
+
     @Column(name = "vehicle_id", nullable = false)
     private UUID vehicleId;
+
     @Column(nullable = false, length = 30)
     private String status;
+
     @Column(name = "diagnostic_notes", nullable = false, length = 2000)
     private String diagnosticNotes;
+
     @Column(name = "total_amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
     @Column(name = "budget_generated_at")
     private LocalDateTime budgetGeneratedAt;
+
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
+
     @Column(name = "started_at")
     private LocalDateTime startedAt;
+
     @Column(name = "finished_at")
     private LocalDateTime finishedAt;
+
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
 

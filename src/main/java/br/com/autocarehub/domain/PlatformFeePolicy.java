@@ -12,7 +12,8 @@ public final class PlatformFeePolicy {
 
     public static Result calculate(BigDecimal monthlyGrossRevenue) {
         Tier tier = resolveTier(monthlyGrossRevenue);
-        BigDecimal feeAmount = monthlyGrossRevenue.multiply(tier.rate()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal feeAmount =
+                monthlyGrossRevenue.multiply(tier.rate()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal net = monthlyGrossRevenue.subtract(feeAmount).setScale(2, RoundingMode.HALF_UP);
         BigDecimal nextTierGap =
                 tier.nextStartsAt() == null
@@ -21,7 +22,8 @@ public final class PlatformFeePolicy {
                         .subtract(monthlyGrossRevenue)
                         .max(BigDecimal.ZERO)
                         .setScale(2, RoundingMode.HALF_UP);
-        return new Result(monthlyGrossRevenue, tier.rate(), feeAmount, net, nextTierGap, tier.nextRate());
+        return new Result(
+                monthlyGrossRevenue, tier.rate(), feeAmount, net, nextTierGap, tier.nextRate());
     }
 
     private static Tier resolveTier(BigDecimal gross) {

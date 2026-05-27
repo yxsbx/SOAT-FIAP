@@ -21,20 +21,21 @@ public final class CustomerJpaMapper {
         entity.setEmail(customer.email());
         entity.setActive(customer.active());
         entity.setCreatedAt(customer.createdAt());
-        customer.address();
-        entity.setAddressStreet(customer.address().street());
-        entity.setAddressNumber(customer.address().number());
-        entity.setAddressComplement(customer.address().complement());
-        entity.setAddressNeighborhood(customer.address().neighborhood());
-        entity.setAddressCity(customer.address().city());
-        entity.setAddressState(customer.address().state());
-        entity.setAddressZipCode(customer.address().zipCode());
+        Address address = customer.address();
+        if (address != null) {
+            entity.setAddressStreet(address.street());
+            entity.setAddressNumber(address.number());
+            entity.setAddressComplement(address.complement());
+            entity.setAddressNeighborhood(address.neighborhood());
+            entity.setAddressCity(address.city());
+            entity.setAddressState(address.state());
+            entity.setAddressZipCode(address.zipCode());
+        }
         return entity;
     }
 
     public static Customer toDomain(CustomerJpaEntity entity) {
         Address address = getAddress(entity);
-        assert address != null;
         return new Customer(
                 entity.getId(),
                 entity.getName(),

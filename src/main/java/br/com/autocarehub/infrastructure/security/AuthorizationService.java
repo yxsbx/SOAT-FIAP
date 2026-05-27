@@ -3,12 +3,11 @@ package br.com.autocarehub.infrastructure.security;
 import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.domain.Document;
-
-import java.util.UUID;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Service("authorizationService")
 public class AuthorizationService {

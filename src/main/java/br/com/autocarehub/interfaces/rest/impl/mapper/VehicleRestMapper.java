@@ -57,10 +57,9 @@ public final class VehicleRestMapper {
 
     public static VehicleListResponse toListResponse(
             List<Vehicle> vehicles, Integer page, Integer size) {
-        return
-                new VehicleListResponse(
-                        RestMapperSupport.page(vehicles, page, size).stream()
-                                .map(VehicleRestMapper::toResponse)
-                                .toList());
+        return new VehicleListResponse(
+                RestMapperSupport.page(vehicles, page, size).stream()
+                        .map(VehicleRestMapper::toResponse)
+                        .toList());
     }
 }

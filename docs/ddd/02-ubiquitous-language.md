@@ -1,6 +1,7 @@
 # Ubiquitous Language
 
-Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por negócio, desenvolvimento, documentação e testes.
+Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por
+negócio, desenvolvimento, documentação e testes.
 
 ## Cliente
 
@@ -19,7 +20,8 @@ diagnostico, serviços, peças, orçamento, status e datas relevantes do fluxo.
 
 ## Servico
 
-Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome, descrição, preco base, tempo estimado e status ativo/inativo.
+Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome,
+descrição, preco base, tempo estimado e status ativo/inativo.
 
 ## Peça/Insumo
 

@@ -73,7 +73,6 @@ public final class CustomerRestMapper {
         if (address == null) {
             return null;
         }
-        assert address.getComplement() != null;
         return new br.com.autocarehub.domain.Address(
                 address.getStreet(),
                 address.getNumber(),

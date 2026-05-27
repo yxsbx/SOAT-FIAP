@@ -1,11 +1,11 @@
 package br.com.autocarehub.domain;
 
-import java.util.Objects;
+import org.springframework.lang.Nullable;
 
 public record Address(
         String street,
         String number,
-        String complement,
+        @Nullable String complement,
         String neighborhood,
         String city,
         String state,
@@ -14,7 +14,7 @@ public record Address(
     public Address {
         street = DomainValidation.requireText(street, "Street is required", 120);
         number = DomainValidation.requireText(number, "Number is required", 20);
-        complement = Objects.requireNonNull(DomainValidation.optionalText(complement));
+        complement = DomainValidation.optionalText(complement);
         neighborhood = DomainValidation.requireText(neighborhood, "Neighborhood is required", 80);
         city = DomainValidation.requireText(city, "City is required", 80);
         state = DomainValidation.requireState(state);
