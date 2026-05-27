@@ -437,8 +437,8 @@ function scrollToSection(id) {
             A demo pública é oferecida apenas para oficinas e lojas de peças. O cliente acessa
             sua área depois do cadastro, com busca por CEP e acompanhamento do próprio veículo.
           </p>
+          <Smartphone :size="88" class="mobile-band-icon"/>
         </div>
-        <Smartphone :size="88" class="mobile-band-icon"/>
       </section>
     </template>
   </main>

@@ -3514,7 +3514,7 @@ onMounted(async () => {
               <button :disabled="pagination.masterCustomers.page === 0" type="button"
                       @click="changePage('masterCustomers', -1)">Anterior
               </button>
-              <span>Página {{ pagination.masterCustomers.page + 1 }} de {{ listTotalPages('masterCustomers') }}</span>
+              <span>{{ pagination.masterCustomers.page + 1 }} de {{ listTotalPages('masterCustomers') }}</span>
               <button :disabled="pagination.masterCustomers.page + 1 >= listTotalPages('masterCustomers')" type="button"
                       @click="changePage('masterCustomers', 1)">Próxima
               </button>
@@ -3578,7 +3578,7 @@ onMounted(async () => {
               <button :disabled="pagination.masterWorkshops.page === 0" type="button"
                       @click="changePage('masterWorkshops', -1)">Anterior
               </button>
-              <span>Página {{ pagination.masterWorkshops.page + 1 }} de {{ listTotalPages('masterWorkshops') }}</span>
+              <span>{{ pagination.masterWorkshops.page + 1 }} de {{ listTotalPages('masterWorkshops') }}</span>
               <button :disabled="pagination.masterWorkshops.page + 1 >= listTotalPages('masterWorkshops')" type="button"
                       @click="changePage('masterWorkshops', 1)">Próxima
               </button>
@@ -3959,7 +3959,7 @@ onMounted(async () => {
             <div class="pager">
               <button :disabled="pagination.users.page === 0" type="button" @click="changePage('users', -1)">Anterior
               </button>
-              <span>Página {{ pagination.users.page + 1 }} de {{ listTotalPages('users') }}</span>
+              <span>{{ pagination.users.page + 1 }} de {{ listTotalPages('users') }}</span>
               <button :disabled="pagination.users.page + 1 >= listTotalPages('users')" type="button"
                       @click="changePage('users', 1)">Próxima
               </button>
@@ -4047,7 +4047,7 @@ onMounted(async () => {
               <button :disabled="pagination.customers.page === 0" type="button" @click="changePage('customers', -1)">
                 Anterior
               </button>
-              <span>Página {{ pagination.customers.page + 1 }} de {{ listTotalPages('customers') }}</span>
+              <span>{{ pagination.customers.page + 1 }} de {{ listTotalPages('customers') }}</span>
               <button :disabled="pagination.customers.page + 1 >= listTotalPages('customers')" type="button"
                       @click="changePage('customers', 1)">Próxima
               </button>
@@ -4131,7 +4131,7 @@ onMounted(async () => {
               <button :disabled="pagination.vehicles.page === 0" type="button" @click="changePage('vehicles', -1)">
                 Anterior
               </button>
-              <span>Página {{ pagination.vehicles.page + 1 }} de {{ listTotalPages('vehicles') }}</span>
+              <span>{{ pagination.vehicles.page + 1 }} de {{ listTotalPages('vehicles') }}</span>
               <button :disabled="pagination.vehicles.page + 1 >= listTotalPages('vehicles')" type="button"
                       @click="changePage('vehicles', 1)">Próxima
               </button>
@@ -4314,7 +4314,7 @@ onMounted(async () => {
             <div class="pager">
               <button :disabled="pagination.parts.page === 0" type="button" @click="changePage('parts', -1)">Anterior
               </button>
-              <span>Página {{ pagination.parts.page + 1 }} de {{ listTotalPages('parts') }}</span>
+              <span>{{ pagination.parts.page + 1 }} de {{ listTotalPages('parts') }}</span>
               <button :disabled="pagination.parts.page + 1 >= listTotalPages('parts')" type="button"
                       @click="changePage('parts', 1)">Próxima
               </button>
@@ -4615,7 +4615,7 @@ onMounted(async () => {
               <button :disabled="pagination.serviceOrders.page === 0" type="button"
                       @click="changePage('serviceOrders', -1)">Anterior
               </button>
-              <span>Página {{ pagination.serviceOrders.page + 1 }} de {{ listTotalPages('serviceOrders') }}</span>
+              <span>{{ pagination.serviceOrders.page + 1 }} de {{ listTotalPages('serviceOrders') }}</span>
               <button :disabled="pagination.serviceOrders.page + 1 >= listTotalPages('serviceOrders')" type="button"
                       @click="changePage('serviceOrders', 1)">Próxima
               </button>
@@ -4695,7 +4695,7 @@ onMounted(async () => {
               <button :disabled="pagination.services.page === 0" type="button" @click="changePage('services', -1)">
                 Anterior
               </button>
-              <span>Página {{ pagination.services.page + 1 }} de {{ listTotalPages('services') }}</span>
+              <span>{{ pagination.services.page + 1 }} de {{ listTotalPages('services') }}</span>
               <button :disabled="pagination.services.page + 1 >= listTotalPages('services')" type="button"
                       @click="changePage('services', 1)">Próxima
               </button>

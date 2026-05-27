@@ -106,9 +106,6 @@ async function submit() {
     <section class="login-content">
       <div class="login-panel">
         <section class="login-copy">
-          <div class="brand-mark login-hero-mark">
-            <Wrench :size="24"/>
-          </div>
           <h1>Acesse sua área</h1>
           <p>Use login manual ou escolha um perfil acadêmico de demonstração.</p>
 

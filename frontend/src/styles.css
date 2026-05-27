@@ -151,7 +151,6 @@ textarea:focus-visible {
     border: 1px solid #d8e7f3;
     border-radius: 22px;
     background: rgba(255, 255, 255, 0.9);
-    box-shadow: var(--shadow-lg);
 }
 
 .login-copy,
@@ -3120,13 +3119,18 @@ textarea:focus-visible {
     border-radius: 18px;
     padding: 30px;
     color: #ffffff;
-    background: linear-gradient(135deg, #064e9e, #06b6d4);
 }
 
-.preview-mobile-band span,
-.preview-mobile-band h2,
+.preview-mobile-band span {
+    color: #0ea5e9;
+}
+
+.preview-mobile-band h2 {
+    color: #102a43;
+}
+
 .preview-mobile-band p {
-    color: #ffffff;
+    color: #506982;
 }
 
 .preview-mobile-band ul {
@@ -3152,7 +3156,7 @@ textarea:focus-visible {
     border: 1px solid rgba(255, 255, 255, 0.22);
     border-radius: 16px;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, #064e9e, #06b6d4);
 }
 
 .mobile-experience-panel p {
@@ -3955,10 +3959,6 @@ textarea:focus-visible {
         gap: 10px;
         border-radius: 18px;
         padding: 14px;
-    }
-
-    .login-hero-mark {
-        display: none;
     }
 
     .login-panel h1 {
