@@ -2,17 +2,18 @@ package br.com.autocarehub.application.usecase.demo;
 
 import br.com.autocarehub.application.repository.DemoLeadRepository;
 import br.com.autocarehub.domain.DemoLead;
+
 import java.util.List;
 
 public class ListDemoLeadsUseCase {
 
-  private final DemoLeadRepository repository;
+    private final DemoLeadRepository repository;
 
-  public ListDemoLeadsUseCase(DemoLeadRepository repository) {
-    this.repository = repository;
-  }
+    public ListDemoLeadsUseCase(DemoLeadRepository repository) {
+        this.repository = repository;
+    }
 
-  public List<DemoLead> execute() {
-    return repository.findAll();
-  }
+    public List<DemoLead> execute() {
+        return repository.findAll();
+    }
 }

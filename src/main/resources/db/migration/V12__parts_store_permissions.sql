@@ -1,6 +1,6 @@
 UPDATE users
 SET employee_sub_role = 'ATTENDANT',
-    permissions = 'MANAGE_STOCK,CREATE_BUDGET,VIEW_STATS'
+    permissions       = 'MANAGE_STOCK,CREATE_BUDGET,VIEW_STATS'
 WHERE username = 'loja.funcionario@autocarehub.com';
 
 UPDATE users

@@ -4,32 +4,34 @@ import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.domain.Address;
 import br.com.autocarehub.domain.Customer;
+
 import java.util.UUID;
 
 public class UpdateCustomerUseCase {
 
-  private final CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
 
-  public UpdateCustomerUseCase(CustomerRepository customerRepository) {
-    this.customerRepository = customerRepository;
-  }
-
-  public Customer execute(Command command) {
-    Customer customer =
-        customerRepository
-            .findById(command.customerId())
-            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-    customer.rename(command.name());
-    customer.updateContact(command.phone(), command.email());
-    customer.updateAddress(command.address());
-    if (command.active()) {
-      customer.activate();
-    } else {
-      customer.deactivate();
+    public UpdateCustomerUseCase(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
-    return customerRepository.save(customer);
-  }
 
-  public record Command(
-      UUID customerId, String name, String phone, String email, Address address, boolean active) {}
+    public Customer execute(Command command) {
+        Customer customer =
+                customerRepository
+                        .findById(command.customerId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        customer.rename(command.name());
+        customer.updateContact(command.phone(), command.email());
+        customer.updateAddress(command.address());
+        if (command.active()) {
+            customer.activate();
+        } else {
+            customer.deactivate();
+        }
+        return customerRepository.save(customer);
+    }
+
+    public record Command(
+            UUID customerId, String name, String phone, String email, Address address, boolean active) {
+    }
 }

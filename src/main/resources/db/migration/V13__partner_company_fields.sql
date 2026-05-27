@@ -4,20 +4,21 @@ ALTER TABLE users
 
 UPDATE users
 SET company_name = CASE
-        WHEN profile_type = 'WORKSHOP_ADMIN' THEN 'Oficina Central AutoCare'
-        WHEN profile_type = 'PARTS_STORE_ADMIN' THEN 'Loja peças Prime'
-        WHEN profile_type = 'WORKSHOP_EMPLOYEE' THEN 'Oficina Central AutoCare'
-        WHEN profile_type = 'PARTS_STORE_EMPLOYEE' THEN 'Loja peças Prime'
-        WHEN profile_type = 'MASTER_ADMIN' THEN 'AutoCare Hub'
-        ELSE ''
+                       WHEN profile_type = 'WORKSHOP_ADMIN' THEN 'Oficina Central AutoCare'
+                       WHEN profile_type = 'PARTS_STORE_ADMIN' THEN 'Loja peças Prime'
+                       WHEN profile_type = 'WORKSHOP_EMPLOYEE' THEN 'Oficina Central AutoCare'
+                       WHEN profile_type = 'PARTS_STORE_EMPLOYEE' THEN 'Loja peças Prime'
+                       WHEN profile_type = 'MASTER_ADMIN' THEN 'AutoCare Hub'
+                       ELSE ''
     END,
     company_type = CASE
-        WHEN profile_type IN ('WORKSHOP_ADMIN', 'WORKSHOP_EMPLOYEE') THEN 'WORKSHOP'
-        WHEN profile_type IN ('PARTS_STORE_ADMIN', 'PARTS_STORE_EMPLOYEE') THEN 'PARTS_STORE'
-        WHEN profile_type = 'MASTER_ADMIN' THEN 'PLATFORM'
-        ELSE ''
-    END;
+                       WHEN profile_type IN ('WORKSHOP_ADMIN', 'WORKSHOP_EMPLOYEE') THEN 'WORKSHOP'
+                       WHEN profile_type IN ('PARTS_STORE_ADMIN', 'PARTS_STORE_EMPLOYEE') THEN 'PARTS_STORE'
+                       WHEN profile_type = 'MASTER_ADMIN' THEN 'PLATFORM'
+                       ELSE ''
+        END;
 
 ALTER TABLE users
     ALTER COLUMN company_name SET NOT NULL,
-    ALTER COLUMN company_type SET NOT NULL;
+ALTER
+COLUMN company_type SET NOT NULL;

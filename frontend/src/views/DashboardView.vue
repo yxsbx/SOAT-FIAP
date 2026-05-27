@@ -642,15 +642,15 @@ const estimatedOrderTotal = computed(() => {
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
-  ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
+    ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
 );
 
 const criticalParts = computed(() =>
-  data.parts.filter((part) => (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock),
+    data.parts.filter((part) => (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock),
 );
 
 const reservedParts = computed(() =>
-  data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0),
+    data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0),
 );
 
 const stockStatusLabels = {
@@ -730,10 +730,10 @@ const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets)
 
 const availableHomeWidgetDefinitions = computed(() =>
     (isMasterAdmin.value
-      ? masterHomeWidgetDefinitions.value
-      : isPartsStoreProfile.value
-        ? storeHomeWidgetDefinitions.value
-        : homeWidgetDefinitions.value).filter(
+        ? masterHomeWidgetDefinitions.value
+        : isPartsStoreProfile.value
+            ? storeHomeWidgetDefinitions.value
+            : homeWidgetDefinitions.value).filter(
         (widget) =>
             widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
     ),
@@ -1206,7 +1206,10 @@ function employeeMetrics(user) {
     ];
   }
   return [
-    {label: 'Ordens em aberto', value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length},
+    {
+      label: 'Ordens em aberto',
+      value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length
+    },
     {label: 'Orçamentos enviados', value: sent},
     {label: 'Serviços concluídos', value: completed},
     {label: 'Permissões ativas', value: user.permissions?.length || 0},
@@ -1622,8 +1625,16 @@ async function loadDashboard() {
 
     const requests = await Promise.allSettled([
       resources.currentUser(),
-      auth.role === 'ADMIN' ? resources.users({active: pagination.users.active, role: pagination.users.role, profileType: pagination.users.profileType, search: pagination.users.search}) : Promise.resolve(null),
-      auth.role !== 'CUSTOMER' ? resources.customers({active: pagination.customers.active, size: API_MAX_PAGE_SIZE}) : Promise.resolve(null),
+      auth.role === 'ADMIN' ? resources.users({
+        active: pagination.users.active,
+        role: pagination.users.role,
+        profileType: pagination.users.profileType,
+        search: pagination.users.search
+      }) : Promise.resolve(null),
+      auth.role !== 'CUSTOMER' ? resources.customers({
+        active: pagination.customers.active,
+        size: API_MAX_PAGE_SIZE
+      }) : Promise.resolve(null),
       resources.vehicles({active: pagination.vehicles.active, size: API_MAX_PAGE_SIZE}),
       resources.services({active: pagination.services.active, size: API_MAX_PAGE_SIZE}),
       resources.parts({active: pagination.parts.active, lowStock: pagination.parts.lowStock, size: API_MAX_PAGE_SIZE}),
@@ -1791,13 +1802,13 @@ async function createOrderFromWizard(createBudgetNow) {
         },
       ],
       parts: forms.orderWizard.partId
-        ? [
+          ? [
             {
               partId: forms.orderWizard.partId,
               quantity: Number(forms.orderWizard.partQuantity),
             },
           ]
-        : [],
+          : [],
       generateBudget: createBudgetNow,
     });
 
@@ -2668,7 +2679,8 @@ onMounted(async () => {
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
             <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
-            <button v-if="!isCustomerProfile" class="secondary-button" type="button" @click="homeSettingsOpen = !homeSettingsOpen">
+            <button v-if="!isCustomerProfile" class="secondary-button" type="button"
+                    @click="homeSettingsOpen = !homeSettingsOpen">
               <Plus :size="17"/>
               Personalizar home
             </button>
@@ -2701,22 +2713,26 @@ onMounted(async () => {
                 <span>Orçamentos e retirada</span>
               </div>
               <div class="customer-alert-list">
-                <button v-for="order in customerBudgetAlerts" :key="`budget-${order.id}`" type="button" @click="openRecord('Orçamento pendente', order)">
+                <button v-for="order in customerBudgetAlerts" :key="`budget-${order.id}`" type="button"
+                        @click="openRecord('Orçamento pendente', order)">
                   <AlertTriangle :size="18"/>
                   <span>Orçamento pendente de aprovação</span>
                   <strong>R$ {{ money(order.totalAmount) }}</strong>
                 </button>
-                <button v-for="order in customerReadyAlerts" :key="`ready-${order.id}`" type="button" @click="openRecord('Veículo pronto', order)">
+                <button v-for="order in customerReadyAlerts" :key="`ready-${order.id}`" type="button"
+                        @click="openRecord('Veículo pronto', order)">
                   <CheckCircle2 :size="18"/>
                   <span>Veículo pronto para retirada</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
-                <button v-for="order in customerFinishedAlerts" :key="`finished-${order.id}`" type="button" @click="openRecord('Veículo concluído', order)">
+                <button v-for="order in customerFinishedAlerts" :key="`finished-${order.id}`" type="button"
+                        @click="openRecord('Veículo concluído', order)">
                   <CheckCircle2 :size="18"/>
                   <span>Atendimento concluído</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
-                <p v-if="!customerBudgetAlerts.length && !customerReadyAlerts.length && !customerFinishedAlerts.length" class="empty-state">Nenhum alerta ativo.</p>
+                <p v-if="!customerBudgetAlerts.length && !customerReadyAlerts.length && !customerFinishedAlerts.length"
+                   class="empty-state">Nenhum alerta ativo.</p>
               </div>
             </article>
           </section>
@@ -2741,7 +2757,9 @@ onMounted(async () => {
               >
                 <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
-                <span>{{ order.services?.length || 0 }} serviços<small>{{ order.parts?.length || 0 }} peças</small></span>
+                <span>{{ order.services?.length || 0 }} serviços<small>{{
+                    order.parts?.length || 0
+                  }} peças</small></span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
             </div>
@@ -2924,7 +2942,8 @@ onMounted(async () => {
             </div>
           </section>
 
-          <section v-if="!isPartsStoreProfile && !isMasterAdmin && !isCustomerProfile" aria-label="Status atual dos veículos" class="vehicle-status-grid">
+          <section v-if="!isPartsStoreProfile && !isMasterAdmin && !isCustomerProfile"
+                   aria-label="Status atual dos veículos" class="vehicle-status-grid">
             <button
                 v-for="item in vehicleStatusWidgets"
                 :key="item.label"
@@ -3022,10 +3041,14 @@ onMounted(async () => {
             <article class="selected-record">
               <BarChart3 :size="20"/>
               <strong>
-                {{ billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor tier atingida' }}
+                {{
+                  billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor tier atingida'
+                }}
               </strong>
               <span>
-                {{ billingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.' }}
+                {{
+                  billingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.'
+                }}
               </span>
             </article>
           </section>
@@ -3037,10 +3060,12 @@ onMounted(async () => {
               <h2>{{ forms.user.id ? 'Editar funcionário' : 'Novo funcionário' }}</h2>
               <span>Role geral, subrole e permissões da oficina</span>
             </div>
-            <form class="form-grid" @submit.prevent="forms.user.role = 'EMPLOYEE'; forms.user.profileType = 'WORKSHOP_EMPLOYEE'; saveUser()">
+            <form class="form-grid"
+                  @submit.prevent="forms.user.role = 'EMPLOYEE'; forms.user.profileType = 'WORKSHOP_EMPLOYEE'; saveUser()">
               <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
               <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
+                     required type="password"/>
               <select v-model="forms.user.employeeSubRole">
                 <option value="MECHANIC">Mecânico</option>
                 <option value="ATTENDANT">Atendente</option>
@@ -3090,7 +3115,8 @@ onMounted(async () => {
                 <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
                 <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar</button>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar
+                </button>
               </article>
             </div>
           </section>
@@ -3183,10 +3209,14 @@ onMounted(async () => {
             <article class="selected-record">
               <BarChart3 :size="20"/>
               <strong>
-                {{ storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor tier atingida' }}
+                {{
+                  storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor tier atingida'
+                }}
               </strong>
               <span>
-                {{ storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.' }}
+                {{
+                  storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.'
+                }}
               </span>
             </article>
           </section>
@@ -3234,7 +3264,8 @@ onMounted(async () => {
             <form class="form-grid" @submit.prevent="saveStoreEmployee">
               <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
               <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
+                     required type="password"/>
               <select v-model="forms.user.employeeSubRole">
                 <option value="ATTENDANT">Atendente</option>
                 <option value="UNSPECIFIED">Funcionário sem especificação</option>
@@ -3280,10 +3311,13 @@ onMounted(async () => {
                   @click="openRecord('Funcionário da loja', employee)"
               >
                 <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
-                <span>{{ employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole] }}</span>
+                <span>{{
+                    employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole]
+                  }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
                 <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar</button>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar
+                </button>
               </article>
             </div>
           </section>
@@ -3297,7 +3331,9 @@ onMounted(async () => {
               <article v-for="employee in storeEmployees" :key="`store-metrics-${employee.id}`" class="employee-card">
                 <div>
                   <strong>{{ employee.fullName }}</strong>
-                  <span>{{ employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole] }}</span>
+                  <span>{{
+                      employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole]
+                    }}</span>
                 </div>
                 <dl>
                   <template v-for="metric in storeEmployeeMetrics(employee)" :key="metric.label">
@@ -3350,11 +3386,13 @@ onMounted(async () => {
               <select v-model="forms.storeQuote.partId">
                 <option value="">Selecione uma peça</option>
                 <option v-for="part in data.parts" :key="part.id" :value="part.id">
-                  {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{ part.availableQuantity ?? part.stockQuantity }} un.
+                  {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{ part.availableQuantity ?? part.stockQuantity }}
+                  un.
                 </option>
               </select>
               <input v-model.number="forms.storeQuote.quantity" min="1" placeholder="Quantidade" type="number"/>
-              <input v-model.number="forms.storeQuote.quotedPrice" min="0" placeholder="Preço negociado" step="0.01" type="number"/>
+              <input v-model.number="forms.storeQuote.quotedPrice" min="0" placeholder="Preço negociado" step="0.01"
+                     type="number"/>
               <button class="secondary-button" type="button" @click="addStoreQuoteItem">
                 <Plus :size="18"/>
                 Adicionar peça
@@ -3408,10 +3446,18 @@ onMounted(async () => {
                 </span>
                 <strong>R$ {{ money(storeQuoteTotal(quote)) }}</strong>
                 <div class="row-actions">
-                  <button class="secondary-button compact-action" type="button" @click.stop="editStoreQuote(quote)">Editar</button>
-                  <button v-if="quote.status === 'DRAFT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'SENT')">Enviar</button>
-                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'APPROVED')">Aprovar</button>
-                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button" @click.stop="updateStoreQuoteStatus(quote, 'REFUSED')">Recusar</button>
+                  <button class="secondary-button compact-action" type="button" @click.stop="editStoreQuote(quote)">
+                    Editar
+                  </button>
+                  <button v-if="quote.status === 'DRAFT'" class="secondary-button compact-action" type="button"
+                          @click.stop="updateStoreQuoteStatus(quote, 'SENT')">Enviar
+                  </button>
+                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button"
+                          @click.stop="updateStoreQuoteStatus(quote, 'APPROVED')">Aprovar
+                  </button>
+                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button"
+                          @click.stop="updateStoreQuoteStatus(quote, 'REFUSED')">Recusar
+                  </button>
                 </div>
               </article>
             </div>
@@ -3425,7 +3471,8 @@ onMounted(async () => {
               <span>{{ listTotal('masterCustomers') }} clientes</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.masterCustomers.search" placeholder="Buscar cliente, documento ou parceiro" type="search" @input="resetListPage('masterCustomers')"/>
+              <input v-model="pagination.masterCustomers.search" placeholder="Buscar cliente, documento ou parceiro"
+                     type="search" @input="resetListPage('masterCustomers')"/>
               <select v-model.number="pagination.masterCustomers.size" @change="resetListPage('masterCustomers')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -3458,13 +3505,19 @@ onMounted(async () => {
                 <strong>{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong>
                 <span>{{ customer.vehiclesCount }}</span>
                 <strong>R$ {{ money(customer.spent) }}</strong>
-                <span>{{ customer.frequency }}<small>{{ customer.partners.join(', ') || 'Sem parceiro vinculado' }}</small></span>
+                <span>{{ customer.frequency }}<small>{{
+                    customer.partners.join(', ') || 'Sem parceiro vinculado'
+                  }}</small></span>
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.masterCustomers.page === 0" type="button" @click="changePage('masterCustomers', -1)">Anterior</button>
+              <button :disabled="pagination.masterCustomers.page === 0" type="button"
+                      @click="changePage('masterCustomers', -1)">Anterior
+              </button>
               <span>Página {{ pagination.masterCustomers.page + 1 }} de {{ listTotalPages('masterCustomers') }}</span>
-              <button :disabled="pagination.masterCustomers.page + 1 >= listTotalPages('masterCustomers')" type="button" @click="changePage('masterCustomers', 1)">Próxima</button>
+              <button :disabled="pagination.masterCustomers.page + 1 >= listTotalPages('masterCustomers')" type="button"
+                      @click="changePage('masterCustomers', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -3476,7 +3529,8 @@ onMounted(async () => {
               <span>{{ listTotal('masterWorkshops') }} oficinas</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou admin" type="search" @input="resetListPage('masterWorkshops')"/>
+              <input v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou admin" type="search"
+                     @input="resetListPage('masterWorkshops')"/>
               <select v-model.number="pagination.masterWorkshops.size" @change="resetListPage('masterWorkshops')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -3506,17 +3560,28 @@ onMounted(async () => {
                   class="data-table-row partner-grid clickable-row"
                   @click="openRecord('Oficina parceira', partner)"
               >
-                <strong>{{ partner.name }}<small>{{ partner.adminName }} · {{ partner.customersServed }} clientes · {{ partner.vehiclesServed }} veículos</small></strong>
-                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{ money(partner.net) }}</small></span>
-                <span>{{ partner.feeRateLabel }}<small>{{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}</small></span>
+                <strong>{{ partner.name }}<small>{{ partner.adminName }} · {{ partner.customersServed }} clientes ·
+                  {{ partner.vehiclesServed }} veículos</small></strong>
+                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{
+                    money(partner.net)
+                  }}</small></span>
+                <span>{{
+                    partner.feeRateLabel
+                  }}<small>{{
+                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
+                    }}</small></span>
                 <strong>R$ {{ money(partner.feeAmount) }}</strong>
                 <span class="badge">{{ partner.status }}</span>
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.masterWorkshops.page === 0" type="button" @click="changePage('masterWorkshops', -1)">Anterior</button>
+              <button :disabled="pagination.masterWorkshops.page === 0" type="button"
+                      @click="changePage('masterWorkshops', -1)">Anterior
+              </button>
               <span>Página {{ pagination.masterWorkshops.page + 1 }} de {{ listTotalPages('masterWorkshops') }}</span>
-              <button :disabled="pagination.masterWorkshops.page + 1 >= listTotalPages('masterWorkshops')" type="button" @click="changePage('masterWorkshops', 1)">Próxima</button>
+              <button :disabled="pagination.masterWorkshops.page + 1 >= listTotalPages('masterWorkshops')" type="button"
+                      @click="changePage('masterWorkshops', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -3541,9 +3606,17 @@ onMounted(async () => {
                   class="data-table-row partner-grid clickable-row"
                   @click="openRecord('Loja parceira', partner)"
               >
-                <strong>{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{ partner.topProducts }}</small></strong>
-                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{ money(partner.net) }}</small></span>
-                <span>{{ partner.feeRateLabel }}<small>{{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}</small></span>
+                <strong>{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{
+                    partner.topProducts
+                  }}</small></strong>
+                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{
+                    money(partner.net)
+                  }}</small></span>
+                <span>{{
+                    partner.feeRateLabel
+                  }}<small>{{
+                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
+                    }}</small></span>
                 <strong>R$ {{ money(partner.feeAmount) }}</strong>
                 <span class="badge">{{ partner.status }}</span>
               </article>
@@ -3571,7 +3644,9 @@ onMounted(async () => {
                   @click="openRecord('Interessado', lead)"
               >
                 <strong>{{ lead.companyName }}<small>{{ lead.cnpj }} · {{ lead.city || 'Cidade não informada' }}</small></strong>
-                <span>{{ lead.contactName }}<small>{{ lead.email }} · {{ lead.phone }} · {{ lead.message || 'Sem mensagem' }}</small></span>
+                <span>{{ lead.contactName }}<small>{{ lead.email }} · {{
+                    lead.phone
+                  }} · {{ lead.message || 'Sem mensagem' }}</small></span>
                 <span class="badge">{{ lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças' }}</span>
                 <span>{{ new Date(lead.createdAt).toLocaleDateString('pt-BR') }}</span>
               </article>
@@ -3588,9 +3663,11 @@ onMounted(async () => {
             <form class="form-grid" @submit.prevent="saveUser">
               <input v-model="forms.user.fullName" placeholder="Nome do admin" required/>
               <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
+                     required type="password"/>
               <input v-model="forms.user.companyName" placeholder="Empresa vinculada" required/>
-              <select v-model="forms.user.profileType" @change="forms.user.companyType = forms.user.profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE'; forms.user.role = 'ADMIN'">
+              <select v-model="forms.user.profileType"
+                      @change="forms.user.companyType = forms.user.profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE'; forms.user.role = 'ADMIN'">
                 <option value="WORKSHOP_ADMIN">Admin de oficina</option>
                 <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
               </select>
@@ -3717,10 +3794,16 @@ onMounted(async () => {
               >
                 <strong>{{ store.name }}<small>{{ store.location }}</small></strong>
                 <span>R$ {{ money(store.price) }}</span>
-                <span class="badge">{{ store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível' }}</span>
+                <span class="badge">{{
+                    store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível'
+                  }}</span>
                 <div class="row-actions">
-                  <button class="secondary-button compact-action" type="button" @click="openRecord('Contato da loja', store)">Contato</button>
-                  <button class="secondary-button compact-action" type="button" @click="addCustomerPartRequest(selectedCustomerPart, store)">Solicitar</button>
+                  <button class="secondary-button compact-action" type="button"
+                          @click="openRecord('Contato da loja', store)">Contato
+                  </button>
+                  <button class="secondary-button compact-action" type="button"
+                          @click="addCustomerPartRequest(selectedCustomerPart, store)">Solicitar
+                  </button>
                 </div>
               </article>
             </div>
@@ -3742,7 +3825,8 @@ onMounted(async () => {
               </select>
               <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada"/>
               <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada"/>
-              <textarea v-model="forms.customerQuote.problemDescription" placeholder="Descreva o problema do veículo ou observações da compra"></textarea>
+              <textarea v-model="forms.customerQuote.problemDescription"
+                        placeholder="Descreva o problema do veículo ou observações da compra"></textarea>
               <div class="quote-items">
                 <button
                     v-for="(item, index) in forms.customerQuote.items"
@@ -3755,7 +3839,9 @@ onMounted(async () => {
                 </button>
               </div>
               <article class="selected-record">
-                <strong>R$ {{ money(forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0)) }}</strong>
+                <strong>R$ {{
+                    money(forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0))
+                  }}</strong>
                 <span>Simulação de compra. O parceiro pode responder com outro valor.</span>
               </article>
               <button class="primary-button" type="submit">
@@ -3778,7 +3864,8 @@ onMounted(async () => {
             </form>
             <form class="form-grid compact" @submit.prevent="changePassword">
               <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
-              <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required type="password"/>
+              <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required
+                     type="password"/>
               <button :disabled="saving" class="secondary-button" type="submit">Alterar senha</button>
             </form>
           </section>
@@ -3791,7 +3878,8 @@ onMounted(async () => {
             <form class="form-grid" @submit.prevent="saveUser">
               <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
               <input v-model="forms.user.username" placeholder="E-mail de login" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial" required type="password"/>
+              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
+                     required type="password"/>
               <select v-model="forms.user.role">
                 <option value="ADMIN">Administrador</option>
                 <option value="EMPLOYEE">Funcionário</option>
@@ -3823,7 +3911,8 @@ onMounted(async () => {
               <span>{{ listTotal('users') }} contas</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.users.search" placeholder="Buscar usuário" type="search" @input="resetListPage('users')"/>
+              <input v-model="pagination.users.search" placeholder="Buscar usuário" type="search"
+                     @input="resetListPage('users')"/>
               <select v-model.number="pagination.users.size" @change="resetListPage('users')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -3863,13 +3952,17 @@ onMounted(async () => {
                 <span>{{ user.role }}</span>
                 <span>{{ user.profileType }}</span>
                 <span class="badge">{{ user.active ? 'Ativo' : 'Inativo' }}</span>
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(user)">Editar</button>
+                <button class="secondary-button compact-action" type="button" @click.stop="editUser(user)">Editar
+                </button>
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.users.page === 0" type="button" @click="changePage('users', -1)">Anterior</button>
+              <button :disabled="pagination.users.page === 0" type="button" @click="changePage('users', -1)">Anterior
+              </button>
               <span>Página {{ pagination.users.page + 1 }} de {{ listTotalPages('users') }}</span>
-              <button :disabled="pagination.users.page + 1 >= listTotalPages('users')" type="button" @click="changePage('users', 1)">Próxima</button>
+              <button :disabled="pagination.users.page + 1 >= listTotalPages('users')" type="button"
+                      @click="changePage('users', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -3909,7 +4002,8 @@ onMounted(async () => {
               <span>{{ listTotal('customers') }} registros</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.customers.search" placeholder="Buscar cliente, e-mail ou documento" type="search" @input="resetListPage('customers')"/>
+              <input v-model="pagination.customers.search" placeholder="Buscar cliente, e-mail ou documento"
+                     type="search" @input="resetListPage('customers')"/>
               <select v-model.number="pagination.customers.size" @change="resetListPage('customers')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -3950,9 +4044,13 @@ onMounted(async () => {
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.customers.page === 0" type="button" @click="changePage('customers', -1)">Anterior</button>
+              <button :disabled="pagination.customers.page === 0" type="button" @click="changePage('customers', -1)">
+                Anterior
+              </button>
               <span>Página {{ pagination.customers.page + 1 }} de {{ listTotalPages('customers') }}</span>
-              <button :disabled="pagination.customers.page + 1 >= listTotalPages('customers')" type="button" @click="changePage('customers', 1)">Próxima</button>
+              <button :disabled="pagination.customers.page + 1 >= listTotalPages('customers')" type="button"
+                      @click="changePage('customers', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -3987,7 +4085,8 @@ onMounted(async () => {
               <span>{{ listTotal('vehicles') }} registros</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.vehicles.search" placeholder="Buscar placa, marca ou status" type="search" @input="resetListPage('vehicles')"/>
+              <input v-model="pagination.vehicles.search" placeholder="Buscar placa, marca ou status" type="search"
+                     @input="resetListPage('vehicles')"/>
               <select v-model.number="pagination.vehicles.size" @change="resetListPage('vehicles')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -4029,9 +4128,13 @@ onMounted(async () => {
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.vehicles.page === 0" type="button" @click="changePage('vehicles', -1)">Anterior</button>
+              <button :disabled="pagination.vehicles.page === 0" type="button" @click="changePage('vehicles', -1)">
+                Anterior
+              </button>
               <span>Página {{ pagination.vehicles.page + 1 }} de {{ listTotalPages('vehicles') }}</span>
-              <button :disabled="pagination.vehicles.page + 1 >= listTotalPages('vehicles')" type="button" @click="changePage('vehicles', 1)">Próxima</button>
+              <button :disabled="pagination.vehicles.page + 1 >= listTotalPages('vehicles')" type="button"
+                      @click="changePage('vehicles', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -4068,15 +4171,23 @@ onMounted(async () => {
               <input v-model="forms.part.category" placeholder="Categoria" required/>
               <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
               <input v-model="forms.part.brand" placeholder="Marca" required/>
-              <input v-model.number="forms.part.costPrice" min="0" placeholder="Valor de custo" required
-                     step="0.01" type="number"/>
-              <input v-model.number="forms.part.unitPrice" min="0" placeholder="Valor de venda" required
-                     step="0.01" type="number"/>
+              <input
+                  v-model.number="forms.part.costPrice" min="0" placeholder="Valor de custo" required
+                  step="0.01" type="number"
+              />
+              <input
+                  v-model.number="forms.part.unitPrice" min="0" placeholder="Valor de venda" required
+                  step="0.01" type="number"
+              />
               <input v-model.number="forms.part.stockQuantity" min="0" placeholder="Estoque" required type="number"/>
-              <input v-model.number="forms.part.minimumStock" min="0" placeholder="Estoque minimo" required
-                     type="number"/>
-              <input v-model.number="forms.part.reservationDays" min="1" placeholder="Dias de bloqueio" required
-                     type="number"/>
+              <input
+                  v-model.number="forms.part.minimumStock" min="0" placeholder="Estoque minimo" required
+                  type="number"
+              />
+              <input
+                  v-model.number="forms.part.reservationDays" min="1" placeholder="Dias de bloqueio" required
+                  type="number"
+              />
               <button :disabled="saving" class="primary-button" type="submit">
                 <Plus :size="18"/>
                 <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
@@ -4101,12 +4212,18 @@ onMounted(async () => {
                 <option value="EXIT">Saída de estoque</option>
                 <option value="SALE">Venda avulsa</option>
               </select>
-              <input v-model.number="forms.stockMovement.quantity" min="1" placeholder="Quantidade" required
-                     type="number"/>
-              <input v-model.number="forms.stockMovement.unitCost" min="0" placeholder="Custo unitário"
-                     step="0.01" type="number"/>
-              <input v-model.number="forms.stockMovement.unitPrice" min="0" placeholder="Venda unitária"
-                     step="0.01" type="number"/>
+              <input
+                  v-model.number="forms.stockMovement.quantity" min="1" placeholder="Quantidade" required
+                  type="number"
+              />
+              <input
+                  v-model.number="forms.stockMovement.unitCost" min="0" placeholder="Custo unitário"
+                  step="0.01" type="number"
+              />
+              <input
+                  v-model.number="forms.stockMovement.unitPrice" min="0" placeholder="Venda unitária"
+                  step="0.01" type="number"
+              />
               <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação"/>
               <button :disabled="saving" class="primary-button" type="submit">
                 <Package :size="18"/>
@@ -4121,7 +4238,8 @@ onMounted(async () => {
               <span>{{ criticalParts.length }} peças críticas</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.parts.search" placeholder="Buscar peça, SKU, categoria ou marca" type="search" @input="resetListPage('parts')"/>
+              <input v-model="pagination.parts.search" placeholder="Buscar peça, SKU, categoria ou marca" type="search"
+                     @input="resetListPage('parts')"/>
               <select v-model.number="pagination.parts.size" @change="resetListPage('parts')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -4173,7 +4291,9 @@ onMounted(async () => {
                 </span>
                 <span>
                   {{ part.reservedQuantity || 0 }} un.
-                  <small>{{ part.reservationExpiresAt ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}` : `${part.reservationDays || 3} dias` }}</small>
+                  <small>{{
+                      part.reservationExpiresAt ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}` : `${part.reservationDays || 3} dias`
+                    }}</small>
                 </span>
                 <span>
                   Venda R$ {{ money(part.unitPrice) }}
@@ -4185,15 +4305,19 @@ onMounted(async () => {
                 >
                   {{ stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível' }}
                 </span>
-                <button v-if="auth.role === 'ADMIN'" class="secondary-button compact-action" type="button" @click.stop="editPart(part)">
+                <button v-if="auth.role === 'ADMIN'" class="secondary-button compact-action" type="button"
+                        @click.stop="editPart(part)">
                   Editar
                 </button>
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.parts.page === 0" type="button" @click="changePage('parts', -1)">Anterior</button>
+              <button :disabled="pagination.parts.page === 0" type="button" @click="changePage('parts', -1)">Anterior
+              </button>
               <span>Página {{ pagination.parts.page + 1 }} de {{ listTotalPages('parts') }}</span>
-              <button :disabled="pagination.parts.page + 1 >= listTotalPages('parts')" type="button" @click="changePage('parts', 1)">Próxima</button>
+              <button :disabled="pagination.parts.page + 1 >= listTotalPages('parts')" type="button"
+                      @click="changePage('parts', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -4321,8 +4445,10 @@ onMounted(async () => {
                     {{ service.name }} - R$ {{ money(service.basePrice) }}
                   </option>
                 </select>
-                <input v-model.number="forms.orderWizard.serviceQuantity" min="1" placeholder="Qtd. serviço"
-                       type="number"/>
+                <input
+                    v-model.number="forms.orderWizard.serviceQuantity" min="1" placeholder="Qtd. serviço"
+                    type="number"
+                />
                 <select v-model="forms.orderWizard.partId">
                   <option value="">Peça inicial prevista</option>
                   <option v-for="part in data.parts" :key="part.id" :value="part.id">
@@ -4330,8 +4456,10 @@ onMounted(async () => {
                   </option>
                 </select>
                 <input v-model.number="forms.orderWizard.partQuantity" min="1" placeholder="Qtd. peça" type="number"/>
-                <textarea v-model="forms.orderWizard.initialValueNotes"
-                          placeholder="Observações de valores iniciais, se houver"></textarea>
+                <textarea
+                    v-model="forms.orderWizard.initialValueNotes"
+                    placeholder="Observações de valores iniciais, se houver"
+                ></textarea>
               </div>
               <article class="selected-record">
                 <strong>R$ {{ money(estimatedOrderTotal) }}</strong>
@@ -4357,12 +4485,16 @@ onMounted(async () => {
             </div>
 
             <div class="wizard-actions">
-              <button :disabled="forms.orderWizard.step === 0 || saving" class="secondary-button" type="button"
-                      @click="previousOrderStep">
+              <button
+                  :disabled="forms.orderWizard.step === 0 || saving" class="secondary-button" type="button"
+                  @click="previousOrderStep"
+              >
                 Voltar
               </button>
-              <button :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" class="secondary-button"
-                      type="button" @click="nextOrderStep">
+              <button
+                  :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" class="secondary-button"
+                  type="button" @click="nextOrderStep"
+              >
                 Avançar
               </button>
             </div>
@@ -4386,23 +4518,30 @@ onMounted(async () => {
                 </option>
               </select>
               <button :disabled="saving" class="primary-button" type="submit">Atualizar status</button>
-              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
-                      @click="generateBudget">
+              <button
+                  :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
+                  @click="generateBudget"
+              >
                 Gerar orçamento
               </button>
-              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
-                      @click="approveBudget">
+              <button
+                  :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
+                  @click="approveBudget"
+              >
                 Aprovar orçamento
               </button>
             </form>
             <form class="form-grid compact" @submit.prevent="addServiceToOrder">
               <select v-model="forms.orderAction.serviceId" required>
                 <option value="">Serviço</option>
-                <option v-for="service in data.services" :key="service.id" :value="service.id">{{ service.name }}
+                <option v-for="service in data.services" :key="service.id" :value="service.id">
+                  {{ service.name }}
                 </option>
               </select>
-              <input v-model.number="forms.orderAction.serviceQuantity" min="1" placeholder="Qtd." required
-                     type="number"/>
+              <input
+                  v-model.number="forms.orderAction.serviceQuantity" min="1" placeholder="Qtd." required
+                  type="number"
+              />
               <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="submit">
                 Adicionar serviço
               </button>
@@ -4425,13 +4564,15 @@ onMounted(async () => {
               <span>{{ listTotal('serviceOrders') }} registros</span>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
-              <input v-model="pagination.serviceOrders.search" placeholder="Buscar status, nota ou ID" type="search" @input="resetListPage('serviceOrders')"/>
+              <input v-model="pagination.serviceOrders.search" placeholder="Buscar status, nota ou ID" type="search"
+                     @input="resetListPage('serviceOrders')"/>
               <select v-model.number="pagination.serviceOrders.size" @change="resetListPage('serviceOrders')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
                 <option :value="20">20 por página</option>
               </select>
-              <select v-model="pagination.serviceOrders.status" @change="resetListPage('serviceOrders'); loadDashboard()">
+              <select v-model="pagination.serviceOrders.status"
+                      @change="resetListPage('serviceOrders'); loadDashboard()">
                 <option value="">Todos os status</option>
                 <option v-for="status in statuses" :key="status" :value="status">
                   {{ statusLabels[status] || status }}
@@ -4471,9 +4612,13 @@ onMounted(async () => {
               <p v-if="!listTotal('serviceOrders') && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="pager">
-              <button :disabled="pagination.serviceOrders.page === 0" type="button" @click="changePage('serviceOrders', -1)">Anterior</button>
+              <button :disabled="pagination.serviceOrders.page === 0" type="button"
+                      @click="changePage('serviceOrders', -1)">Anterior
+              </button>
               <span>Página {{ pagination.serviceOrders.page + 1 }} de {{ listTotalPages('serviceOrders') }}</span>
-              <button :disabled="pagination.serviceOrders.page + 1 >= listTotalPages('serviceOrders')" type="button" @click="changePage('serviceOrders', 1)">Próxima</button>
+              <button :disabled="pagination.serviceOrders.page + 1 >= listTotalPages('serviceOrders')" type="button"
+                      @click="changePage('serviceOrders', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
@@ -4486,10 +4631,14 @@ onMounted(async () => {
             </div>
             <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
               <input v-model="forms.service.name" placeholder="Nome" required/>
-              <input v-model.number="forms.service.basePrice" min="0" placeholder="Preço base" required step="0.01"
-                     type="number"/>
-              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" placeholder="Tempo em minutos"
-                     required type="number"/>
+              <input
+                  v-model.number="forms.service.basePrice" min="0" placeholder="Preço base" required step="0.01"
+                  type="number"
+              />
+              <input
+                  v-model.number="forms.service.estimatedTimeInMinutes" min="1" placeholder="Tempo em minutos"
+                  required type="number"
+              />
               <textarea v-model="forms.service.description" placeholder="Descrição" required></textarea>
               <label class="check-row">
                 <input v-model="forms.service.active" type="checkbox"/>
@@ -4508,7 +4657,8 @@ onMounted(async () => {
               <span>{{ listTotal('services') }} registros</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.services.search" placeholder="Buscar serviço" type="search" @input="resetListPage('services')"/>
+              <input v-model="pagination.services.search" placeholder="Buscar serviço" type="search"
+                     @input="resetListPage('services')"/>
               <select v-model.number="pagination.services.size" @change="resetListPage('services')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
@@ -4542,15 +4692,19 @@ onMounted(async () => {
               </article>
             </div>
             <div class="pager">
-              <button :disabled="pagination.services.page === 0" type="button" @click="changePage('services', -1)">Anterior</button>
+              <button :disabled="pagination.services.page === 0" type="button" @click="changePage('services', -1)">
+                Anterior
+              </button>
               <span>Página {{ pagination.services.page + 1 }} de {{ listTotalPages('services') }}</span>
-              <button :disabled="pagination.services.page + 1 >= listTotalPages('services')" type="button" @click="changePage('services', 1)">Próxima</button>
+              <button :disabled="pagination.services.page + 1 >= listTotalPages('services')" type="button"
+                      @click="changePage('services', 1)">Próxima
+              </button>
             </div>
           </section>
         </section>
 
         <div v-if="selectedRecord" class="detail-modal-backdrop" @click.self="closeRecord">
-          <section class="detail-modal" role="dialog" aria-modal="true">
+          <section aria-modal="true" class="detail-modal" role="dialog">
             <div class="detail-drawer-heading">
               <div>
                 <span>{{ selectedRecordType }}</span>
@@ -4610,31 +4764,40 @@ onMounted(async () => {
             </dl>
 
             <div class="detail-actions">
-              <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button" @click="editVehicle(selectedRecord)">
+              <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button"
+                      @click="editVehicle(selectedRecord)">
                 Editar veículo
               </button>
-              <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button" @click="editPart(selectedRecord)">
+              <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button"
+                      @click="editPart(selectedRecord)">
                 Editar peça
               </button>
-              <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button" @click="editService(selectedRecord)">
+              <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button"
+                      @click="editService(selectedRecord)">
                 Editar serviço
               </button>
-              <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+              <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button"
+                      @click="editUser(selectedRecord)">
                 Editar usuário
               </button>
-              <button v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button" @click="editUser(selectedRecord)">
+              <button v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button"
+                      @click="editUser(selectedRecord)">
                 Editar funcionário
               </button>
-              <button v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button" @click="editStoreQuote(selectedRecord)">
+              <button v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button"
+                      @click="editStoreQuote(selectedRecord)">
                 Editar carrinho
               </button>
-              <button v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button" @click="addCustomerPartRequest(selectedRecord)">
+              <button v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button"
+                      @click="addCustomerPartRequest(selectedRecord)">
                 Adicionar à solicitação
               </button>
-              <button v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button" @click="requestStoreQuote(selectedRecord)">
+              <button v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button"
+                      @click="requestStoreQuote(selectedRecord)">
                 Solicitar orçamento
               </button>
-              <button v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button" @click="contactWorkshop(selectedRecord)">
+              <button v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button"
+                      @click="contactWorkshop(selectedRecord)">
                 Contatar oficina
               </button>
             </div>

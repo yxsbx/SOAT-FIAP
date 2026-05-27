@@ -46,9 +46,9 @@ Representa o atendimento da oficina para um veículo de um cliente.
 - Itens da ordem podem ser alterados antes do orçamento ser gerado.
 - Itens nao podem ser alterados nos status `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` ou `ENTREGUE`.
 
-### Regras de Orcamento
+### Regras de Orçamento
 
-- Orcamento exige pelo menos um serviço ou uma peça.
+- Orçamento exige pelo menos um serviço ou uma peça.
 - Total do orçamento e calculado pela soma dos serviços e peças.
 - Ao gerar orçamento, status muda para `AGUARDANDO_APROVACAO`.
 - Aprovação so pode ocorrer quando a ordem estiver em `AGUARDANDO_APROVACAO`.

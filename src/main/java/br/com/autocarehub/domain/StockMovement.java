@@ -5,23 +5,20 @@ import java.util.Objects;
 import java.util.UUID;
 
 public record StockMovement(
-    UUID partId,
-    StockMovementType type,
-    int quantity,
-    Money unitCost,
-    Money unitPrice,
-    String reason,
-    LocalDateTime occurredAt) {
+        UUID partId,
+        StockMovementType type,
+        int quantity,
+        Money unitCost,
+        Money unitPrice,
+        String reason,
+        LocalDateTime occurredAt) {
 
-  public StockMovement {
-    Objects.requireNonNull(partId, "partId is required");
-    Objects.requireNonNull(type, "type is required");
-    if (quantity <= 0) {
-      throw new DomainException("Quantity must be greater than zero");
+    public StockMovement {
+        Objects.requireNonNull(partId, "partId is required");
+        Objects.requireNonNull(type, "type is required");
+        if (quantity <= 0) {
+            throw new DomainException("Quantity must be greater than zero");
+        }
+        reason = reason.trim();
     }
-    unitCost = unitCost == null ? Money.zero() : unitCost;
-    unitPrice = unitPrice == null ? Money.zero() : unitPrice;
-    reason = reason == null ? null : reason.trim();
-    occurredAt = occurredAt == null ? LocalDateTime.now() : occurredAt;
-  }
 }

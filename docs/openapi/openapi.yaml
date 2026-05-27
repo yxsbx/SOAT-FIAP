@@ -21,6 +21,10 @@ tags:
         description: Cadastro, manutenção e controle de estoque de peças e insumos
     -   name: Service Orders
         description: Criação, composição, orçamento, aprovação e acompanhamento de ordens de serviço
+    -   name: Users
+        description: Conta do usuario autenticado, funcionarios, permissoes e preferencias de home
+    -   name: Demo Leads
+        description: Registro publico e consulta administrativa de interessados em parceria
 paths:
     /api/v1/auth/login:
         post:
@@ -879,7 +883,7 @@ paths:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
-                    description: Orcamento gerado
+                    description: Orçamento gerado
                     content:
                         application/json:
                             schema:
@@ -900,7 +904,7 @@ paths:
                 -   $ref: "#/components/parameters/ServiceOrderIdPathParam"
             responses:
                 "200":
-                    description: Orcamento aprovado
+                    description: Orçamento aprovado
                     content:
                         application/json:
                             schema:
@@ -938,6 +942,382 @@ paths:
                     $ref: "#/components/responses/Unauthorized"
                 "404":
                     $ref: "#/components/responses/NotFound"
+    /api/v1/users/me:
+        get:
+            tags:
+                - Users
+            summary: Consulta os dados do usuario autenticado
+            description: Retorna perfil, empresa, permissoes e status da conta vinculada ao Bearer Token JWT.
+            operationId: getCurrentUser
+            responses:
+                "200":
+                    description: Usuario autenticado encontrado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                            example:
+                                id: "00000000-0000-0000-0000-000000000001"
+                                username: admin@autocarehub.com
+                                role: ADMIN
+                                profileType: MASTER_ADMIN
+                                fullName: Marina AutoCare Hub
+                                permissions:
+                                    - VIEW_STATS
+                                active: true
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+        put:
+            tags:
+                - Users
+            summary: Atualiza os dados basicos do usuario autenticado
+            description: Permite ao usuario logado alterar o proprio nome exibido no sistema.
+            operationId: updateCurrentUser
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateCurrentUserRequest"
+                        example:
+                            fullName: Maria AutoCare Hub
+            responses:
+                "200":
+                    description: Usuario atualizado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users/me/password:
+        patch:
+            tags:
+                - Users
+            summary: Altera a senha do usuario autenticado
+            description: Valida a senha atual e define uma nova senha para a conta logada.
+            operationId: changeCurrentPassword
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ChangePasswordRequest"
+                        example:
+                            currentPassword: autocare123
+                            newPassword: novaSenha123
+            responses:
+                "204":
+                    description: Senha alterada
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users/me/preferences/home:
+        get:
+            tags:
+                - Users
+            summary: Consulta preferencias da home do usuario
+            description: Retorna os widgets visiveis e a preferencia de exibir alertas na home.
+            operationId: getHomePreference
+            responses:
+                "200":
+                    description: Preferencia encontrada
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/HomePreferenceResponse"
+                            example:
+                                widgets:
+                                    - orders-progress
+                                    - services-catalog
+                                showAlertsOnHome: false
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+        put:
+            tags:
+                - Users
+            summary: Salva preferencias da home do usuario
+            description: Persiste no backend os widgets escolhidos para a home do usuario autenticado.
+            operationId: saveHomePreference
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/HomePreferenceRequest"
+                        example:
+                            widgets:
+                                - orders-progress
+                                - active-customers
+                                - vehicles-in-service
+                            showAlertsOnHome: true
+            responses:
+                "200":
+                    description: Preferencia salva
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/HomePreferenceResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users:
+        get:
+            tags:
+                - Users
+            summary: Lista contas de usuario
+            description: Endpoint administrativo para listar usuarios por status, role, perfil ou termo de busca. Requer Bearer Token JWT de administrador.
+            operationId: listUsers
+            parameters:
+                -   name: active
+                    in: query
+                    required: false
+                    schema:
+                        type: boolean
+                -   name: role
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        example: ADMIN
+                -   name: profileType
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        example: WORKSHOP_ADMIN
+                -   name: search
+                    in: query
+                    required: false
+                    schema:
+                        type: string
+                        maxLength: 120
+            responses:
+                "200":
+                    description: Usuarios encontrados
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserListResponse"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+        post:
+            tags:
+                - Users
+            summary: Cria uma conta de usuario
+            description: Endpoint administrativo para criar administradores, funcionarios ou clientes vinculados ao sistema. Requer Bearer Token JWT de administrador.
+            operationId: createUser
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/CreateUserRequest"
+                        example:
+                            username: mecanico@example.com
+                            password: autocare123
+                            role: EMPLOYEE
+                            fullName: Carlos Oficina
+                            profileType: WORKSHOP_EMPLOYEE
+                            companyName: Oficina Central AutoCare
+                            companyType: workshop
+                            employeeSubRole: MECHANIC
+                            permissions:
+                                - CREATE_ORDER
+                                - EDIT_ORDER
+                            active: true
+            responses:
+                "201":
+                    description: Usuario criado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "409":
+                    $ref: "#/components/responses/Conflict"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users/partners:
+        get:
+            tags:
+                - Users
+            summary: Lista parceiros ativos
+            description: Lista oficinas e lojas de peças cadastradas como parceiros ativos para uso na area do cliente final.
+            operationId: listPartners
+            responses:
+                "200":
+                    description: Parceiros encontrados
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserListResponse"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users/{userId}:
+        put:
+            tags:
+                - Users
+            summary: Atualiza uma conta de usuario
+            description: Endpoint administrativo para editar dados, perfil, subrole, permissoes e status ativo de uma conta.
+            operationId: updateUser
+            parameters:
+                -   name: userId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateUserRequest"
+            responses:
+                "200":
+                    description: Usuario atualizado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "409":
+                    $ref: "#/components/responses/Conflict"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/users/{userId}/password:
+        patch:
+            tags:
+                - Users
+            summary: Redefine a senha de uma conta
+            description: Endpoint administrativo para definir nova senha inicial ou resetar senha de funcionario, cliente ou parceiro.
+            operationId: resetUserPassword
+            parameters:
+                -   name: userId
+                    in: path
+                    required: true
+                    schema:
+                        type: string
+                        format: uuid
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResetPasswordRequest"
+            responses:
+                "204":
+                    description: Senha redefinida
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "404":
+                    $ref: "#/components/responses/NotFound"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+    /api/v1/demo-leads:
+        post:
+            tags:
+                - Demo Leads
+            summary: Registra interesse em parceria
+            description: Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstracao.
+            operationId: registerDemoLead
+            security: [ ]
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/DemoLeadRequest"
+                        example:
+                            contactName: Ana Oficina
+                            companyName: Oficina Central AutoCare
+                            demoProfile: workshop
+                            email: ana@example.com
+                            phone: "11999999999"
+                            cnpj: "11.222.333/0001-81"
+                            city: Sao Paulo
+                            message: Quero conhecer a plataforma.
+            responses:
+                "201":
+                    description: Interesse registrado
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/DemoLeadResponse"
+                "400":
+                    $ref: "#/components/responses/BadRequest"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
+        get:
+            tags:
+                - Demo Leads
+            summary: Lista interessados em parceria
+            description: Endpoint administrativo para Admin Master acompanhar interessados, contatos e parceiros potenciais. Requer Bearer Token JWT de administrador.
+            operationId: listDemoLeads
+            responses:
+                "200":
+                    description: Interessados encontrados
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/DemoLeadResponse"
+                "401":
+                    $ref: "#/components/responses/Unauthorized"
+                "403":
+                    $ref: "#/components/responses/Forbidden"
+                "500":
+                    $ref: "#/components/responses/InternalServerError"
 components:
     securitySchemes:
         bearerAuth:
@@ -1004,18 +1384,79 @@ components:
                 application/json:
                     schema:
                         $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 400
+                        error: Bad Request
+                        message: Invalid request body
+                        path: /api/v1/service-orders
+                        details:
+                            -   customerDocument: must not be blank
         Unauthorized:
             description: Credenciais ausentes ou invalidas
             content:
                 application/json:
                     schema:
                         $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 401
+                        error: Unauthorized
+                        message: Missing or invalid credentials
+                        path: /api/v1/customers
+                        details: [ ]
+        Forbidden:
+            description: Usuario autenticado sem permissao para acessar o recurso
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 403
+                        error: Forbidden
+                        message: Access denied
+                        path: /api/v1/customers
+                        details: [ ]
         NotFound:
             description: Recurso nao encontrado
             content:
                 application/json:
                     schema:
                         $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 404
+                        error: Not Found
+                        message: Resource not found
+                        path: /api/v1/customers/00000000-0000-0000-0000-000000000000
+                        details: [ ]
+        Conflict:
+            description: Conflito com estado atual do recurso, como duplicidade de documento, placa, usuario ou SKU
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 409
+                        error: Conflict
+                        message: Resource already exists
+                        path: /api/v1/customers
+                        details: [ ]
+        InternalServerError:
+            description: Erro interno inesperado
+            content:
+                application/json:
+                    schema:
+                        $ref: "#/components/schemas/ErrorResponse"
+                    example:
+                        timestamp: "2026-05-27T17:00:00-03:00"
+                        status: 500
+                        error: Internal Server Error
+                        message: Unexpected error
+                        path: /api/v1/service-orders
+                        details: [ ]
     schemas:
         LoginRequest:
             type: object
@@ -1914,6 +2355,265 @@ components:
                     type: number
                     format: double
                     minimum: 0
+        UserResponse:
+            type: object
+            required:
+                - id
+                - username
+                - role
+                - fullName
+                - profileType
+                - permissions
+                - active
+            properties:
+                id:
+                    type: string
+                    format: uuid
+                username:
+                    type: string
+                    format: email
+                    maxLength: 120
+                role:
+                    type: string
+                    example: ADMIN
+                customerId:
+                    type: string
+                    format: uuid
+                fullName:
+                    type: string
+                    maxLength: 160
+                profileType:
+                    type: string
+                    example: WORKSHOP_ADMIN
+                companyName:
+                    type: string
+                    maxLength: 160
+                companyType:
+                    type: string
+                    example: workshop
+                employeeSubRole:
+                    type: string
+                    example: MECHANIC
+                permissions:
+                    type: array
+                    items:
+                        type: string
+                    example:
+                        - CREATE_ORDER
+                        - EDIT_ORDER
+                        - MANAGE_STOCK
+                active:
+                    type: boolean
+        UserListResponse:
+            type: object
+            required:
+                - items
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/UserResponse"
+        CreateUserRequest:
+            type: object
+            required:
+                - username
+                - password
+                - role
+                - fullName
+                - profileType
+                - active
+            properties:
+                username:
+                    type: string
+                    format: email
+                    maxLength: 120
+                password:
+                    type: string
+                    format: password
+                    minLength: 6
+                    maxLength: 120
+                role:
+                    type: string
+                    enum:
+                        - ADMIN
+                        - EMPLOYEE
+                        - CUSTOMER
+                customerId:
+                    type: string
+                    format: uuid
+                fullName:
+                    type: string
+                    minLength: 1
+                    maxLength: 160
+                profileType:
+                    type: string
+                    example: WORKSHOP_EMPLOYEE
+                companyName:
+                    type: string
+                    maxLength: 160
+                companyType:
+                    type: string
+                    example: workshop
+                employeeSubRole:
+                    type: string
+                    example: MECHANIC
+                permissions:
+                    type: array
+                    items:
+                        type: string
+                active:
+                    type: boolean
+        UpdateUserRequest:
+            type: object
+            required:
+                - username
+                - role
+                - fullName
+                - profileType
+                - active
+            properties:
+                username:
+                    type: string
+                    format: email
+                    maxLength: 120
+                role:
+                    type: string
+                    enum:
+                        - ADMIN
+                        - EMPLOYEE
+                        - CUSTOMER
+                customerId:
+                    type: string
+                    format: uuid
+                fullName:
+                    type: string
+                    minLength: 1
+                    maxLength: 160
+                profileType:
+                    type: string
+                    example: WORKSHOP_EMPLOYEE
+                companyName:
+                    type: string
+                    maxLength: 160
+                companyType:
+                    type: string
+                    example: workshop
+                employeeSubRole:
+                    type: string
+                    example: MECHANIC
+                permissions:
+                    type: array
+                    items:
+                        type: string
+                active:
+                    type: boolean
+        UpdateCurrentUserRequest:
+            type: object
+            required:
+                - fullName
+            properties:
+                fullName:
+                    type: string
+                    minLength: 1
+                    maxLength: 160
+        ChangePasswordRequest:
+            type: object
+            required:
+                - currentPassword
+                - newPassword
+            properties:
+                currentPassword:
+                    type: string
+                    format: password
+                    minLength: 1
+                    maxLength: 120
+                newPassword:
+                    type: string
+                    format: password
+                    minLength: 6
+                    maxLength: 120
+        ResetPasswordRequest:
+            type: object
+            required:
+                - newPassword
+            properties:
+                newPassword:
+                    type: string
+                    format: password
+                    minLength: 6
+                    maxLength: 120
+        HomePreferenceRequest:
+            type: object
+            required:
+                - widgets
+                - showAlertsOnHome
+            properties:
+                widgets:
+                    type: array
+                    minItems: 1
+                    items:
+                        type: string
+                showAlertsOnHome:
+                    type: boolean
+        HomePreferenceResponse:
+            allOf:
+                -   $ref: "#/components/schemas/HomePreferenceRequest"
+        DemoLeadRequest:
+            type: object
+            required:
+                - contactName
+                - companyName
+                - demoProfile
+                - email
+                - phone
+                - cnpj
+            properties:
+                contactName:
+                    type: string
+                    minLength: 1
+                    maxLength: 120
+                companyName:
+                    type: string
+                    minLength: 1
+                    maxLength: 120
+                demoProfile:
+                    type: string
+                    enum:
+                        - workshop
+                        - partsStore
+                email:
+                    type: string
+                    format: email
+                    maxLength: 160
+                phone:
+                    type: string
+                    minLength: 8
+                    maxLength: 30
+                cnpj:
+                    type: string
+                    minLength: 6
+                    maxLength: 40
+                    pattern: "^[A-Za-z0-9./-]+$"
+                city:
+                    type: string
+                    maxLength: 120
+                message:
+                    type: string
+                    maxLength: 500
+        DemoLeadResponse:
+            allOf:
+                -   $ref: "#/components/schemas/DemoLeadRequest"
+                -   type: object
+                    required:
+                        - id
+                        - createdAt
+                    properties:
+                        id:
+                            type: string
+                            format: uuid
+                        createdAt:
+                            type: string
+                            format: date-time
         ServiceOrderStatus:
             type: string
             enum:

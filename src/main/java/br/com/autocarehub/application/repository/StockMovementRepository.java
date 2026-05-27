@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public interface StockMovementRepository {
 
-  void register(
-      UUID partId,
-      String movementType,
-      int quantity,
-      BigDecimal unitCost,
-      BigDecimal unitPrice,
-      String reason);
+    void register(
+            UUID partId,
+            String movementType,
+            int quantity,
+            BigDecimal unitCost,
+            BigDecimal unitPrice,
+            String reason);
 }

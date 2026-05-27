@@ -4,35 +4,37 @@ import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.PartRepository;
 import br.com.autocarehub.application.repository.StockMovementRepository;
 import br.com.autocarehub.domain.Part;
+
 import java.util.UUID;
 
 public class CommitPartReservationUseCase {
 
-  private final PartRepository partRepository;
-  private final StockMovementRepository stockMovementRepository;
+    private final PartRepository partRepository;
+    private final StockMovementRepository stockMovementRepository;
 
-  public CommitPartReservationUseCase(
-      PartRepository partRepository, StockMovementRepository stockMovementRepository) {
-    this.partRepository = partRepository;
-    this.stockMovementRepository = stockMovementRepository;
-  }
+    public CommitPartReservationUseCase(
+            PartRepository partRepository, StockMovementRepository stockMovementRepository) {
+        this.partRepository = partRepository;
+        this.stockMovementRepository = stockMovementRepository;
+    }
 
-  public Part execute(Command command) {
-    Part part =
-        partRepository
-            .findById(command.partId())
-            .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-    part.commitReservedStock(command.quantity());
-    Part saved = partRepository.save(part);
-    stockMovementRepository.register(
-        command.partId(),
-        "SALE",
-        command.quantity(),
-        part.costPrice().value(),
-        part.unitPrice().value(),
-        command.reason());
-    return saved;
-  }
+    public Part execute(Command command) {
+        Part part =
+                partRepository
+                        .findById(command.partId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        part.commitReservedStock(command.quantity());
+        Part saved = partRepository.save(part);
+        stockMovementRepository.register(
+                command.partId(),
+                "SALE",
+                command.quantity(),
+                part.costPrice().value(),
+                part.unitPrice().value(),
+                command.reason());
+        return saved;
+    }
 
-  public record Command(UUID partId, int quantity, String reason) {}
+    public record Command(UUID partId, int quantity, String reason) {
+    }
 }

@@ -1,100 +1,101 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.domain.Money;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.domain.ServiceOrderStatus;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
 import java.util.*;
-import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class ListServiceOrdersUseCaseTest {
 
-  private final InMemoryServiceOrderRepository repository = new InMemoryServiceOrderRepository();
+    private final InMemoryServiceOrderRepository repository = new InMemoryServiceOrderRepository();
 
-  @Test
-  void shouldFilterByStatusCustomerVehicleAndPeriod() {
-    UUID customerId = UUID.randomUUID();
-    UUID vehicleId = UUID.randomUUID();
-    ServiceOrder expected =
-        serviceOrder(customerId, vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(2));
-    repository.save(expected);
-    repository.save(
-        serviceOrder(
-            UUID.randomUUID(), vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(2)));
-    repository.save(
-        serviceOrder(customerId, UUID.randomUUID(), ServiceOrderStatus.RECEBIDA, daysAgo(2)));
-    repository.save(
-        serviceOrder(customerId, vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(10)));
-    ListServiceOrdersUseCase useCase = new ListServiceOrdersUseCase(repository);
-
-    List<ServiceOrder> result =
-        useCase.execute(
-            new ListServiceOrdersUseCase.Query(
-                ServiceOrderStatus.AGUARDANDO_APROVACAO,
+    private static ServiceOrder serviceOrder(
+            UUID customerId, UUID vehicleId, ServiceOrderStatus status, LocalDateTime createdAt) {
+        return new ServiceOrder(
+                UUID.randomUUID(),
                 customerId,
                 vehicleId,
-                daysAgo(3),
-                daysAgo(1)));
-
-    assertThat(result).extracting(ServiceOrder::id).containsExactly(expected.id());
-  }
-
-  private static ServiceOrder serviceOrder(
-      UUID customerId, UUID vehicleId, ServiceOrderStatus status, LocalDateTime createdAt) {
-    return new ServiceOrder(
-        UUID.randomUUID(),
-        customerId,
-        vehicleId,
-        status,
-        "Cliente relata falha intermitente",
-        List.of(),
-        List.of(),
-        Money.zero(),
-        createdAt,
-        null,
-        null,
-        null,
-        null,
-        null);
-  }
-
-  private static LocalDateTime daysAgo(int days) {
-    return LocalDateTime.now().minusDays(days);
-  }
-
-  private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
-
-    private final Map<UUID, ServiceOrder> serviceOrders = new LinkedHashMap<>();
-
-    @Override
-    public ServiceOrder save(ServiceOrder serviceOrder) {
-      serviceOrders.put(serviceOrder.id(), serviceOrder);
-      return serviceOrder;
+                status,
+                "Cliente relata falha intermitente",
+                List.of(),
+                List.of(),
+                Money.zero(),
+                createdAt,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
-    @Override
-    public Optional<ServiceOrder> findById(UUID id) {
-      return Optional.ofNullable(serviceOrders.get(id));
+    private static LocalDateTime daysAgo(int days) {
+        return LocalDateTime.now().minusDays(days);
     }
 
-    @Override
-    public List<ServiceOrder> findAll() {
-      return List.copyOf(serviceOrders.values());
+    @Test
+    void shouldFilterByStatusCustomerVehicleAndPeriod() {
+        UUID customerId = UUID.randomUUID();
+        UUID vehicleId = UUID.randomUUID();
+        ServiceOrder expected =
+                serviceOrder(customerId, vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(2));
+        repository.save(expected);
+        repository.save(
+                serviceOrder(
+                        UUID.randomUUID(), vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(2)));
+        repository.save(
+                serviceOrder(customerId, UUID.randomUUID(), ServiceOrderStatus.RECEBIDA, daysAgo(2)));
+        repository.save(
+                serviceOrder(customerId, vehicleId, ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(10)));
+        ListServiceOrdersUseCase useCase = new ListServiceOrdersUseCase(repository);
+
+        List<ServiceOrder> result =
+                useCase.execute(
+                        new ListServiceOrdersUseCase.Query(
+                                ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                                customerId,
+                                vehicleId,
+                                daysAgo(3),
+                                daysAgo(1)));
+
+        assertThat(result).extracting(ServiceOrder::id).containsExactly(expected.id());
     }
 
-    @Override
-    public List<ServiceOrder> findByCustomerId(UUID customerId) {
-      return serviceOrders.values().stream()
-          .filter(serviceOrder -> serviceOrder.customerId().equals(customerId))
-          .toList();
-    }
+    private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
 
-    @Override
-    public List<ServiceOrder> findCompletedWithExecutionTime() {
-      return List.of();
+        private final Map<UUID, ServiceOrder> serviceOrders = new LinkedHashMap<>();
+
+        @Override
+        public ServiceOrder save(ServiceOrder serviceOrder) {
+            serviceOrders.put(serviceOrder.id(), serviceOrder);
+            return serviceOrder;
+        }
+
+        @Override
+        public Optional<ServiceOrder> findById(UUID id) {
+            return Optional.ofNullable(serviceOrders.get(id));
+        }
+
+        @Override
+        public List<ServiceOrder> findAll() {
+            return List.copyOf(serviceOrders.values());
+        }
+
+        @Override
+        public List<ServiceOrder> findByCustomerId(UUID customerId) {
+            return serviceOrders.values().stream()
+                    .filter(serviceOrder -> serviceOrder.customerId().equals(customerId))
+                    .toList();
+        }
+
+        @Override
+        public List<ServiceOrder> findCompletedWithExecutionTime() {
+            return List.of();
+        }
     }
-  }
 }

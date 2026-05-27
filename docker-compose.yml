@@ -3,15 +3,15 @@ services:
         image: postgres:16
         container_name: autocarehub-postgres
         environment:
-            POSTGRES_DB: autocarehub
-            POSTGRES_USER: autocarehub
-            POSTGRES_PASSWORD: autocarehub
+            POSTGRES_DB: ${POSTGRES_DB:-autocarehub}
+            POSTGRES_USER: ${POSTGRES_USER:-autocarehub}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
         ports:
-            - "5432:5432"
+            - "${POSTGRES_PORT:-5432}:5432"
         volumes:
             - autocarehub-postgres-data:/var/lib/postgresql/data
         healthcheck:
-            test: [ "CMD-SHELL", "pg_isready -U autocarehub -d autocarehub" ]
+            test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-autocarehub} -d ${POSTGRES_DB:-autocarehub}" ]
             interval: 10s
             timeout: 5s
             retries: 5
@@ -22,14 +22,16 @@ services:
             dockerfile: Dockerfile
         container_name: autocarehub-api
         environment:
-            DB_URL: jdbc:postgresql://postgres:5432/autocarehub
-            DB_USERNAME: autocarehub
-            DB_PASSWORD: autocarehub
-            JWT_SECRET: change-me-change-me-change-me-change-me
-            JWT_EXPIRATION_MINUTES: 60
+            DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-autocarehub}
+            DB_USERNAME: ${POSTGRES_USER:-autocarehub}
+            DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+            JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+            JWT_EXPIRATION_MINUTES: ${JWT_EXPIRATION_MINUTES:-60}
             SERVER_PORT: 8080
+            SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+            JAVA_OPTS: ${JAVA_OPTS:-}
         ports:
-            - "8080:8080"
+            - "${APP_PORT:-8080}:8080"
         depends_on:
             postgres:
                 condition: service_healthy

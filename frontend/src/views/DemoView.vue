@@ -198,8 +198,10 @@ function incrementPart(part, quantity) {
         </label>
         <label>
           Nome da empresa
-          <input v-model.trim="leadForm.companyName" :placeholder="demoContext.companyPlaceholder" maxlength="120"
-                 required/>
+          <input
+              v-model.trim="leadForm.companyName" :placeholder="demoContext.companyPlaceholder" maxlength="120"
+              required
+          />
         </label>
         <label>
           Email
@@ -227,8 +229,8 @@ function incrementPart(part, quantity) {
           Mensagem
           <textarea
               v-model.trim="leadForm.message"
-              maxlength="500"
               :placeholder="`Conte rapidamente como sua ${demoContext.partnerTypeLabel} quer usar a AutoCare Hub`"
+              maxlength="500"
           ></textarea>
         </label>
         <p v-if="error" class="alert error span-2">{{ error }}</p>

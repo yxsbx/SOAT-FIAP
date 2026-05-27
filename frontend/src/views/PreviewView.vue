@@ -154,7 +154,8 @@ function scrollToSection(id) {
         </a>
         <a v-else href="#diferenciais" @click.prevent="scrollToSection('diferenciais')">Diferenciais</a>
       </nav>
-      <RouterLink class="preview-login" to="/login">Já tenho acesso
+      <RouterLink class="preview-login" to="/login">
+        Já tenho acesso
         <ChevronRight :size="17"/>
       </RouterLink>
     </header>

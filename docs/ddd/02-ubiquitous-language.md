@@ -1,11 +1,10 @@
 # Ubiquitous Language
 
-Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por
-negocio, desenvolvimento, documentação e testes.
+Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por negócio, desenvolvimento, documentação e testes.
 
 ## Cliente
 
-Pessoa fisica ou juridica atendida pela oficina. No MVP, um cliente possui nome, documento, telefone, email, endereco e
+Pessoa física ou juridica atendida pela oficina. No MVP, um cliente possui nome, documento, telefone, email, endereco e
 status ativo/inativo.
 
 ## Veículo
@@ -20,8 +19,7 @@ diagnostico, serviços, peças, orçamento, status e datas relevantes do fluxo.
 
 ## Servico
 
-Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome,
-descrição, preco base, tempo estimado e status ativo/inativo.
+Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome, descrição, preco base, tempo estimado e status ativo/inativo.
 
 ## Peça/Insumo
 
@@ -39,7 +37,7 @@ o orçamento e aprovado.
 Descrição inicial do problema informado ou observado no veículo. No MVP, a ordem de serviço nasce com notas de
 diagnostico.
 
-## Orcamento
+## Orçamento
 
 Valor calculado a partir dos serviços e peças associados a uma ordem de serviço. No MVP, o orçamento so pode ser gerado
 quando ha pelo menos um serviço ou uma peça na ordem.

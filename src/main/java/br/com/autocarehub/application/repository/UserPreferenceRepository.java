@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public interface UserPreferenceRepository {
 
-  Optional<String> findValue(UUID userId, String key);
+    Optional<String> findValue(UUID userId, String key);
 
-  String saveValue(UUID userId, String key, String valueJson);
+    String saveValue(UUID userId, String key, String valueJson);
 }

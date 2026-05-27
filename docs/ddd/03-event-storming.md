@@ -32,8 +32,8 @@ regras para deixar claro o comportamento do MVP.
 - Servico adicionado a ordem de serviço.
 - Peça adicionada a ordem de serviço.
 - Estoque de peça reduzido.
-- Orcamento gerado.
-- Orcamento aprovado.
+- Orçamento gerado.
+- Orçamento aprovado.
 - Diagnostico iniciado.
 - Execução iniciada.
 - Ordem de serviço finalizada.

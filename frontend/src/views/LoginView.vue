@@ -1,7 +1,7 @@
 <script setup>
 import {ref} from 'vue';
 import {useRouter} from 'vue-router';
-import {ArrowLeft, Wrench, LogIn} from 'lucide-vue-next';
+import {ArrowLeft, LogIn, Wrench} from 'lucide-vue-next';
 import {useAuthStore} from '@/stores/auth';
 
 const router = useRouter();

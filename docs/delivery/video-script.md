@@ -123,7 +123,7 @@ Explicar agregados principais:
 Ponto principal da explicação:
 
 ```text
-O DDD ajudou a organizar o domínio da oficina em conceitos claros, como Cliente, Veículo, Ordem de Servico, Diagnostico, Orcamento, Aprovação, Execução e Entrega.
+O DDD ajudou a organizar o domínio da oficina em conceitos claros, como Cliente, Veículo, Ordem de Servico, Diagnostico, Orçamento, Aprovação, Execução e Entrega.
 ```
 
 ## 5. Demonstração do Swagger

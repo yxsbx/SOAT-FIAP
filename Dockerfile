@@ -7,6 +7,8 @@ RUN mvn -q -DskipTests package
 
 FROM eclipse-temurin:21-jre
 WORKDIR /app
+RUN addgroup --system autocarehub && adduser --system --ingroup autocarehub autocarehub
 COPY --from=build /app/target/autocare-hub-api-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+USER autocarehub
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS:-} -jar app.jar"]

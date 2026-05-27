@@ -11,8 +11,6 @@ import {
   MapPin,
   Package,
   ShieldCheck,
-  Store,
-  Truck,
   UserCog,
   Users,
   Wrench,

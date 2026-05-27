@@ -8,15 +8,16 @@ UPDATE parts
 SET cost_price = ROUND(unit_price * 0.62, 2)
 WHERE cost_price = 0;
 
-CREATE TABLE stock_movements (
-    id UUID PRIMARY KEY,
-    part_id UUID NOT NULL REFERENCES parts (id),
+CREATE TABLE stock_movements
+(
+    id            UUID PRIMARY KEY,
+    part_id       UUID        NOT NULL REFERENCES parts (id),
     movement_type VARCHAR(30) NOT NULL,
-    quantity INTEGER NOT NULL,
-    unit_cost NUMERIC(15, 2),
-    unit_price NUMERIC(15, 2),
-    reason VARCHAR(500),
-    created_at TIMESTAMP NOT NULL
+    quantity      INTEGER     NOT NULL,
+    unit_cost     NUMERIC(15, 2),
+    unit_price    NUMERIC(15, 2),
+    reason        VARCHAR(500),
+    created_at    TIMESTAMP   NOT NULL
 );
 
 CREATE INDEX idx_stock_movements_part_id ON stock_movements (part_id);
