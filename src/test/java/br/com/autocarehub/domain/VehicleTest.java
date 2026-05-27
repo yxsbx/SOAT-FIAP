@@ -13,7 +13,15 @@ class VehicleTest {
   }
 
   @Test
-  void shouldValidatePlate() {
+  void shouldValidateOldBrazilianPlate() {
+    Vehicle vehicle =
+        new Vehicle(UUID.randomUUID(), new Plate("abc-1234"), "Honda", "Civic", 2020, 30000);
+
+    assertThat(vehicle.plate().value()).isEqualTo("ABC1234");
+  }
+
+  @Test
+  void shouldValidateMercosurPlate() {
     Vehicle vehicle =
         new Vehicle(UUID.randomUUID(), new Plate("abc-1d23"), "Honda", "Civic", 2020, 30000);
 
@@ -24,7 +32,7 @@ class VehicleTest {
   void shouldRejectInvalidPlate() {
     assertThatThrownBy(
             () ->
-                new Vehicle(UUID.randomUUID(), new Plate("ABC123"), "Honda", "Civic", 2020, 30000))
+                new Vehicle(UUID.randomUUID(), new Plate("ABC12D3"), "Honda", "Civic", 2020, 30000))
         .isInstanceOf(DomainException.class)
         .hasMessage("Invalid plate");
   }
@@ -78,6 +86,11 @@ class VehicleTest {
     assertThatThrownBy(
             () ->
                 new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 1899, 30000))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid year");
+    assertThatThrownBy(
+            () ->
+                new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2200, 30000))
         .isInstanceOf(DomainException.class)
         .hasMessage("Invalid year");
     assertThatThrownBy(

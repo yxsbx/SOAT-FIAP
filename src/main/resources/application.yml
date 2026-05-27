@@ -16,6 +16,9 @@ spring:
     flyway:
         enabled: true
         locations: classpath:db/migration
+    jackson:
+        deserialization:
+            fail-on-unknown-properties: true
 
 server:
     port: ${SERVER_PORT:8080}

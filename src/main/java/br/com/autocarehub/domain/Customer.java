@@ -29,37 +29,22 @@ public class Customer {
       boolean active,
       LocalDateTime createdAt) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = requireText(name, "Name is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 120);
     this.document = Objects.requireNonNull(document, "document is required");
-    this.phone = requireText(phone, "Phone is required");
-    this.email = requireEmail(email);
+    this.phone = DomainValidation.requirePhone(phone);
+    this.email = DomainValidation.requireEmail(email);
     this.address = address;
     this.active = active;
     this.createdAt = Objects.requireNonNull(createdAt, "createdAt is required");
   }
 
-  private static String requireEmail(String value) {
-    String email = requireText(value, "Email is required");
-    if (!email.contains("@")) {
-      throw new DomainException("Invalid email");
-    }
-    return email;
-  }
-
-  private static String requireText(String value, String message) {
-    if (value == null || value.isBlank()) {
-      throw new DomainException(message);
-    }
-    return value.trim();
-  }
-
   public void rename(String name) {
-    this.name = requireText(name, "Name is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 120);
   }
 
   public void updateContact(String phone, String email) {
-    this.phone = requireText(phone, "Phone is required");
-    this.email = requireEmail(email);
+    this.phone = DomainValidation.requirePhone(phone);
+    this.email = DomainValidation.requireEmail(email);
   }
 
   public void updateAddress(Address address) {

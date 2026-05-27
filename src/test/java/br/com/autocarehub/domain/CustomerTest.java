@@ -13,17 +13,23 @@ class CustomerTest {
   }
 
   @Test
-  void shouldValidateDocument() {
+  void shouldValidateValidCpf() {
     Customer customer =
         new Customer(
-            "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", null);
+            "Maria Silva",
+            Document.from("529.982.247-25"),
+            "(11) 99999-9999",
+            "Maria@Example.com",
+            null);
 
     assertThat(customer.document().type()).isEqualTo(DocumentType.CPF);
     assertThat(customer.document().value()).isEqualTo("52998224725");
+    assertThat(customer.phone()).isEqualTo("11999999999");
+    assertThat(customer.email()).isEqualTo("maria@example.com");
   }
 
   @Test
-  void shouldRejectInvalidDocument() {
+  void shouldRejectInvalidCpf() {
     assertThatThrownBy(
             () ->
                 new Customer(
@@ -37,11 +43,18 @@ class CustomerTest {
   }
 
   @Test
-  void shouldValidateCnpjDocument() {
-    Document document = Document.from("11222333000181");
+  void shouldValidateValidCnpj() {
+    Document document = Document.from("11.222.333/0001-81");
 
     assertThat(document.type()).isEqualTo(DocumentType.CNPJ);
     assertThat(document.value()).isEqualTo("11222333000181");
+  }
+
+  @Test
+  void shouldRejectInvalidCnpj() {
+    assertThatThrownBy(() -> Document.from("11.222.333/0001-82"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid document");
   }
 
   @Test
@@ -80,6 +93,9 @@ class CustomerTest {
     assertThatThrownBy(() -> customer.updateContact("11999999999", "invalid-email"))
         .isInstanceOf(DomainException.class)
         .hasMessage("Invalid email");
+    assertThatThrownBy(() -> customer.updateContact("1234", "maria@example.com"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid phone");
     assertThatThrownBy(() -> Document.from("123"))
         .isInstanceOf(DomainException.class)
         .hasMessage("Document must be CPF or CNPJ");

@@ -181,12 +181,12 @@ public class Part {
       LocalDateTime reservationExpiresAt,
       boolean active) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = requireText(name, "Name is required");
-    this.description = requireText(description, "Description is required");
-    this.sku = requireText(sku, "SKU is required");
-    this.category = requireText(category, "Category is required");
-    this.subcategory = subcategory == null ? null : subcategory.trim();
-    this.brand = requireText(brand, "Brand is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 120);
+    this.description = DomainValidation.requireText(description, "Description is required", 500);
+    this.sku = DomainValidation.requireText(sku, "SKU is required", 60);
+    this.category = DomainValidation.requireText(category, "Category is required", 80);
+    this.subcategory = DomainValidation.optionalText(subcategory, 80);
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 80);
     this.costPrice = requireNonNegativeMoney(costPrice, "Cost price cannot be negative");
     this.unitPrice = requirePositiveMoney(unitPrice, "Unit price must be greater than zero");
     this.stockQuantity = requireNonNegative(stockQuantity, "Stock cannot be negative");
@@ -224,13 +224,6 @@ public class Part {
     return value;
   }
 
-  private static String requireText(String value, String message) {
-    if (value == null || value.isBlank()) {
-      throw new DomainException(message);
-    }
-    return value.trim();
-  }
-
   public void update(
       String name,
       String description,
@@ -241,12 +234,12 @@ public class Part {
       Money costPrice,
       Money unitPrice,
       int minimumStock) {
-    this.name = requireText(name, "Name is required");
-    this.description = requireText(description, "Description is required");
-    this.sku = requireText(sku, "SKU is required");
-    this.category = requireText(category, "Category is required");
-    this.subcategory = subcategory == null ? null : subcategory.trim();
-    this.brand = requireText(brand, "Brand is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 120);
+    this.description = DomainValidation.requireText(description, "Description is required", 500);
+    this.sku = DomainValidation.requireText(sku, "SKU is required", 60);
+    this.category = DomainValidation.requireText(category, "Category is required", 80);
+    this.subcategory = DomainValidation.optionalText(subcategory, 80);
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 80);
     this.costPrice = requireNonNegativeMoney(costPrice, "Cost price cannot be negative");
     this.unitPrice = requirePositiveMoney(unitPrice, "Unit price must be greater than zero");
     this.minimumStock = requireNonNegative(minimumStock, "Minimum stock cannot be negative");

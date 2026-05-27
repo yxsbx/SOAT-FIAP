@@ -10,24 +10,15 @@ public record Address(
     String zipCode) {
 
   public Address {
-    street = requireText(street, "Street is required");
-    number = requireText(number, "Number is required");
-    neighborhood = requireText(neighborhood, "Neighborhood is required");
-    city = requireText(city, "City is required");
-    state = requireText(state, "State is required").toUpperCase();
-    zipCode = requireText(zipCode, "Zip code is required").replaceAll("\\D", "");
-    if (state.length() != 2) {
-      throw new DomainException("State must have two characters");
-    }
+    street = DomainValidation.requireText(street, "Street is required", 120);
+    number = DomainValidation.requireText(number, "Number is required", 20);
+    complement = DomainValidation.optionalText(complement, 80);
+    neighborhood = DomainValidation.requireText(neighborhood, "Neighborhood is required", 80);
+    city = DomainValidation.requireText(city, "City is required", 80);
+    state = DomainValidation.requireState(state);
+    zipCode = DomainValidation.requireText(zipCode, "Zip code is required", 9).replaceAll("\\D", "");
     if (zipCode.length() != 8) {
       throw new DomainException("Zip code must have eight digits");
     }
-  }
-
-  private static String requireText(String value, String message) {
-    if (value == null || value.isBlank()) {
-      throw new DomainException(message);
-    }
-    return value.trim();
   }
 }

@@ -25,8 +25,8 @@ public class WorkshopService {
       int estimatedTimeInMinutes,
       boolean active) {
     this.id = Objects.requireNonNull(id, "id is required");
-    this.name = requireText(name, "Name is required");
-    this.description = requireText(description, "Description is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 100);
+    this.description = DomainValidation.requireText(description, "Description is required", 500);
     this.basePrice = requirePositiveMoney(basePrice, "Base price must be greater than zero");
     this.estimatedTimeInMinutes =
         requirePositive(estimatedTimeInMinutes, "Estimated time must be greater than zero");
@@ -48,16 +48,9 @@ public class WorkshopService {
     return value;
   }
 
-  private static String requireText(String value, String message) {
-    if (value == null || value.isBlank()) {
-      throw new DomainException(message);
-    }
-    return value.trim();
-  }
-
   public void update(String name, String description, Money basePrice, int estimatedTimeInMinutes) {
-    this.name = requireText(name, "Name is required");
-    this.description = requireText(description, "Description is required");
+    this.name = DomainValidation.requireText(name, "Name is required", 100);
+    this.description = DomainValidation.requireText(description, "Description is required", 500);
     this.basePrice = requirePositiveMoney(basePrice, "Base price must be greater than zero");
     this.estimatedTimeInMinutes =
         requirePositive(estimatedTimeInMinutes, "Estimated time must be greater than zero");

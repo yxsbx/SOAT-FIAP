@@ -30,18 +30,11 @@ public class Vehicle {
     this.id = Objects.requireNonNull(id, "id is required");
     this.customerId = Objects.requireNonNull(customerId, "customerId is required");
     this.plate = Objects.requireNonNull(plate, "plate is required");
-    this.brand = requireText(brand, "Brand is required");
-    this.model = requireText(model, "Model is required");
-    this.year = requireYear(year);
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
+    this.model = DomainValidation.requireText(model, "Model is required", 80);
+    this.year = DomainValidation.requireVehicleYear(year);
     this.mileage = requireMileage(mileage);
     this.active = active;
-  }
-
-  private static int requireYear(int value) {
-    if (value < 1900) {
-      throw new DomainException("Invalid year");
-    }
-    return value;
   }
 
   private static int requireMileage(int value) {
@@ -51,18 +44,11 @@ public class Vehicle {
     return value;
   }
 
-  private static String requireText(String value, String message) {
-    if (value == null || value.isBlank()) {
-      throw new DomainException(message);
-    }
-    return value.trim();
-  }
-
   public void update(Plate plate, String brand, String model, int year, int mileage) {
     this.plate = Objects.requireNonNull(plate, "plate is required");
-    this.brand = requireText(brand, "Brand is required");
-    this.model = requireText(model, "Model is required");
-    this.year = requireYear(year);
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
+    this.model = DomainValidation.requireText(model, "Model is required", 80);
+    this.year = DomainValidation.requireVehicleYear(year);
     this.mileage = requireMileage(mileage);
   }
 
