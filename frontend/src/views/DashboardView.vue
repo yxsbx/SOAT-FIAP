@@ -30,6 +30,10 @@ import {
 import {useAuthStore} from '@/stores/auth';
 import {resources} from '@/services/api';
 import {calculatePlatformFee} from '@/utils/platformFee';
+import AppModal from '@/components/AppModal.vue';
+import PaginationControl from '@/components/PaginationControl.vue';
+import StatusBadge from '@/components/StatusBadge.vue';
+import ToastAlert from '@/components/ToastAlert.vue';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -37,6 +41,7 @@ const loading = ref(false);
 const saving = ref(false);
 const error = ref('');
 const success = ref('');
+let toastTimer = null;
 const activeTab = ref('overview');
 const mobileMenuOpen = ref(false);
 const sidebarCollapsed = ref(true);
@@ -236,7 +241,7 @@ const forms = reactive({
     id: '',
     fullName: '',
     username: '',
-    password: '123456',
+    password: '',
     role: 'EMPLOYEE',
     profileType: 'WORKSHOP_EMPLOYEE',
     companyName: '',
@@ -1492,6 +1497,37 @@ function formatDuration(minutes) {
 function resetMessage() {
   error.value = '';
   success.value = '';
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = null;
+  }
+}
+
+function showToast(type, message) {
+  error.value = '';
+  success.value = '';
+  if (toastTimer) {
+    window.clearTimeout(toastTimer);
+    toastTimer = null;
+  }
+  if (type === 'error') {
+    error.value = message;
+  } else {
+    success.value = message;
+  }
+  toastTimer = window.setTimeout(() => {
+    error.value = '';
+    success.value = '';
+    toastTimer = null;
+  }, 3800);
+}
+
+function showSuccess(message) {
+  showToast('success', message);
+}
+
+function showError(message) {
+  showToast('error', message);
 }
 
 function userHomeKey() {
@@ -1551,9 +1587,9 @@ async function saveUserHomePreferences() {
       widgets: homePreferences.userWidgets,
       showAlertsOnHome: homePreferences.showAlertsOnHome,
     });
-    success.value = 'Preferências da home salvas.';
+    showSuccess('Preferências da home salvas.');
   } catch (err) {
-    error.value = err.message || 'Preferências salvas apenas localmente.';
+    showError(err.message || 'Preferências salvas apenas localmente.');
   }
 }
 
@@ -1618,7 +1654,7 @@ async function loadDashboard() {
 
       const failed = [serviceOrders, vehicles, user, parts, partners].filter((request) => request.status === 'rejected');
       if (failed.length) {
-        error.value = failed.map((request) => request.reason.message).join(' | ');
+        showError(failed.map((request) => request.reason.message).join(' | '));
       }
       return;
     }
@@ -1672,10 +1708,10 @@ async function loadDashboard() {
       return request.reason.status !== 403 || (auth.role === 'ADMIN' && isCustomersRequest);
     });
     if (failed.length) {
-      error.value = failed.map((request) => request.reason.message).join(' | ');
+      showError(failed.map((request) => request.reason.message).join(' | '));
     }
   } catch (err) {
-    error.value = err.message || 'Não foi possível carregar os dados.';
+    showError(err.message || 'Não foi possível carregar os dados.');
   } finally {
     loading.value = false;
   }
@@ -1687,10 +1723,10 @@ async function runAction(action, message) {
 
   try {
     await action();
-    success.value = message;
+    showSuccess(message);
     await loadDashboard();
   } catch (err) {
-    error.value = err.message || 'Não foi possível concluir a operação.';
+    showError(err.message || 'Não foi possível concluir a operação.');
   } finally {
     saving.value = false;
   }
@@ -1815,16 +1851,16 @@ async function createOrderFromWizard(createBudgetNow) {
     forms.orderAction.serviceOrderId = order.id;
     if (createBudgetNow) {
       pagination.serviceOrders.status = 'WAITING_APPROVAL';
-      success.value = 'Ordem salva e orçamento gerado.';
+      showSuccess('Ordem salva e orçamento gerado.');
     } else {
       pagination.serviceOrders.status = 'RECEIVED';
-      success.value = 'Ordem salva como orçamento pendente.';
+      showSuccess('Ordem salva como orçamento pendente.');
     }
 
     resetOrderWizard();
     await loadDashboard();
   } catch (err) {
-    error.value = err.message || 'Não foi possível criar a ordem.';
+    showError(err.message || 'Não foi possível criar a ordem.');
   } finally {
     saving.value = false;
   }
@@ -2040,7 +2076,7 @@ function resetStoreQuoteForm() {
 function addStoreQuoteItem() {
   const part = data.parts.find((item) => item.id === forms.storeQuote.partId);
   if (!part) {
-    error.value = 'Selecione uma peça para adicionar ao carrinho.';
+    showError('Selecione uma peça para adicionar ao carrinho.');
     return;
   }
 
@@ -2061,7 +2097,7 @@ function removeStoreQuoteItem(index) {
 
 function saveStoreQuote() {
   if (!forms.storeQuote.customerName || !forms.storeQuote.items.length) {
-    error.value = 'Informe o cliente e ao menos uma peça para salvar o carrinho.';
+    showError('Informe o cliente e ao menos uma peça para salvar o carrinho.');
     return;
   }
 
@@ -2084,7 +2120,7 @@ function saveStoreQuote() {
   }
   persistStoreQuotes();
   resetStoreQuoteForm();
-  success.value = 'Carrinho salvo.';
+  showSuccess('Carrinho salvo.');
 }
 
 function editStoreQuote(quote) {
@@ -2153,7 +2189,7 @@ function addCustomerPartRequest(part, store = null) {
     forms.customerQuote.storeName = store.name;
     forms.customerQuote.storeContact = store.username;
   }
-  success.value = 'Peça adicionada à solicitação.';
+  showSuccess('Peça adicionada à solicitação.');
 }
 
 function removeCustomerQuoteItem(index) {
@@ -2175,14 +2211,14 @@ function contactWorkshop(workshop) {
 
 function sendCustomerQuoteRequest() {
   if (!forms.customerQuote.storeName && !forms.customerQuote.workshopName) {
-    error.value = 'Escolha uma loja ou oficina para enviar a solicitação.';
+    showError('Escolha uma loja ou oficina para enviar a solicitação.');
     return;
   }
   if (!forms.customerQuote.items.length && !forms.customerQuote.problemDescription.trim()) {
-    error.value = 'Adicione uma peça ou descreva o problema do veículo.';
+    showError('Adicione uma peça ou descreva o problema do veículo.');
     return;
   }
-  success.value = 'Solicitação enviada. O parceiro poderá responder com um orçamento.';
+  showSuccess('Solicitação enviada. O parceiro poderá responder com um orçamento.');
   forms.customerQuote = {
     storeName: '',
     storeContact: '',
@@ -2269,11 +2305,8 @@ function addPartToOrder() {
   }, 'Peça adicionada a ordem.');
 }
 
-function changePage(resource, direction) {
-  pagination[resource].page = Math.min(
-      listTotalPages(resource) - 1,
-      Math.max(0, pagination[resource].page + direction),
-  );
+function setListPage(resource, page) {
+  pagination[resource].page = Math.min(listTotalPages(resource) - 1, Math.max(0, Number(page || 0)));
 }
 
 function resetListPage(resource) {
@@ -2344,7 +2377,10 @@ function openRecord(type, record) {
   }
 }
 
-function closeRecord() {
+function closeRecord(force = false) {
+  if (!force && detailModalDirty.value && !window.confirm('Existem alterações não salvas. Deseja fechar mesmo assim?')) {
+    return;
+  }
   selectedRecord.value = null;
   selectedRecordType.value = '';
   Object.assign(modalDraft.customer, {});
@@ -2355,7 +2391,7 @@ async function saveDetailModal() {
   if (isCustomerDetail.value) {
     await runAction(async () => {
       await resources.updateCustomer(selectedRecord.value.id, modalDraft.customer);
-      closeRecord();
+      closeRecord(true);
     }, 'Cliente atualizado.');
     return;
   }
@@ -2375,7 +2411,7 @@ async function saveDetailModal() {
         permissions: user.permissions || [],
         active: modalDraft.partner.active,
       });
-      closeRecord();
+      closeRecord(true);
     }, 'Oficina atualizada.');
   }
 }
@@ -2420,7 +2456,7 @@ function editUser(user) {
     id: user.id,
     fullName: user.fullName,
     username: user.username,
-    password: '123456',
+    password: '',
     role: user.role,
     profileType: user.profileType,
     companyName: user.companyName || '',
@@ -2473,7 +2509,7 @@ function saveUser() {
       id: '',
       fullName: '',
       username: '',
-      password: '123456',
+      password: '',
       role: 'EMPLOYEE',
       profileType: 'WORKSHOP_EMPLOYEE',
       companyName: '',
@@ -2673,8 +2709,8 @@ onMounted(async () => {
       ></button>
 
       <section class="content">
-        <p v-if="error" class="alert error">{{ error }}</p>
-        <p v-if="success" class="alert success">{{ success }}</p>
+        <ToastAlert :message="success" type="success" @close="resetMessage"/>
+        <ToastAlert :message="error" type="error" @close="resetMessage"/>
 
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
@@ -2755,7 +2791,7 @@ onMounted(async () => {
                   class="data-table-row orders-grid clickable-row"
                   @click="openRecord('Histórico', order)"
               >
-                <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
+                <StatusBadge :value="order.status" />
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
                 <span>{{ order.services?.length || 0 }} serviços<small>{{
                     order.parts?.length || 0
@@ -3114,7 +3150,7 @@ onMounted(async () => {
                 <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
                 <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
+                <StatusBadge :value="employee.active" />
                 <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar
                 </button>
               </article>
@@ -3315,7 +3351,7 @@ onMounted(async () => {
                     employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole]
                   }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <span class="badge">{{ employee.active ? 'Ativo' : 'Inativo' }}</span>
+                <StatusBadge :value="employee.active" />
                 <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar
                 </button>
               </article>
@@ -3438,7 +3474,7 @@ onMounted(async () => {
                   class="data-table-row store-quotes-grid clickable-row"
                   @click="openRecord('Carrinho da loja', quote)"
               >
-                <span class="badge">{{ storeQuoteStatusLabels[quote.status] || quote.status }}</span>
+                <StatusBadge :value="quote.status" />
                 <span>{{ quote.customerName }}<small>{{ quote.customerContact }} · {{ quote.id }}</small></span>
                 <span>
                   {{ quote.items.length }} peças
@@ -3510,15 +3546,11 @@ onMounted(async () => {
                   }}</small></span>
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.masterCustomers.page === 0" type="button"
-                      @click="changePage('masterCustomers', -1)">Anterior
-              </button>
-              <span>{{ pagination.masterCustomers.page + 1 }} de {{ listTotalPages('masterCustomers') }}</span>
-              <button :disabled="pagination.masterCustomers.page + 1 >= listTotalPages('masterCustomers')" type="button"
-                      @click="changePage('masterCustomers', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.masterCustomers.page"
+                :total-pages="listTotalPages('masterCustomers')"
+                @update:page="setListPage('masterCustomers', $event)"
+            />
           </section>
         </section>
 
@@ -3571,18 +3603,14 @@ onMounted(async () => {
                       partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
                     }}</small></span>
                 <strong>R$ {{ money(partner.feeAmount) }}</strong>
-                <span class="badge">{{ partner.status }}</span>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.masterWorkshops.page === 0" type="button"
-                      @click="changePage('masterWorkshops', -1)">Anterior
-              </button>
-              <span>{{ pagination.masterWorkshops.page + 1 }} de {{ listTotalPages('masterWorkshops') }}</span>
-              <button :disabled="pagination.masterWorkshops.page + 1 >= listTotalPages('masterWorkshops')" type="button"
-                      @click="changePage('masterWorkshops', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.masterWorkshops.page"
+                :total-pages="listTotalPages('masterWorkshops')"
+                @update:page="setListPage('masterWorkshops', $event)"
+            />
           </section>
         </section>
 
@@ -3618,7 +3646,7 @@ onMounted(async () => {
                       partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
                     }}</small></span>
                 <strong>R$ {{ money(partner.feeAmount) }}</strong>
-                <span class="badge">{{ partner.status }}</span>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
           </section>
@@ -3647,7 +3675,10 @@ onMounted(async () => {
                 <span>{{ lead.contactName }}<small>{{ lead.email }} · {{
                     lead.phone
                   }} · {{ lead.message || 'Sem mensagem' }}</small></span>
-                <span class="badge">{{ lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças' }}</span>
+                <StatusBadge
+                    :label="lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças'"
+                    value="NEUTRAL"
+                />
                 <span>{{ new Date(lead.createdAt).toLocaleDateString('pt-BR') }}</span>
               </article>
             </div>
@@ -3794,9 +3825,10 @@ onMounted(async () => {
               >
                 <strong>{{ store.name }}<small>{{ store.location }}</small></strong>
                 <span>R$ {{ money(store.price) }}</span>
-                <span class="badge">{{
-                    store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível'
-                  }}</span>
+                <StatusBadge
+                    :label="store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível'"
+                    :value="store.availableQuantity > 0 ? 'AVAILABLE' : 'OUT_OF_STOCK'"
+                />
                 <div class="row-actions">
                   <button class="secondary-button compact-action" type="button"
                           @click="openRecord('Contato da loja', store)">Contato
@@ -3951,19 +3983,16 @@ onMounted(async () => {
                 <strong>{{ user.fullName }}<small>{{ user.username }}</small></strong>
                 <span>{{ user.role }}</span>
                 <span>{{ user.profileType }}</span>
-                <span class="badge">{{ user.active ? 'Ativo' : 'Inativo' }}</span>
+                <StatusBadge :value="user.active" />
                 <button class="secondary-button compact-action" type="button" @click.stop="editUser(user)">Editar
                 </button>
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.users.page === 0" type="button" @click="changePage('users', -1)">Anterior
-              </button>
-              <span>{{ pagination.users.page + 1 }} de {{ listTotalPages('users') }}</span>
-              <button :disabled="pagination.users.page + 1 >= listTotalPages('users')" type="button"
-                      @click="changePage('users', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.users.page"
+                :total-pages="listTotalPages('users')"
+                @update:page="setListPage('users', $event)"
+            />
           </section>
         </section>
 
@@ -4040,18 +4069,14 @@ onMounted(async () => {
                 <strong>{{ customer.name }}</strong>
                 <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
                 <code>{{ customer.document }}</code>
-                <span class="badge"><CheckCircle2 :size="14"/> {{ customer.active ? 'Ativo' : 'Inativo' }}</span>
+                <StatusBadge :value="customer.active" />
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.customers.page === 0" type="button" @click="changePage('customers', -1)">
-                Anterior
-              </button>
-              <span>{{ pagination.customers.page + 1 }} de {{ listTotalPages('customers') }}</span>
-              <button :disabled="pagination.customers.page + 1 >= listTotalPages('customers')" type="button"
-                      @click="changePage('customers', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.customers.page"
+                :total-pages="listTotalPages('customers')"
+                @update:page="setListPage('customers', $event)"
+            />
           </section>
         </section>
 
@@ -4124,18 +4149,14 @@ onMounted(async () => {
                 <strong>{{ vehicle.plate }}</strong>
                 <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
                 <span>{{ vehicle.mileage }} km</span>
-                <span class="badge">{{ vehicle.currentStatus }}</span>
+                <StatusBadge :value="vehicle.currentStatus" />
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.vehicles.page === 0" type="button" @click="changePage('vehicles', -1)">
-                Anterior
-              </button>
-              <span>{{ pagination.vehicles.page + 1 }} de {{ listTotalPages('vehicles') }}</span>
-              <button :disabled="pagination.vehicles.page + 1 >= listTotalPages('vehicles')" type="button"
-                      @click="changePage('vehicles', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.vehicles.page"
+                :total-pages="listTotalPages('vehicles')"
+                @update:page="setListPage('vehicles', $event)"
+            />
           </section>
         </section>
 
@@ -4299,26 +4320,21 @@ onMounted(async () => {
                   Venda R$ {{ money(part.unitPrice) }}
                   <small>Custo R$ {{ money(part.costPrice) }}</small>
                 </span>
-                <span
-                    :class="{ danger: ['LOW_STOCK', 'OUT_OF_STOCK'].includes(part.stockStatus) }"
-                    class="badge"
-                >
-                  {{ stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível' }}
-                </span>
+                <StatusBadge
+                    :label="stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível'"
+                    :value="part.stockStatus || 'AVAILABLE'"
+                />
                 <button v-if="auth.role === 'ADMIN'" class="secondary-button compact-action" type="button"
                         @click.stop="editPart(part)">
                   Editar
                 </button>
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.parts.page === 0" type="button" @click="changePage('parts', -1)">Anterior
-              </button>
-              <span>{{ pagination.parts.page + 1 }} de {{ listTotalPages('parts') }}</span>
-              <button :disabled="pagination.parts.page + 1 >= listTotalPages('parts')" type="button"
-                      @click="changePage('parts', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.parts.page"
+                :total-pages="listTotalPages('parts')"
+                @update:page="setListPage('parts', $event)"
+            />
           </section>
         </section>
 
@@ -4601,7 +4617,7 @@ onMounted(async () => {
                   class="data-table-row orders-grid clickable-row"
                   @click="openRecord('Ordem de serviço', order)"
               >
-                <span class="badge">{{ statusLabels[order.status] || order.status }}</span>
+                <StatusBadge :value="order.status" />
                 <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
                 <span>
                   {{ order.services?.length || 0 }} serviços
@@ -4611,15 +4627,12 @@ onMounted(async () => {
               </article>
               <p v-if="!listTotal('serviceOrders') && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
             </div>
-            <div v-if="auth.role !== 'CUSTOMER'" class="pager">
-              <button :disabled="pagination.serviceOrders.page === 0" type="button"
-                      @click="changePage('serviceOrders', -1)">Anterior
-              </button>
-              <span>{{ pagination.serviceOrders.page + 1 }} de {{ listTotalPages('serviceOrders') }}</span>
-              <button :disabled="pagination.serviceOrders.page + 1 >= listTotalPages('serviceOrders')" type="button"
-                      @click="changePage('serviceOrders', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                v-if="auth.role !== 'CUSTOMER'"
+                :page="pagination.serviceOrders.page"
+                :total-pages="listTotalPages('serviceOrders')"
+                @update:page="setListPage('serviceOrders', $event)"
+            />
           </section>
         </section>
 
@@ -4691,31 +4704,21 @@ onMounted(async () => {
                 <span>R$ {{ money(service.basePrice) }}</span>
               </article>
             </div>
-            <div class="pager">
-              <button :disabled="pagination.services.page === 0" type="button" @click="changePage('services', -1)">
-                Anterior
-              </button>
-              <span>{{ pagination.services.page + 1 }} de {{ listTotalPages('services') }}</span>
-              <button :disabled="pagination.services.page + 1 >= listTotalPages('services')" type="button"
-                      @click="changePage('services', 1)">Próxima
-              </button>
-            </div>
+            <PaginationControl
+                :page="pagination.services.page"
+                :total-pages="listTotalPages('services')"
+                @update:page="setListPage('services', $event)"
+            />
           </section>
         </section>
 
-        <div v-if="selectedRecord" class="detail-modal-backdrop" @click.self="closeRecord">
-          <section aria-modal="true" class="detail-modal" role="dialog">
-            <div class="detail-drawer-heading">
-              <div>
-                <span>{{ selectedRecordType }}</span>
-                <h2>
-                  {{ selectedRecord.name || selectedRecord.fullName || selectedRecord.plate || selectedRecord.status }}
-                </h2>
-              </div>
-              <button class="icon-button" type="button" @click="closeRecord">
-                <X :size="18"/>
-              </button>
-            </div>
+        <AppModal
+            :dirty="detailModalDirty"
+            :open="Boolean(selectedRecord)"
+            :subtitle="selectedRecordType"
+            :title="selectedRecord?.name || selectedRecord?.fullName || selectedRecord?.plate || selectedRecord?.status || 'Detalhes'"
+            @close="closeRecord"
+        >
 
             <form v-if="isCustomerDetail" class="modal-form" @submit.prevent="saveDetailModal">
               <input v-model="modalDraft.customer.name" placeholder="Nome"/>
@@ -4801,8 +4804,7 @@ onMounted(async () => {
                 Contatar oficina
               </button>
             </div>
-          </section>
-        </div>
+        </AppModal>
 
         <div v-if="loading" class="loading-bar">Carregando dados...</div>
       </section>

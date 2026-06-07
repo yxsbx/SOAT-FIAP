@@ -7,7 +7,8 @@ import {useAuthStore} from '@/stores/auth';
 const router = useRouter();
 const auth = useAuthStore();
 const username = ref('master@autocarehub.com');
-const password = ref('autocare123');
+const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
+const password = ref(demoPassword);
 const loading = ref(false);
 const error = ref('');
 const selectedProfile = ref('master');
@@ -18,7 +19,6 @@ const demoProfiles = [
     label: 'Admin Master',
     subtitle: 'Dona da AutoCare Hub',
     username: 'master@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
   {
@@ -26,7 +26,6 @@ const demoProfiles = [
     label: 'Admin de oficina',
     subtitle: 'Gestão da oficina',
     username: 'oficina.admin@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
   {
@@ -34,7 +33,6 @@ const demoProfiles = [
     label: 'Admin de loja',
     subtitle: 'Loja de peças',
     username: 'loja.admin@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
   {
@@ -42,7 +40,6 @@ const demoProfiles = [
     label: 'Funcionário oficina',
     subtitle: 'Operação e atendimento',
     username: 'oficina.funcionario@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
   {
@@ -50,7 +47,6 @@ const demoProfiles = [
     label: 'Funcionário loja',
     subtitle: 'Estoque e peças',
     username: 'loja.funcionario@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
   {
@@ -58,7 +54,6 @@ const demoProfiles = [
     label: 'Cliente',
     subtitle: 'Dono de veículo',
     username: 'cliente@autocarehub.com',
-    password: 'autocare123',
     routeName: 'dashboard',
   },
 ];
@@ -66,7 +61,7 @@ const demoProfiles = [
 function selectProfile(profile) {
   selectedProfile.value = profile.id;
   username.value = profile.username;
-  password.value = profile.password;
+  password.value = demoPassword;
   error.value = '';
 }
 
@@ -97,7 +92,7 @@ async function submit() {
         <strong>AutoCare Hub</strong>
       </div>
 
-      <RouterLink class="login-back-link" to="/preview">
+      <RouterLink class="login-back-link" to="/">
         <ArrowLeft :size="17"/>
         Voltar para a home
       </RouterLink>

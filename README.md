@@ -212,8 +212,10 @@ Status:
 - Senhas usam BCrypt.
 - CPF/CNPJ e placa sao normalizados antes de persistir.
 - Requests usam DTOs explicitos para reduzir risco de mass assignment.
+- Campos de entrada possuem limites de tamanho nos fluxos administrativos.
 - Jackson rejeita campos desconhecidos.
 - Respostas de erro sao padronizadas.
+- CORS e exposicao do Swagger sao configuraveis por variaveis de ambiente.
 - Dados sensiveis nao devem ser logados.
 
 ## Execucao Local com Docker
@@ -289,10 +291,13 @@ Variaveis usadas pela aplicacao:
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/autocarehub
 DB_USERNAME=autocarehub
-DB_PASSWORD=change-me-local-postgres-password
-JWT_SECRET=change-me-local-jwt-secret-at-least-32-bytes
+DB_PASSWORD=replace-with-local-postgres-password
+JWT_SECRET=replace-with-local-jwt-secret-at-least-32-bytes
 JWT_EXPIRATION_MINUTES=60
 SERVER_PORT=8080
+APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
+SPRINGDOC_API_DOCS_ENABLED=true
+SPRINGDOC_SWAGGER_UI_ENABLED=true
 ```
 
 ## Testes e Cobertura
@@ -339,17 +344,27 @@ Para autenticar no Swagger:
 3. Clique em `Authorize`.
 4. Informe `Bearer <accessToken>`.
 
-No MVP academico, Swagger e OpenAPI ficam publicos para facilitar avaliacao. Em producao, recomenda-se
-restringir `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**` e `/openapi.yaml` por rede, perfil administrativo ou
-configuracao de ambiente.
+No MVP academico, Swagger e OpenAPI ficam publicos para facilitar avaliacao. Em producao, desative por ambiente com:
+
+```text
+SPRINGDOC_API_DOCS_ENABLED=false
+SPRINGDOC_SWAGGER_UI_ENABLED=false
+```
+
+Tambem recomenda-se restringir `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**` e `/openapi.yaml` por rede ou
+perfil administrativo quando houver ambiente produtivo.
 
 ## Usuarios de Teste
 
-Senha padrao dos seeds:
+Senha padrao dos seeds academicos locais:
 
 ```text
 autocare123
 ```
+
+Essa senha existe apenas para demonstracao do MVP. Nao reutilize em producao e redefina as senhas apos carregar dados
+reais. No frontend, o preenchimento automatico da senha demo deve ser configurado via `VITE_DEMO_PASSWORD` no `.env`
+local, nao no codigo versionado.
 
 Contas:
 
@@ -368,7 +383,7 @@ Login via curl:
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
+  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"$SENHA_DEMO_LOCAL\"}"
 ```
 
 ## Endpoints Principais

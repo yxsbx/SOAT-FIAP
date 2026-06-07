@@ -23,12 +23,12 @@ http://localhost:5173
 Login local:
 
 ```text
-Admin Master: master@autocarehub.com / autocare123
-Admin de oficina: oficina.admin@autocarehub.com / autocare123
-Admin de loja de peças: loja.admin@autocarehub.com / autocare123
-Funcionário de oficina: oficina.funcionario@autocarehub.com / autocare123
-Funcionário de loja de peças: loja.funcionario@autocarehub.com / autocare123
-Cliente: cliente@autocarehub.com / autocare123
+Admin Master: master@autocarehub.com / <SENHA_DEMO_LOCAL>
+Admin de oficina: oficina.admin@autocarehub.com / <SENHA_DEMO_LOCAL>
+Admin de loja de peças: loja.admin@autocarehub.com / <SENHA_DEMO_LOCAL>
+Funcionário de oficina: oficina.funcionario@autocarehub.com / <SENHA_DEMO_LOCAL>
+Funcionário de loja de peças: loja.funcionario@autocarehub.com / <SENHA_DEMO_LOCAL>
+Cliente: cliente@autocarehub.com / <SENHA_DEMO_LOCAL>
 ```
 
 ## Scripts uteis

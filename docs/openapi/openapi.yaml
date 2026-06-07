@@ -1014,7 +1014,7 @@ paths:
             schema:
               $ref: "#/components/schemas/ChangePasswordRequest"
             example:
-              currentPassword: autocare123
+              currentPassword: "<SENHA_DEMO_LOCAL>"
               newPassword: novaSenha123
       responses:
         "204":
@@ -1143,7 +1143,7 @@ paths:
               $ref: "#/components/schemas/CreateUserRequest"
             example:
               username: mecanico@example.com
-              password: autocare123
+              password: "<SENHA_DEMO_LOCAL>"
               role: EMPLOYEE
               fullName: Carlos Oficina
               profileType: WORKSHOP_EMPLOYEE
@@ -1472,9 +1472,9 @@ components:
         password:
           type: string
           minLength: 8
-          maxLength: 120
+          maxLength: 72
           format: password
-          example: autocare123
+          example: "<SENHA_DEMO_LOCAL>"
     LoginResponse:
       type: object
       required:
@@ -2430,8 +2430,8 @@ components:
         password:
           type: string
           format: password
-          minLength: 6
-          maxLength: 120
+          minLength: 8
+          maxLength: 72
         role:
           type: string
           enum:
@@ -2526,12 +2526,12 @@ components:
           type: string
           format: password
           minLength: 1
-          maxLength: 120
+          maxLength: 72
         newPassword:
           type: string
           format: password
-          minLength: 6
-          maxLength: 120
+          minLength: 8
+          maxLength: 72
     ResetPasswordRequest:
       type: object
       required:
@@ -2540,8 +2540,8 @@ components:
         newPassword:
           type: string
           format: password
-          minLength: 6
-          maxLength: 120
+          minLength: 8
+          maxLength: 72
     HomePreferenceRequest:
       type: object
       required:

@@ -1,9 +1,8 @@
 package br.com.autocarehub.infrastructure.persistence.entity;
 
-import lombok.*;
-
 import java.io.Serializable;
 import java.util.UUID;
+import lombok.*;
 
 @Getter
 @Setter
@@ -12,6 +11,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class UserPreferenceId implements Serializable {
 
-    private UUID userId;
-    private String prefKey;
+  private UUID userId;
+  private String prefKey;
 }

@@ -2,31 +2,29 @@ package br.com.autocarehub.application.usecase.serviceorder;
 
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.domain.ServiceOrder;
-
 import java.time.Duration;
 import java.util.List;
 
 public class GetAverageServiceOrderExecutionTimeUseCase {
 
-    private final ServiceOrderRepository serviceOrderRepository;
+  private final ServiceOrderRepository serviceOrderRepository;
 
-    public GetAverageServiceOrderExecutionTimeUseCase(ServiceOrderRepository serviceOrderRepository) {
-        this.serviceOrderRepository = serviceOrderRepository;
-    }
+  public GetAverageServiceOrderExecutionTimeUseCase(ServiceOrderRepository serviceOrderRepository) {
+    this.serviceOrderRepository = serviceOrderRepository;
+  }
 
-    public Output execute() {
-        List<Long> durations =
-                serviceOrderRepository.findCompletedWithExecutionTime().stream()
-                        .map(this::durationInMinutes)
-                        .toList();
-        double average = durations.stream().mapToLong(Long::longValue).average().orElse(0);
-        return new Output(durations.size(), average);
-    }
+  public Output execute() {
+    List<Long> durations =
+        serviceOrderRepository.findCompletedWithExecutionTime().stream()
+            .map(this::durationInMinutes)
+            .toList();
+    double average = durations.stream().mapToLong(Long::longValue).average().orElse(0);
+    return new Output(durations.size(), average);
+  }
 
-    private long durationInMinutes(ServiceOrder serviceOrder) {
-        return Duration.between(serviceOrder.startedAt(), serviceOrder.finishedAt()).toMinutes();
-    }
+  private long durationInMinutes(ServiceOrder serviceOrder) {
+    return Duration.between(serviceOrder.startedAt(), serviceOrder.finishedAt()).toMinutes();
+  }
 
-    public record Output(long completedOrders, double averageExecutionTimeInMinutes) {
-    }
+  public record Output(long completedOrders, double averageExecutionTimeInMinutes) {}
 }

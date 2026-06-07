@@ -208,6 +208,6 @@ mvn dependency-check:check
 
 ```text
 Usuario: admin@autocarehub.com
-Senha: autocare123
+Senha: <SENHA_DEMO_LOCAL>
 Perfil: ADMIN
 ```

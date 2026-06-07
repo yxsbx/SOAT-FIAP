@@ -236,7 +236,10 @@ function scrollToSection(id) {
         </div>
         <div class="customer-cep-preview">
           <label>
-            CEP
+            <span>
+              <Search :size="18"/>
+              CEP
+            </span>
             <strong>01310-100</strong>
           </label>
           <article>

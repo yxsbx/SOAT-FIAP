@@ -9,7 +9,8 @@ import {useAuthStore} from '@/stores/auth';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
-        {path: '/preview', name: 'preview', component: PreviewView, meta: {public: true}},
+        {path: '/', name: 'home', component: PreviewView, meta: {public: true}},
+        {path: '/preview', redirect: '/'},
         {path: '/demo', name: 'demo', component: DemoView, meta: {public: true}},
         {
             path: '/oficina/admin',
@@ -47,7 +48,7 @@ const router = createRouter({
             meta: {public: true},
         },
         {path: '/login', name: 'login', component: LoginView, meta: {public: true}},
-        {path: '/', name: 'dashboard', component: DashboardView},
+        {path: '/app', name: 'dashboard', component: DashboardView},
         {path: '/:pathMatch(.*)*', redirect: '/'},
     ],
 });

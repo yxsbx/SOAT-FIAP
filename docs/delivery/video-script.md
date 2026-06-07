@@ -149,7 +149,7 @@ Executar login:
 
 ```text
 Usuario: admin@autocarehub.com
-Senha: autocare123
+Senha: <SENHA_DEMO_LOCAL>
 ```
 
 Mostrar o token JWT retornado e explicar que ele deve ser usado como Bearer token nas chamadas protegidas.

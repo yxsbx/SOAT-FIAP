@@ -5,5 +5,4 @@ import br.com.autocarehub.infrastructure.persistence.entity.UserPreferenceJpaEnt
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserPreferenceJpaRepository
-        extends JpaRepository<UserPreferenceJpaEntity, UserPreferenceId> {
-}
+    extends JpaRepository<UserPreferenceJpaEntity, UserPreferenceId> {}
