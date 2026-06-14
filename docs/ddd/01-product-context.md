@@ -53,10 +53,6 @@ autenticação JWT, controle básico de perfis e migrations versionadas.
 
 ## Visão Futura do Produto
 
-A visão futura é transformar o AutoCare Hub em uma plataforma automotiva mais ampla. A oficina teria um painel
-operacional para acompanhar atendimentos, estoque, serviços, agenda e indicadores. O cliente teria um aplicativo para
-consultar veículos, aprovar orçamentos, acompanhar status e contratar serviços.
+A visão futura é transformar o AutoCare Hub em uma plataforma automotiva mais ampla. A oficina teria um painel operacional para acompanhar atendimentos, estoque, serviços, agenda e indicadores. O cliente teria um aplicativo para consultar veículos, aprovar orçamentos, acompanhar status e contratar serviços.
 
-Também existe potencial de evolução para marketplace de lojas de peças, cupons, agendamento online, atendimento 24h e
-integrações com lava-jatos e outros serviços automotivos. Essas possibilidades não fazem parte do MVP atual e devem ser
-tratadas como novos contextos ou extensões futuras.
+Também existe potencial de evolução para marketplace de lojas de peças, cupons, agendamento online, atendimento 24h e integrações com lava-jatos e outros serviços automotivos. Essas possibilidades não fazem parte do MVP atual e devem ser tratadas como novos contextos ou extensões futuras.

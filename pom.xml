@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.13</version>
+    <version>4.1.0</version>
     <relativePath/>
   </parent>
 
@@ -22,11 +22,14 @@
     <java.version>21</java.version>
     <maven.compiler.release>21</maven.compiler.release>
     <openapi-generator.version>7.22.0</openapi-generator.version>
-    <springdoc.version>2.8.17</springdoc.version>
-    <jjwt.version>0.12.6</jjwt.version>
+    <springdoc.version>3.0.3</springdoc.version>
+    <swagger-ui.version>5.32.6</swagger-ui.version>
+    <jjwt.version>0.13.0</jjwt.version>
     <dependency-check.version>12.1.1</dependency-check.version>
     <jacoco.version>0.8.12</jacoco.version>
-    <lombok.version>1.18.38</lombok.version>
+    <lombok.version>1.18.46</lombok.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
+    <commons-compress.version>1.28.0</commons-compress.version>
     <spotless.version>2.44.4</spotless.version>
     <maven-compiler.version>3.14.0</maven-compiler.version>
   </properties>
@@ -68,6 +71,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-flyway</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>runtime</scope>
@@ -77,6 +85,12 @@
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+      <version>${swagger-ui.version}</version>
     </dependency>
 
     <dependency>
@@ -102,7 +116,7 @@
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
-      <version>0.2.6</version>
+      <version>0.2.10</version>
     </dependency>
 
     <dependency>
@@ -115,6 +129,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-webmvc-test</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -133,18 +153,28 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>jdbc</artifactId>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>postgresql</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -225,6 +255,12 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>br/com/autocarehub/AutoCareHubApiApplication.class</exclude>
+            <exclude>br/com/autocarehub/interfaces/rest/generated/**/*.class</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <id>prepare-agent</id>
@@ -279,6 +315,7 @@
           <failBuildOnCVSS>7.0</failBuildOnCVSS>
           <skipProvidedScope>true</skipProvidedScope>
           <skipTestScope>false</skipTestScope>
+          <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
           <suppressionFiles>
             <suppressionFile>${project.basedir}/docs/security/dependency-check-suppressions.xml
             </suppressionFile>
