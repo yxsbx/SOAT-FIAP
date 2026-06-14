@@ -6,8 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
 import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 
 class RegisterPartStockMovementUseCaseTest {

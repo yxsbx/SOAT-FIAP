@@ -1,10 +1,8 @@
 package br.com.autocarehub.domain.model;
 
 import br.com.autocarehub.domain.exception.DomainException;
-
-import br.com.autocarehub.domain.valueobject.Plate;
 import br.com.autocarehub.domain.service.DomainValidation;
-
+import br.com.autocarehub.domain.valueobject.Plate;
 import java.util.Objects;
 import java.util.UUID;
 

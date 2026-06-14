@@ -1,11 +1,12 @@
 package br.com.autocarehub.domain.model;
 
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class PartTest {
@@ -143,5 +144,126 @@ class PartTest {
                     "Air filter", "AIR-001", "Filters", null, "Mann", Money.of("80.00"), -1))
         .isInstanceOf(DomainException.class)
         .hasMessage("Minimum stock cannot be negative");
+  }
+
+  @Test
+  void shouldCoverPartConstructorAndUpdateOverloads() {
+    UUID id = UUID.randomUUID();
+    Part first =
+        new Part(
+            "Oil filter",
+            "OIL-002",
+            "Filters",
+            null,
+            "Bosch",
+            Money.of("25.00"),
+            Money.of("50.00"),
+            10,
+            2);
+    Part second =
+        new Part(
+            id,
+            "Cabin filter",
+            "CAB-001",
+            "Filters",
+            null,
+            "Mann",
+            Money.of("60.00"),
+            6,
+            2,
+            true);
+    Part third =
+        new Part(
+            UUID.randomUUID(),
+            "Air filter",
+            "Air filter description",
+            "AIR-001",
+            "Filters",
+            null,
+            "Mann",
+            Money.of("70.00"),
+            8,
+            2,
+            true);
+
+    first.update("Oil filter premium", "OIL-003", "Filters", null, "Bosch", Money.of("65.00"), 3);
+    second.update(
+        "Cabin filter premium",
+        "CAB-002",
+        "Filters",
+        null,
+        "Mann",
+        Money.of("30.00"),
+        Money.of("80.00"),
+        4);
+
+    assertThat(first.description()).isEqualTo("Oil filter premium");
+    assertThat(second.id()).isEqualTo(id);
+    assertThat(second.costPrice().value()).isEqualByComparingTo("30.00");
+    assertThat(third.description()).isEqualTo("Air filter description");
+  }
+
+  @Test
+  void shouldRejectAdditionalInvalidPartStates() {
+    assertThatThrownBy(
+            () ->
+                new Part(
+                    UUID.randomUUID(),
+                    "Oil filter",
+                    "Oil filter",
+                    "OIL-004",
+                    "Filters",
+                    null,
+                    "Bosch",
+                    Money.of("25.00"),
+                    Money.of("50.00"),
+                    2,
+                    3,
+                    1,
+                    3,
+                    null,
+                    true))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Reserved stock cannot be greater than stock");
+
+    Part part = part();
+    assertThatThrownBy(() -> part.reserveStock(0))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Quantity must be greater than zero");
+    assertThatThrownBy(() -> part.commitReservedStock(0))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Quantity must be greater than zero");
+    assertThatThrownBy(() -> part.releaseReservedStock(0))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Quantity must be greater than zero");
+    assertThatThrownBy(() -> part.configureReservationDays(0))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Reservation days must be greater than zero");
+  }
+
+  @Test
+  void shouldReleaseExpiredReservation() {
+    Part part =
+        new Part(
+            UUID.randomUUID(),
+            "Oil filter",
+            "Oil filter",
+            "OIL-005",
+            "Filters",
+            null,
+            "Bosch",
+            Money.of("25.00"),
+            Money.of("50.00"),
+            10,
+            4,
+            2,
+            3,
+            LocalDateTime.now().minusDays(1),
+            true);
+
+    part.releaseExpiredReservation();
+
+    assertThat(part.reservedQuantity()).isZero();
+    assertThat(part.reservationExpiresAt()).isNull();
   }
 }

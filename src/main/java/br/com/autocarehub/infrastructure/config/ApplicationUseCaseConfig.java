@@ -35,8 +35,8 @@ import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUse
 import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
-import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersByCustomerUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
@@ -103,7 +103,7 @@ public class ApplicationUseCaseConfig {
 
   @Bean
   ChangeUserPasswordUseCase changeUserPasswordUseCase(
-          UserRepository repository, PasswordEncoder passwordEncoder) {
+      UserRepository repository, PasswordEncoder passwordEncoder) {
     return new ChangeUserPasswordUseCase(repository, passwordEncoder);
   }
 

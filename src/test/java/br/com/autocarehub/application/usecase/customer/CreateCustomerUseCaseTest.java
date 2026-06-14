@@ -5,16 +5,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
-import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.model.Customer;
+import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
-import org.junit.jupiter.api.Test;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class CreateCustomerUseCaseTest {
 

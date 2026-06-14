@@ -1,14 +1,14 @@
 package br.com.autocarehub.application.usecase.user;
 
+import static java.util.Objects.requireNonNull;
+
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.UserRepository;
-import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import static java.util.Objects.requireNonNull;
 
 public class CreateUserUseCase {
 

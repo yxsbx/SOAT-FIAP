@@ -236,7 +236,7 @@ Tempo sugerido: 1 minuto
 Mostrar a documentação:
 
 ```text
-docs/security/vulnerability-analysis.md
+docs/security/SECURITY_REPORT.md
 ```
 
 Executar:

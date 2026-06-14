@@ -1,8 +1,6 @@
 package br.com.autocarehub.domain.valueobject;
 
 import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.service.DomainValidation;
-
 import java.util.Locale;
 
 public record Plate(String value) {
@@ -11,7 +9,7 @@ public record Plate(String value) {
   private static final String MERCOSUR_PLATE_PATTERN = "^[A-Z]{3}[0-9][A-Z][0-9]{2}$";
 
   public Plate {
-    if (value.isBlank()) {
+    if (value == null || value.isBlank()) {
       throw new DomainException("Plate is required");
     }
     value = value.replaceAll("[^A-Za-z0-9]", "").toUpperCase(Locale.ROOT);

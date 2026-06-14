@@ -1,12 +1,12 @@
 package br.com.autocarehub.application.usecase.auth;
 
+import static java.util.Objects.requireNonNull;
+
 import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
 import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-
-import static java.util.Objects.requireNonNull;
 
 public class LoginUseCase {
 

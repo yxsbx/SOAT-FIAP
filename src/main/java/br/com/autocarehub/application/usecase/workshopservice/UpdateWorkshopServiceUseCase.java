@@ -2,8 +2,8 @@ package br.com.autocarehub.application.usecase.workshopservice;
 
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.WorkshopService;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.util.UUID;
 
 public class UpdateWorkshopServiceUseCase {

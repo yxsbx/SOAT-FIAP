@@ -77,7 +77,8 @@ public final class ServiceOrderRestMapper {
     return new ListServiceOrdersUseCase.Query(
         status == null
             ? null
-            : br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(status.getValue()),
+            : br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(
+                status.getValue()),
         customerId,
         vehicleId,
         createdFrom == null ? null : createdFrom.toLocalDateTime(),
@@ -179,7 +180,8 @@ public final class ServiceOrderRestMapper {
             br.com.autocarehub.domain.enums.ServiceOrderStatus.RECEBIDA,
             serviceOrder.createdAt(),
             "Ordem de serviço criada"));
-    if (serviceOrder.status() == br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO) {
+    if (serviceOrder.status()
+        == br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO) {
       history.add(
           statusHistoryItem(
               br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO,

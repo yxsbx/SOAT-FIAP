@@ -3,7 +3,6 @@ package br.com.autocarehub.infrastructure.persistence.repository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.infrastructure.persistence.mapper.ServiceOrderJpaMapper;
-import br.com.autocarehub.infrastructure.persistence.repository.ServiceOrderJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

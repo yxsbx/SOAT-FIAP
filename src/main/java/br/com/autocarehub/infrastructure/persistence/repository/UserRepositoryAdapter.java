@@ -3,7 +3,6 @@ package br.com.autocarehub.infrastructure.persistence.repository;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.infrastructure.persistence.mapper.UserJpaMapper;
-import br.com.autocarehub.infrastructure.persistence.repository.UserJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

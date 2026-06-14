@@ -1,7 +1,7 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.WorkshopService;
+import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.infrastructure.persistence.entity.WorkshopServiceJpaEntity;
 
 public final class WorkshopServiceJpaMapper {

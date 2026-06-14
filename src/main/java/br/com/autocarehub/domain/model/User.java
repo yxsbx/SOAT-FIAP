@@ -1,9 +1,7 @@
 package br.com.autocarehub.domain.model;
 
-import br.com.autocarehub.domain.exception.DomainException;
-
 import br.com.autocarehub.domain.enums.UserRole;
-
+import br.com.autocarehub.domain.exception.DomainException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;

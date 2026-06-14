@@ -3,8 +3,8 @@ package br.com.autocarehub.application.usecase.part;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.util.UUID;
 
 public class RegisterPartStockMovementUseCase {

@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
-import br.com.autocarehub.domain.model.DemoLead;
 import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.model.DemoLead;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;

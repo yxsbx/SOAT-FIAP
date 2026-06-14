@@ -37,7 +37,7 @@ Video de apresentação:
 Relatorio de vulnerabilidades:
 
 ```text
-docs/security/vulnerability-analysis.md
+docs/security/SECURITY_REPORT.md
 ```
 
 ## Resumo do Projeto
@@ -116,7 +116,7 @@ mvn dependency-check:check
 Caminho da documentação:
 
 ```text
-docs/security/vulnerability-analysis.md
+docs/security/SECURITY_REPORT.md
 ```
 
 Caminho dos relatorios gerados:
@@ -136,7 +136,7 @@ Vulnerabilidades encontradas:
 
 ```text
 CVE criticas e altas foram apontadas principalmente em spring-boot-3.5.13, spring-boot-starter-web-3.5.13,
-tomcat-embed-core-10.1.53 e postgresql-42.7.10. A lista detalhada esta em docs/security/vulnerability-analysis.md.
+tomcat-embed-core-10.1.53 e postgresql-42.7.10. A lista detalhada esta em docs/security/SECURITY_REPORT.md.
 ```
 
 Plano de correção:

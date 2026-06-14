@@ -1,7 +1,6 @@
 package br.com.autocarehub.domain.service;
 
 import br.com.autocarehub.domain.exception.DomainException;
-
 import java.time.Year;
 import java.util.Locale;
 import java.util.regex.Pattern;

@@ -4,14 +4,13 @@ import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
 import br.com.autocarehub.application.usecase.part.ListPartsUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartUseCase;
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.Part;
-import br.com.autocarehub.interfaces.rest.generated.model.PartResponse;
-import br.com.autocarehub.interfaces.rest.generated.model.PartListResponse;
+import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.interfaces.rest.generated.model.CreatePartRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.PartListResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.PartResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;

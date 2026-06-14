@@ -14,9 +14,9 @@ import br.com.autocarehub.interfaces.rest.generated.model.VehicleListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleResponse;
 import br.com.autocarehub.interfaces.rest.mapper.VehicleRestMapper;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 

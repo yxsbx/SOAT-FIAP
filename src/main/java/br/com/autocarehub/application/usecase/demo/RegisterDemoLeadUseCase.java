@@ -1,10 +1,10 @@
 package br.com.autocarehub.application.usecase.demo;
 
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
-import br.com.autocarehub.domain.model.DemoLead;
-import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.model.DemoLead;
+import br.com.autocarehub.domain.valueobject.Document;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

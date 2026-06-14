@@ -1,13 +1,12 @@
 package br.com.autocarehub.domain.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
 import br.com.autocarehub.domain.valueobject.Money;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import org.junit.jupiter.api.Test;
 
 class ServiceOrderTest {

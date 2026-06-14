@@ -1,14 +1,13 @@
 package br.com.autocarehub.application.usecase.user;
 
+import static java.util.Objects.requireNonNull;
+
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
-
 import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import static java.util.Objects.requireNonNull;
 
 public class ChangeUserPasswordUseCase {
 

@@ -1,9 +1,8 @@
 package br.com.autocarehub.domain.model;
 
+import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
-import br.com.autocarehub.domain.service.DomainValidation;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;

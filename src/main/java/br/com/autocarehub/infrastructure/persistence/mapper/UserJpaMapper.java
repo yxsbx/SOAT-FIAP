@@ -1,7 +1,7 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.infrastructure.persistence.entity.UserJpaEntity;
 import java.util.Arrays;
 import java.util.List;

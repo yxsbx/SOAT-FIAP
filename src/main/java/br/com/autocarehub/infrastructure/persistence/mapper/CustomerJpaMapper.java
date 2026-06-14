@@ -1,9 +1,9 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.valueobject.Address;
-import br.com.autocarehub.domain.model.Customer;
-import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.enums.DocumentType;
+import br.com.autocarehub.domain.model.Customer;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.infrastructure.persistence.entity.CustomerJpaEntity;
 
 public final class CustomerJpaMapper {
@@ -21,14 +21,14 @@ public final class CustomerJpaMapper {
     entity.setActive(customer.active());
     entity.setCreatedAt(customer.createdAt());
     Address address = customer.address();
-      entity.setAddressStreet(address.street());
-      entity.setAddressNumber(address.number());
-      entity.setAddressComplement(address.complement());
-      entity.setAddressNeighborhood(address.neighborhood());
-      entity.setAddressCity(address.city());
-      entity.setAddressState(address.state());
-      entity.setAddressZipCode(address.zipCode());
-      return entity;
+    entity.setAddressStreet(address.street());
+    entity.setAddressNumber(address.number());
+    entity.setAddressComplement(address.complement());
+    entity.setAddressNeighborhood(address.neighborhood());
+    entity.setAddressCity(address.city());
+    entity.setAddressState(address.state());
+    entity.setAddressZipCode(address.zipCode());
+    return entity;
   }
 
   public static Customer toDomain(CustomerJpaEntity entity) {

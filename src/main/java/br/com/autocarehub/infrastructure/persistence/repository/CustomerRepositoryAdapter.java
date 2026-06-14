@@ -4,7 +4,6 @@ import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.infrastructure.persistence.mapper.CustomerJpaMapper;
-import br.com.autocarehub.infrastructure.persistence.repository.CustomerJpaRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

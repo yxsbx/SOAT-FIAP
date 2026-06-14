@@ -1,11 +1,10 @@
 package br.com.autocarehub.domain.model;
 
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
 import org.junit.jupiter.api.Test;
 
 class WorkshopServiceTest {

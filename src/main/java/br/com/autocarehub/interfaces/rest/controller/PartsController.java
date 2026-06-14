@@ -11,8 +11,8 @@ import br.com.autocarehub.application.usecase.part.ReleasePartReservationUseCase
 import br.com.autocarehub.application.usecase.part.ReservePartStockUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartUseCase;
-import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.interfaces.rest.generated.api.PartsApi;
 import br.com.autocarehub.interfaces.rest.generated.model.CommitPartReservationRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.ConfigurePartReservationRequest;
@@ -26,9 +26,9 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest
 import br.com.autocarehub.interfaces.rest.mapper.PartRestMapper;
 import java.math.BigDecimal;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.jspecify.annotations.Nullable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

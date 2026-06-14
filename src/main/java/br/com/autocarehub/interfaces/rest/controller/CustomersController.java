@@ -13,9 +13,9 @@ import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.mapper.CustomerRestMapper;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.jspecify.annotations.Nullable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

@@ -2,7 +2,6 @@ package br.com.autocarehub.domain.valueobject;
 
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
-
 import java.util.Objects;
 
 public record Document(DocumentType type, String value) {
@@ -27,7 +26,10 @@ public record Document(DocumentType type, String value) {
   }
 
   private static String normalize(String value) {
-      return value.replaceAll("\\D", "");
+    if (value == null || value.isBlank()) {
+      return "";
+    }
+    return value.replaceAll("\\D", "");
   }
 
   private static boolean isValid(DocumentType type, String value) {

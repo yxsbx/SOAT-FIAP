@@ -4,15 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.application.port.out.VehicleRepository;
-import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.model.Customer;
-import br.com.autocarehub.domain.valueobject.Document;
-import br.com.autocarehub.domain.valueobject.Plate;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.Vehicle;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.valueobject.Document;
+import br.com.autocarehub.domain.valueobject.Plate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,6 +96,48 @@ class TrackServiceOrderUseCaseTest {
     assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(null, null, null)))
         .isInstanceOf(ApplicationException.class)
         .hasMessage("Provide serviceOrderId, customerDocument or plate to track a service order");
+  }
+
+  @Test
+  void shouldRejectTrackingWhenFiltersDoNotMatchServiceOrder() {
+    Seed seed = seed();
+    TrackServiceOrderUseCase useCase = useCase();
+
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new TrackServiceOrderUseCase.Query(
+                        seed.serviceOrder().id(), "11222333000181", null)))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Service order not found for customer document");
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new TrackServiceOrderUseCase.Query(
+                        seed.serviceOrder().id(), null, "DEF2G34")))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Service order not found for vehicle plate");
+  }
+
+  @Test
+  void shouldRejectTrackingWhenReferencesDoNotExist() {
+    Seed seed = seed();
+    TrackServiceOrderUseCase useCase = useCase();
+
+    vehicleRepository.vehicles.clear();
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null)))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Vehicle not found");
+
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new TrackServiceOrderUseCase.Query(null, seed.customer().document().value(), null)))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Vehicle not found");
   }
 
   private TrackServiceOrderUseCase useCase() {

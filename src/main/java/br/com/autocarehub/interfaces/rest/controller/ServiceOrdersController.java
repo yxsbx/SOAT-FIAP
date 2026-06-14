@@ -25,9 +25,9 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateServiceOrderStat
 import br.com.autocarehub.interfaces.rest.mapper.ServiceOrderRestMapper;
 import java.time.OffsetDateTime;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 

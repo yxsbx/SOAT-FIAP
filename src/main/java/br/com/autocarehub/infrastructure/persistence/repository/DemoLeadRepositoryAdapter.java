@@ -3,7 +3,6 @@ package br.com.autocarehub.infrastructure.persistence.repository;
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.domain.model.DemoLead;
 import br.com.autocarehub.infrastructure.persistence.entity.DemoLeadJpaEntity;
-import br.com.autocarehub.infrastructure.persistence.repository.DemoLeadJpaRepository;
 import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;

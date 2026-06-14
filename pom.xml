@@ -259,6 +259,11 @@
           <excludes>
             <exclude>br/com/autocarehub/AutoCareHubApiApplication.class</exclude>
             <exclude>br/com/autocarehub/interfaces/rest/generated/**/*.class</exclude>
+            <exclude>br/com/autocarehub/interfaces/rest/**/*.class</exclude>
+            <exclude>br/com/autocarehub/infrastructure/**/*.class</exclude>
+            <exclude>br/com/autocarehub/application/usecase/**/*$Command.class</exclude>
+            <exclude>br/com/autocarehub/application/usecase/**/*$Query.class</exclude>
+            <exclude>br/com/autocarehub/application/usecase/**/*$Output.class</exclude>
           </excludes>
         </configuration>
         <executions>
@@ -278,7 +283,7 @@
           </execution>
 
           <execution>
-            <id>check-domain-coverage</id>
+            <id>check-business-coverage</id>
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
@@ -286,16 +291,12 @@
             <configuration>
               <rules>
                 <rule>
-                  <element>PACKAGE</element>
-                  <includes>
-                    <include>br.com.autocarehub.domain.*</include>
-                    <include>br.com.autocarehub.domain.**</include>
-                  </includes>
+                  <element>BUNDLE</element>
                   <limits>
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.80</minimum>
+                      <minimum>0.95</minimum>
                     </limit>
                   </limits>
                 </rule>

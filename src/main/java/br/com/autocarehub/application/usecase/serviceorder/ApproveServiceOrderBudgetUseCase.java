@@ -9,18 +9,34 @@ import java.util.UUID;
 public class ApproveServiceOrderBudgetUseCase {
 
   private final ServiceOrderRepository serviceOrderRepository;
+  private final PartRepository partRepository;
 
-    public ApproveServiceOrderBudgetUseCase(
+  public ApproveServiceOrderBudgetUseCase(
       ServiceOrderRepository serviceOrderRepository, PartRepository partRepository) {
     this.serviceOrderRepository = serviceOrderRepository;
-    }
+    this.partRepository = partRepository;
+  }
 
   public ServiceOrder execute(UUID serviceOrderId) {
     ServiceOrder serviceOrder =
         serviceOrderRepository
             .findById(serviceOrderId)
             .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
-      serviceOrder.approvedAt();
-      return serviceOrder;
+    if (serviceOrder.approvedAt() == null) {
+      commitReservedParts(serviceOrder);
+      serviceOrder.approveBudget();
+    }
+    return serviceOrderRepository.save(serviceOrder);
+  }
+
+  private void commitReservedParts(ServiceOrder serviceOrder) {
+    for (ServiceOrder.ServiceOrderPart serviceOrderPart : serviceOrder.parts()) {
+      var part =
+          partRepository
+              .findById(serviceOrderPart.partId())
+              .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+      part.commitReservedStock(serviceOrderPart.quantity());
+      partRepository.save(part);
+    }
   }
 }
