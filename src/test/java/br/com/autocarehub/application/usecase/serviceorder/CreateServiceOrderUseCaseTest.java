@@ -64,6 +64,8 @@ class CreateServiceOrderUseCaseTest {
     assertThat(serviceOrder.partsTotal().value()).isEqualByComparingTo("40.00");
     assertThat(serviceOrder.totalAmount().value()).isEqualByComparingTo("280.00");
     assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
+    assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(1);
+    assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(10);
   }
 
   @Test

@@ -2,6 +2,9 @@ package br.com.autocarehub.application.usecase.demo;
 
 import br.com.autocarehub.application.repository.DemoLeadRepository;
 import br.com.autocarehub.domain.DemoLead;
+import br.com.autocarehub.domain.Document;
+import br.com.autocarehub.domain.DocumentType;
+import br.com.autocarehub.domain.DomainException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,6 +21,10 @@ public class RegisterDemoLeadUseCase {
   }
 
   public DemoLead execute(Command command) {
+    Document cnpj = Document.from(command.cnpj());
+    if (cnpj.type() != DocumentType.CNPJ) {
+      throw new DomainException("Demo lead document must be CNPJ");
+    }
     DemoLead demoLead =
         new DemoLead(
             UUID.randomUUID(),
@@ -26,7 +33,7 @@ public class RegisterDemoLeadUseCase {
             command.demoProfile().trim(),
             command.email().trim().toLowerCase(),
             command.phone().trim(),
-            command.cnpj().trim().toUpperCase(),
+            cnpj.value(),
             normalize(command.city()),
             normalize(command.message()),
             LocalDateTime.now());

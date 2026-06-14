@@ -59,6 +59,30 @@ class ApproveServiceOrderBudgetUseCaseTest {
   }
 
   @Test
+  void shouldNotReduceStockAgainWhenBudgetWasAlreadyApproved() {
+    Part part = partRepository.save(part());
+    ServiceOrder serviceOrder =
+        new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+    serviceOrder.addService(
+        new WorkshopService(
+            "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
+        1);
+    serviceOrder.addPart(part, 2);
+    serviceOrderRepository.save(serviceOrder);
+    new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
+        .execute(serviceOrder.id());
+    ApproveServiceOrderBudgetUseCase useCase =
+        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository);
+
+    useCase.execute(serviceOrder.id());
+    useCase.execute(serviceOrder.id());
+
+    Part updated = partRepository.findById(part.id()).orElseThrow();
+    assertThat(updated.stockQuantity()).isEqualTo(8);
+    assertThat(updated.reservedQuantity()).isZero();
+  }
+
+  @Test
   void shouldRejectBudgetApprovalWhenBudgetWasNotGenerated() {
     ServiceOrder serviceOrder =
         new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");

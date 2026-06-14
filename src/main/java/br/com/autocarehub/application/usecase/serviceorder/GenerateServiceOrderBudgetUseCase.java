@@ -23,6 +23,9 @@ public class GenerateServiceOrderBudgetUseCase {
         serviceOrderRepository
             .findById(serviceOrderId)
             .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+    if (serviceOrder.budgetGeneratedAt() != null) {
+      return serviceOrder;
+    }
     serviceOrder.generateBudget();
     for (ServiceOrder.ServiceOrderPart orderPart : serviceOrder.parts()) {
       Part part =

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,8 @@ public class SecurityConfig {
   public SecurityConfig(
       JwtAuthenticationFilter jwtAuthenticationFilter,
       ObjectMapper objectMapper,
-      @Value("${app.cors.allowed-origins}") String allowedOrigins) {
+      @Value("${app.cors.allowed-origins:http://localhost:5173,http://127.0.0.1:5173}")
+          String allowedOrigins) {
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     this.objectMapper = objectMapper;
     this.allowedOrigins = allowedOrigins;
@@ -196,10 +198,16 @@ public class SecurityConfig {
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    Arrays.stream(allowedOrigins.split(","))
-        .map(String::trim)
-        .filter(origin -> !origin.isBlank())
-        .forEach(configuration::addAllowedOrigin);
+    Set<String> origins =
+        Arrays.stream(allowedOrigins.split(","))
+            .map(String::trim)
+            .filter(origin -> !origin.isBlank())
+            .peek(this::rejectUnsafeCorsOrigin)
+            .collect(java.util.stream.Collectors.toCollection(java.util.LinkedHashSet::new));
+    if (origins.isEmpty()) {
+      throw new IllegalStateException("At least one CORS origin must be configured");
+    }
+    origins.forEach(configuration::addAllowedOrigin);
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
     configuration.setAllowCredentials(false);
@@ -208,6 +216,12 @@ public class SecurityConfig {
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
+  }
+
+  private void rejectUnsafeCorsOrigin(String origin) {
+    if ("*".equals(origin) || "null".equalsIgnoreCase(origin)) {
+      throw new IllegalStateException("Wildcard or null CORS origins are not allowed");
+    }
   }
 
   private void writeError(

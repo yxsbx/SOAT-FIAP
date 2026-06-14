@@ -99,5 +99,8 @@ class CustomerTest {
     assertThatThrownBy(() -> Document.from("123"))
         .isInstanceOf(DomainException.class)
         .hasMessage("Document must be CPF or CNPJ");
+    assertThatThrownBy(() -> Document.from(null))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Document must be CPF or CNPJ");
   }
 }

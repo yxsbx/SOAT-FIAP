@@ -34,7 +34,7 @@ const customerZipCode = ref('01310-100');
 
 const configs = {
   workshopAdmin: {
-    label: 'Oficina - Admin',
+    label: 'Admin de oficina',
     title: 'Gestão completa para dono, gerente e administradores da oficina',
     text: 'Centraliza acessos, permissões, operação, estoque, clientes, veículos, faturamento e indicadores internos.',
     icon: ShieldCheck,
@@ -46,14 +46,14 @@ const configs = {
       ['7', 'Alertas de estoque'],
     ],
     cards: [
-      ['Perfis e permissões', 'Crie funcionários, admins e defina acesso por módulo.', UserCog],
+      ['Perfis e permissões', 'Crie funcionários, administradores e defina acesso por módulo.', UserCog],
       ['Operação da oficina', 'Acompanhe ordens, prazos, aprovações e entrega dos veículos.', ClipboardList],
       ['Financeiro interno', 'Resumo de faturamento, tickets e serviços mais vendidos.', DollarSign],
     ],
   },
   employee: {
     label: 'Funcionário',
-    title: 'Rotina por usuário com acesso limitado por role e permissão',
+    title: 'Rotina por usuário com acesso limitado por função e permissão',
     text: 'A tela muda conforme o perfil do funcionário, evitando acesso a faturamento, usuários ou configurações sensíveis quando não permitido.',
     icon: Users,
     accent: 'cyan',
@@ -72,19 +72,19 @@ const configs = {
   master: {
     label: 'Admin Master',
     title: 'Sua visão de plataforma, clientes, receita e interesse comercial',
-    text: 'Painel para acompanhar oficinas ativas, uso por cliente, faturamento do app, leads da demo, assinaturas e saúde da base.',
+    text: 'Painel para acompanhar oficinas ativas, uso por cliente, faturamento da plataforma, interessados da demo, assinaturas e saúde da base.',
     icon: BarChart3,
     accent: 'violet',
     stats: [
       ['128', 'Empresas ativas'],
       ['842', 'Usuários totais'],
-      ['R$ 54.900', 'MRR do app'],
-      ['31', 'Leads de demo'],
+      ['R$ 54.900', 'Receita recorrente mensal'],
+      ['31', 'Interessados na demo'],
     ],
     cards: [
       ['Clientes ativos', 'Detalhe por empresa, plano, uso, faturamento e usuários.', Building2],
-      ['Leads e assinaturas', 'Empresas que entraram em contato, converteram ou abandonaram.', Eye],
-      ['Saúde da plataforma', 'Uso por cliente, churn, crescimento, receita e alertas.', BarChart3],
+      ['Interessados e assinaturas', 'Empresas que entraram em contato, converteram ou abandonaram.', Eye],
+      ['Saúde da plataforma', 'Uso por cliente, cancelamentos, crescimento, receita e alertas.', BarChart3],
     ],
   }
 };
@@ -143,7 +143,7 @@ const nearbyPlaces = computed(() => {
       <article v-if="persona === 'workshopAdmin' || persona === 'employee'" class="persona-card permission-card">
         <ShieldCheck :size="28"/>
         <h2>Exemplo de permissões por usuário</h2>
-        <p>Esse bloco mostra como a tela de funcionário deve variar conforme as permissões dadas pelo admin.</p>
+        <p>Esse bloco mostra como a tela de funcionário deve variar conforme as permissões definidas pelo administrador.</p>
         <div class="permission-list">
           <label v-for="row in permissionRows" :key="row.key">
             <input v-model="permissions[row.key]" type="checkbox"/>
@@ -157,7 +157,7 @@ const nearbyPlaces = computed(() => {
         <BarChart3 :size="28"/>
         <h2>Indicadores que cabem na sua visão</h2>
         <p>
-          Empresas por plano, receita recorrente, leads da demo, conversão, inadimplência,
+          Empresas por plano, receita recorrente, interessados da demo, conversão, inadimplência,
           oficinas mais ativas, usuários por empresa, uso de estoque e ordens criadas por período.
         </p>
       </article>

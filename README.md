@@ -217,6 +217,8 @@ Status:
 - Respostas de erro sao padronizadas.
 - CORS e exposicao do Swagger sao configuraveis por variaveis de ambiente.
 - Dados sensiveis nao devem ser logados.
+- `APP_CORS_ALLOWED_ORIGINS` deve listar origens explicitas. O backend rejeita `*` e `null`.
+- Em listagens, documentos de clientes podem ser mascarados; consulte o detalhe individual apenas quando houver necessidade operacional.
 
 ## Execucao Local com Docker
 
@@ -232,7 +234,8 @@ cp .env.example .env
 ```
 
 Edite o `.env` antes de subir o ambiente. O `docker-compose.yml` exige `POSTGRES_PASSWORD` e `JWT_SECRET` definidos
-localmente e nao possui fallback com segredo fixo. Nao versionar `.env`.
+localmente e nao possui fallback com segredo fixo. Nao versionar `.env`. O `JWT_SECRET` deve ter pelo menos 32 bytes e
+nao deve ser reutilizado entre ambientes.
 
 Suba API e banco:
 
@@ -300,6 +303,9 @@ SPRINGDOC_API_DOCS_ENABLED=true
 SPRINGDOC_SWAGGER_UI_ENABLED=true
 ```
 
+Nao use `APP_CORS_ALLOWED_ORIGINS=*`. A aplicacao rejeita wildcard para evitar CORS permissivo em ambientes de scan,
+homologacao ou producao.
+
 ## Testes e Cobertura
 
 Rodar testes:
@@ -352,7 +358,8 @@ SPRINGDOC_SWAGGER_UI_ENABLED=false
 ```
 
 Tambem recomenda-se restringir `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**` e `/openapi.yaml` por rede ou
-perfil administrativo quando houver ambiente produtivo.
+perfil administrativo quando houver ambiente produtivo. Nunca publique Swagger produtivo com credenciais reais nos
+exemplos.
 
 ## Usuarios de Teste
 

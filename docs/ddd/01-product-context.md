@@ -1,4 +1,4 @@
-# Product Context
+# Contexto do Produto
 
 ## Problema da Oficina
 
@@ -7,7 +7,7 @@ de status. Quando esses dados ficam em planilhas, mensagens ou controles manuais
 perda de histórico, dificuldade para controlar estoque e pouca clareza para o cliente sobre o andamento da ordem de
 serviço.
 
-O problema central do domínio e organizar o ciclo de atendimento da oficina desde o cadastro do cliente e do veículo até
+O problema central do domínio é organizar o ciclo de atendimento da oficina desde o cadastro do cliente e do veículo até
 a criação, composição, orçamento, aprovação, execução e entrega da ordem de serviço.
 
 ## Objetivo do MVP
@@ -15,10 +15,10 @@ a criação, composição, orçamento, aprovação, execução e entrega da orde
 O MVP do AutoCare Hub tem como objetivo oferecer uma API REST para centralizar os principais cadastros e fluxos
 operacionais de uma oficina mecânica.
 
-O foco do MVP e backend: disponibilizar casos de uso essenciais por API, com contrato OpenAPI, persistência relacional,
-autenticação JWT, controle basico de perfis e migrations versionadas.
+O foco do MVP é backend: disponibilizar casos de uso essenciais por API, com contrato OpenAPI, persistência relacional,
+autenticação JWT, controle básico de perfis e migrations versionadas.
 
-## Escopo Incluido no MVP
+## Escopo Incluído no MVP
 
 - Autenticação com JWT.
 - Perfis `ADMIN`, `EMPLOYEE` e `CUSTOMER`.
@@ -40,9 +40,9 @@ autenticação JWT, controle basico de perfis e migrations versionadas.
 - Aplicativo mobile do cliente.
 - Interface web administrativa da oficina.
 - Pagamentos online.
-- Emissao fiscal.
-- Notificacoes por email, SMS ou WhatsApp.
-- Agenda de horarios.
+- Emissão fiscal.
+- Notificações por e-mail, SMS ou WhatsApp.
+- Agenda de horários.
 - Marketplace de peças.
 - Cupons e campanhas comerciais.
 - Serviços 24h.
@@ -51,12 +51,12 @@ autenticação JWT, controle basico de perfis e migrations versionadas.
 - Multi-oficina ou franquias.
 - Auditoria detalhada de eventos.
 
-## Visao Futura do Produto
+## Visão Futura do Produto
 
-A visao futura e transformar o AutoCare Hub em uma plataforma automotiva mais ampla. A oficina teria um painel
+A visão futura é transformar o AutoCare Hub em uma plataforma automotiva mais ampla. A oficina teria um painel
 operacional para acompanhar atendimentos, estoque, serviços, agenda e indicadores. O cliente teria um aplicativo para
 consultar veículos, aprovar orçamentos, acompanhar status e contratar serviços.
 
-Tambem existe potencial de evolução para marketplace de lojas de peças, cupons, agendamento online, atendimento 24h e
-integracoes com lava-jatos e outros serviços automotivos. Essas possibilidades nao fazem parte do MVP atual e devem ser
-tratadas como novos contextos ou extensoes futuras.
+Também existe potencial de evolução para marketplace de lojas de peças, cupons, agendamento online, atendimento 24h e
+integrações com lava-jatos e outros serviços automotivos. Essas possibilidades não fazem parte do MVP atual e devem ser
+tratadas como novos contextos ou extensões futuras.

@@ -139,11 +139,9 @@ public final class ServiceOrderRestMapper {
 
   private static ServiceOrderBudgetTrackingResponse toBudgetTrackingResponse(
       ServiceOrder serviceOrder) {
-    serviceOrder.budgetGeneratedAt();
-    serviceOrder.approvedAt();
     return new ServiceOrderBudgetTrackingResponse(
-            true,
-            true,
+            serviceOrder.budgetGeneratedAt() != null,
+            serviceOrder.approvedAt() != null,
             serviceOrder.servicesTotal().value().doubleValue(),
             serviceOrder.partsTotal().value().doubleValue(),
             serviceOrder.totalAmount().value().doubleValue())
@@ -163,43 +161,43 @@ public final class ServiceOrderRestMapper {
           statusHistoryItem(
               br.com.autocarehub.domain.ServiceOrderStatus.EM_DIAGNOSTICO,
               serviceOrder.createdAt(),
-              "Diagnostico iniciado"));
+              "Diagnóstico iniciado"));
     }
-    serviceOrder.budgetGeneratedAt();
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.EM_DIAGNOSTICO,
-            serviceOrder.createdAt(),
-            "Diagnostico realizado"));
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.AGUARDANDO_APROVACAO,
-            serviceOrder.budgetGeneratedAt(),
-            "Orçaamento gerado e disponibilizado para aprovação"));
-    serviceOrder.approvedAt();
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.AGUARDANDO_APROVACAO,
-            serviceOrder.approvedAt(),
-            "Orçamento aprovado pelo cliente"));
-    serviceOrder.startedAt();
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.EM_EXECUCAO,
-            serviceOrder.startedAt(),
-            "Execução iniciada"));
-    serviceOrder.finishedAt();
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.FINALIZADA,
-            serviceOrder.finishedAt(),
-            "Servico finalizado"));
-    serviceOrder.deliveredAt();
-    history.add(
-        statusHistoryItem(
-            br.com.autocarehub.domain.ServiceOrderStatus.ENTREGUE,
-            serviceOrder.deliveredAt(),
-            "Veículo entregue"));
+    if (serviceOrder.budgetGeneratedAt() != null) {
+      history.add(
+          statusHistoryItem(
+              br.com.autocarehub.domain.ServiceOrderStatus.AGUARDANDO_APROVACAO,
+              serviceOrder.budgetGeneratedAt(),
+              "Orçamento gerado e disponibilizado para aprovação"));
+    }
+    if (serviceOrder.approvedAt() != null) {
+      history.add(
+          statusHistoryItem(
+              br.com.autocarehub.domain.ServiceOrderStatus.AGUARDANDO_APROVACAO,
+              serviceOrder.approvedAt(),
+              "Orçamento aprovado pelo cliente"));
+    }
+    if (serviceOrder.startedAt() != null) {
+      history.add(
+          statusHistoryItem(
+              br.com.autocarehub.domain.ServiceOrderStatus.EM_EXECUCAO,
+              serviceOrder.startedAt(),
+              "Execução iniciada"));
+    }
+    if (serviceOrder.finishedAt() != null) {
+      history.add(
+          statusHistoryItem(
+              br.com.autocarehub.domain.ServiceOrderStatus.FINALIZADA,
+              serviceOrder.finishedAt(),
+              "Serviço finalizado"));
+    }
+    if (serviceOrder.deliveredAt() != null) {
+      history.add(
+          statusHistoryItem(
+              br.com.autocarehub.domain.ServiceOrderStatus.ENTREGUE,
+              serviceOrder.deliveredAt(),
+              "Veículo entregue"));
+    }
     return history;
   }
 

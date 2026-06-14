@@ -46,6 +46,7 @@ public class CreateServiceOrderUseCase {
     addRequestedParts(serviceOrder, command.parts());
     if (command.generateBudget()) {
       serviceOrder.generateBudget();
+      reserveBudgetParts(serviceOrder);
     }
     return serviceOrderRepository.save(serviceOrder);
   }
@@ -129,6 +130,17 @@ public class CreateServiceOrderUseCase {
           }
           serviceOrder.addPart(part, partInput.quantity());
         });
+  }
+
+  private void reserveBudgetParts(ServiceOrder serviceOrder) {
+    for (ServiceOrder.ServiceOrderPart orderPart : serviceOrder.parts()) {
+      Part part =
+          partRepository
+              .findById(orderPart.partId())
+              .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+      part.reserveStock(orderPart.quantity());
+      partRepository.save(part);
+    }
   }
 
   public record Command(

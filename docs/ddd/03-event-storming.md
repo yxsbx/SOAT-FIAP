@@ -1,23 +1,23 @@
 # Event Storming
 
-Este documento descreve os fluxos principais em formato textual. Ele separa comandos, eventos, atores, politicas e
+Este documento descreve os fluxos principais em formato textual. Ele separa comandos, eventos, atores, políticas e
 regras para deixar claro o comportamento do MVP.
 
-## Fluxo de Criação e Acompanhamento da Ordem de Servico
+## Fluxo de Criação e Acompanhamento da Ordem de Serviço
 
 ### Atores
 
 - `ADMIN`: pode executar todos os comandos.
 - `EMPLOYEE`: pode gerenciar clientes, veículos, serviços, peças e ordens de serviço.
-- `CUSTOMER`: pode consultar suas proprias ordens e aprovar seu proprio orçamento.
+- `CUSTOMER`: pode consultar suas próprias ordens e aprovar seu próprio orçamento.
 
 ### Comandos
 
 - Criar cliente.
 - Criar veículo.
 - Criar ordem de serviço.
-- Adicionar serviço a ordem de serviço.
-- Adicionar peça a ordem de serviço.
+- Adicionar serviço à Ordem de Serviço.
+- Adicionar peça à Ordem de Serviço.
 - Gerar orçamento.
 - Aprovar orçamento.
 - Atualizar status da ordem de serviço.
@@ -26,26 +26,27 @@ regras para deixar claro o comportamento do MVP.
 
 ### Eventos
 
-- Cliente criado.
-- Veículo criado.
-- Ordem de serviço criada.
-- Servico adicionado a ordem de serviço.
-- Peça adicionada a ordem de serviço.
-- Estoque de peça reduzido.
-- Orçamento gerado.
-- Orçamento aprovado.
-- Diagnostico iniciado.
-- Execução iniciada.
-- Ordem de serviço finalizada.
-- Veículo entregue.
+- ClienteIdentificado.
+- VeiculoCadastrado.
+- OrdemServicoCriada.
+- ServicoIncluidoNaOrdem.
+- PecaIncluidaNaOrdem.
+- OrcamentoGerado.
+- OrcamentoEnviado.
+- OrcamentoAprovado.
+- OrdemServicoEmExecucao.
+- OrdemServicoFinalizada.
+- VeiculoEntregue.
+- EstoqueAtualizado.
+- PecaBaixadaDoEstoque.
 
-### Politicas
+### Políticas
 
 - Ao vincular uma peça a um orçamento, a peça pode ser reservada para impedir venda duplicada.
-- Ao aprovar um orçamento, a reserva das peças e convertida em baixa definitiva de estoque.
-- Se uma reserva for liberada, a quantidade volta a ficar disponivel no estoque.
-- Um cliente autenticado so pode consultar ordens vinculadas ao seu proprio `customerId`.
-- Um cliente autenticado so pode aprovar orçamento de ordem vinculada ao seu proprio `customerId`.
+- Ao aprovar um orçamento, a reserva das peças é convertida em baixa definitiva de estoque.
+- Se uma reserva for liberada, a quantidade volta a ficar disponível no estoque.
+- Um cliente autenticado só pode consultar ordens vinculadas ao seu próprio `customerId`.
+- Um cliente autenticado só pode aprovar orçamento de ordem vinculada ao seu próprio `customerId`.
 - `ADMIN` e `EMPLOYEE` podem executar o fluxo operacional da oficina.
 
 ### Regras
@@ -53,13 +54,13 @@ regras para deixar claro o comportamento do MVP.
 - Uma ordem de serviço deve estar vinculada a um cliente e a um veículo.
 - O veículo deve pertencer ao cliente informado na criação da ordem de serviço.
 - O orçamento requer pelo menos um serviço ou uma peça.
-- Uma ordem so pode iniciar execução depois do orçamento gerado e aprovado.
-- Uma ordem so pode ser finalizada quando estiver em execução.
-- Uma ordem so pode ser entregue depois de finalizada.
-- Itens da ordem nao podem ser alterados depois que a ordem estiver aguardando aprovação, em execução, finalizada ou
+- Uma ordem só pode iniciar execução depois do orçamento gerado e aprovado.
+- Uma ordem só pode ser finalizada quando estiver em execução.
+- Uma ordem só pode ser entregue depois de finalizada.
+- Itens da ordem não podem ser alterados depois que a ordem estiver aguardando aprovação, em execução, finalizada ou
   entregue.
 
-## Fluxo de Gestao de Peças e Insumos
+## Fluxo de Gestão de Peças e Insumos
 
 ### Atores
 
@@ -71,7 +72,7 @@ regras para deixar claro o comportamento do MVP.
 - Criar peça ou insumo.
 - Atualizar peça ou insumo.
 - Atualizar estoque.
-- Registrar entrada, saida ou venda isolada.
+- Registrar entrada, saída ou venda isolada.
 - Reservar peça para orçamento.
 - Liberar reserva de peça.
 - Confirmar reserva como baixa definitiva.
@@ -81,27 +82,26 @@ regras para deixar claro o comportamento do MVP.
 
 ### Eventos
 
-- Peça criada.
-- Peça atualizada.
-- Estoque atualizado.
-- Movimento de estoque registrado.
-- Estoque reservado.
-- Reserva liberada.
-- Reserva confirmada como venda ou consumo.
-- Peça desativada.
-- Estoque reduzido por uso em ordem de serviço.
+- PecaCadastrada.
+- PecaAtualizada.
+- EstoqueAtualizado.
+- PecaReservada.
+- ReservaPecaLiberada.
+- PecaBaixadaDoEstoque.
+- EstoqueInsuficienteIdentificado.
 
-### Politicas
+### Políticas
 
-- O estoque minimo pode ser usado para identificar baixo estoque.
-- A baixa de estoque acontece quando a peça e adicionada a ordem de serviço.
+- O estoque mínimo pode ser usado para identificar baixo estoque.
+- A peça vinculada a orçamento é reservada primeiro.
+- A baixa definitiva acontece quando o orçamento é aprovado ou quando uma saída/venda é registrada.
 
 ### Regras
 
-- Estoque nao pode ser negativo.
+- Estoque não pode ser negativo.
 - Quantidade movimentada deve ser maior que zero.
-- Nao e permitido reduzir estoque acima da quantidade disponivel.
-- Preco unitario de peça deve ser maior que zero.
+- Não é permitido reduzir estoque acima da quantidade disponível.
+- Preço unitário de peça deve ser maior que zero.
 
 ## Fluxo de Catálogo de Serviços
 
@@ -114,12 +114,12 @@ regras para deixar claro o comportamento do MVP.
 
 ### Eventos
 
-- Servico criado.
-- Servico atualizado.
-- Servico desativado.
+- Serviço criado.
+- Serviço atualizado.
+- Serviço desativado.
 
 ### Regras
 
-- Preco base deve ser maior que zero.
+- Preço base deve ser maior que zero.
 - Tempo estimado deve ser maior que zero.
-- Nome e descrição sao obrigatorios.
+- Nome e descrição são obrigatórios.

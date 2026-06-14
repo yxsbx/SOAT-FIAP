@@ -47,12 +47,32 @@ const mobileMenuOpen = ref(false);
 const sidebarCollapsed = ref(true);
 const profileMenuOpen = ref(false);
 const globalSearch = ref('');
+const employeeMetricSearch = ref('');
 const homeSettingsOpen = ref(false);
+const userModalOpen = ref(false);
+const customerModalOpen = ref(false);
+const vehicleModalOpen = ref(false);
+const partModalOpen = ref(false);
+const serviceModalOpen = ref(false);
+const storeQuoteModalOpen = ref(false);
 const selectedRecord = ref(null);
 const selectedRecordType = ref('');
 const modalDraft = reactive({
   customer: {},
+  vehicle: {
+    customerId: '',
+    plate: '',
+    brand: '',
+    model: '',
+    year: new Date().getFullYear(),
+    mileage: 0,
+    active: true,
+  },
   partner: {},
+  order: {
+    diagnosticNotes: '',
+    status: 'RECEIVED',
+  },
 });
 const currentUser = ref(null);
 const customerPartnerSearch = ref('');
@@ -108,11 +128,49 @@ const employeeSubRoleLabels = {
   '': 'Funcionário sem especificação',
 };
 
+const roleDisplayLabels = {
+  ADMIN: 'Administrador',
+  EMPLOYEE: 'Funcionário',
+  CUSTOMER: 'Cliente',
+};
+
+const profileTypeLabels = {
+  MASTER_ADMIN: 'Admin Master',
+  WORKSHOP_ADMIN: 'Admin de oficina',
+  PARTS_STORE_ADMIN: 'Admin de loja de peças',
+  WORKSHOP_EMPLOYEE: 'Funcionário de oficina',
+  PARTS_STORE_EMPLOYEE: 'Funcionário de loja de peças',
+  CUSTOMER_OWNER: 'Cliente final',
+};
+
+const companyTypeLabels = {
+  WORKSHOP: 'Oficina',
+  PARTS_STORE: 'Loja de peças',
+};
+
+function roleDisplayLabel(role) {
+  return roleDisplayLabels[role] || role || '-';
+}
+
+function profileTypeLabel(profileType) {
+  return profileTypeLabels[profileType] || profileType || '-';
+}
+
+function companyTypeLabel(companyType) {
+  return companyTypeLabels[companyType] || companyType || 'Sem empresa vinculada';
+}
+
 const homePreferences = reactive({
   userWidgets: [...defaultHomeWidgetIds],
   globalWidgets: [...defaultHomeWidgetIds],
   showAlertsOnHome: false,
 });
+const homePreferenceDraft = reactive({
+  userWidgets: [...defaultHomeWidgetIds],
+  globalWidgets: [...defaultHomeWidgetIds],
+  showAlertsOnHome: false,
+});
+const homePreferencesSaving = ref(false);
 
 const statuses = ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'];
 
@@ -176,6 +234,7 @@ const pagination = reactive({
   services: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
   masterCustomers: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
   masterWorkshops: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
+  masterStores: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
 });
 
 const forms = reactive({
@@ -413,7 +472,7 @@ const availableTabs = computed(() => {
     {
       id: 'billing',
       label: 'Faturamento',
-      description: 'Receita, taxa e tiers',
+      description: 'Receita, taxa e faixas',
       icon: DollarSign,
       roles: ['ADMIN'],
       workshopAdminOnly: true,
@@ -445,15 +504,15 @@ const availableTabs = computed(() => {
     {
       id: 'master-leads',
       label: 'Interessados',
-      description: 'Leads e parceiros potenciais',
+      description: 'Interessados e parceiros potenciais',
       icon: TrendingUp,
       roles: ['ADMIN'],
       masterOnly: true,
     },
     {
       id: 'master-admins',
-      label: 'Admins parceiros',
-      description: 'Cadastrar admins de oficina e loja',
+      label: 'Administradores parceiros',
+      description: 'Cadastrar administradores de oficina e loja',
       icon: UserPlus,
       roles: ['ADMIN'],
       masterOnly: true,
@@ -573,7 +632,7 @@ const availableTabs = computed(() => {
 const availableTabIds = computed(() => new Set(availableTabs.value.map((tab) => tab.id)));
 
 const userInitials = computed(() => {
-  const fallback = currentUser.value?.fullName || auth.user?.username || 'Usuario AutoCare';
+  const fallback = currentUser.value?.fullName || auth.user?.username || 'Usuário AutoCare';
   const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
   const parts = name
       .replace(/[._-]+/g, ' ')
@@ -644,6 +703,51 @@ const estimatedOrderTotal = computed(() => {
   return serviceTotal + partTotal;
 });
 
+function orderVehicle(order) {
+  return order.vehicle || data.vehicles.find((vehicle) => vehicle.id === order.vehicleId) || {};
+}
+
+function orderCustomer(order) {
+  const vehicle = orderVehicle(order);
+  return order.customer
+      || data.customers.find((customer) => customer.id === order.customerId)
+      || data.customers.find((customer) => customer.id === vehicle.customerId)
+      || data.customers.find((customer) => customer.document === order.customerDocument)
+      || {};
+}
+
+function orderCustomerName(order) {
+  return orderCustomer(order).name || order.customerName || 'Cliente não informado';
+}
+
+function orderVehicleLabel(order) {
+  const vehicle = orderVehicle(order);
+  const brandModel = [vehicle.brand, vehicle.model].filter(Boolean).join(' ');
+  return brandModel || order.vehicleDescription || 'Veículo não informado';
+}
+
+function orderPlate(order) {
+  return orderVehicle(order).plate || order.plate || '-';
+}
+
+function orderDate(order) {
+  const value = order.createdAt || order.updatedAt || order.budgetGeneratedAt || order.approvedAt;
+  if (!value) {
+    return '-';
+  }
+  return new Date(value).toLocaleDateString('pt-BR');
+}
+
+function orderBudgetStatus(order) {
+  if (order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)) {
+    return 'Orçamento aprovado';
+  }
+  if (order.budgetGeneratedAt || order.status === 'WAITING_APPROVAL') {
+    return 'Aguardando aprovação';
+  }
+  return 'Orçamento pendente';
+}
+
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
@@ -657,6 +761,26 @@ const criticalParts = computed(() =>
 const reservedParts = computed(() =>
     data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0),
 );
+
+const partDuplicateMatches = computed(() => {
+  const query = normalize(forms.part.name);
+  if (forms.part.id || query.length < 2) {
+    return [];
+  }
+  return data.parts
+      .filter((part) => normalize(`${part.name} ${part.sku} ${part.brand}`).includes(query))
+      .slice(0, 5);
+});
+
+const serviceDuplicateMatches = computed(() => {
+  const query = normalize(forms.service.name);
+  if (forms.service.id || query.length < 2) {
+    return [];
+  }
+  return data.services
+      .filter((service) => normalize(`${service.name} ${service.description}`).includes(query))
+      .slice(0, 5);
+});
 
 const stockStatusLabels = {
   AVAILABLE: 'Disponível',
@@ -1221,6 +1345,52 @@ function employeeMetrics(user) {
   ];
 }
 
+function employeePerformanceScore(user) {
+  return employeeMetrics(user).reduce((total, metric) => {
+    const numericValue = Number(String(metric.value).replace(/[^\d]/g, '')) || 0;
+    return total + numericValue;
+  }, 0);
+}
+
+const employeeMetricCards = computed(() => {
+  const query = normalize(employeeMetricSearch.value);
+  return workshopEmployees.value
+      .map((employee) => ({
+        employee,
+        metrics: employeeMetrics(employee),
+        score: employeePerformanceScore(employee),
+      }))
+      .filter(({employee}) => !query || normalize(`${employee.fullName} ${employee.username} ${employee.employeeSubRole}`).includes(query))
+      .sort((first, second) => second.score - first.score);
+});
+
+const featuredWorkshopEmployees = computed(() =>
+    workshopEmployees.value
+        .map((employee) => ({
+          employee,
+          metrics: employeeMetrics(employee),
+          score: employeePerformanceScore(employee),
+        }))
+        .sort((first, second) => second.score - first.score)
+        .slice(0, 3),
+);
+
+const userModalIsWorkshopEmployee = computed(() => forms.user.profileType === 'WORKSHOP_EMPLOYEE');
+const userModalIsStoreEmployee = computed(() => forms.user.profileType === 'PARTS_STORE_EMPLOYEE');
+const userModalIsEmployee = computed(() => userModalIsWorkshopEmployee.value || userModalIsStoreEmployee.value);
+
+const userModalEmployeeMetrics = computed(() => {
+  if (!forms.user.id || !userModalIsEmployee.value) {
+    return [];
+  }
+  if (userModalIsStoreEmployee.value) {
+    const employee = storeEmployees.value.find((item) => item.id === forms.user.id);
+    return employee ? storeEmployeeMetrics(employee) : [];
+  }
+  const employee = workshopEmployees.value.find((item) => item.id === forms.user.id);
+  return employee ? employeeMetrics(employee) : [];
+});
+
 const showHomeAlerts = computed(() => homePreferences.showAlertsOnHome);
 
 const searchResults = computed(() => {
@@ -1290,6 +1460,27 @@ const vehiclesWithCurrentStatus = computed(() =>
       };
     }),
 );
+
+function vehicleOwner(vehicle) {
+  return data.customers.find((customer) => customer.id === vehicle.customerId) || {};
+}
+
+function vehicleStatusValue(vehicle) {
+  if (vehicle.active === false) {
+    return false;
+  }
+  return vehicle.currentStatus || 'ACTIVE';
+}
+
+function vehicleStatusLabel(vehicle) {
+  if (vehicle.active === false) {
+    return 'Inativo';
+  }
+  if (vehicle.currentStatus && vehicle.currentStatus !== 'SEM_ORDEM') {
+    return statusLabels[vehicle.currentStatus] || vehicle.currentStatus;
+  }
+  return 'Ativo';
+}
 
 const customerVehicles = computed(() => vehiclesWithCurrentStatus.value);
 
@@ -1398,6 +1589,7 @@ const listSources = computed(() => ({
   services: data.services,
   masterCustomers: masterCustomers.value,
   masterWorkshops: workshopPartners.value,
+  masterStores: storePartners.value,
 }));
 
 const listSearchFields = {
@@ -1409,6 +1601,7 @@ const listSearchFields = {
   services: ['name', 'description'],
   masterCustomers: ['name', 'email', 'phone', 'document', 'partners'],
   masterWorkshops: ['name', 'adminName', 'status'],
+  masterStores: ['name', 'adminName', 'status', 'topProducts'],
 };
 
 function listRows(resource) {
@@ -1419,6 +1612,17 @@ function listRows(resource) {
       .filter((item) => {
         if (!query) {
           return true;
+        }
+        if (resource === 'serviceOrders') {
+          return smartMatch(config.search, [
+            item.status,
+            statusLabels[item.status],
+            item.diagnosticNotes,
+            item.id,
+            orderCustomerName(item),
+            orderVehicleLabel(item),
+            orderPlate(item),
+          ]);
         }
         return fields.some((field) => normalize(item[field]).includes(query));
       })
@@ -1442,6 +1646,17 @@ function listTotal(resource) {
   return (listSources.value[resource] || []).filter((item) => {
     if (!query) {
       return true;
+    }
+    if (resource === 'serviceOrders') {
+      return smartMatch(config.search, [
+        item.status,
+        statusLabels[item.status],
+        item.diagnosticNotes,
+        item.id,
+        orderCustomerName(item),
+        orderVehicleLabel(item),
+        orderPlate(item),
+      ]);
     }
     return fields.some((field) => normalize(item[field]).includes(query));
   }).length;
@@ -1552,6 +1767,24 @@ function readStoredJson(key, fallback) {
   }
 }
 
+function validHomeWidgetIds() {
+  return new Set(availableHomeWidgetDefinitions.value.map((widget) => widget.id));
+}
+
+function sanitizeHomeWidgets(widgetIds, fallback = []) {
+  if (!Array.isArray(widgetIds)) {
+    return [...fallback];
+  }
+  const validWidgetIds = validHomeWidgetIds();
+  return widgetIds.filter((widgetId) => validWidgetIds.has(widgetId));
+}
+
+function syncHomePreferenceDraft() {
+  homePreferenceDraft.userWidgets = [...homePreferences.userWidgets];
+  homePreferenceDraft.globalWidgets = [...homePreferences.globalWidgets];
+  homePreferenceDraft.showAlertsOnHome = homePreferences.showAlertsOnHome;
+}
+
 async function loadHomePreferences() {
   const defaults = homeDefaultWidgetIds();
   const globalConfig = readStoredJson('autocare.home.workshop.global', {
@@ -1562,38 +1795,22 @@ async function loadHomePreferences() {
     widgets: globalConfig.widgets || defaults,
   });
 
-  homePreferences.globalWidgets = [...(globalConfig.widgets || defaults)];
+  homePreferences.globalWidgets = sanitizeHomeWidgets(globalConfig.widgets, defaults);
   homePreferences.showAlertsOnHome = Boolean(globalConfig.showAlertsOnHome);
-  homePreferences.userWidgets = [...(userConfig.widgets ?? homePreferences.globalWidgets)];
+  homePreferences.userWidgets = sanitizeHomeWidgets(userConfig.widgets, homePreferences.globalWidgets);
 
   try {
     const preference = await resources.homePreferences();
-    const validWidgetIds = new Set(availableHomeWidgetDefinitions.value.map((widget) => widget.id));
-    const preferredWidgets = (preference.widgets || []).filter((widgetId) => validWidgetIds.has(widgetId));
-    homePreferences.userWidgets = [...preferredWidgets];
-    if (!homePreferences.userWidgets.length) {
-      homePreferences.userWidgets = [...defaults];
-    }
+    homePreferences.userWidgets = sanitizeHomeWidgets(preference.widgets, defaults);
     homePreferences.showAlertsOnHome = Boolean(preference.showAlertsOnHome);
   } catch {
-    saveUserHomePreferences();
+    homePreferences.userWidgets = sanitizeHomeWidgets(homePreferences.userWidgets, defaults);
   }
+  syncHomePreferenceDraft();
 }
 
-async function saveUserHomePreferences() {
+function persistHomePreferencesLocally() {
   localStorage.setItem(userHomeKey(), JSON.stringify({widgets: homePreferences.userWidgets}));
-  try {
-    await resources.saveHomePreferences({
-      widgets: homePreferences.userWidgets,
-      showAlertsOnHome: homePreferences.showAlertsOnHome,
-    });
-    showSuccess('Preferências da home salvas.');
-  } catch (err) {
-    showError(err.message || 'Preferências salvas apenas localmente.');
-  }
-}
-
-function saveGlobalHomePreferences() {
   localStorage.setItem(
       'autocare.home.workshop.global',
       JSON.stringify({
@@ -1603,8 +1820,15 @@ function saveGlobalHomePreferences() {
   );
 }
 
+function toggleHomeSettings() {
+  if (!homeSettingsOpen.value) {
+    syncHomePreferenceDraft();
+  }
+  homeSettingsOpen.value = !homeSettingsOpen.value;
+}
+
 function toggleHomeWidget(widgetId, scope = 'user') {
-  const target = scope === 'global' ? homePreferences.globalWidgets : homePreferences.userWidgets;
+  const target = scope === 'global' ? homePreferenceDraft.globalWidgets : homePreferenceDraft.userWidgets;
   const index = target.indexOf(widgetId);
 
   if (index >= 0) {
@@ -1612,20 +1836,38 @@ function toggleHomeWidget(widgetId, scope = 'user') {
   } else if (index < 0) {
     target.push(widgetId);
   }
-
-  if (scope === 'global') {
-    saveGlobalHomePreferences();
-    saveUserHomePreferences();
-    return;
-  }
-
-  saveUserHomePreferences();
 }
 
 function toggleHomeAlerts() {
-  homePreferences.showAlertsOnHome = !homePreferences.showAlertsOnHome;
-  saveGlobalHomePreferences();
-  saveUserHomePreferences();
+  homePreferenceDraft.showAlertsOnHome = !homePreferenceDraft.showAlertsOnHome;
+}
+
+function isHomeWidgetSelected(widgetId, scope = 'user') {
+  return (scope === 'global' ? homePreferenceDraft.globalWidgets : homePreferenceDraft.userWidgets).includes(widgetId);
+}
+
+async function saveHomePreferenceDraft() {
+  const nextUserWidgets = sanitizeHomeWidgets(homePreferenceDraft.userWidgets);
+  const nextGlobalWidgets = sanitizeHomeWidgets(homePreferenceDraft.globalWidgets);
+  const nextShowAlertsOnHome = Boolean(homePreferenceDraft.showAlertsOnHome);
+
+  homePreferencesSaving.value = true;
+  try {
+    await resources.saveHomePreferences({
+      widgets: nextUserWidgets,
+      showAlertsOnHome: nextShowAlertsOnHome,
+    });
+    homePreferences.userWidgets = [...nextUserWidgets];
+    homePreferences.globalWidgets = [...nextGlobalWidgets];
+    homePreferences.showAlertsOnHome = nextShowAlertsOnHome;
+    persistHomePreferencesLocally();
+    syncHomePreferenceDraft();
+    showSuccess('Preferências da home salvas.');
+  } catch (err) {
+    showError(err.message || 'Não foi possível salvar as preferências da home.');
+  } finally {
+    homePreferencesSaving.value = false;
+  }
 }
 
 async function loadDashboard() {
@@ -1873,21 +2115,8 @@ function createCustomer() {
     } else {
       await resources.createCustomer(forms.customer);
     }
-    forms.customer.name = '';
-    forms.customer.id = '';
-    forms.customer.document = '';
-    forms.customer.phone = '';
-    forms.customer.email = '';
-    forms.customer.address = {
-      street: '',
-      number: '',
-      complement: '',
-      neighborhood: '',
-      city: '',
-      state: 'SP',
-      zipCode: '',
-    };
-    forms.customer.active = true;
+    customerModalOpen.value = false;
+    resetCustomerForm();
   }, forms.customer.id ? 'Cliente atualizado.' : 'Cliente cadastrado.');
 }
 
@@ -1903,18 +2132,62 @@ function createVehicle() {
     } else {
       await resources.createVehicle(payload);
     }
-    forms.vehicle.id = '';
-    forms.vehicle.customerId = '';
-    forms.vehicle.plate = '';
-    forms.vehicle.brand = '';
-    forms.vehicle.model = '';
-    forms.vehicle.year = new Date().getFullYear();
-    forms.vehicle.mileage = 0;
-    forms.vehicle.active = true;
+    vehicleModalOpen.value = false;
+    resetVehicleForm();
   }, forms.vehicle.id ? 'Veículo atualizado.' : 'Veículo cadastrado.');
 }
 
+function resetCustomerForm() {
+  forms.customer.name = '';
+  forms.customer.id = '';
+  forms.customer.document = '';
+  forms.customer.phone = '';
+  forms.customer.email = '';
+  forms.customer.address = {
+    street: '',
+    number: '',
+    complement: '',
+    neighborhood: '',
+    city: '',
+    state: 'SP',
+    zipCode: '',
+  };
+  forms.customer.active = true;
+}
+
+function resetVehicleForm() {
+  forms.vehicle.id = '';
+  forms.vehicle.customerId = '';
+  forms.vehicle.plate = '';
+  forms.vehicle.brand = '';
+  forms.vehicle.model = '';
+  forms.vehicle.year = new Date().getFullYear();
+  forms.vehicle.mileage = 0;
+  forms.vehicle.active = true;
+}
+
+function openCreateCustomerModal() {
+  resetCustomerForm();
+  customerModalOpen.value = true;
+}
+
+function closeCustomerModal() {
+  customerModalOpen.value = false;
+  resetCustomerForm();
+}
+
+function openCreateVehicleModal() {
+  resetVehicleForm();
+  vehicleModalOpen.value = true;
+}
+
+function closeVehicleModal() {
+  vehicleModalOpen.value = false;
+  resetVehicleForm();
+}
+
 function createPart() {
+  const wasEditing = Boolean(forms.part.id);
   return runAction(async () => {
     const payload = {
       ...forms.part,
@@ -1945,7 +2218,31 @@ function createPart() {
       active: true,
       reservationDays: 3,
     });
-  }, forms.part.id ? 'Peça atualizada.' : 'Peça cadastrada.');
+    partModalOpen.value = false;
+  }, wasEditing ? 'Peça atualizada.' : 'Peça cadastrada.');
+}
+
+function resetPartForm() {
+  Object.assign(forms.part, {
+    id: '',
+    name: '',
+    description: '',
+    sku: '',
+    category: '',
+    subcategory: '',
+    brand: '',
+    costPrice: 0,
+    unitPrice: 0,
+    stockQuantity: 0,
+    minimumStock: 1,
+    active: true,
+    reservationDays: 3,
+  });
+}
+
+function openCreatePartModal() {
+  resetPartForm();
+  partModalOpen.value = true;
 }
 
 function editPart(part) {
@@ -1961,10 +2258,19 @@ function editPart(part) {
     unitPrice: Number(part.unitPrice || 0),
     stockQuantity: Number(part.stockQuantity || 0),
     minimumStock: Number(part.minimumStock || 0),
-    active: Boolean(part.active),
+    active: part.active !== false,
     reservationDays: Number(part.reservationDays || 3),
   });
-  selectTab('parts');
+  partModalOpen.value = true;
+}
+
+function selectExistingPartForModal(part) {
+  editPart(part);
+}
+
+function closePartModal() {
+  partModalOpen.value = false;
+  resetPartForm();
 }
 
 function registerStockMovement() {
@@ -2073,6 +2379,16 @@ function resetStoreQuoteForm() {
   });
 }
 
+function openCreateStoreQuoteModal() {
+  resetStoreQuoteForm();
+  storeQuoteModalOpen.value = true;
+}
+
+function closeStoreQuoteModal() {
+  storeQuoteModalOpen.value = false;
+  resetStoreQuoteForm();
+}
+
 function addStoreQuoteItem() {
   const part = data.parts.find((item) => item.id === forms.storeQuote.partId);
   if (!part) {
@@ -2095,10 +2411,10 @@ function removeStoreQuoteItem(index) {
   forms.storeQuote.items.splice(index, 1);
 }
 
-function saveStoreQuote() {
+function saveStoreQuote({closeModal = true, notify = true} = {}) {
   if (!forms.storeQuote.customerName || !forms.storeQuote.items.length) {
     showError('Informe o cliente e ao menos uma peça para salvar o carrinho.');
-    return;
+    return null;
   }
 
   const quote = {
@@ -2119,8 +2435,14 @@ function saveStoreQuote() {
     storeQuotes.value.unshift(quote);
   }
   persistStoreQuotes();
-  resetStoreQuoteForm();
-  showSuccess('Carrinho salvo.');
+  if (closeModal) {
+    storeQuoteModalOpen.value = false;
+    resetStoreQuoteForm();
+  }
+  if (notify) {
+    showSuccess('Carrinho salvo.');
+  }
+  return quote;
 }
 
 function editStoreQuote(quote) {
@@ -2135,7 +2457,33 @@ function editStoreQuote(quote) {
     quotedPrice: 0,
     items: quote.items.map((item) => ({...item})),
   });
+  closeRecord();
   selectTab('store-quotes');
+  storeQuoteModalOpen.value = true;
+}
+
+function storeQuoteMainItem(quote) {
+  const items = quote.items || [];
+  if (!items.length) {
+    return 'Sem peças vinculadas';
+  }
+  const first = items[0];
+  const suffix = items.length > 1 ? ` + ${items.length - 1}` : '';
+  return `${first.quantity || 1}x ${first.name}${suffix}`;
+}
+
+function storeQuoteUpdatedAt(quote) {
+  return quote.updatedAt
+      ? new Date(quote.updatedAt).toLocaleDateString('pt-BR')
+      : '-';
+}
+
+function saveStoreQuoteStatusFromModal(status) {
+  const quote = saveStoreQuote({closeModal: false, notify: false});
+  if (!quote) {
+    return null;
+  }
+  return updateStoreQuoteStatus(quote, status);
 }
 
 function updateStoreQuoteStatus(quote, status) {
@@ -2163,6 +2511,8 @@ function updateStoreQuoteStatus(quote, status) {
     quote.status = status;
     quote.updatedAt = new Date().toISOString();
     persistStoreQuotes();
+    storeQuoteModalOpen.value = false;
+    resetStoreQuoteForm();
   }, `Carrinho marcado como ${storeQuoteStatusLabels[status]}.`);
 }
 
@@ -2230,6 +2580,7 @@ function sendCustomerQuoteRequest() {
 }
 
 function createWorkshopService() {
+  const wasEditing = Boolean(forms.service.id);
   return runAction(async () => {
     const payload = {
       ...forms.service,
@@ -2249,7 +2600,24 @@ function createWorkshopService() {
       estimatedTimeInMinutes: 60,
       active: true,
     });
-  }, forms.service.id ? 'Serviço atualizado.' : 'Serviço cadastrado.');
+    serviceModalOpen.value = false;
+  }, wasEditing ? 'Serviço atualizado.' : 'Serviço cadastrado.');
+}
+
+function resetServiceForm() {
+  Object.assign(forms.service, {
+    id: '',
+    name: '',
+    description: '',
+    basePrice: 0,
+    estimatedTimeInMinutes: 60,
+    active: true,
+  });
+}
+
+function openCreateServiceModal() {
+  resetServiceForm();
+  serviceModalOpen.value = true;
 }
 
 function createOrder() {
@@ -2281,9 +2649,31 @@ function generateBudget() {
   }, 'Orçamento gerado.');
 }
 
+function generateBudgetFromSelectedOrder() {
+  if (!selectedRecord.value?.id) {
+    return Promise.resolve();
+  }
+  return runAction(async () => {
+    await resources.generateBudget(selectedRecord.value.id);
+    selectedRecord.value.status = 'WAITING_APPROVAL';
+    modalDraft.order.status = 'WAITING_APPROVAL';
+  }, 'Orçamento gerado.');
+}
+
 function approveBudget() {
   return runAction(async () => {
     await resources.approveBudget(forms.orderAction.serviceOrderId);
+  }, 'Orçamento aprovado.');
+}
+
+function approveBudgetFromSelectedOrder() {
+  if (!selectedRecord.value?.id) {
+    return Promise.resolve();
+  }
+  return runAction(async () => {
+    await resources.approveBudget(selectedRecord.value.id);
+    selectedRecord.value.status = 'IN_PROGRESS';
+    modalDraft.order.status = 'IN_PROGRESS';
   }, 'Orçamento aprovado.');
 }
 
@@ -2318,12 +2708,35 @@ const isCustomerDetail = computed(() =>
 );
 
 const isWorkshopDetail = computed(() =>
-    selectedRecord.value && ['Oficina', 'Oficina parceira'].includes(selectedRecordType.value),
+    selectedRecord.value && ['Oficina', 'Oficina parceira', 'Loja parceira'].includes(selectedRecordType.value),
+);
+
+const isOrderDetail = computed(() =>
+    selectedRecord.value && ['Ordem de serviço', 'Histórico'].includes(selectedRecordType.value),
+);
+
+const isVehicleDetail = computed(() =>
+    selectedRecord.value && selectedRecordType.value === 'Veículo',
 );
 
 const selectedPartnerUser = computed(() =>
     data.users.find((user) => user.id === selectedRecord.value?.id),
 );
+
+const detailModalTitle = computed(() => {
+  if (!selectedRecord.value) {
+    return 'Detalhes';
+  }
+  if (isOrderDetail.value) {
+    return `Ordem de serviço - ${orderCustomerName(selectedRecord.value)}`;
+  }
+  return selectedRecord.value.name
+      || selectedRecord.value.fullName
+      || selectedRecord.value.plate
+      || statusLabels[selectedRecord.value.status]
+      || selectedRecord.value.status
+      || 'Detalhes';
+});
 
 const detailModalDirty = computed(() => {
   if (isCustomerDetail.value) {
@@ -2351,6 +2764,25 @@ const detailModalDirty = computed(() => {
     }) !== JSON.stringify(modalDraft.partner);
   }
 
+  if (isOrderDetail.value) {
+    return JSON.stringify({
+      diagnosticNotes: selectedRecord.value.diagnosticNotes || '',
+      status: selectedRecord.value.status || 'RECEIVED',
+    }) !== JSON.stringify(modalDraft.order);
+  }
+
+  if (isVehicleDetail.value) {
+    return JSON.stringify({
+      customerId: selectedRecord.value.customerId || '',
+      plate: selectedRecord.value.plate || '',
+      brand: selectedRecord.value.brand || '',
+      model: selectedRecord.value.model || '',
+      year: selectedRecord.value.year || new Date().getFullYear(),
+      mileage: selectedRecord.value.mileage || 0,
+      active: selectedRecord.value.active !== false,
+    }) !== JSON.stringify(modalDraft.vehicle);
+  }
+
   return false;
 });
 
@@ -2375,6 +2807,25 @@ function openRecord(type, record) {
       active: user.active !== false && record.status !== 'Inativa',
     });
   }
+  if (['Ordem de serviço', 'Histórico'].includes(type)) {
+    Object.assign(modalDraft.order, {
+      diagnosticNotes: record.diagnosticNotes || '',
+      status: record.status || 'RECEIVED',
+    });
+    forms.orderAction.serviceOrderId = record.id;
+    forms.orderAction.status = record.status || 'RECEIVED';
+  }
+  if (type === 'Veículo') {
+    Object.assign(modalDraft.vehicle, {
+      customerId: record.customerId || '',
+      plate: record.plate || '',
+      brand: record.brand || '',
+      model: record.model || '',
+      year: record.year || new Date().getFullYear(),
+      mileage: record.mileage || 0,
+      active: record.active !== false,
+    });
+  }
 }
 
 function closeRecord(force = false) {
@@ -2385,6 +2836,16 @@ function closeRecord(force = false) {
   selectedRecordType.value = '';
   Object.assign(modalDraft.customer, {});
   Object.assign(modalDraft.partner, {});
+  Object.assign(modalDraft.order, {diagnosticNotes: '', status: 'RECEIVED'});
+  Object.assign(modalDraft.vehicle, {
+    customerId: '',
+    plate: '',
+    brand: '',
+    model: '',
+    year: new Date().getFullYear(),
+    mileage: 0,
+    active: true,
+  });
 }
 
 async function saveDetailModal() {
@@ -2413,6 +2874,30 @@ async function saveDetailModal() {
       });
       closeRecord(true);
     }, 'Oficina atualizada.');
+    return;
+  }
+
+  if (isOrderDetail.value) {
+    await runAction(async () => {
+      if (modalDraft.order.status !== selectedRecord.value.status) {
+        await resources.updateOrderStatus(selectedRecord.value.id, modalDraft.order.status);
+      }
+      selectedRecord.value.diagnosticNotes = modalDraft.order.diagnosticNotes;
+      selectedRecord.value.status = modalDraft.order.status;
+      closeRecord(true);
+    }, 'Ordem atualizada.');
+    return;
+  }
+
+  if (isVehicleDetail.value) {
+    await runAction(async () => {
+      await resources.updateVehicle(selectedRecord.value.id, {
+        ...modalDraft.vehicle,
+        year: Number(modalDraft.vehicle.year),
+        mileage: Number(modalDraft.vehicle.mileage),
+      });
+      closeRecord(true);
+    }, 'Veículo atualizado.');
   }
 }
 
@@ -2448,7 +2933,16 @@ function editService(service) {
     estimatedTimeInMinutes: Number(service.estimatedTimeInMinutes || 60),
     active: service.active !== false,
   });
-  selectTab('services');
+  serviceModalOpen.value = true;
+}
+
+function selectExistingServiceForModal(service) {
+  editService(service);
+}
+
+function closeServiceModal() {
+  serviceModalOpen.value = false;
+  resetServiceForm();
 }
 
 function editUser(user) {
@@ -2466,15 +2960,108 @@ function editUser(user) {
     customerId: user.customerId || '',
     active: user.active,
   });
-  if (user.profileType === 'WORKSHOP_EMPLOYEE') {
-    selectTab('employees');
+  userModalOpen.value = true;
+}
+
+function resetUserForm() {
+  Object.assign(forms.user, {
+    id: '',
+    fullName: '',
+    username: '',
+    password: '',
+    role: 'EMPLOYEE',
+    profileType: 'WORKSHOP_EMPLOYEE',
+    companyName: '',
+    companyType: '',
+    employeeSubRole: 'UNSPECIFIED',
+    permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
+    customerId: '',
+    active: true,
+  });
+}
+
+function openCreateUserModal() {
+  resetUserForm();
+  userModalOpen.value = true;
+}
+
+function openCreatePartnerAdminModal(profileType = 'WORKSHOP_ADMIN') {
+  resetUserForm();
+  Object.assign(forms.user, {
+    role: 'ADMIN',
+    profileType,
+    companyType: profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE',
+    employeeSubRole: '',
+    permissions: ['VIEW_BILLING', 'MANAGE_STOCK', 'CREATE_BUDGET', 'EDIT_EMPLOYEES', 'VIEW_STATS'],
+  });
+  userModalOpen.value = true;
+}
+
+function openCreateWorkshopEmployeeModal() {
+  resetUserForm();
+  Object.assign(forms.user, {
+    role: 'EMPLOYEE',
+    profileType: 'WORKSHOP_EMPLOYEE',
+    companyType: 'WORKSHOP',
+    employeeSubRole: 'UNSPECIFIED',
+    permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
+  });
+  userModalOpen.value = true;
+}
+
+function openCreateStoreEmployeeModal() {
+  resetUserForm();
+  Object.assign(forms.user, {
+    role: 'EMPLOYEE',
+    profileType: 'PARTS_STORE_EMPLOYEE',
+    companyType: 'PARTS_STORE',
+    employeeSubRole: 'ATTENDANT',
+    permissions: ['MANAGE_STOCK', 'CREATE_BUDGET'],
+  });
+  userModalOpen.value = true;
+}
+
+function closeUserModal() {
+  userModalOpen.value = false;
+  resetUserForm();
+}
+
+function syncUserProfileDefaults() {
+  if (forms.user.profileType === 'MASTER_ADMIN') {
+    forms.user.role = 'ADMIN';
+    forms.user.companyType = '';
+    forms.user.employeeSubRole = '';
     return;
   }
-  if (['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType)) {
-    selectTab('store-employees');
+  if (forms.user.profileType === 'WORKSHOP_ADMIN') {
+    forms.user.role = 'ADMIN';
+    forms.user.companyType = 'WORKSHOP';
+    forms.user.employeeSubRole = '';
     return;
   }
-  selectTab('users');
+  if (forms.user.profileType === 'PARTS_STORE_ADMIN') {
+    forms.user.role = 'ADMIN';
+    forms.user.companyType = 'PARTS_STORE';
+    forms.user.employeeSubRole = '';
+    return;
+  }
+  if (forms.user.profileType === 'WORKSHOP_EMPLOYEE') {
+    forms.user.role = 'EMPLOYEE';
+    forms.user.companyType = 'WORKSHOP';
+    forms.user.employeeSubRole = forms.user.employeeSubRole || 'UNSPECIFIED';
+    return;
+  }
+  if (forms.user.profileType === 'PARTS_STORE_EMPLOYEE') {
+    forms.user.role = 'EMPLOYEE';
+    forms.user.companyType = 'PARTS_STORE';
+    forms.user.employeeSubRole = forms.user.employeeSubRole || 'UNSPECIFIED';
+    return;
+  }
+  if (forms.user.profileType === 'CUSTOMER_OWNER') {
+    forms.user.role = 'CUSTOMER';
+    forms.user.companyType = '';
+    forms.user.employeeSubRole = '';
+  }
 }
 
 function toggleUserPermission(permissionId) {
@@ -2487,6 +3074,10 @@ function toggleUserPermission(permissionId) {
 }
 
 function saveUser() {
+  const isEmployee = ['WORKSHOP_EMPLOYEE', 'PARTS_STORE_EMPLOYEE'].includes(forms.user.profileType);
+  const successMessage = forms.user.id
+      ? (isEmployee ? 'Funcionário atualizado.' : 'Conta atualizada.')
+      : (isEmployee ? 'Funcionário criado.' : 'Conta criada.');
   return runAction(async () => {
     const payload = {
       fullName: forms.user.fullName,
@@ -2502,24 +3093,14 @@ function saveUser() {
     };
     if (forms.user.id) {
       await resources.updateUser(forms.user.id, payload);
+      if (forms.user.password) {
+        await resources.resetUserPassword(forms.user.id, forms.user.password);
+      }
     } else {
       await resources.createUser({...payload, password: forms.user.password});
     }
-    Object.assign(forms.user, {
-      id: '',
-      fullName: '',
-      username: '',
-      password: '',
-      role: 'EMPLOYEE',
-      profileType: 'WORKSHOP_EMPLOYEE',
-      companyName: '',
-      companyType: '',
-      employeeSubRole: 'UNSPECIFIED',
-      permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
-      customerId: '',
-      active: true,
-    });
-  }, forms.user.id ? 'Usuário atualizado.' : 'Usuário criado.');
+    closeUserModal();
+  }, successMessage);
 }
 
 function saveStoreEmployee() {
@@ -2716,7 +3297,7 @@ onMounted(async () => {
           <div class="home-toolbar">
             <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
             <button v-if="!isCustomerProfile" class="secondary-button" type="button"
-                    @click="homeSettingsOpen = !homeSettingsOpen">
+                    @click="toggleHomeSettings">
               <Plus :size="17"/>
               Personalizar home
             </button>
@@ -2805,13 +3386,21 @@ onMounted(async () => {
             <div>
               <strong>Meus widgets</strong>
               <div class="home-option-grid">
-                <label v-for="widget in availableHomeWidgetDefinitions" :key="widget.id">
+                <label
+                    v-for="widget in availableHomeWidgetDefinitions"
+                    :key="widget.id"
+                    :class="{
+                      'is-active': isHomeWidgetSelected(widget.id),
+                      'is-inactive': !isHomeWidgetSelected(widget.id),
+                    }"
+                >
                   <input
-                      :checked="homePreferences.userWidgets.includes(widget.id)"
+                      :checked="isHomeWidgetSelected(widget.id)"
                       type="checkbox"
                       @change="toggleHomeWidget(widget.id)"
                   />
                   <span>{{ widget.label }}</span>
+                  <small>{{ isHomeWidgetSelected(widget.id) ? 'Ativo' : 'Inativo' }}</small>
                 </label>
               </div>
             </div>
@@ -2819,22 +3408,40 @@ onMounted(async () => {
               <strong>{{ isPartsStoreProfile ? 'Configuração da loja' : 'Configuração da oficina' }}</strong>
               <label class="home-alert-toggle">
                 <input
-                    :checked="homePreferences.showAlertsOnHome"
+                    :checked="homePreferenceDraft.showAlertsOnHome"
                     type="checkbox"
                     @change="toggleHomeAlerts"
                 />
                 <span>Exibir avisos críticos de estoque para a equipe</span>
               </label>
               <div class="home-option-grid">
-                <label v-for="widget in availableHomeWidgetDefinitions" :key="`global-${widget.id}`">
+                <label
+                    v-for="widget in availableHomeWidgetDefinitions"
+                    :key="`global-${widget.id}`"
+                    :class="{
+                      'is-active': isHomeWidgetSelected(widget.id, 'global'),
+                      'is-inactive': !isHomeWidgetSelected(widget.id, 'global'),
+                    }"
+                >
                   <input
-                      :checked="homePreferences.globalWidgets.includes(widget.id)"
+                      :checked="isHomeWidgetSelected(widget.id, 'global')"
                       type="checkbox"
                       @change="toggleHomeWidget(widget.id, 'global')"
                   />
                   <span>{{ widget.label }}</span>
+                  <small>{{ isHomeWidgetSelected(widget.id, 'global') ? 'Ativo' : 'Inativo' }}</small>
                 </label>
               </div>
+            </div>
+            <div class="home-settings-actions">
+              <button
+                  :disabled="homePreferencesSaving"
+                  class="primary-button"
+                  type="button"
+                  @click="saveHomePreferenceDraft"
+              >
+                Salvar preferências
+              </button>
             </div>
           </section>
 
@@ -2850,6 +3457,34 @@ onMounted(async () => {
               <strong>{{ widget.value }}</strong>
               <span>{{ widget.label }}</span>
             </button>
+          </section>
+
+          <section v-if="isWorkshopAdmin && featuredWorkshopEmployees.length" class="section-block">
+            <div class="section-heading">
+              <h2>Funcionários em destaque</h2>
+              <span>Melhores desempenhos recentes da oficina</span>
+            </div>
+            <div class="employee-metrics-grid featured-employee-grid">
+              <article
+                  v-for="{ employee, metrics, score } in featuredWorkshopEmployees"
+                  :key="`featured-${employee.id}`"
+                  class="employee-card employee-card--highlight clickable-row"
+                  @click="editUser(employee)"
+              >
+                <div>
+                  <strong>{{ employee.fullName }}</strong>
+                  <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
+                </div>
+                <dl>
+                  <template v-for="metric in metrics.slice(0, 3)" :key="metric.label">
+                    <dt>{{ metric.label }}</dt>
+                    <dd>{{ metric.value }}</dd>
+                  </template>
+                  <dt>Desempenho</dt>
+                  <dd>{{ score }}</dd>
+                </dl>
+              </article>
+            </div>
           </section>
 
           <section v-if="isMasterAdmin" class="master-widget-sections">
@@ -2938,7 +3573,7 @@ onMounted(async () => {
                 </dl>
               </article>
               <article class="employee-card">
-                <div><strong>Parceiros com maior potencial</strong><span>Leads da demo</span></div>
+                <div><strong>Parceiros com maior potencial</strong><span>Interessados da demo</span></div>
                 <dl>
                   <template v-for="lead in masterPotentialPartners.slice(0, 5)" :key="lead.id">
                     <dt>{{ lead.companyName }}</dt>
@@ -3011,24 +3646,62 @@ onMounted(async () => {
           </section>
         </section>
 
-        <section v-if="activeTab === 'billing' && isWorkshopAdmin" class="screen-stack">
-          <section class="order-flow-stats">
-            <article>
-              <strong>R$ {{ money(billingSummary.gross) }}</strong>
+        <section v-if="activeTab === 'billing' && isWorkshopAdmin" class="screen-stack billing-screen">
+          <section class="billing-hero-grid">
+            <button class="billing-card tone-green" type="button" @click="selectTab('orders')">
+              <DollarSign :size="22"/>
               <span>Faturamento bruto</span>
-            </article>
-            <article>
+              <strong>R$ {{ money(billingSummary.gross) }}</strong>
+              <small>Ordens e orçamentos aprovados</small>
+            </button>
+            <article class="billing-card tone-blue">
+              <BadgePercent :size="22"/>
+              <span>Taxa atual AutoCare Hub</span>
               <strong>{{ billingSummary.feeRateLabel }}</strong>
-              <span>Taxa AutoCare Hub</span>
+              <small>Aplicada sobre o faturamento mensal</small>
             </article>
-            <article>
+            <article class="billing-card tone-teal billing-card--featured">
+              <CheckCircle2 :size="22"/>
+              <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(billingSummary.net) }}</strong>
-              <span>Líquido estimado já com taxa AutoCare Hub descontada</span>
+              <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
-            <article>
-              <strong>R$ {{ money(billingSummary.ticket) }}</strong>
+            <button class="billing-card tone-amber" type="button" @click="selectTab('orders')">
+              <TrendingUp :size="22"/>
               <span>Ticket médio</span>
-            </article>
+              <strong>R$ {{ money(billingSummary.ticket) }}</strong>
+              <small>Baseado nos orçamentos aprovados</small>
+            </button>
+          </section>
+
+          <section class="billing-tier-panel">
+            <div>
+              <span class="tier-chip tier-chip--done">Taxa atual {{ billingSummary.feeRateLabel }}</span>
+              <h2>Quanto maior o faturamento mensal, menor pode ser a taxa.</h2>
+              <p>
+                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa,
+                a oficina passa a trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
+              </p>
+            </div>
+            <div class="billing-tier-summary">
+              <span>
+                Valor líquido
+                <strong>R$ {{ money(billingSummary.net) }}</strong>
+              </span>
+              <span>
+                Próxima taxa
+                <strong>{{ billingSummary.nextTierLabel }}</strong>
+              </span>
+              <span>
+                Falta para a próxima faixa
+                <strong>{{
+                    billingSummary.nextTierGap > 0 ? `R$ ${money(billingSummary.nextTierGap)}` : 'Menor taxa ativa'
+                  }}</strong>
+              </span>
+            </div>
+            <div class="billing-progress-track">
+              <b :style="{ width: `${Math.min(100, Math.max(8, ((billingSummary.gross % 5000) / 5000) * 100))}%` }"></b>
+            </div>
           </section>
 
           <section class="section-block">
@@ -3037,22 +3710,22 @@ onMounted(async () => {
               <span>Receita, conversão e serviços concluídos</span>
             </div>
             <div class="analytics-grid">
-              <article class="metric-card">
+              <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('orders')">
                 <BadgePercent :size="22"/>
                 <strong>{{ billingSummary.sentBudgets }}</strong>
                 <span>Orçamentos enviados</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('orders')">
                 <CheckCircle2 :size="22"/>
                 <strong>{{ billingSummary.approvedBudgets }}</strong>
                 <span>Orçamentos aprovados</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('orders')">
                 <Wrench :size="22"/>
                 <strong>{{ billingSummary.completed }}</strong>
                 <span>Serviços concluídos</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <article class="metric-card billing-metric tone-violet">
                 <DollarSign :size="22"/>
                 <strong>R$ {{ money(billingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
@@ -3065,7 +3738,7 @@ onMounted(async () => {
               <h2>Evolução mensal</h2>
               <span>Faturamento por mês nas ordens carregadas</span>
             </div>
-            <div class="comparison-bars revenue-bars">
+            <div class="comparison-bars revenue-bars billing-revenue-bars">
               <div v-for="month in monthlyRevenue" :key="month.month">
                 <span>{{ month.month }}</span>
                 <div>
@@ -3074,16 +3747,16 @@ onMounted(async () => {
                 <strong>R$ {{ money(month.value) }}</strong>
               </div>
             </div>
-            <article class="selected-record">
+            <article class="selected-record billing-tier-callout">
               <BarChart3 :size="20"/>
               <strong>
                 {{
-                  billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor tier atingida'
+                  billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor faixa atingida'
                 }}
               </strong>
               <span>
                 {{
-                  billingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.'
+                  billingSummary.nextTierGap > 0 ? `Para atingir a próxima faixa de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.'
                 }}
               </span>
             </article>
@@ -3093,66 +3766,30 @@ onMounted(async () => {
         <section v-if="activeTab === 'employees' && isWorkshopAdmin" class="screen-stack">
           <section class="section-block">
             <div class="section-heading">
-              <h2>{{ forms.user.id ? 'Editar funcionário' : 'Novo funcionário' }}</h2>
-              <span>Role geral, subrole e permissões da oficina</span>
-            </div>
-            <form class="form-grid"
-                  @submit.prevent="forms.user.role = 'EMPLOYEE'; forms.user.profileType = 'WORKSHOP_EMPLOYEE'; saveUser()">
-              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
-              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
-                     required type="password"/>
-              <select v-model="forms.user.employeeSubRole">
-                <option value="MECHANIC">Mecânico</option>
-                <option value="ATTENDANT">Atendente</option>
-                <option value="UNSPECIFIED">Funcionário sem especificação</option>
-              </select>
-              <label class="check-row">
-                <input v-model="forms.user.active" type="checkbox"/>
-                <span>Funcionário ativo</span>
-              </label>
-              <div class="permission-grid">
-                <label v-for="permission in permissionDefinitions" :key="permission.id">
-                  <input
-                      :checked="forms.user.permissions.includes(permission.id)"
-                      type="checkbox"
-                      @change="toggleUserPermission(permission.id)"
-                  />
-                  <span>{{ permission.label }}</span>
-                </label>
-              </div>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <UserPlus :size="18"/>
-                <span>{{ forms.user.id ? 'Salvar funcionário' : 'Criar funcionário' }}</span>
-              </button>
-            </form>
-          </section>
-
-          <section class="section-block">
-            <div class="section-heading">
               <h2>Funcionários</h2>
               <span>{{ workshopEmployees.length }} pessoas na oficina</span>
+              <button class="primary-button" type="button" @click="openCreateWorkshopEmployeeModal">
+                <UserPlus :size="18"/>
+                <span>Criar funcionário</span>
+              </button>
             </div>
             <div class="data-table">
               <div class="data-table-header employee-grid">
                 <span>Funcionário</span>
-                <span>Subrole</span>
+                <span>Subfunção</span>
                 <span>Permissões</span>
                 <span>Status</span>
-                <span>Ação</span>
               </div>
               <article
                   v-for="employee in workshopEmployees"
                   :key="employee.id"
                   class="data-table-row employee-grid clickable-row"
-                  @click="openRecord('Funcionário', employee)"
+                  @click="editUser(employee)"
               >
                 <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
                 <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
                 <StatusBadge :value="employee.active" />
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">Editar
-                </button>
               </article>
             </div>
           </section>
@@ -3160,43 +3797,95 @@ onMounted(async () => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Métricas por funcionário</h2>
-              <span>Indicadores por subrole</span>
+              <span>Indicadores ordenados do maior para o menor desempenho</span>
+            </div>
+            <div class="filters">
+              <input
+                  v-model="employeeMetricSearch"
+                  placeholder="Buscar funcionário nas métricas"
+                  type="search"
+              />
             </div>
             <div class="employee-metrics-grid">
-              <article v-for="employee in workshopEmployees" :key="`metrics-${employee.id}`" class="employee-card">
+              <article
+                  v-for="{ employee, metrics, score } in employeeMetricCards"
+                  :key="`metrics-${employee.id}`"
+                  class="employee-card employee-card--metric clickable-row"
+                  @click="editUser(employee)"
+              >
                 <div>
                   <strong>{{ employee.fullName }}</strong>
                   <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 </div>
                 <dl>
-                  <template v-for="metric in employeeMetrics(employee)" :key="metric.label">
+                  <template v-for="metric in metrics" :key="metric.label">
                     <dt>{{ metric.label }}</dt>
                     <dd>{{ metric.value }}</dd>
                   </template>
+                  <dt>Desempenho</dt>
+                  <dd>{{ score }}</dd>
                 </dl>
               </article>
             </div>
           </section>
         </section>
 
-        <section v-if="activeTab === 'store-billing' && isPartsStoreAdmin" class="screen-stack">
-          <section class="order-flow-stats">
-            <article>
-              <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
+        <section v-if="activeTab === 'store-billing' && isPartsStoreAdmin" class="screen-stack billing-screen">
+          <section class="billing-hero-grid">
+            <button class="billing-card tone-green" type="button" @click="selectTab('store-quotes')">
+              <DollarSign :size="22"/>
               <span>Faturamento bruto</span>
-            </article>
-            <article>
+              <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
+              <small>Carrinhos e orçamentos aprovados</small>
+            </button>
+            <article class="billing-card tone-blue">
+              <BadgePercent :size="22"/>
+              <span>Taxa atual AutoCare Hub</span>
               <strong>{{ storeBillingSummary.feeRateLabel }}</strong>
-              <span>Taxa AutoCare Hub</span>
+              <small>Aplicada sobre o faturamento mensal</small>
             </article>
-            <article>
+            <article class="billing-card tone-teal billing-card--featured">
+              <CheckCircle2 :size="22"/>
+              <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(storeBillingSummary.net) }}</strong>
-              <span>Líquido estimado já com taxa AutoCare Hub descontada</span>
+              <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
-            <article>
-              <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
+            <button class="billing-card tone-amber" type="button" @click="selectTab('store-quotes')">
+              <TrendingUp :size="22"/>
               <span>Ticket médio</span>
-            </article>
+              <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
+              <small>Baseado nos orçamentos aprovados</small>
+            </button>
+          </section>
+
+          <section class="billing-tier-panel">
+            <div>
+              <span class="tier-chip tier-chip--done">Taxa atual {{ storeBillingSummary.feeRateLabel }}</span>
+              <h2>Quanto maior o faturamento mensal, menor pode ser a taxa.</h2>
+              <p>
+                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa,
+                a loja passa a trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
+              </p>
+            </div>
+            <div class="billing-tier-summary">
+              <span>
+                Valor líquido
+                <strong>R$ {{ money(storeBillingSummary.net) }}</strong>
+              </span>
+              <span>
+                Próxima taxa
+                <strong>{{ storeBillingSummary.nextTierLabel }}</strong>
+              </span>
+              <span>
+                Falta para a próxima faixa
+                <strong>{{
+                    storeBillingSummary.nextTierGap > 0 ? `R$ ${money(storeBillingSummary.nextTierGap)}` : 'Menor taxa ativa'
+                  }}</strong>
+              </span>
+            </div>
+            <div class="billing-progress-track">
+              <b :style="{ width: `${Math.min(100, Math.max(8, ((storeBillingSummary.gross % 5000) / 5000) * 100))}%` }"></b>
+            </div>
           </section>
 
           <section class="section-block">
@@ -3205,22 +3894,22 @@ onMounted(async () => {
               <span>Orçamentos, conversão e vendas de peças</span>
             </div>
             <div class="analytics-grid">
-              <article class="metric-card">
+              <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('store-quotes')">
                 <ClipboardList :size="22"/>
                 <strong>{{ storeBillingSummary.sentQuotes }}</strong>
                 <span>Orçamentos enviados</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('store-quotes')">
                 <CheckCircle2 :size="22"/>
                 <strong>{{ storeBillingSummary.approvedQuotes }}</strong>
                 <span>Orçamentos aprovados</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('store-quotes')">
                 <BadgePercent :size="22"/>
                 <strong>{{ storeBillingSummary.conversion }}%</strong>
                 <span>Taxa de conversão</span>
-              </article>
-              <article class="metric-card">
+              </button>
+              <article class="metric-card billing-metric tone-violet">
                 <DollarSign :size="22"/>
                 <strong>R$ {{ money(storeBillingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
@@ -3233,7 +3922,7 @@ onMounted(async () => {
               <h2>Evolução mensal</h2>
               <span>Vendas aprovadas nos carrinhos da loja</span>
             </div>
-            <div class="comparison-bars revenue-bars">
+            <div class="comparison-bars revenue-bars billing-revenue-bars">
               <div v-for="month in storeMonthlyRevenue" :key="month.month">
                 <span>{{ month.month }}</span>
                 <div>
@@ -3242,16 +3931,16 @@ onMounted(async () => {
                 <strong>R$ {{ money(month.value) }}</strong>
               </div>
             </div>
-            <article class="selected-record">
+            <article class="selected-record billing-tier-callout">
               <BarChart3 :size="20"/>
               <strong>
                 {{
-                  storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor tier atingida'
+                  storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor faixa atingida'
                 }}
               </strong>
               <span>
                 {{
-                  storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima tier de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.'
+                  storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima faixa de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.'
                 }}
               </span>
             </article>
@@ -3292,39 +3981,15 @@ onMounted(async () => {
         </section>
 
         <section v-if="activeTab === 'store-employees' && isPartsStoreAdmin" class="screen-stack">
-          <section class="section-block">
+          <section class="section-block action-hero">
             <div class="section-heading">
-              <h2>{{ forms.user.id ? 'Editar funcionário da loja' : 'Novo funcionário da loja' }}</h2>
-              <span>Atendentes, admin e permissões comerciais</span>
+              <h2>Funcionários da loja</h2>
+              <span>Atendentes, administradores e permissões comerciais</span>
             </div>
-            <form class="form-grid" @submit.prevent="saveStoreEmployee">
-              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
-              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
-                     required type="password"/>
-              <select v-model="forms.user.employeeSubRole">
-                <option value="ATTENDANT">Atendente</option>
-                <option value="UNSPECIFIED">Funcionário sem especificação</option>
-              </select>
-              <label class="check-row">
-                <input v-model="forms.user.active" type="checkbox"/>
-                <span>Funcionário ativo</span>
-              </label>
-              <div class="permission-grid">
-                <label v-for="permission in permissionDefinitions" :key="permission.id">
-                  <input
-                      :checked="forms.user.permissions.includes(permission.id)"
-                      type="checkbox"
-                      @change="toggleUserPermission(permission.id)"
-                  />
-                  <span>{{ permission.label }}</span>
-                </label>
-              </div>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <UserPlus :size="18"/>
-                <span>{{ forms.user.id ? 'Salvar funcionário' : 'Criar funcionário' }}</span>
-              </button>
-            </form>
+            <button class="primary-button action-hero-button" type="button" @click="openCreateStoreEmployeeModal">
+              <UserPlus :size="18"/>
+              <span>Criar funcionário</span>
+            </button>
           </section>
 
           <section class="section-block">
@@ -3335,7 +4000,7 @@ onMounted(async () => {
             <div class="data-table">
               <div class="data-table-header employee-grid">
                 <span>Funcionário</span>
-                <span>Subrole</span>
+                <span>Subfunção</span>
                 <span>Permissões</span>
                 <span>Status</span>
                 <span>Ação</span>
@@ -3348,7 +4013,7 @@ onMounted(async () => {
               >
                 <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
                 <span>{{
-                    employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole]
+                    employee.profileType === 'PARTS_STORE_ADMIN' ? 'Administrador' : employeeSubRoleLabels[employee.employeeSubRole]
                   }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
                 <StatusBadge :value="employee.active" />
@@ -3368,7 +4033,7 @@ onMounted(async () => {
                 <div>
                   <strong>{{ employee.fullName }}</strong>
                   <span>{{
-                      employee.profileType === 'PARTS_STORE_ADMIN' ? 'Admin' : employeeSubRoleLabels[employee.employeeSubRole]
+                      employee.profileType === 'PARTS_STORE_ADMIN' ? 'Administrador' : employeeSubRoleLabels[employee.employeeSubRole]
                     }}</span>
                 </div>
                 <dl>
@@ -3402,57 +4067,15 @@ onMounted(async () => {
             </article>
           </section>
 
-          <section v-if="auth.role === 'ADMIN' || can('CREATE_BUDGET')" class="section-block">
+          <section v-if="auth.role === 'ADMIN' || can('CREATE_BUDGET')" class="section-block action-hero">
             <div class="section-heading">
-              <h2>{{ forms.storeQuote.id ? 'Editar carrinho' : 'Novo orçamento/carrinho' }}</h2>
-              <span>Monte o carrinho do cliente e ajuste preços quando necessário</span>
+              <h2>Carrinhos e orçamentos da loja</h2>
+              <span>Monte solicitações de peças, negocie valores e acompanhe a aprovação do cliente</span>
             </div>
-            <form class="form-grid" @submit.prevent="saveStoreQuote">
-              <input v-model="forms.storeQuote.customerName" placeholder="Cliente" required/>
-              <input v-model="forms.storeQuote.customerContact" placeholder="Contato do cliente"/>
-              <select v-model="forms.storeQuote.status">
-                <option v-for="(label, status) in storeQuoteStatusLabels" :key="status" :value="status">
-                  {{ label }}
-                </option>
-              </select>
-              <label class="check-row">
-                <input v-model="forms.storeQuote.contactRequested" type="checkbox"/>
-                <span>Cliente quer ser contatado</span>
-              </label>
-              <select v-model="forms.storeQuote.partId">
-                <option value="">Selecione uma peça</option>
-                <option v-for="part in data.parts" :key="part.id" :value="part.id">
-                  {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{ part.availableQuantity ?? part.stockQuantity }}
-                  un.
-                </option>
-              </select>
-              <input v-model.number="forms.storeQuote.quantity" min="1" placeholder="Quantidade" type="number"/>
-              <input v-model.number="forms.storeQuote.quotedPrice" min="0" placeholder="Preço negociado" step="0.01"
-                     type="number"/>
-              <button class="secondary-button" type="button" @click="addStoreQuoteItem">
-                <Plus :size="18"/>
-                Adicionar peça
-              </button>
-              <div class="quote-items">
-                <button
-                    v-for="(item, index) in forms.storeQuote.items"
-                    :key="`${item.partId}-${index}`"
-                    type="button"
-                    @click="removeStoreQuoteItem(index)"
-                >
-                  <strong>{{ item.quantity }}x {{ item.name }}</strong>
-                  <span>R$ {{ money(item.quotedPrice) }}</span>
-                </button>
-              </div>
-              <article class="selected-record">
-                <strong>R$ {{ money(storeQuoteTotal(forms.storeQuote)) }}</strong>
-                <span>Total do carrinho atual.</span>
-              </article>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <ShoppingCart :size="18"/>
-                <span>{{ forms.storeQuote.id ? 'Salvar carrinho' : 'Criar carrinho' }}</span>
-              </button>
-            </form>
+            <button class="primary-button action-hero-button" type="button" @click="openCreateStoreQuoteModal">
+              <ShoppingCart :size="18"/>
+              <span>Novo carrinho/orçamento</span>
+            </button>
           </section>
 
           <section class="section-block">
@@ -3462,42 +4085,148 @@ onMounted(async () => {
             </div>
             <div class="data-table">
               <div class="data-table-header store-quotes-grid">
-                <span>Status</span>
                 <span>Cliente</span>
-                <span>Itens</span>
+                <span>Peças solicitadas</span>
+                <span>Status</span>
+                <span>Atualização</span>
                 <span>Total</span>
-                <span>Ações</span>
               </div>
               <article
                   v-for="quote in storeQuotes"
                   :key="quote.id"
                   class="data-table-row store-quotes-grid clickable-row"
-                  @click="openRecord('Carrinho da loja', quote)"
+                  @click="editStoreQuote(quote)"
               >
-                <StatusBadge :value="quote.status" />
-                <span>{{ quote.customerName }}<small>{{ quote.customerContact }} · {{ quote.id }}</small></span>
                 <span>
-                  {{ quote.items.length }} peças
-                  <small>{{ quote.contactRequested ? 'Aguardar contato' : 'Sem contato pendente' }}</small>
+                  {{ quote.customerName }}
+                  <small>{{ quote.customerContact || 'Sem contato informado' }} · {{ quote.id }}</small>
                 </span>
-                <strong>R$ {{ money(storeQuoteTotal(quote)) }}</strong>
-                <div class="row-actions">
-                  <button class="secondary-button compact-action" type="button" @click.stop="editStoreQuote(quote)">
-                    Editar
-                  </button>
-                  <button v-if="quote.status === 'DRAFT'" class="secondary-button compact-action" type="button"
-                          @click.stop="updateStoreQuoteStatus(quote, 'SENT')">Enviar
-                  </button>
-                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button"
-                          @click.stop="updateStoreQuoteStatus(quote, 'APPROVED')">Aprovar
-                  </button>
-                  <button v-if="quote.status === 'SENT'" class="secondary-button compact-action" type="button"
-                          @click.stop="updateStoreQuoteStatus(quote, 'REFUSED')">Recusar
-                  </button>
-                </div>
+                <span>
+                  {{ storeQuoteMainItem(quote) }}
+                  <small>{{ quote.contactRequested ? 'Cliente aguardando contato' : `${quote.items.length} item(ns) no carrinho` }}</small>
+                </span>
+                <StatusBadge :label="storeQuoteStatusLabels[quote.status]" :value="quote.status" />
+                <span class="table-center">{{ storeQuoteUpdatedAt(quote) }}</span>
+                <strong class="table-money">R$ {{ money(storeQuoteTotal(quote)) }}</strong>
               </article>
             </div>
           </section>
+
+          <AppModal
+              :dirty="Boolean(forms.storeQuote.customerName || forms.storeQuote.customerContact || forms.storeQuote.items.length)"
+              :open="storeQuoteModalOpen"
+              :title="forms.storeQuote.id ? 'Editar carrinho/orçamento' : 'Novo carrinho/orçamento'"
+              subtitle="Fluxo comercial da loja de peças"
+              @close="closeStoreQuoteModal"
+          >
+            <form class="modal-form store-quote-modal-form" @submit.prevent="saveStoreQuote()">
+              <label class="form-field">
+                <span>Cliente</span>
+                <input v-model="forms.storeQuote.customerName" placeholder="Nome do cliente ou empresa" required/>
+              </label>
+              <label class="form-field">
+                <span>Contato do cliente</span>
+                <input v-model="forms.storeQuote.customerContact" placeholder="Telefone ou e-mail"/>
+              </label>
+              <label class="form-field">
+                <span>Status atual</span>
+                <input :value="storeQuoteStatusLabels[forms.storeQuote.status] || forms.storeQuote.status" disabled/>
+              </label>
+              <label class="check-row">
+                <input v-model="forms.storeQuote.contactRequested" type="checkbox"/>
+                <span>Cliente quer ser contatado pela loja</span>
+              </label>
+
+              <div class="quote-item-builder">
+                <label class="form-field">
+                  <span>Peça solicitada</span>
+                  <select v-model="forms.storeQuote.partId">
+                    <option value="">Selecione uma peça</option>
+                    <option v-for="part in data.parts" :key="part.id" :value="part.id">
+                      {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{ part.availableQuantity ?? part.stockQuantity }} un.
+                    </option>
+                  </select>
+                </label>
+                <label class="form-field">
+                  <span>Quantidade</span>
+                  <input v-model.number="forms.storeQuote.quantity" min="1" type="number"/>
+                </label>
+                <label class="form-field">
+                  <span>Valor unitário negociado</span>
+                  <input v-model.number="forms.storeQuote.quotedPrice" min="0" step="0.01" type="number"/>
+                </label>
+                <button class="secondary-button" type="button" @click="addStoreQuoteItem">
+                  <Plus :size="18"/>
+                  Adicionar peça
+                </button>
+              </div>
+
+              <div class="quote-items store-quote-items">
+                <button
+                    v-for="(item, index) in forms.storeQuote.items"
+                    :key="`${item.partId}-${index}`"
+                    type="button"
+                    @click="removeStoreQuoteItem(index)"
+                >
+                  <span>
+                    <strong>{{ item.quantity }}x {{ item.name }}</strong>
+                    <small>R$ {{ money(item.quotedPrice) }} por unidade</small>
+                  </span>
+                  <b>Remover</b>
+                </button>
+              </div>
+
+              <div class="modal-readonly-grid store-quote-summary">
+                <span>Peças no carrinho<strong>{{ forms.storeQuote.items.length }}</strong></span>
+                <span>Total negociado<strong>R$ {{ money(storeQuoteTotal(forms.storeQuote)) }}</strong></span>
+                <span>Status comercial<strong>{{ storeQuoteStatusLabels[forms.storeQuote.status] }}</strong></span>
+                <span>Fluxo de estoque<strong>Reserva ao enviar, baixa ao aprovar</strong></span>
+              </div>
+
+              <div class="quote-status-actions modal-save">
+                <button :disabled="saving" class="primary-button" type="submit">
+                  <ShoppingCart :size="18"/>
+                  <span>{{ forms.storeQuote.id ? 'Salvar ajustes' : 'Criar carrinho' }}</span>
+                </button>
+                <button
+                    v-if="forms.storeQuote.status === 'DRAFT'"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="saveStoreQuoteStatusFromModal('SENT')"
+                >
+                  Enviar orçamento
+                </button>
+                <button
+                    v-if="forms.storeQuote.status === 'SENT'"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="saveStoreQuoteStatusFromModal('APPROVED')"
+                >
+                  Aprovar venda
+                </button>
+                <button
+                    v-if="forms.storeQuote.status === 'SENT'"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="saveStoreQuoteStatusFromModal('REFUSED')"
+                >
+                  Recusar orçamento
+                </button>
+                <button
+                    v-if="forms.storeQuote.status === 'SENT'"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="saveStoreQuoteStatusFromModal('EXPIRED')"
+                >
+                  Marcar expirado
+                </button>
+              </div>
+            </form>
+          </AppModal>
         </section>
 
         <section v-if="activeTab === 'master-customers' && isMasterAdmin" class="screen-stack">
@@ -3526,7 +4255,7 @@ onMounted(async () => {
               </select>
             </div>
             <div class="data-table">
-              <div class="data-table-header customers-grid">
+              <div class="data-table-header master-customers-grid">
                 <span>Cliente</span>
                 <span>Veículos</span>
                 <span>Gasto total</span>
@@ -3535,13 +4264,13 @@ onMounted(async () => {
               <article
                   v-for="customer in listRows('masterCustomers')"
                   :key="customer.id"
-                  class="data-table-row customers-grid clickable-row"
+                  class="data-table-row master-customers-grid clickable-row"
                   @click="openRecord('Cliente', customer)"
               >
                 <strong>{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong>
-                <span>{{ customer.vehiclesCount }}</span>
-                <strong>R$ {{ money(customer.spent) }}</strong>
-                <span>{{ customer.frequency }}<small>{{
+                <span class="centered-number">{{ customer.vehiclesCount }}</span>
+                <strong class="money-value">R$ {{ money(customer.spent) }}</strong>
+                <span class="interaction-cell">{{ customer.frequency }} interações<small>{{
                     customer.partners.join(', ') || 'Sem parceiro vinculado'
                   }}</small></span>
               </article>
@@ -3561,7 +4290,7 @@ onMounted(async () => {
               <span>{{ listTotal('masterWorkshops') }} oficinas</span>
             </div>
             <div class="filters">
-              <input v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou admin" type="search"
+              <input v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou administrador" type="search"
                      @input="resetListPage('masterWorkshops')"/>
               <select v-model.number="pagination.masterWorkshops.size" @change="resetListPage('masterWorkshops')">
                 <option :value="5">5 por página</option>
@@ -3579,7 +4308,7 @@ onMounted(async () => {
               </select>
             </div>
             <div class="data-table">
-              <div class="data-table-header partner-grid">
+              <div class="data-table-header master-partner-grid">
                 <span>Oficina</span>
                 <span>Faturamento</span>
                 <span>Taxa</span>
@@ -3589,20 +4318,22 @@ onMounted(async () => {
               <article
                   v-for="partner in listRows('masterWorkshops')"
                   :key="partner.id"
-                  class="data-table-row partner-grid clickable-row"
+                  class="data-table-row master-partner-grid clickable-row"
                   @click="openRecord('Oficina parceira', partner)"
               >
                 <strong>{{ partner.name }}<small>{{ partner.adminName }} · {{ partner.customersServed }} clientes ·
                   {{ partner.vehiclesServed }} veículos</small></strong>
-                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{
-                    money(partner.net)
-                  }}</small></span>
-                <span>{{
-                    partner.feeRateLabel
-                  }}<small>{{
-                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
-                    }}</small></span>
-                <strong>R$ {{ money(partner.feeAmount) }}</strong>
+                <span class="finance-stack">
+                  <strong>R$ {{ money(partner.gross) }}</strong>
+                  <small class="net-highlight">Líquido com taxa descontada R$ {{ money(partner.net) }}</small>
+                </span>
+                <span class="rate-stack">
+                  <b class="fee-chip">{{ partner.feeRateLabel }}</b>
+                  <small :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'">
+                    {{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}
+                  </small>
+                </span>
+                <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
                 <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
@@ -3618,10 +4349,28 @@ onMounted(async () => {
           <section class="section-block">
             <div class="section-heading">
               <h2>Lojas de peças parceiras</h2>
-              <span>Vendas, peças mais vendidas e taxa da plataforma</span>
+              <span>{{ listTotal('masterStores') }} lojas</span>
+            </div>
+            <div class="filters">
+              <input v-model="pagination.masterStores.search" placeholder="Buscar loja, administrador ou produto" type="search"
+                     @input="resetListPage('masterStores')"/>
+              <select v-model.number="pagination.masterStores.size" @change="resetListPage('masterStores')">
+                <option :value="5">5 por página</option>
+                <option :value="10">10 por página</option>
+                <option :value="20">20 por página</option>
+              </select>
+              <select v-model="pagination.masterStores.sortBy">
+                <option value="name">Ordenar por nome</option>
+                <option value="gross">Ordenar por faturamento</option>
+                <option value="feeAmount">Ordenar por taxa</option>
+              </select>
+              <select v-model="pagination.masterStores.sortDir">
+                <option value="asc">Crescente</option>
+                <option value="desc">Decrescente</option>
+              </select>
             </div>
             <div class="data-table">
-              <div class="data-table-header partner-grid">
+              <div class="data-table-header master-partner-grid">
                 <span>Loja</span>
                 <span>Faturamento</span>
                 <span>Taxa</span>
@@ -3629,26 +4378,33 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="partner in storePartners"
+                  v-for="partner in listRows('masterStores')"
                   :key="partner.id"
-                  class="data-table-row partner-grid clickable-row"
+                  class="data-table-row master-partner-grid clickable-row"
                   @click="openRecord('Loja parceira', partner)"
               >
                 <strong>{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{
                     partner.topProducts
                   }}</small></strong>
-                <span>R$ {{ money(partner.gross) }}<small>Líquido com taxa descontada R$ {{
-                    money(partner.net)
-                  }}</small></span>
-                <span>{{
-                    partner.feeRateLabel
-                  }}<small>{{
-                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
-                    }}</small></span>
-                <strong>R$ {{ money(partner.feeAmount) }}</strong>
+                <span class="finance-stack">
+                  <strong>R$ {{ money(partner.gross) }}</strong>
+                  <small class="net-highlight">Líquido com taxa descontada R$ {{ money(partner.net) }}</small>
+                </span>
+                <span class="rate-stack">
+                  <b class="fee-chip">{{ partner.feeRateLabel }}</b>
+                  <small :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'">
+                    {{ partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa' }}
+                  </small>
+                </span>
+                <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
                 <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
+            <PaginationControl
+                :page="pagination.masterStores.page"
+                :total-pages="listTotalPages('masterStores')"
+                @update:page="setListPage('masterStores', $event)"
+            />
           </section>
         </section>
 
@@ -3688,48 +4444,19 @@ onMounted(async () => {
         <section v-if="activeTab === 'master-admins' && isMasterAdmin" class="screen-stack">
           <section class="section-block">
             <div class="section-heading">
-              <h2>Cadastrar admin parceiro</h2>
-              <span>Crie acesso inicial para oficina ou loja de peças</span>
+              <h2>Cadastro de administrador parceiro</h2>
+              <span>O cadastro foi centralizado na aba de contas para evitar duplicidade</span>
             </div>
-            <form class="form-grid" @submit.prevent="saveUser">
-              <input v-model="forms.user.fullName" placeholder="Nome do admin" required/>
-              <input v-model="forms.user.username" placeholder="E-mail" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
-                     required type="password"/>
-              <input v-model="forms.user.companyName" placeholder="Empresa vinculada" required/>
-              <select v-model="forms.user.profileType"
-                      @change="forms.user.companyType = forms.user.profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE'; forms.user.role = 'ADMIN'">
-                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
-                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
-              </select>
-              <select v-model="forms.user.companyType">
-                <option value="WORKSHOP">Oficina</option>
-                <option value="PARTS_STORE">Loja de peças</option>
-              </select>
-              <label class="check-row">
-                <input v-model="forms.user.active" type="checkbox"/>
-                <span>Admin ativo</span>
-              </label>
-              <div class="permission-grid">
-                <label v-for="permission in permissionDefinitions" :key="`master-${permission.id}`">
-                  <input
-                      :checked="forms.user.permissions.includes(permission.id)"
-                      type="checkbox"
-                      @change="toggleUserPermission(permission.id)"
-                  />
-                  <span>{{ permission.label }}</span>
-                </label>
-              </div>
-              <button
-                  :disabled="saving"
-                  class="primary-button"
-                  type="submit"
-                  @click="forms.user.role = 'ADMIN'; forms.user.employeeSubRole = ''; forms.user.permissions = forms.user.permissions.length ? forms.user.permissions : ['VIEW_BILLING','MANAGE_STOCK','CREATE_BUDGET','EDIT_EMPLOYEES','VIEW_STATS']"
-              >
+            <div class="account-cta-row">
+              <button class="primary-button" type="button" @click="openCreatePartnerAdminModal('WORKSHOP_ADMIN')">
                 <UserPlus :size="18"/>
-                <span>{{ forms.user.id ? 'Salvar admin' : 'Criar admin parceiro' }}</span>
+                <span>Criar administrador de oficina</span>
               </button>
-            </form>
+              <button class="secondary-button" type="button" @click="openCreatePartnerAdminModal('PARTS_STORE_ADMIN')">
+                <UserPlus :size="18"/>
+                <span>Criar administrador de loja</span>
+              </button>
+            </div>
           </section>
         </section>
 
@@ -3885,7 +4612,7 @@ onMounted(async () => {
         </section>
 
         <section v-if="activeTab === 'users'" class="screen-stack">
-          <section class="section-block">
+          <section v-if="!isMasterAdmin" class="section-block">
             <div class="section-heading">
               <h2>Minha conta</h2>
               <span>{{ currentUser?.username }}</span>
@@ -3904,43 +4631,12 @@ onMounted(async () => {
 
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
-              <h2>{{ forms.user.id ? 'Editar usuário' : 'Criar nova conta' }}</h2>
-              <span>Perfis e permissões dos funcionários</span>
-            </div>
-            <form class="form-grid" @submit.prevent="saveUser">
-              <input v-model="forms.user.fullName" placeholder="Nome completo" required/>
-              <input v-model="forms.user.username" placeholder="E-mail de login" required type="email"/>
-              <input v-if="!forms.user.id" v-model="forms.user.password" minlength="6" placeholder="Senha inicial"
-                     required type="password"/>
-              <select v-model="forms.user.role">
-                <option value="ADMIN">Administrador</option>
-                <option value="EMPLOYEE">Funcionário</option>
-                <option value="CUSTOMER">Cliente</option>
-              </select>
-              <select v-model="forms.user.profileType">
-                <option value="MASTER_ADMIN">Admin Master</option>
-                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
-                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
-                <option value="WORKSHOP_EMPLOYEE">Funcionário de oficina</option>
-                <option value="PARTS_STORE_EMPLOYEE">Funcionário de loja de peças</option>
-                <option value="CUSTOMER_OWNER">Cliente</option>
-              </select>
-              <input v-model="forms.user.customerId" placeholder="ID do cliente, se for conta de cliente"/>
-              <label class="check-row">
-                <input v-model="forms.user.active" type="checkbox"/>
-                <span>Usuário ativo</span>
-              </label>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <UserPlus :size="18"/>
-                <span>{{ forms.user.id ? 'Salvar usuário' : 'Criar conta' }}</span>
-              </button>
-            </form>
-          </section>
-
-          <section v-if="auth.role === 'ADMIN'" class="section-block">
-            <div class="section-heading">
-              <h2>Usuários</h2>
+              <h2>Contas do sistema</h2>
               <span>{{ listTotal('users') }} contas</span>
+              <button class="primary-button" type="button" @click="openCreateUserModal">
+                <UserPlus :size="18"/>
+                <span>Criar nova conta</span>
+              </button>
             </div>
             <div class="filters">
               <input v-model="pagination.users.search" placeholder="Buscar usuário" type="search"
@@ -3971,21 +4667,20 @@ onMounted(async () => {
                 <span>Usuário</span>
                 <span>Permissão</span>
                 <span>Perfil</span>
+                <span>Empresa</span>
                 <span>Status</span>
-                <span>Ação</span>
               </div>
               <article
                   v-for="user in listRows('users')"
                   :key="user.id"
                   class="data-table-row users-grid clickable-row"
-                  @click="openRecord('Usuário', user)"
+                  @click="editUser(user)"
               >
                 <strong>{{ user.fullName }}<small>{{ user.username }}</small></strong>
-                <span>{{ user.role }}</span>
-                <span>{{ user.profileType }}</span>
+                <span>{{ roleDisplayLabel(user.role) }}</span>
+                <span>{{ profileTypeLabel(user.profileType) }}</span>
+                <span>{{ user.companyName || '-' }}<small>{{ companyTypeLabel(user.companyType) }}</small></span>
                 <StatusBadge :value="user.active" />
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(user)">Editar
-                </button>
               </article>
             </div>
             <PaginationControl
@@ -3997,32 +4692,15 @@ onMounted(async () => {
         </section>
 
         <section v-if="activeTab === 'customers'" class="screen-stack">
-          <section v-if="auth.role === 'ADMIN'" class="section-block">
+          <section v-if="auth.role === 'ADMIN'" class="section-block action-hero">
             <div class="section-heading">
-              <h2>Cadastro e conta do cliente</h2>
+              <h2>Clientes</h2>
               <span>Cria o cadastro base usado por veículos e ordens</span>
             </div>
-            <form class="form-grid" @submit.prevent="createCustomer">
-              <input v-model="forms.customer.name" placeholder="Nome" required/>
-              <input v-model="forms.customer.document" placeholder="CPF/CNPJ somente números" required/>
-              <input v-model="forms.customer.phone" placeholder="Telefone" required/>
-              <input v-model="forms.customer.email" placeholder="E-mail" required type="email"/>
-              <input v-model="forms.customer.address.street" placeholder="Rua" required/>
-              <input v-model="forms.customer.address.number" placeholder="Número" required/>
-              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required/>
-              <input v-model="forms.customer.address.city" placeholder="Cidade" required/>
-              <input v-model="forms.customer.address.state" maxlength="2" placeholder="UF" required/>
-              <input v-model="forms.customer.address.zipCode" placeholder="CEP" required/>
-              <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
-              <label class="check-row">
-                <input v-model="forms.customer.active" type="checkbox"/>
-                <span>Cliente ativo</span>
-              </label>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <UserPlus :size="18"/>
-                <span>{{ forms.customer.id ? 'Salvar cliente' : 'Cadastrar cliente' }}</span>
-              </button>
-            </form>
+            <button class="primary-button action-hero-button" type="button" @click="openCreateCustomerModal">
+              <UserPlus :size="18"/>
+              <span>Cadastrar cliente</span>
+            </button>
           </section>
 
           <section class="section-block">
@@ -4081,27 +4759,15 @@ onMounted(async () => {
         </section>
 
         <section v-if="activeTab === 'vehicles'" class="screen-stack">
-          <section v-if="auth.role === 'ADMIN'" class="section-block">
+          <section v-if="auth.role === 'ADMIN'" class="section-block action-hero">
             <div class="section-heading">
-              <h2>Cadastro de veículo</h2>
+              <h2>Veículos</h2>
               <span>Vinculado ao cliente</span>
             </div>
-            <form class="form-grid compact" @submit.prevent="createVehicle">
-              <input v-model="forms.vehicle.customerId" placeholder="ID do cliente" required/>
-              <input v-model="forms.vehicle.plate" placeholder="Placa ABC1D23" required/>
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required/>
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
-              <input v-model.number="forms.vehicle.year" placeholder="Ano" required type="number"/>
-              <input v-model.number="forms.vehicle.mileage" placeholder="Km" required type="number"/>
-              <label class="check-row">
-                <input v-model="forms.vehicle.active" type="checkbox"/>
-                <span>Veículo ativo</span>
-              </label>
-              <button :disabled="saving" class="primary-button" type="submit">
-                <Plus :size="18"/>
-                <span>{{ forms.vehicle.id ? 'Salvar veículo' : 'Cadastrar veículo' }}</span>
-              </button>
-            </form>
+            <button class="primary-button action-hero-button" type="button" @click="openCreateVehicleModal">
+              <Plus :size="18"/>
+              <span>Cadastrar veículo</span>
+            </button>
           </section>
 
           <section class="section-block">
@@ -4135,9 +4801,10 @@ onMounted(async () => {
             </div>
             <div class="data-table">
               <div class="data-table-header vehicles-grid">
-                <span>Placa</span>
                 <span>Veículo</span>
-                <span>Km</span>
+                <span>Placa</span>
+                <span>Cliente</span>
+                <span>Documento</span>
                 <span>Status</span>
               </div>
               <article
@@ -4146,10 +4813,11 @@ onMounted(async () => {
                   class="data-table-row vehicles-grid clickable-row"
                   @click="openRecord('Veículo', vehicle)"
               >
-                <strong>{{ vehicle.plate }}</strong>
                 <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
-                <span>{{ vehicle.mileage }} km</span>
-                <StatusBadge :value="vehicle.currentStatus" />
+                <strong class="plate-chip">{{ vehicle.plate }}</strong>
+                <strong>{{ vehicleOwner(vehicle).name || 'Cliente não informado' }}</strong>
+                <span>{{ vehicleOwner(vehicle).document || '-' }}</span>
+                <StatusBadge :label="vehicleStatusLabel(vehicle)" :value="vehicleStatusValue(vehicle)"/>
               </article>
             </div>
             <PaginationControl
@@ -4182,38 +4850,14 @@ onMounted(async () => {
 
           <section v-if="auth.role === 'ADMIN' || can('MANAGE_STOCK')" class="section-block">
             <div class="section-heading">
-              <h2>{{ forms.part.id ? 'Editar peça' : 'Cadastro de peças' }}</h2>
+              <h2>Cadastro de peças</h2>
               <span>Catálogo, custo, venda e reserva</span>
-            </div>
-            <form class="form-grid" @submit.prevent="createPart">
-              <input v-model="forms.part.name" placeholder="Nome" required/>
-              <input v-model="forms.part.description" placeholder="Descrição" required/>
-              <input v-model="forms.part.sku" placeholder="SKU" required/>
-              <input v-model="forms.part.category" placeholder="Categoria" required/>
-              <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
-              <input v-model="forms.part.brand" placeholder="Marca" required/>
-              <input
-                  v-model.number="forms.part.costPrice" min="0" placeholder="Valor de custo" required
-                  step="0.01" type="number"
-              />
-              <input
-                  v-model.number="forms.part.unitPrice" min="0" placeholder="Valor de venda" required
-                  step="0.01" type="number"
-              />
-              <input v-model.number="forms.part.stockQuantity" min="0" placeholder="Estoque" required type="number"/>
-              <input
-                  v-model.number="forms.part.minimumStock" min="0" placeholder="Estoque minimo" required
-                  type="number"
-              />
-              <input
-                  v-model.number="forms.part.reservationDays" min="1" placeholder="Dias de bloqueio" required
-                  type="number"
-              />
-              <button :disabled="saving" class="primary-button" type="submit">
+              <button class="primary-button" type="button" @click="openCreatePartModal">
                 <Plus :size="18"/>
-                <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
+                <span>Cadastrar peça</span>
               </button>
-            </form>
+            </div>
+            <p class="hint">Use o cadastro guiado para criar uma peça nova ou localizar uma peça existente antes de salvar.</p>
           </section>
 
           <section v-if="can('MANAGE_STOCK')" class="section-block">
@@ -4293,24 +4937,23 @@ onMounted(async () => {
                 <span>Reservado</span>
                 <span>Valores</span>
                 <span>Status</span>
-                <span>Ação</span>
               </div>
               <article
                   v-for="part in listRows('parts')"
                   :key="part.id"
                   :class="{ danger: (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock }"
                   class="data-table-row parts-grid clickable-row"
-                  @click="openRecord('Peça', part)"
+                  @click="editPart(part)"
               >
                 <strong>
                   {{ part.name }}
                   <small>{{ part.sku }} · {{ part.category }} · {{ part.brand }}</small>
                 </strong>
-                <span>
+                <span class="stock-number">
                   {{ part.availableQuantity ?? part.stockQuantity }} un.
                   <small>Total {{ part.stockQuantity }} · Min. {{ part.minimumStock }}</small>
                 </span>
-                <span>
+                <span class="stock-number">
                   {{ part.reservedQuantity || 0 }} un.
                   <small>{{
                       part.reservationExpiresAt ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}` : `${part.reservationDays || 3} dias`
@@ -4324,10 +4967,6 @@ onMounted(async () => {
                     :label="stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível'"
                     :value="part.stockStatus || 'AVAILABLE'"
                 />
-                <button v-if="auth.role === 'ADMIN'" class="secondary-button compact-action" type="button"
-                        @click.stop="editPart(part)">
-                  Editar
-                </button>
               </article>
             </div>
             <PaginationControl
@@ -4485,9 +5124,41 @@ onMounted(async () => {
 
             <div v-if="forms.orderWizard.step === 5" class="wizard-panel">
               <article class="order-review">
-                <strong>Status ao salvar</strong>
-                <span>Sem orçamento agora: {{ statusLabels.RECEIVED }}.</span>
-                <span>Com orçamento agora: {{ statusLabels.WAITING_APPROVAL }}.</span>
+                <strong>Revisão da ordem antes de salvar</strong>
+                <div class="order-review-grid">
+                  <span>
+                    Cliente
+                    <b>{{ selectedOrderCustomer?.name || forms.orderWizard.customer.name || 'Cliente novo' }}</b>
+                  </span>
+                  <span>
+                    Veículo
+                    <b>{{ selectedOrderVehicle ? `${selectedOrderVehicle.brand} ${selectedOrderVehicle.model}` : `${forms.orderWizard.vehicle.brand} ${forms.orderWizard.vehicle.model}` }}</b>
+                  </span>
+                  <span>
+                    Placa
+                    <b>{{ selectedOrderVehicle?.plate || forms.orderWizard.vehicle.plate || '-' }}</b>
+                  </span>
+                  <span>
+                    Problema relatado
+                    <b>{{ forms.orderWizard.defects || 'Não informado' }}</b>
+                  </span>
+                  <span>
+                    Serviço previsto
+                    <b>{{ selectedOrderService?.name || 'Nenhum serviço selecionado' }}</b>
+                  </span>
+                  <span>
+                    Peça prevista
+                    <b>{{ selectedOrderPart?.name || 'Nenhuma peça inicial' }}</b>
+                  </span>
+                  <span>
+                    Orçamento
+                    <b>R$ {{ money(estimatedOrderTotal) }}</b>
+                  </span>
+                  <span>
+                    Status
+                    <b>Sem orçamento: {{ statusLabels.RECEIVED }} · Com orçamento: {{ statusLabels.WAITING_APPROVAL }}</b>
+                  </span>
+                </div>
               </article>
               <div class="wizard-actions">
                 <button :disabled="saving" class="secondary-button" type="button" @click="createOrderFromWizard(false)">
@@ -4525,7 +5196,7 @@ onMounted(async () => {
               <select v-model="forms.orderAction.serviceOrderId" required>
                 <option value="">Selecione a ordem</option>
                 <option v-for="order in data.serviceOrders" :key="order.id" :value="order.id">
-                  {{ statusLabels[order.status] || order.status }} - {{ order.diagnosticNotes }}
+                  {{ orderCustomerName(order) }} · {{ orderVehicleLabel(order) }} · {{ orderPlate(order) }} · {{ statusLabels[order.status] || order.status }}
                 </option>
               </select>
               <select v-model="forms.orderAction.status">
@@ -4580,7 +5251,7 @@ onMounted(async () => {
               <span>{{ listTotal('serviceOrders') }} registros</span>
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
-              <input v-model="pagination.serviceOrders.search" placeholder="Buscar status, nota ou ID" type="search"
+              <input v-model="pagination.serviceOrders.search" placeholder="Buscar cliente, veículo, placa, status ou ID" type="search"
                      @input="resetListPage('serviceOrders')"/>
               <select v-model.number="pagination.serviceOrders.size" @change="resetListPage('serviceOrders')">
                 <option :value="5">5 por página</option>
@@ -4605,24 +5276,25 @@ onMounted(async () => {
               </select>
             </div>
             <div class="data-table">
-              <div class="data-table-header orders-grid">
+              <div class="data-table-header service-orders-grid">
+                <span>Cliente</span>
+                <span>Veículo</span>
+                <span>Placa</span>
                 <span>Status</span>
-                <span>Nota</span>
-                <span>Itens</span>
+                <span>Data</span>
                 <span>Total</span>
               </div>
               <article
                   v-for="order in listRows('serviceOrders')"
                   :key="order.id"
-                  class="data-table-row orders-grid clickable-row"
+                  class="data-table-row service-orders-grid clickable-row"
                   @click="openRecord('Ordem de serviço', order)"
               >
-                <StatusBadge :value="order.status" />
-                <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
-                <span>
-                  {{ order.services?.length || 0 }} serviços
-                  <small>{{ order.parts?.length || 0 }} peças</small>
-                </span>
+                <strong>{{ orderCustomerName(order) }}<small>{{ orderCustomer(order).phone || orderCustomer(order).email || 'Sem contato' }}</small></strong>
+                <span>{{ orderVehicleLabel(order) }}<small>{{ order.services?.length || 0 }} serviços · {{ order.parts?.length || 0 }} peças</small></span>
+                <strong class="plate-chip">{{ orderPlate(order) }}</strong>
+                <StatusBadge :value="order.status"/>
+                <span>{{ orderDate(order) }}</span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
               <p v-if="!listTotal('serviceOrders') && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
@@ -4641,27 +5313,12 @@ onMounted(async () => {
             <div class="section-heading">
               <h2>Cadastro de serviços</h2>
               <span>Catálogo da oficina</span>
-            </div>
-            <form v-if="auth.role === 'ADMIN'" class="form-grid compact" @submit.prevent="createWorkshopService">
-              <input v-model="forms.service.name" placeholder="Nome" required/>
-              <input
-                  v-model.number="forms.service.basePrice" min="0" placeholder="Preço base" required step="0.01"
-                  type="number"
-              />
-              <input
-                  v-model.number="forms.service.estimatedTimeInMinutes" min="1" placeholder="Tempo em minutos"
-                  required type="number"
-              />
-              <textarea v-model="forms.service.description" placeholder="Descrição" required></textarea>
-              <label class="check-row">
-                <input v-model="forms.service.active" type="checkbox"/>
-                <span>Serviço ativo</span>
-              </label>
-              <button :disabled="saving" class="primary-button" type="submit">
+              <button v-if="auth.role === 'ADMIN'" class="primary-button" type="button" @click="openCreateServiceModal">
                 <Plus :size="18"/>
-                <span>{{ forms.service.id ? 'Salvar serviço' : 'Cadastrar serviço' }}</span>
+                <span>Cadastrar serviço</span>
               </button>
-            </form>
+            </div>
+            <p class="hint">Cadastre novos serviços em uma janela dedicada ou clique em um serviço da lista para editar.</p>
           </section>
 
           <section class="section-block">
@@ -4692,16 +5349,18 @@ onMounted(async () => {
                 <span>Serviço</span>
                 <span>Prazo previsto</span>
                 <span>Preço base</span>
+                <span>Status</span>
               </div>
               <article
                   v-for="service in listRows('services')"
                   :key="service.id"
                   class="data-table-row services-grid clickable-row"
-                  @click="openRecord('Serviço', service)"
+                  @click="editService(service)"
               >
                 <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
-                <span>{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
-                <span>R$ {{ money(service.basePrice) }}</span>
+                <span class="centered-number">{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
+                <strong class="money-value">R$ {{ money(service.basePrice) }}</strong>
+                <StatusBadge :value="service.active !== false" />
               </article>
             </div>
             <PaginationControl
@@ -4713,10 +5372,338 @@ onMounted(async () => {
         </section>
 
         <AppModal
+            :open="customerModalOpen"
+            title="Cadastrar cliente"
+            subtitle="Dados cadastrais usados por veículos e ordens"
+            @close="closeCustomerModal"
+        >
+          <form class="modal-form" @submit.prevent="createCustomer">
+            <label class="form-field">
+              <span>Nome</span>
+              <input v-model="forms.customer.name" placeholder="Nome completo" required/>
+            </label>
+            <label class="form-field">
+              <span>CPF/CNPJ</span>
+              <input v-model="forms.customer.document" placeholder="Somente números" required/>
+            </label>
+            <label class="form-field">
+              <span>Telefone</span>
+              <input v-model="forms.customer.phone" placeholder="Telefone" required/>
+            </label>
+            <label class="form-field">
+              <span>E-mail</span>
+              <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email"/>
+            </label>
+            <label class="form-field">
+              <span>Rua</span>
+              <input v-model="forms.customer.address.street" placeholder="Rua" required/>
+            </label>
+            <label class="form-field">
+              <span>Número</span>
+              <input v-model="forms.customer.address.number" placeholder="Número" required/>
+            </label>
+            <label class="form-field">
+              <span>Bairro</span>
+              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required/>
+            </label>
+            <label class="form-field">
+              <span>Cidade</span>
+              <input v-model="forms.customer.address.city" placeholder="Cidade" required/>
+            </label>
+            <label class="form-field">
+              <span>UF</span>
+              <input v-model="forms.customer.address.state" maxlength="2" placeholder="SP" required/>
+            </label>
+            <label class="form-field">
+              <span>CEP</span>
+              <input v-model="forms.customer.address.zipCode" placeholder="00000-000" required/>
+            </label>
+            <label class="form-field">
+              <span>Complemento</span>
+              <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
+            </label>
+            <label class="check-row">
+              <input v-model="forms.customer.active" type="checkbox"/>
+              <span>Cliente ativo</span>
+            </label>
+            <button :disabled="saving" class="primary-button modal-save" type="submit">
+              <UserPlus :size="18"/>
+              <span>Cadastrar cliente</span>
+            </button>
+          </form>
+        </AppModal>
+
+        <AppModal
+            :open="vehicleModalOpen"
+            title="Cadastrar veículo"
+            subtitle="Vincule o veículo a um cliente"
+            @close="closeVehicleModal"
+        >
+          <form class="modal-form" @submit.prevent="createVehicle">
+            <label class="form-field">
+              <span>Cliente dono</span>
+              <select v-model="forms.vehicle.customerId" required>
+                <option value="">Selecione o cliente</option>
+                <option v-for="customer in data.customers" :key="customer.id" :value="customer.id">
+                  {{ customer.name }} · {{ customer.document }}
+                </option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Placa</span>
+              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required/>
+            </label>
+            <label class="form-field">
+              <span>Marca</span>
+              <input v-model="forms.vehicle.brand" placeholder="Marca" required/>
+            </label>
+            <label class="form-field">
+              <span>Modelo</span>
+              <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
+            </label>
+            <label class="form-field">
+              <span>Ano</span>
+              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number"/>
+            </label>
+            <label class="form-field">
+              <span>Quilometragem</span>
+              <input v-model.number="forms.vehicle.mileage" min="0" placeholder="Km" required type="number"/>
+            </label>
+            <label class="check-row">
+              <input v-model="forms.vehicle.active" type="checkbox"/>
+              <span>Veículo ativo</span>
+            </label>
+            <button :disabled="saving" class="primary-button modal-save" type="submit">
+              <Plus :size="18"/>
+              <span>Cadastrar veículo</span>
+            </button>
+          </form>
+        </AppModal>
+
+        <AppModal
+            :open="serviceModalOpen"
+            :title="forms.service.id ? 'Editar serviço' : 'Cadastrar serviço'"
+            subtitle="Catálogo da oficina"
+            @close="closeServiceModal"
+        >
+          <form class="modal-form service-modal-form" @submit.prevent="createWorkshopService">
+            <label class="form-field">
+              <span>Nome do serviço</span>
+              <input v-model="forms.service.name" placeholder="Ex.: Revisão preventiva" required/>
+            </label>
+            <label class="form-field">
+              <span>Preço base</span>
+              <input v-model.number="forms.service.basePrice" min="0" required step="0.01" type="number"/>
+            </label>
+
+            <div v-if="serviceDuplicateMatches.length" class="duplicate-suggestions">
+              <strong>Serviços parecidos já cadastrados</strong>
+              <button
+                  v-for="service in serviceDuplicateMatches"
+                  :key="`service-match-${service.id}`"
+                  type="button"
+                  @click="selectExistingServiceForModal(service)"
+              >
+                <span>{{ service.name }}<small>{{ service.description }}</small></span>
+                <b>Editar existente</b>
+              </button>
+            </div>
+
+            <label class="form-field">
+              <span>Tempo previsto</span>
+              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" required type="number"/>
+            </label>
+            <label class="form-field service-description-field">
+              <span>Descrição</span>
+              <textarea v-model="forms.service.description" placeholder="Descrição do serviço, escopo e observações" required></textarea>
+            </label>
+            <label class="check-row">
+              <input v-model="forms.service.active" type="checkbox"/>
+              <span>Serviço ativo</span>
+            </label>
+            <button :disabled="saving" class="primary-button modal-save" type="submit">
+              <Wrench :size="18"/>
+              <span>{{ forms.service.id ? 'Salvar serviço' : 'Cadastrar serviço' }}</span>
+            </button>
+          </form>
+        </AppModal>
+
+        <AppModal
+            :open="partModalOpen"
+            :title="forms.part.id ? 'Editar peça' : 'Cadastrar peça'"
+            subtitle="Estoque, preços e identificação da peça"
+            @close="closePartModal"
+        >
+          <form class="modal-form part-modal-form" @submit.prevent="createPart">
+            <label class="form-field">
+              <span>Nome da peça</span>
+              <input v-model="forms.part.name" placeholder="Ex.: Filtro de óleo" required/>
+            </label>
+            <label class="form-field">
+              <span>SKU</span>
+              <input v-model="forms.part.sku" placeholder="Código interno ou SKU" required/>
+            </label>
+
+            <div v-if="partDuplicateMatches.length" class="duplicate-suggestions">
+              <strong>Peças parecidas já cadastradas</strong>
+              <button
+                  v-for="part in partDuplicateMatches"
+                  :key="`match-${part.id}`"
+                  type="button"
+                  @click="selectExistingPartForModal(part)"
+              >
+                <span>{{ part.name }}<small>{{ part.sku }} · {{ part.brand }}</small></span>
+                <b>Editar existente</b>
+              </button>
+            </div>
+
+            <label class="form-field">
+              <span>Categoria</span>
+              <input v-model="forms.part.category" placeholder="Categoria" required/>
+            </label>
+            <label class="form-field">
+              <span>Subcategoria</span>
+              <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
+            </label>
+            <label class="form-field">
+              <span>Marca</span>
+              <input v-model="forms.part.brand" placeholder="Marca" required/>
+            </label>
+            <label class="form-field">
+              <span>Valor de custo</span>
+              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number"/>
+            </label>
+            <label class="form-field">
+              <span>Valor de venda</span>
+              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number"/>
+            </label>
+            <label class="form-field">
+              <span>Quantidade em estoque</span>
+              <input v-model.number="forms.part.stockQuantity" min="0" required type="number"/>
+            </label>
+            <label class="form-field">
+              <span>Estoque mínimo</span>
+              <input v-model.number="forms.part.minimumStock" min="0" required type="number"/>
+            </label>
+            <label class="form-field">
+              <span>Dias de bloqueio em orçamento</span>
+              <input v-model.number="forms.part.reservationDays" min="1" required type="number"/>
+            </label>
+            <label class="form-field part-description-field">
+              <span>Descrição</span>
+              <textarea v-model="forms.part.description" placeholder="Descrição da peça, aplicação ou observações" required></textarea>
+            </label>
+            <label class="check-row">
+              <input v-model="forms.part.active" type="checkbox"/>
+              <span>Peça ativa</span>
+            </label>
+            <button :disabled="saving" class="primary-button modal-save" type="submit">
+              <Package :size="18"/>
+              <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
+            </button>
+          </form>
+        </AppModal>
+
+        <AppModal
+            :open="userModalOpen"
+            :title="forms.user.id ? (userModalIsEmployee ? 'Editar funcionário' : 'Editar conta') : (userModalIsEmployee ? 'Criar funcionário' : 'Criar nova conta')"
+            :subtitle="userModalIsEmployee ? 'Dados, função, permissões e status' : 'Conta do sistema'"
+            @close="closeUserModal"
+        >
+          <form class="modal-form account-modal-form" @submit.prevent="saveUser">
+            <label class="form-field">
+              <span>Nome completo</span>
+              <input v-model="forms.user.fullName" placeholder="Ex.: Carlos Atendimento" required/>
+            </label>
+            <label class="form-field">
+              <span>E-mail de login</span>
+              <input v-model="forms.user.username" placeholder="email@autocarehub.com" required type="email"/>
+            </label>
+            <label class="form-field">
+              <span>{{ forms.user.id ? 'Nova senha' : 'Senha inicial' }}</span>
+              <input
+                  v-model="forms.user.password"
+                  minlength="8"
+                  :placeholder="forms.user.id ? 'Preencha apenas se quiser alterar' : 'Mínimo 8 caracteres'"
+                  :required="!forms.user.id"
+                  type="password"
+              />
+            </label>
+            <label class="form-field">
+              <span>Perfil</span>
+              <select v-model="forms.user.profileType" @change="syncUserProfileDefaults">
+                <option value="MASTER_ADMIN">Admin Master</option>
+                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
+                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
+                <option value="WORKSHOP_EMPLOYEE">Funcionário de oficina</option>
+                <option value="PARTS_STORE_EMPLOYEE">Funcionário de loja de peças</option>
+                <option value="CUSTOMER_OWNER">Cliente final</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Role geral</span>
+              <select v-model="forms.user.role">
+                <option value="ADMIN">Administrador</option>
+                <option value="EMPLOYEE">Funcionário</option>
+                <option value="CUSTOMER">Cliente</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Tipo de empresa</span>
+              <select v-model="forms.user.companyType">
+                <option value="">Sem empresa</option>
+                <option value="WORKSHOP">Oficina</option>
+                <option value="PARTS_STORE">Loja de peças</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>Empresa vinculada</span>
+              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja"/>
+            </label>
+            <label class="form-field">
+              <span>Função do funcionário</span>
+              <select v-model="forms.user.employeeSubRole">
+                <option value="">Sem subfunção</option>
+                <option v-if="!userModalIsStoreEmployee" value="MECHANIC">Mecânico</option>
+                <option value="ATTENDANT">Atendente</option>
+                <option value="UNSPECIFIED">Funcionário sem especificação</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span>ID do cliente</span>
+              <input v-model="forms.user.customerId" placeholder="Usado apenas em conta de cliente"/>
+            </label>
+            <label class="check-row">
+              <input v-model="forms.user.active" type="checkbox"/>
+              <span>{{ userModalIsEmployee ? 'Funcionário ativo' : 'Conta ativa' }}</span>
+            </label>
+            <div v-if="userModalEmployeeMetrics.length" class="modal-readonly-grid employee-modal-metrics">
+              <span v-for="metric in userModalEmployeeMetrics" :key="`modal-${metric.label}`">
+                {{ metric.label }}<strong>{{ metric.value }}</strong>
+              </span>
+            </div>
+            <div class="permission-grid account-permission-grid">
+              <label v-for="permission in permissionDefinitions" :key="`account-${permission.id}`">
+                <input
+                    :checked="forms.user.permissions.includes(permission.id)"
+                    type="checkbox"
+                    @change="toggleUserPermission(permission.id)"
+                />
+                <span>{{ permission.label }}</span>
+              </label>
+            </div>
+            <button :disabled="saving" class="primary-button modal-save" type="submit">
+              <UserPlus :size="18"/>
+              <span>{{ forms.user.id ? (userModalIsEmployee ? 'Salvar funcionário' : 'Salvar conta') : (userModalIsEmployee ? 'Criar funcionário' : 'Criar conta') }}</span>
+            </button>
+          </form>
+        </AppModal>
+
+        <AppModal
             :dirty="detailModalDirty"
             :open="Boolean(selectedRecord)"
             :subtitle="selectedRecordType"
-            :title="selectedRecord?.name || selectedRecord?.fullName || selectedRecord?.plate || selectedRecord?.status || 'Detalhes'"
+            :title="detailModalTitle"
             @close="closeRecord"
         >
 
@@ -4742,11 +5729,14 @@ onMounted(async () => {
             </form>
 
             <form v-else-if="isWorkshopDetail" class="modal-form" @submit.prevent="saveDetailModal">
-              <input v-model="modalDraft.partner.companyName" placeholder="Nome da oficina"/>
+              <input
+                  v-model="modalDraft.partner.companyName"
+                  :placeholder="selectedRecordType === 'Loja parceira' ? 'Nome da loja' : 'Nome da oficina'"
+              />
               <input v-model="modalDraft.partner.fullName" placeholder="Responsável"/>
               <label class="check-row">
                 <input v-model="modalDraft.partner.active" type="checkbox"/>
-                <span>Oficina ativa</span>
+                <span>{{ selectedRecordType === 'Loja parceira' ? 'Loja ativa' : 'Oficina ativa' }}</span>
               </label>
               <div class="modal-readonly-grid">
                 <span>Faturamento bruto<strong>R$ {{ money(selectedRecord.gross) }}</strong></span>
@@ -4759,6 +5749,115 @@ onMounted(async () => {
               </button>
             </form>
 
+            <form v-else-if="isVehicleDetail" class="modal-form" @submit.prevent="saveDetailModal">
+              <label class="form-field">
+                <span>Cliente dono</span>
+                <select v-model="modalDraft.vehicle.customerId" required>
+                  <option value="">Selecione o cliente</option>
+                  <option v-for="customer in data.customers" :key="customer.id" :value="customer.id">
+                    {{ customer.name }} · {{ customer.document }}
+                  </option>
+                </select>
+              </label>
+              <label class="form-field">
+                <span>Placa</span>
+                <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required/>
+              </label>
+              <label class="form-field">
+                <span>Marca</span>
+                <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required/>
+              </label>
+              <label class="form-field">
+                <span>Modelo</span>
+                <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required/>
+              </label>
+              <label class="form-field">
+                <span>Ano</span>
+                <input v-model.number="modalDraft.vehicle.year" min="1900" type="number" required/>
+              </label>
+              <label class="form-field">
+                <span>Quilometragem</span>
+                <input v-model.number="modalDraft.vehicle.mileage" min="0" type="number" required/>
+              </label>
+              <div class="modal-readonly-grid">
+                <span>Cliente atual<strong>{{ vehicleOwner(selectedRecord).name || '-' }}</strong></span>
+                <span>Documento<strong>{{ vehicleOwner(selectedRecord).document || '-' }}</strong></span>
+                <span>Status atual<strong>{{ vehicleStatusLabel(selectedRecord) }}</strong></span>
+                <span>OS vinculada<strong>{{ selectedRecord.diagnosticNotes || 'Sem ordem ativa' }}</strong></span>
+              </div>
+              <label class="check-row">
+                <input v-model="modalDraft.vehicle.active" type="checkbox"/>
+                <span>Veículo ativo</span>
+              </label>
+              <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
+                Salvar veículo
+              </button>
+            </form>
+
+            <form v-else-if="isOrderDetail" class="modal-form order-detail-form" @submit.prevent="saveDetailModal">
+              <div class="modal-readonly-grid order-detail-summary">
+                <span>Cliente<strong>{{ orderCustomerName(selectedRecord) }}</strong></span>
+                <span>Contato<strong>{{ orderCustomer(selectedRecord).phone || orderCustomer(selectedRecord).email || '-' }}</strong></span>
+                <span>Veículo<strong>{{ orderVehicleLabel(selectedRecord) }}</strong></span>
+                <span>Placa<strong>{{ orderPlate(selectedRecord) }}</strong></span>
+                <span>Data<strong>{{ orderDate(selectedRecord) }}</strong></span>
+                <span>Orçamento<strong>{{ orderBudgetStatus(selectedRecord) }}</strong></span>
+              </div>
+
+              <label class="form-field">
+                <span>Status atual</span>
+                <select v-model="modalDraft.order.status">
+                  <option v-for="status in statuses" :key="`detail-${status}`" :value="status">
+                    {{ statusLabels[status] || status }}
+                  </option>
+                </select>
+              </label>
+              <label class="form-field">
+                <span>Valor total</span>
+                <input :value="`R$ ${money(selectedRecord.totalAmount)}`" disabled/>
+              </label>
+              <label class="form-field order-notes-field">
+                <span>Problema relatado e observações</span>
+                <textarea
+                    v-model="modalDraft.order.diagnosticNotes"
+                    placeholder="Descreva o problema relatado, diagnóstico inicial e observações da recepção"
+                ></textarea>
+              </label>
+
+              <div class="order-detail-items">
+                <article>
+                  <strong>Serviços solicitados</strong>
+                  <span v-if="!(selectedRecord.services?.length)">Nenhum serviço vinculado.</span>
+                  <ul v-else>
+                    <li v-for="service in selectedRecord.services" :key="service.serviceId || service.id || service.name">
+                      {{ service.name || service.serviceName || service.serviceId }} · {{ service.quantity || 1 }} un.
+                    </li>
+                  </ul>
+                </article>
+                <article>
+                  <strong>Peças e insumos</strong>
+                  <span v-if="!(selectedRecord.parts?.length)">Nenhuma peça vinculada.</span>
+                  <ul v-else>
+                    <li v-for="part in selectedRecord.parts" :key="part.partId || part.id || part.name">
+                      {{ part.name || part.partName || part.partId }} · {{ part.quantity || 1 }} un.
+                    </li>
+                  </ul>
+                </article>
+              </div>
+
+              <div class="detail-actions modal-save">
+                <button :disabled="!detailModalDirty || saving" class="primary-button" type="submit">
+                  Salvar ajustes
+                </button>
+                <button :disabled="saving" class="secondary-button" type="button" @click="generateBudgetFromSelectedOrder">
+                  Gerar orçamento
+                </button>
+                <button :disabled="saving" class="secondary-button" type="button" @click="approveBudgetFromSelectedOrder">
+                  Aprovar orçamento
+                </button>
+              </div>
+            </form>
+
             <dl v-else>
               <template v-for="(value, key) in selectedRecord" :key="key">
                 <dt>{{ key }}</dt>
@@ -4767,18 +5866,6 @@ onMounted(async () => {
             </dl>
 
             <div class="detail-actions">
-              <button v-if="selectedRecordType === 'Veículo'" class="secondary-button" type="button"
-                      @click="editVehicle(selectedRecord)">
-                Editar veículo
-              </button>
-              <button v-if="selectedRecordType === 'Peça'" class="secondary-button" type="button"
-                      @click="editPart(selectedRecord)">
-                Editar peça
-              </button>
-              <button v-if="selectedRecordType === 'Serviço'" class="secondary-button" type="button"
-                      @click="editService(selectedRecord)">
-                Editar serviço
-              </button>
               <button v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button"
                       @click="editUser(selectedRecord)">
                 Editar usuário

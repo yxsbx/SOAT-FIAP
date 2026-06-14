@@ -55,7 +55,7 @@ public final class CustomerRestMapper {
       List<Customer> customers, Integer page, Integer size) {
     List<CustomerResponse> items =
         RestMapperSupport.page(customers, page, size).stream()
-            .map(CustomerRestMapper::toResponse)
+            .map(CustomerRestMapper::toListItemResponse)
             .toList();
 
     return new CustomerListResponse(
@@ -64,6 +64,27 @@ public final class CustomerRestMapper {
         size == null ? customers.size() : size,
         (long) customers.size(),
         RestMapperSupport.totalPages(customers.size(), size));
+  }
+
+  private static CustomerResponse toListItemResponse(Customer customer) {
+    return new CustomerResponse(
+        customer.id(),
+        customer.name(),
+        maskDocument(customer.document().value()),
+        customer.phone(),
+        customer.email(),
+        toApiAddress(customer.address()),
+        customer.active(),
+        RestMapperSupport.toOffsetDateTime(customer.createdAt()));
+  }
+
+  private static String maskDocument(String document) {
+    if (document == null || document.length() < 5) {
+      return "****";
+    }
+    int visibleEndDigits = document.length() == 14 ? 4 : 2;
+    int maskedLength = document.length() - visibleEndDigits;
+    return "*".repeat(maskedLength) + document.substring(maskedLength);
   }
 
   public static br.com.autocarehub.domain.Address toDomainAddress(

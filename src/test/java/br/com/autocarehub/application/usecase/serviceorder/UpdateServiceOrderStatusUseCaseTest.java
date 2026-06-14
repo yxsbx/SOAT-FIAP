@@ -3,6 +3,7 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.application.repository.PartRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.domain.*;
 import java.util.*;
@@ -12,6 +13,7 @@ class UpdateServiceOrderStatusUseCaseTest {
 
   private final InMemoryServiceOrderRepository serviceOrderRepository =
       new InMemoryServiceOrderRepository();
+  private final InMemoryPartRepository partRepository = new InMemoryPartRepository();
 
   private static ServiceOrder serviceOrderWithGeneratedAndApprovedBudget() {
     ServiceOrder serviceOrder = serviceOrderWithGeneratedBudget();
@@ -35,7 +37,7 @@ class UpdateServiceOrderStatusUseCaseTest {
     ServiceOrder serviceOrder = serviceOrderWithGeneratedAndApprovedBudget();
     serviceOrderRepository.save(serviceOrder);
     UpdateServiceOrderStatusUseCase useCase =
-        new UpdateServiceOrderStatusUseCase(serviceOrderRepository);
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
 
     useCase.execute(
         new UpdateServiceOrderStatusUseCase.Command(
@@ -59,7 +61,7 @@ class UpdateServiceOrderStatusUseCaseTest {
     ServiceOrder serviceOrder = serviceOrderWithGeneratedAndApprovedBudget();
     serviceOrderRepository.save(serviceOrder);
     UpdateServiceOrderStatusUseCase useCase =
-        new UpdateServiceOrderStatusUseCase(serviceOrderRepository);
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
 
     assertThatThrownBy(
             () ->
@@ -75,7 +77,7 @@ class UpdateServiceOrderStatusUseCaseTest {
     ServiceOrder serviceOrder = serviceOrderWithGeneratedBudget();
     serviceOrderRepository.save(serviceOrder);
     UpdateServiceOrderStatusUseCase useCase =
-        new UpdateServiceOrderStatusUseCase(serviceOrderRepository);
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
 
     assertThatThrownBy(
             () ->
@@ -84,6 +86,42 @@ class UpdateServiceOrderStatusUseCaseTest {
                         serviceOrder.id(), ServiceOrderStatus.EM_EXECUCAO)))
         .isInstanceOf(DomainException.class)
         .hasMessage("Execution cannot start without budget approval");
+  }
+
+  @Test
+  void shouldGenerateBudgetAndReservePartsWhenStatusChangesToWaitingApproval() {
+    Part part =
+        partRepository.save(
+            new Part(
+                "Filtro de oleo",
+                "Filtro de oleo do motor",
+                "OIL-STATUS-001",
+                "Filtros",
+                "Oleo",
+                "Bosch",
+                Money.of("25.00"),
+                Money.of("50.00"),
+                10,
+                2));
+    ServiceOrder serviceOrder =
+        new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+    serviceOrder.addService(
+        new WorkshopService(
+            "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
+        1);
+    serviceOrder.addPart(part, 2);
+    serviceOrderRepository.save(serviceOrder);
+    UpdateServiceOrderStatusUseCase useCase =
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
+
+    ServiceOrder updated =
+        useCase.execute(
+            new UpdateServiceOrderStatusUseCase.Command(
+                serviceOrder.id(), ServiceOrderStatus.AGUARDANDO_APROVACAO));
+
+    assertThat(updated.status()).isEqualTo(ServiceOrderStatus.AGUARDANDO_APROVACAO);
+    assertThat(updated.budgetGeneratedAt()).isNotNull();
+    assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(2);
   }
 
   private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
@@ -116,6 +154,27 @@ class UpdateServiceOrderStatusUseCaseTest {
     @Override
     public List<ServiceOrder> findCompletedWithExecutionTime() {
       return List.of();
+    }
+  }
+
+  private static class InMemoryPartRepository implements PartRepository {
+
+    private final Map<UUID, Part> parts = new LinkedHashMap<>();
+
+    @Override
+    public Part save(Part part) {
+      parts.put(part.id(), part);
+      return part;
+    }
+
+    @Override
+    public Optional<Part> findById(UUID id) {
+      return Optional.ofNullable(parts.get(id));
+    }
+
+    @Override
+    public List<Part> findAll() {
+      return List.copyOf(parts.values());
     }
   }
 }

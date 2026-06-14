@@ -1,13 +1,13 @@
-# Context Map
+# Mapa de Contextos
 
 ## Relação entre Contextos
 
 ```mermaid
 flowchart LR
-    CV["Customer and Vehicle Management"]
-    SO["Service Order Management"]
-    INV["Inventory Management"]
-    SC["Service Catalog Management"]
+    CV["Gestão de Clientes e Veículos"]
+    SO["Gestão de Ordens de Serviço"]
+    INV["Gestão de Peças e Estoque"]
+    SC["Catálogo de Serviços"]
     FM["Future Marketplace"]
 
     CV --> SO
@@ -17,38 +17,38 @@ flowchart LR
     FM -. futuro .-> SO
 ```
 
-## Customer and Vehicle Management -> Service Order Management
+## Gestão de Clientes e Veículos -> Gestão de Ordens de Serviço
 
-Service Order Management depende de Customer and Vehicle Management para validar que uma ordem de serviço pertence a um
+Gestão de Ordens de Serviço depende de Gestão de Clientes e Veículos para validar que uma Ordem de Serviço pertence a um
 cliente e a um veículo existentes.
 
-No MVP, essa relação aparece quando uma ordem de serviço e criada. O caso de uso verifica cliente e veículo e impede
-criar ordem se o veículo nao pertencer ao cliente.
+No MVP, essa relação aparece quando uma Ordem de Serviço é criada. O caso de uso verifica cliente e veículo e impede
+criar ordem se o veículo não pertencer ao cliente.
 
-## Service Catalog Management -> Service Order Management
+## Catálogo de Serviços -> Gestão de Ordens de Serviço
 
-Service Order Management depende do catálogo de serviços para adicionar serviços existentes a uma ordem de serviço.
+Gestão de Ordens de Serviço depende do Catálogo de Serviços para adicionar serviços existentes a uma Ordem de Serviço.
 
-No MVP, ao adicionar um serviço a uma ordem, o sistema usa dados do serviço cadastrado, como nome e preco base, para
+No MVP, ao adicionar um serviço a uma ordem, o sistema usa dados do serviço cadastrado, como nome e preço base, para
 compor os itens da ordem.
 
-## Inventory Management -> Service Order Management
+## Gestão de Peças e Estoque -> Gestão de Ordens de Serviço
 
-Service Order Management depende de Inventory Management para adicionar peças a uma ordem de serviço e baixar estoque.
+Gestão de Ordens de Serviço depende de Gestão de Peças e Estoque para adicionar peças a uma Ordem de Serviço e baixar estoque.
 
-No MVP, ao adicionar uma peça a ordem, a peça precisa existir e ter quantidade disponivel. A peça pode ser reservada
-durante o orçamento e a baixa definitiva acontece quando a reserva e confirmada ou quando o orçamento e aprovado.
+No MVP, ao adicionar uma peça à ordem, a peça precisa existir e ter quantidade disponível. A peça pode ser reservada
+durante o orçamento e a baixa definitiva acontece quando a reserva é confirmada ou quando o orçamento é aprovado.
 
-## Future Marketplace -> Inventory Management
+## Future Marketplace -> Gestão de Peças e Estoque
 
-Future Marketplace nao esta implementado no MVP.
+Future Marketplace não está implementado no MVP.
 
-Em uma evolução futura, o marketplace poderia alimentar o contexto de estoque com cotacoes, fornecedores, lojas
+Em uma evolução futura, o marketplace poderia alimentar o contexto de estoque com cotações, fornecedores, lojas
 parceiras e disponibilidade externa de peças.
 
-## Future Marketplace -> Service Order Management
+## Future Marketplace -> Gestão de Ordens de Serviço
 
-Future Marketplace nao esta implementado no MVP.
+Future Marketplace não está implementado no MVP.
 
 Em uma evolução futura, a ordem de serviço poderia solicitar cotação de peças, aplicar cupons ou contratar serviços
-parceiros, mas isso deve ser tratado como integração futura e nao como regra atual do MVP.
+parceiros, mas isso deve ser tratado como integração futura e não como regra atual do MVP.

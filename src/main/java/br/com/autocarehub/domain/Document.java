@@ -24,6 +24,9 @@ public record Document(DocumentType type, String value) {
   }
 
   private static String normalize(String value) {
+    if (value == null) {
+      return "";
+    }
     return value.replaceAll("\\D", "");
   }
 

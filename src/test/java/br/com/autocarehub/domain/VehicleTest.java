@@ -97,5 +97,8 @@ class VehicleTest {
             () -> new Vehicle(UUID.randomUUID(), new Plate("ABC1D23"), "Honda", "Civic", 2020, -1))
         .isInstanceOf(DomainException.class)
         .hasMessage("Mileage cannot be negative");
+    assertThatThrownBy(() -> new Plate(null))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Plate is required");
   }
 }

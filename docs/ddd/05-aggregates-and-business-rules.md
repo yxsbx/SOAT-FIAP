@@ -1,6 +1,6 @@
-# Aggregates and Business Rules
+# Agregados e Regras de Negócio
 
-## Customer
+## Customer - Cliente
 
 ### Responsabilidade
 
@@ -8,13 +8,13 @@ Representa o cliente atendido pela oficina.
 
 ### Regras no MVP
 
-- Nome e obrigatorio.
-- Documento e obrigatorio e deve ser CPF ou CNPJ valido.
-- Telefone e obrigatorio.
-- Email e obrigatorio e deve conter `@`.
+- Nome é obrigatório.
+- Documento é obrigatório e deve ser CPF ou CNPJ válido.
+- Telefone é obrigatório.
+- E-mail é obrigatório e deve conter `@`.
 - Cliente pode ser ativado ou desativado.
 
-## Vehicle
+## Vehicle - Veículo
 
 ### Responsabilidade
 
@@ -23,18 +23,18 @@ Representa um veículo pertencente a um cliente.
 ### Regras no MVP
 
 - Veículo deve estar vinculado a um cliente.
-- Placa e obrigatoria e deve seguir o formato aceito pelo domínio.
-- Marca e modelo sao obrigatorios.
+- Placa é obrigatória e deve seguir o formato aceito pelo domínio.
+- Marca e modelo são obrigatórios.
 - Ano deve ser maior ou igual a 1900.
-- Quilometragem nao pode ser negativa.
-- Quilometragem nao pode diminuir quando atualizada por operação especifica.
+- Quilometragem não pode ser negativa.
+- Quilometragem não pode diminuir quando atualizada por operação específica.
 - Veículo pode ser ativado ou desativado.
 
-## ServiceOrder
+## ServiceOrder - Ordem de Serviço
 
 ### Responsabilidade
 
-Representa o atendimento da oficina para um veículo de um cliente.
+Representa o atendimento da oficina para um veículo de um cliente. É o agregado principal do fluxo de atendimento.
 
 ### Regras da OS
 
@@ -42,28 +42,28 @@ Representa o atendimento da oficina para um veículo de um cliente.
 - Ordem deve estar vinculada a um veículo.
 - Veículo informado deve pertencer ao cliente informado.
 - Ordem inicia com status `RECEBIDA`.
-- Diagnostico pode iniciar a partir de `RECEBIDA`.
+- Diagnóstico pode iniciar a partir de `RECEBIDA`.
 - Itens da ordem podem ser alterados antes do orçamento ser gerado.
-- Itens nao podem ser alterados nos status `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` ou `ENTREGUE`.
+- Itens não podem ser alterados nos status `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` ou `ENTREGUE`.
 
 ### Regras de Orçamento
 
 - Orçamento exige pelo menos um serviço ou uma peça.
-- Total do orçamento e calculado pela soma dos serviços e peças.
+- Total do orçamento é calculado pela soma dos serviços e peças.
 - Ao gerar orçamento, status muda para `AGUARDANDO_APROVACAO`.
-- Aprovação so pode ocorrer quando a ordem estiver em `AGUARDANDO_APROVACAO`.
+- Aprovação só pode ocorrer quando a ordem estiver em `AGUARDANDO_APROVACAO`.
 - Aprovação exige que o orçamento tenha sido gerado.
 
 ### Regras de Status
 
 - `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
-- `AGUARDANDO_APROVACAO` e definido ao gerar orçamento.
+- `AGUARDANDO_APROVACAO` é definido ao gerar orçamento.
 - `EM_EXECUCAO` exige orçamento aprovado.
 - `FINALIZADA` exige status `EM_EXECUCAO`.
 - `ENTREGUE` exige status `FINALIZADA`.
-- Ordem nao pode retornar para `RECEBIDA` via atualização de status.
+- Ordem não pode retornar para `RECEBIDA` via atualização de status.
 
-## Part
+## Part - Peça/Insumo
 
 ### Responsabilidade
 
@@ -71,27 +71,27 @@ Representa uma peça ou insumo usado pela oficina.
 
 ### Regras de Estoque
 
-- Estoque nao pode ser negativo.
-- Estoque minimo nao pode ser negativo.
-- Quantidade reservada nao pode ser maior que o estoque total.
+- Estoque não pode ser negativo.
+- Estoque mínimo não pode ser negativo.
+- Quantidade reservada não pode ser maior que o estoque total.
 - Quantidade de movimentação deve ser maior que zero.
-- Nao e permitido reduzir estoque acima da quantidade disponivel.
-- Peça deve informar se ha estoque disponivel para uma quantidade solicitada.
-- Reserva de estoque reduz a quantidade disponivel, mas nao reduz o estoque total.
+- Não é permitido reduzir estoque acima da quantidade disponível.
+- Peça deve informar se há estoque disponível para uma quantidade solicitada.
+- Reserva de estoque reduz a quantidade disponível, mas não reduz o estoque total.
 - Confirmar uma reserva reduz o estoque total e a quantidade reservada.
-- Liberar uma reserva devolve a quantidade para o estoque disponivel.
-- Reserva expirada pode ser liberada automaticamente quando a peça e consultada ou movimentada.
+- Liberar uma reserva devolve a quantidade para o estoque disponível.
+- Reserva expirada pode ser liberada automaticamente quando a peça é consultada ou movimentada.
 - Peça pode ser ativada ou desativada.
 
 ### Regras Comerciais
 
-- Nome e obrigatorio.
-- SKU e obrigatorio.
-- Categoria e obrigatoria.
-- Marca e obrigatoria.
-- Preco unitario deve ser maior que zero.
+- Nome é obrigatório.
+- SKU é obrigatório.
+- Categoria é obrigatória.
+- Marca é obrigatória.
+- Preço unitário deve ser maior que zero.
 
-## WorkshopService
+## WorkshopService - Serviço
 
 ### Responsabilidade
 
@@ -99,8 +99,8 @@ Representa um serviço oferecido pela oficina.
 
 ### Regras no MVP
 
-- Nome e obrigatorio.
-- Descrição e obrigatoria.
-- Preco base deve ser maior que zero.
+- Nome é obrigatório.
+- Descrição é obrigatória.
+- Preço base deve ser maior que zero.
 - Tempo estimado deve ser maior que zero.
-- Servico pode ser ativado ou desativado.
+- Serviço pode ser ativado ou desativado.

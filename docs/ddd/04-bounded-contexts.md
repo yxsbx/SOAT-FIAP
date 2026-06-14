@@ -1,8 +1,8 @@
 # Bounded Contexts
 
-## Customer and Vehicle Management
+## Gestão de Clientes e Veículos
 
-Contexto responsavel por manter clientes e veículos.
+Contexto responsável por manter clientes e veículos.
 
 ### MVP
 
@@ -14,13 +14,13 @@ Contexto responsavel por manter clientes e veículos.
 
 ### Fora do MVP
 
-- Historico completo de propriedade de veículos.
-- Multiplo proprietario por veículo.
+- Histórico completo de propriedade de veículos.
+- Múltiplo proprietário por veículo.
 - Integração com bases externas de placa ou documento.
 
-## Service Order Management
+## Gestão de Ordens de Serviço
 
-Contexto responsavel pelo ciclo de vida da ordem de serviço.
+Contexto responsável pelo ciclo de vida da Ordem de Serviço.
 
 ### MVP
 
@@ -36,46 +36,46 @@ Contexto responsavel pelo ciclo de vida da ordem de serviço.
 ### Fora do MVP
 
 - Timeline detalhada de eventos.
-- Comentarios e anexos.
-- Notificacoes ao cliente.
+- Comentários e anexos.
+- Notificações ao cliente.
 - Assinatura digital de aprovação.
 
-## Inventory Management
+## Gestão de Peças e Estoque
 
-Contexto responsavel por peças, insumos e estoque.
+Contexto responsável por peças, insumos e estoque.
 
 ### MVP
 
 - Criar, atualizar, consultar, listar e desativar peças.
 - Atualizar estoque.
-- Registrar entrada, saida e venda isolada.
+- Registrar entrada, saída e venda isolada.
 - Reservar e liberar peças vinculadas a orçamentos.
-- Identificar baixo estoque por comparação com estoque minimo.
-- Baixar estoque quando uma reserva e confirmada ou quando o orçamento e aprovado.
+- Identificar baixo estoque por comparação com estoque mínimo.
+- Baixar estoque quando uma reserva é confirmada ou quando o orçamento é aprovado.
 
 ### Fora do MVP
 
 - Entrada fiscal.
 - Lotes.
 - Fornecedores.
-- Cotação automatica.
+- Cotação automática.
 - Lotes, fornecedores e rastreabilidade fiscal de entradas.
 
-## Service Catalog Management
+## Catálogo de Serviços
 
-Contexto responsavel pelo catalogo de serviços oferecidos pela oficina.
+Contexto responsável pelo catálogo de serviços oferecidos pela oficina.
 
 ### MVP
 
 - Criar, atualizar, consultar, listar e desativar serviços da oficina.
-- Manter preco base e tempo estimado.
+- Manter preço base e tempo estimado.
 
 ### Fora do MVP
 
-- Precificação dinamica.
+- Precificação dinâmica.
 - Pacotes de serviços.
-- Promocoes.
-- Variação de preco por modelo de veículo.
+- Promoções.
+- Variação de preço por modelo de veículo.
 
 ## Future Marketplace
 
@@ -83,13 +83,13 @@ Contexto futuro para conectar oficina, lojas de peças e outros parceiros automo
 
 ### MVP
 
-Nao implementado.
+Não implementado.
 
 ### Evolução Futura
 
 - Marketplace de lojas de peças.
 - Cupons.
-- Comparação de precos.
+- Comparação de preços.
 - Integração com lava-jatos.
 - Serviços automotivos parceiros.
 - Serviços 24h.

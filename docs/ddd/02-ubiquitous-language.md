@@ -1,74 +1,76 @@
-# Ubiquitous Language
+# Linguagem Ubíqua
 
-Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por
-negócio, desenvolvimento, documentação e testes.
+Este documento define a linguagem compartilhada do domínio. Os termos abaixo devem ser usados de forma consistente por negócio, desenvolvimento, documentação, testes e interface da API.
 
 ## Cliente
 
-Pessoa física ou juridica atendida pela oficina. No MVP, um cliente possui nome, documento, telefone, email, endereco e
-status ativo/inativo.
+Pessoa física ou jurídica atendida pela oficina. No MVP, um cliente possui nome, CPF/CNPJ, telefone, e-mail, endereço e status ativo/inativo.
+
+## Documento
+
+CPF ou CNPJ usado para identificar o cliente. O documento deve ser validado, normalizado e comparado sem máscara para evitar duplicidade.
 
 ## Veículo
 
-Automovel associado a um cliente. No MVP, um veículo possui placa, marca, modelo, ano, quilometragem e status
-ativo/inativo.
+Veículo associado a um cliente. No MVP, um veículo possui placa, marca, modelo, ano, quilometragem e status ativo/inativo.
 
-## Ordem de Servico
+## Placa
 
-Registro que representa um atendimento da oficina para um veículo de um cliente. A ordem de serviço concentra
-diagnostico, serviços, peças, orçamento, status e datas relevantes do fluxo.
+Identificador do veículo. A aplicação aceita o formato brasileiro antigo e o formato Mercosul, sempre normalizando antes de salvar.
 
-## Servico
+## Ordem de Serviço
 
-Atividade oferecida pela oficina, como troca de oleo, revisao ou troca de freio. No MVP, o serviço possui nome,
-descrição, preco base, tempo estimado e status ativo/inativo.
+Registro que representa um atendimento da oficina para um veículo de um cliente. A Ordem de Serviço concentra diagnóstico, serviços solicitados, peças ou insumos, orçamento, status e datas relevantes do fluxo.
+
+## Serviço
+
+Atividade oferecida pela oficina, como troca de óleo, revisão ou troca de freio. No MVP, o serviço possui nome, descrição, preço base, tempo estimado e status ativo/inativo.
 
 ## Peça/Insumo
 
-Item fisico usado na execução de um serviço, como filtro, oleo, pastilha de freio ou fluido. No MVP, uma peça possui
-SKU, categoria, marca, preco unitario, quantidade em estoque, estoque minimo e status ativo/inativo.
+Item físico usado na execução de um serviço, como filtro, óleo, pastilha de freio ou fluido. No MVP, uma peça ou insumo possui SKU, categoria, marca, preço unitário, custo, quantidade em estoque, estoque mínimo e status ativo/inativo.
 
 ## Estoque
 
-Quantidade disponivel de uma peça ou insumo. No MVP, o estoque pode ser movimentado por entrada, saida ou venda isolada.
-peças vinculadas a orçamentos podem ficar reservadas; a baixa definitiva ocorre quando a reserva e confirmada ou quando
-o orçamento e aprovado.
+Quantidade disponível de uma peça ou insumo. O estoque pode ser movimentado por entrada, saída, venda isolada, reserva ou baixa vinculada a orçamento aprovado.
 
-## Diagnostico
+## Movimentação de estoque
 
-Descrição inicial do problema informado ou observado no veículo. No MVP, a ordem de serviço nasce com notas de
-diagnostico.
+Registro de alteração no estoque. Deve indicar peça, tipo de movimentação, quantidade, data e origem da alteração quando aplicável.
+
+## Diagnóstico
+
+Descrição inicial do problema informado pelo cliente ou observado pela oficina. No MVP, a Ordem de Serviço pode nascer com notas de diagnóstico e avançar para o status `EM_DIAGNOSTICO`.
 
 ## Orçamento
 
-Valor calculado a partir dos serviços e peças associados a uma ordem de serviço. No MVP, o orçamento so pode ser gerado
-quando ha pelo menos um serviço ou uma peça na ordem.
+Valor calculado a partir dos serviços e peças associados a uma Ordem de Serviço. O orçamento deve calcular total de serviços, total de peças e total geral.
 
 ## Aprovação
 
-Confirmação do cliente ou usuario autorizado para aceitar o orçamento. No MVP, a aprovação registra data de aprovação e
-permite que a ordem avance para execução.
+Confirmação do cliente ou usuário autorizado para aceitar o orçamento. A aprovação libera a Ordem de Serviço para execução e confirma a baixa das peças reservadas.
 
 ## Execução
 
-Momento em que a oficina inicia a realização dos serviços aprovados. No domínio, a execução corresponde ao status
-`EM_EXECUCAO`.
+Momento em que a oficina realiza os serviços aprovados. No domínio, a execução corresponde ao status `EM_EXECUCAO`.
+
+## Finalização
+
+Momento em que a oficina conclui os serviços executados. No domínio, a finalização corresponde ao status `FINALIZADA`.
 
 ## Entrega
 
-Etapa final em que o veículo e entregue apos a conclusao da ordem de serviço. No domínio, a entrega corresponde ao
-status `ENTREGUE`.
+Etapa final em que o veículo é entregue ao cliente após a conclusão da Ordem de Serviço. No domínio, a entrega corresponde ao status `ENTREGUE`.
 
-## Status da Ordem de Servico
+## Status da Ordem de Serviço
 
-Estados controlados da ordem de serviço no MVP:
+Estados controlados da Ordem de Serviço no MVP:
 
-- `RECEBIDA`: ordem recebida.
-- `EM_DIAGNOSTICO`: diagnostico iniciado.
-- `AGUARDANDO_APROVACAO`: orçamento gerado e aguardando aprovação.
-- `EM_EXECUCAO`: execução iniciada.
-- `FINALIZADA`: serviço finalizado.
-- `ENTREGUE`: veículo entregue.
+- `RECEBIDA`: Ordem de Serviço registrada e aguardando continuidade.
+- `EM_DIAGNOSTICO`: diagnóstico iniciado pela oficina.
+- `AGUARDANDO_APROVACAO`: orçamento gerado e aguardando aprovação do cliente.
+- `EM_EXECUCAO`: execução iniciada após aprovação.
+- `FINALIZADA`: serviço finalizado pela oficina.
+- `ENTREGUE`: veículo entregue ao cliente.
 
-Na interface REST, esses estados continuam mapeados para os codigos externos em ingles para preservar compatibilidade
-com o contrato publicado.
+Na interface REST, alguns códigos externos continuam em inglês para preservar compatibilidade com o contrato publicado, mas a documentação e a interface do usuário devem exibir os termos em português.

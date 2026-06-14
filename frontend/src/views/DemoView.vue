@@ -41,7 +41,7 @@ const customers = ref([
 
 const orders = ref([
   {id: 101, plate: 'MRA2E19', service: 'Troca de pastilhas', status: 'Em execução', eta: 'Hoje'},
-  {id: 102, plate: 'VRA7B42', service: 'Revisão preventiva', status: 'Recebido', eta: 'Amanhã'},
+  {id: 102, plate: 'VRA7B42', service: 'Revisão preventiva', status: 'Recebida', eta: 'Amanhã'},
   {id: 103, plate: 'ALC4D08', service: 'Diagnóstico elétrico', status: 'Aguardando aprovação', eta: '2 dias'},
 ]);
 
@@ -72,7 +72,7 @@ const demoContext = computed(() => {
       companyPlaceholder: 'Loja de Peças Exemplo',
       servicePlaceholder: 'Pedido ou peça',
       heroLabel: 'Visão resumida da loja',
-      heroText: 'Fluxo reduzido para sentir pedidos, estoque e atendimento a oficinas sem expor todos os recursos internos.',
+      heroText: 'Fluxo reduzido para experimentar pedidos, estoque e atendimento a oficinas sem expor todos os recursos internos.',
       ordersLabel: 'Pedidos ativos',
       customersLabel: 'Oficinas demo',
       actionTitle: 'Criar pedido rápido',
@@ -88,7 +88,7 @@ const demoContext = computed(() => {
     companyPlaceholder: 'Oficina Exemplo',
     servicePlaceholder: 'Serviço',
     heroLabel: 'Visão resumida da oficina',
-    heroText: 'Fluxo reduzido para sentir a operação sem expor todos os recursos internos.',
+    heroText: 'Fluxo reduzido para experimentar a operação sem expor todos os recursos internos.',
     ordersLabel: 'Ordens ativas',
     customersLabel: 'Clientes demo',
     actionTitle: 'Criar ordem rápida',
@@ -100,7 +100,7 @@ const demoContext = computed(() => {
 
 const cnpjIsValid = computed(() => /^[A-Za-z0-9./-]{6,40}$/.test(leadForm.cnpj.trim()));
 const lowStockCount = computed(() => parts.value.filter((part) => part.stock < part.min).length);
-const activeOrders = computed(() => orders.value.filter((order) => order.status !== 'Finalizado').length);
+const activeOrders = computed(() => orders.value.filter((order) => order.status !== 'Finalizada').length);
 
 async function submitLead() {
   error.value = '';
@@ -133,13 +133,13 @@ function addOrder() {
     id: Date.now(),
     plate: customer.plate,
     service: orderForm.service,
-    status: 'Recebido',
+    status: 'Recebida',
     eta: 'Hoje',
   });
 }
 
 function moveOrder(order) {
-  const flow = ['Recebido', 'Em execução', 'Aguardando aprovação', 'Finalizado'];
+  const flow = ['Recebida', 'Em execução', 'Aguardando aprovação', 'Finalizada'];
   const currentIndex = flow.indexOf(order.status);
   order.status = flow[(currentIndex + 1) % flow.length];
 }
@@ -204,7 +204,7 @@ function incrementPart(part, quantity) {
           />
         </label>
         <label>
-          Email
+          E-mail
           <input v-model.trim="leadForm.email" maxlength="160" placeholder="contato@empresa.com" required type="email"/>
         </label>
         <label>
@@ -320,7 +320,7 @@ function incrementPart(part, quantity) {
             <article v-for="part in parts" :key="part.id" :class="{ warning: part.stock < part.min }">
               <div>
                 <strong>{{ part.name }}</strong>
-                <span>Minimo {{ part.min }} unidades</span>
+                <span>Mínimo {{ part.min }} unidades</span>
               </div>
               <div class="stock-stepper">
                 <button @click="incrementPart(part, -1)">-</button>

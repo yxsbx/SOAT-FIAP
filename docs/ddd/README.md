@@ -1,400 +1,218 @@
-# Documentacao DDD - AutoCare Hub
+# Documentação DDD - AutoCare Hub
 
-## Visao Geral do Dominio
+## Visão do domínio
 
-AutoCare Hub atua no dominio de gestao operacional de oficinas mecanicas. O nucleo do dominio e acompanhar o ciclo de
-atendimento de um veiculo, desde a identificacao do cliente ate a entrega final, passando por diagnostico, orçamento,
-aprovacao, execucao de servicos e consumo de pecas/insumos.
+O AutoCare Hub atua no domínio de gestão operacional de oficinas mecânicas. O núcleo do domínio é o atendimento de um veículo, desde a identificação do cliente até a entrega final, passando por diagnóstico, orçamento, aprovação, execução dos serviços e consumo de peças ou insumos.
 
-Embora o projeto seja um monolito em camadas, a modelagem separa conceitos de dominio, casos de uso, persistencia e
-interface HTTP para manter a linguagem de negocio protegida de detalhes tecnicos.
+O projeto continua sendo um monolito em camadas, como permitido pelo Tech Challenge, mas organiza o código para proteger a linguagem de negócio:
 
-## Problema de Negocio
+- `domain`: entidades, value objects, enums, exceções e regras do domínio.
+- `application`: casos de uso, serviços de aplicação, DTOs e portas de repositório.
+- `infrastructure`: persistência, segurança, configurações e integrações técnicas.
+- `interfaces`: controllers REST, requests, responses e contrato OpenAPI.
 
-Oficinas precisam controlar clientes, veiculos, ordens de servico, orçamentos e estoque de forma integrada. Sem essa
-integracao, e comum ocorrer:
+Os nomes técnicos principais permanecem em inglês por estabilidade do código e compatibilidade com o contrato atual, mas a documentação abaixo explicita a linguagem ubíqua em português usada pelo domínio.
 
-- perda de historico de atendimento;
-- orçamentos sem rastreabilidade;
-- uso de pecas sem baixa correta;
-- dificuldade para o cliente acompanhar a OS;
-- divergencia entre estoque fisico e sistema;
-- falta de padronizacao no fluxo operacional.
+## Linguagem ubíqua
 
-## Objetivo do Sistema
-
-Fornecer uma API backend que permita:
-
-- registrar clientes e veiculos;
-- criar ordens de servico;
-- vincular servicos, pecas e insumos;
-- gerar orçamentos automaticamente;
-- aprovar orçamentos;
-- controlar transicoes de status da OS;
-- reservar e baixar pecas do estoque;
-- disponibilizar acompanhamento da OS ao cliente.
-
-## Linguagem Ubiqua
-
-| Termo              | Definicao                                                            |
-|--------------------|----------------------------------------------------------------------|
-| Cliente            | Pessoa fisica ou juridica atendida pela oficina.                     |
-| Documento          | CPF ou CNPJ usado para identificar cliente.                          |
-| Veiculo            | Bem do cliente atendido pela oficina.                                |
-| Placa              | Identificador do veiculo nos formatos brasileiro antigo ou Mercosul. |
-| Ordem de Servico   | Registro central do atendimento.                                     |
-| Diagnostico        | Etapa de avaliacao inicial do problema.                              |
-| Servico Solicitado | Servico da oficina incluido na OS.                                   |
-| Peca/Insumo        | Item de estoque usado em servico ou vendido separadamente.           |
-| Orçamento          | Total calculado com servicos e pecas.                                |
-| Aprovacao          | Aceite do cliente para execucao do orçamento.                        |
-| Execucao           | Etapa em que o servico e realizado.                                  |
-| Finalizacao        | Servico concluido pela oficina.                                      |
-| Entrega            | Veiculo entregue ao cliente.                                         |
-| Reserva de Estoque | Bloqueio temporario de peca para orçamento.                          |
-| Baixa de Estoque   | Reducao definitiva da quantidade em estoque.                         |
-
-## Subdominios
-
-### Core Domain
-
-- Gestao de Ordem de Servico.
-- Orçamento e aprovacao.
-- Controle de estoque associado a servicos.
-
-### Supporting Domains
-
-- Cadastro de clientes.
-- Cadastro de veiculos.
-- Cadastro de servicos.
-- Cadastro de usuarios e permissoes.
-
-### Generic Domains
-
-- Autenticacao JWT.
-- Persistencia relacional.
-- Documentacao OpenAPI.
-- Relatorios de vulnerabilidade.
-
-## Bounded Contexts Sugeridos
-
-1. **Atendimento e OS**
-    - Cliente, Veiculo, Ordem de Servico, Status da OS.
-2. **Orçamento**
-    - Orçamento, Item de Orçamento, Aprovacao.
-3. **Estoque**
-    - Peca, Insumo, Movimentacao, Reserva, Baixa.
-4. **Identidade e Acesso**
-    - Usuario, Role, Perfil, Permissoes, JWT.
-5. **Catalogo Operacional**
-    - Servicos oferecidos pela oficina e pecas cadastradas.
-
-No MVP, esses contextos convivem no mesmo monolito, mas a separacao por camadas e nomes preserva fronteiras conceituais.
+| Termo de negócio | Nome técnico no código | Definição |
+| --- | --- | --- |
+| Cliente | `Customer` | Pessoa física ou jurídica atendida pela oficina, identificada por CPF ou CNPJ. |
+| Documento | `Document` | CPF ou CNPJ validado, normalizado e usado para evitar duplicidade de clientes. |
+| Veículo | `Vehicle` | Veículo pertencente a um cliente, identificado por placa, marca, modelo e ano. |
+| Placa | `Plate` | Identificador do veículo nos formatos brasileiros antigo e Mercosul. |
+| Ordem de Serviço | `ServiceOrder` | Registro central do atendimento da oficina para um cliente e um veículo. |
+| Status da OS | `ServiceOrderStatus` | Estado controlado da Ordem de Serviço: recebida, em diagnóstico, aguardando aprovação, em execução, finalizada ou entregue. |
+| Serviço | `WorkshopService` | Atividade executável pela oficina, com nome, descrição, preço e tempo estimado. |
+| Peça/Insumo | `Part` | Item físico usado em serviço ou vendido separadamente, com preço, custo e controle de estoque. |
+| Estoque | `Part` + `StockMovement` | Quantidade total, reservada e disponível de peças ou insumos. |
+| Movimentação de estoque | `StockMovement` | Registro de entrada, saída, venda, reserva confirmada ou ajuste de estoque. |
+| Orçamento | `Budget` | Cálculo financeiro gerado a partir de serviços e peças vinculados à OS. |
+| Item de orçamento | `BudgetItem` | Item calculável do orçamento, representando serviço, peça ou insumo. |
+| Aprovação | métodos de `ServiceOrder` | Aceite do cliente para executar o orçamento. |
+| Baixa de estoque | métodos de `Part` | Redução definitiva do estoque após aprovação do orçamento ou saída registrada. |
 
 ## Entidades
 
-- `Customer`: mantem identidade do cliente, documento, contato e endereco.
-- `Vehicle`: mantem placa, marca, modelo, ano, quilometragem e cliente vinculado.
-- `WorkshopService`: representa servico executavel pela oficina.
-- `Part`: representa peca ou insumo com preco, estoque, estoque minimo e reserva.
-- `ServiceOrder`: agregado principal do atendimento.
-- `User`: representa conta autenticavel e autorizavel.
-- `StockMovement`: registra entradas, saidas, vendas e baixas.
+- `Customer`: mantém identidade do cliente, documento, contato, endereço e status.
+- `Vehicle`: mantém placa, marca, modelo, ano, quilometragem, status e vínculo com o cliente.
+- `WorkshopService`: representa um serviço oferecido pela oficina.
+- `Part`: representa peça ou insumo com preço, custo, estoque, reserva e estoque mínimo.
+- `ServiceOrder`: agregado principal do fluxo de atendimento.
+- `StockMovement`: registra movimentações de estoque para rastreabilidade.
+- `User`: representa conta autenticável e autorizável.
+- `DemoLead`: representa interessado em parceria capturado pela área pública.
 
 ## Value Objects
 
-- `Document`: CPF/CNPJ validado e normalizado.
-- `Plate`: placa validada e normalizada.
-- `Money`: valor monetario nao negativo.
-- `Address`: endereco estruturado.
-- `BudgetItem`: item calculavel do orçamento.
+- `Document`: valida e normaliza CPF/CNPJ.
+- `Plate`: valida e normaliza placa de veículo.
+- `Money`: representa valor monetário não negativo e centraliza operações financeiras básicas.
+- `Address`: estrutura endereço do cliente.
+- `BudgetItem`: item imutável de cálculo do orçamento.
+
+O conceito de período de execução ainda não é um value object próprio. No MVP, ele é representado por datas da OS, como início e finalização. Se a regra de prazo, SLA ou tempo médio crescer, a recomendação é criar um value object `ExecutionPeriod`.
 
 ## Agregados
 
-### ServiceOrder
+### Ordem de Serviço
 
-Raiz: `ServiceOrder`
+Raiz do agregado: `ServiceOrder`.
 
-Contem:
+Responsabilidades:
 
-- servicos solicitados;
-- pecas vinculadas;
-- status atual;
-- timestamps de orçamento, aprovacao, execucao, finalizacao e entrega.
+- garantir que uma OS sempre tenha cliente e veículo;
+- controlar serviços solicitados e peças vinculadas;
+- gerar orçamento com totais de serviços, peças e total geral;
+- controlar status e transições válidas;
+- registrar datas relevantes do ciclo de atendimento;
+- impedir alterações de itens quando a OS já está em fase que não permite edição.
 
-Invariantes:
+Invariantes principais:
 
-- OS exige cliente e veiculo.
-- Itens nao podem ser alterados apos orçamento gerado.
-- Execucao exige orçamento aprovado.
-- Entrega exige OS finalizada.
+- uma OS não pode existir sem cliente;
+- uma OS não pode existir sem veículo;
+- uma OS precisa de ao menos um serviço solicitado;
+- itens não podem ser alterados depois da geração do orçamento;
+- execução só pode iniciar após orçamento aprovado;
+- finalização só pode ocorrer após execução;
+- entrega só pode ocorrer após finalização.
 
-### Part
+### Peça/Insumo e Estoque
 
-Raiz: `Part`
+Raiz do agregado: `Part`.
 
-Controla:
+Responsabilidades:
 
-- quantidade total;
-- quantidade reservada;
-- quantidade disponivel;
-- estoque minimo;
-- prazo de reserva.
+- controlar estoque total;
+- controlar quantidade reservada;
+- calcular estoque disponível;
+- impedir estoque negativo;
+- impedir reserva acima da disponibilidade;
+- confirmar reserva como baixa definitiva;
+- liberar reserva quando orçamento for recusado ou expirado.
 
-Invariantes:
+### Cliente e Veículo
 
-- estoque nao pode ser negativo;
-- reserva nao pode ultrapassar disponibilidade;
-- baixa nao pode exceder estoque disponivel/reservado.
+`Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente e a placa é tratada como identificador único do veículo.
 
-### Customer / Vehicle
+## Eventos de domínio
 
-Clientes e veiculos possuem identidade propria. O veiculo sempre pertence a um cliente e a placa e unica no sistema.
+No MVP, os eventos abaixo são usados como linguagem de modelagem, testes e documentação. O projeto ainda não implementa um event store ou dispatcher de eventos, mas os estados, timestamps e regras de domínio refletem estes acontecimentos.
 
-## Repositorios
+- `ClienteIdentificado`
+- `VeiculoCadastrado`
+- `OrdemServicoCriada`
+- `ServicoIncluidoNaOrdem`
+- `PecaIncluidaNaOrdem`
+- `OrcamentoGerado`
+- `OrcamentoEnviado`
+- `OrcamentoAprovado`
+- `OrdemServicoEmExecucao`
+- `OrdemServicoFinalizada`
+- `VeiculoEntregue`
+- `EstoqueAtualizado`
+- `PecaBaixadaDoEstoque`
 
-Portas de repositorio ficam na camada `application.repository`:
+Eventos complementares usados no Event Storming:
 
-- `CustomerRepository`
-- `VehicleRepository`
-- `WorkshopServiceRepository`
-- `PartRepository`
-- `ServiceOrderRepository`
-- `UserRepository`
-- `UserPreferenceRepository`
+- `ClienteCadastrado`
+- `DiagnosticoIniciado`
+- `PecaReservada`
+- `ReservaPecaLiberada`
+- `EstoqueInsuficienteIdentificado`
 
-Adapters JPA ficam em `infrastructure.persistence.adapter`.
+## Regras de negócio
 
-## Servicos de Dominio
+- CPF/CNPJ inválido não pode ser salvo.
+- Placa inválida não pode ser salva.
+- Cliente não pode ser duplicado por diferença de formatação do documento.
+- Veículo exige cliente vinculado.
+- Veículo não pode ser criado com placa inválida.
+- Ordem de Serviço exige cliente, veículo e ao menos um serviço.
+- Orçamento é calculado automaticamente a partir de serviços e peças da OS.
+- Após a geração do orçamento, a OS vai para `AGUARDANDO_APROVACAO`.
+- Orçamento só pode ser aprovado se já foi gerado.
+- Ao aprovar o orçamento, peças reservadas são baixadas do estoque.
+- Execução só inicia após aprovação.
+- OS em execução pode ser finalizada.
+- OS finalizada pode ser entregue.
+- Transições inválidas de status geram exceção de domínio.
+- Estoque não pode ficar negativo.
+- Baixa de estoque não pode exceder a quantidade disponível ou reservada, conforme o fluxo.
 
-- `PlatformFeePolicy`: calcula taxa da plataforma por tiers de faturamento.
-- Regras internas de `ServiceOrder`: transicoes de status e criacao de orçamento.
-- Regras internas de `Part`: reserva, liberacao, baixa e status de estoque.
+## Bounded Contexts sugeridos
 
-## Eventos de Dominio
+### Atendimento de Oficina
 
-Eventos mapeados conceitualmente:
+Contexto principal do MVP. Contém Ordem de Serviço, status da OS, diagnóstico, serviços solicitados, peças vinculadas, orçamento e acompanhamento pelo cliente.
 
-- ClienteIdentificado
-- ClienteCadastrado
-- VeiculoCadastrado
-- OrdemServicoCriada
-- DiagnosticoIniciado
-- ServicoSolicitadoIncluido
-- PecaIncluidaNaOrdem
-- OrcamentoGerado
-- OrcamentoEnviado
-- OrcamentoAprovado
-- OrdemServicoLiberadaParaExecucao
-- ExecucaoIniciada
-- ServicoFinalizado
-- VeiculoEntregue
-- EstoqueAtualizado
-- PecaReservada
-- PecaBaixadaDoEstoque
-- EstoqueInsuficienteIdentificado
+### Cadastro de Clientes e Veículos
 
-No MVP, esses eventos nao sao persistidos como event store; eles orientam modelagem, testes e fluxos.
+Contexto de apoio responsável por identificar clientes por CPF/CNPJ, manter seus dados básicos e vincular veículos por placa.
 
-## Comandos
+### Catálogo de Serviços
 
-- IdentificarCliente
-- CadastrarCliente
-- CadastrarVeiculo
-- CriarOrdemServico
-- IncluirServicoSolicitado
-- IncluirPecaNaOrdem
-- GerarOrcamento
-- AprovarOrcamento
-- IniciarDiagnostico
-- IniciarExecucao
-- FinalizarServico
-- EntregarVeiculo
-- RegistrarEntradaEstoque
-- RegistrarSaidaEstoque
-- ReservarPeca
-- LiberarReserva
-- BaixarPecaDoEstoque
+Contexto de apoio responsável pelos serviços que a oficina oferece e que podem ser incluídos em uma Ordem de Serviço.
 
-## Politicas e Regras
+### Gestão de Peças e Estoque
 
-- CPF/CNPJ invalido nao pode ser salvo.
-- Placa invalida nao pode ser salva.
-- Cliente nao pode ser duplicado por documento formatado/digitos.
-- Veiculo exige cliente.
-- OS exige cliente, veiculo e ao menos um servico.
-- Orçamento soma servicos e pecas.
-- OS vai para `AGUARDANDO_APROVACAO` apos orçamento.
-- Orçamento so pode ser aprovado se foi gerado.
-- Execucao so inicia apos aprovacao.
-- Peca em orçamento e reservada antes da aprovacao.
-- Peca reservada e baixada quando o orçamento e aprovado.
-- Estoque negativo nao e permitido.
+Contexto de apoio responsável por peças, insumos, reservas, entradas, saídas, baixa e consulta de baixo estoque.
 
-## Event Storming Textual - OS
+### Orçamentos e Aprovação
 
-1. `IdentificarCliente` -> `ClienteIdentificado`
-2. `CadastrarCliente` -> `ClienteCadastrado`, se necessario
-3. `CadastrarVeiculo` -> `VeiculoCadastrado`, se necessario
-4. `CriarOrdemServico` -> `OrdemServicoCriada`
-5. `IncluirServicoSolicitado` -> `ServicoSolicitadoIncluido`
-6. `IncluirPecaNaOrdem` -> `PecaIncluidaNaOrdem`
-7. `GerarOrcamento` -> `OrcamentoGerado`
-8. Politica: reservar pecas -> `PecaReservada`
-9. `AprovarOrcamento` -> `OrcamentoAprovado`
-10. Politica: baixar pecas -> `PecaBaixadaDoEstoque`
-11. `IniciarExecucao` -> `ExecucaoIniciada`
-12. `FinalizarServico` -> `ServicoFinalizado`
-13. `EntregarVeiculo` -> `VeiculoEntregue`
+Contexto fortemente ligado ao Atendimento de Oficina. Controla geração automática do orçamento, disponibilização ao cliente, aprovação e liberação da OS para execução.
 
-## Event Storming Textual - Estoque
+### Identidade e Acesso
 
-1. `CadastrarPeca` -> `PecaCadastrada`
-2. `RegistrarEntradaEstoque` -> `EstoqueAtualizado`
-3. `ReservarPeca` -> `PecaReservada`
-4. Politica: se indisponivel -> `EstoqueInsuficienteIdentificado`
-5. `LiberarReserva` -> `ReservaLiberada`
-6. `BaixarPecaDoEstoque` -> `PecaBaixadaDoEstoque`
-7. `RegistrarSaidaEstoque` -> `EstoqueAtualizado`
+Contexto genérico responsável por autenticação JWT, usuários, perfis e autorização das APIs administrativas.
 
-## Fluxo de Criacao da OS
+## Fluxo de criação da OS
 
 ```mermaid
 flowchart TD
     A["Identificar cliente por CPF/CNPJ"] --> B{Cliente existe?}
-    B -- Nao --> C["Cadastrar cliente"]
-    B -- Sim --> D["Selecionar cliente"]
-    C --> E{Veiculo existe?}
+    B -- "Não" --> C["Cadastrar cliente"]
+    B -- "Sim" --> D["Selecionar cliente"]
+    C --> E{Veículo existe?}
     D --> E
-    E -- Nao --> F["Cadastrar veiculo"]
-    E -- Sim --> G["Selecionar veiculo"]
-    F --> H["Incluir servicos solicitados"]
+    E -- "Não" --> F["Cadastrar veículo"]
+    E -- "Sim" --> G["Selecionar veículo"]
+    F --> H["Incluir serviços solicitados"]
     G --> H
-    H --> I["Incluir pecas/insumos opcionais"]
-    I --> J["Criar OS"]
-    J --> K{Gerar orçamento agora?}
-    K -- Sim --> L["Gerar orçamento e aguardar aprovacao"]
-    K -- Nao --> M["Manter OS recebida"]
+    H --> I["Incluir peças ou insumos opcionais"]
+    I --> J["Gerar orçamento automaticamente"]
+    J --> K["Disponibilizar orçamento ao cliente"]
+    K --> L["OS em AGUARDANDO_APROVACAO"]
 ```
 
-## Fluxo de Aprovacao de Orçamento
+## Fluxo de aprovação de orçamento
 
 ```mermaid
 sequenceDiagram
     participant Oficina
-    participant OS as Ordem de Servico
+    participant OS as Ordem de Serviço
     participant Estoque
     participant Cliente
 
-    Oficina->>OS: GerarOrcamento
-    OS->>Estoque: Reservar pecas
-    Estoque-->>OS: PecasReservadas
-    OS-->>Cliente: OrcamentoDisponibilizado
-    Cliente->>OS: AprovarOrcamento
-    OS->>Estoque: Baixar pecas reservadas
-    Estoque-->>OS: PecaBaixadaDoEstoque
-    OS-->>Oficina: OrdemServicoLiberadaParaExecucao
+    Oficina->>OS: Gerar orçamento
+    OS->>Estoque: Reservar peças
+    OS-->>Cliente: Disponibilizar orçamento
+    Cliente->>OS: Aprovar orçamento
+    OS->>Estoque: Baixar peças reservadas
+    OS-->>Oficina: Liberar execução
 ```
 
-## Fluxo de Baixa de Estoque
-
-```mermaid
-flowchart TD
-    A["Peca vinculada ao orçamento"] --> B["Reservar quantidade"]
-    B --> C{Cliente aprovou?}
-    C -- Sim --> D["Baixar estoque"]
-    C -- Nao --> E["Liberar reserva"]
-    D --> F["Atualizar quantidade disponivel"]
-    E --> F
-```
-
-## Fluxo de Acompanhamento pelo Cliente
-
-```mermaid
-flowchart LR
-    A["Cliente autenticado"] --> B["Consultar OS"]
-    B --> C["Validar acesso ao cliente/OS"]
-    C --> D["Retornar status atual"]
-    D --> E["Exibir servicos, pecas, orçamento e historico"]
-```
-
-## Context Map
-
-```mermaid
-flowchart LR
-    IA["Identidade e Acesso"] --> OS["Atendimento e OS"]
-    CAD["Cadastro de Clientes e Veiculos"] --> OS
-    CAT["Catalogo de Servicos"] --> OS
-    EST["Estoque de Pecas"] --> ORC["Orçamento"]
-    OS --> ORC
-    ORC --> EST
-    OS --> CLI["Consulta do Cliente"]
-```
-
-## Diagrama Conceitual de Classes
-
-```mermaid
-classDiagram
-    class Customer {
-        UUID id
-        Document document
-        String name
-        String phone
-        String email
-    }
-    class Vehicle {
-        UUID id
-        UUID customerId
-        Plate plate
-        String brand
-        String model
-        int year
-    }
-    class ServiceOrder {
-        UUID id
-        UUID customerId
-        UUID vehicleId
-        ServiceOrderStatus status
-        generateBudget()
-        approveBudget()
-        startExecution()
-        finish()
-        deliver()
-    }
-    class WorkshopService {
-        UUID id
-        String name
-        Money basePrice
-    }
-    class Part {
-        UUID id
-        String name
-        int stockQuantity
-        int reservedQuantity
-        reserveStock()
-        commitReservedStock()
-    }
-    class Budget {
-        Money totalAmount
-    }
-    Customer "1" --> "*" Vehicle
-    Customer "1" --> "*" ServiceOrder
-    Vehicle "1" --> "*" ServiceOrder
-    ServiceOrder "*" --> "*" WorkshopService
-    ServiceOrder "*" --> "*" Part
-    ServiceOrder --> Budget
-```
-
-## Diagrama de Estados da OS
+## Diagrama de estados da OS
 
 ```mermaid
 stateDiagram-v2
     [*] --> RECEBIDA
-    RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnostico
+    RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnóstico
     RECEBIDA --> AGUARDANDO_APROVACAO: gerar orçamento
     EM_DIAGNOSTICO --> AGUARDANDO_APROVACAO: gerar orçamento
-    AGUARDANDO_APROVACAO --> EM_EXECUCAO: aprovar orçamento e iniciar execucao
-    EM_EXECUCAO --> FINALIZADA: finalizar servico
-    FINALIZADA --> ENTREGUE: entregar veiculo
+    AGUARDANDO_APROVACAO --> EM_EXECUCAO: aprovar orçamento
+    EM_EXECUCAO --> FINALIZADA: finalizar serviço
+    FINALIZADA --> ENTREGUE: entregar veículo
     ENTREGUE --> [*]
 ```

@@ -261,8 +261,8 @@ public class ApplicationUseCaseConfig {
 
   @Bean
   UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase(
-      ServiceOrderRepository repository) {
-    return new UpdateServiceOrderStatusUseCase(repository);
+      ServiceOrderRepository repository, PartRepository partRepository) {
+    return new UpdateServiceOrderStatusUseCase(repository, partRepository);
   }
 
   @Bean

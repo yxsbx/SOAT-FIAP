@@ -24,7 +24,7 @@ import {
 const activeAudience = ref('customer');
 
 const workshopStats = [
-  {label: 'O.S. em andamento', value: '25', tone: 'blue'},
+  {label: 'OS em andamento', value: '25', tone: 'blue'},
   {label: 'Entregas este mês', value: '55', tone: 'green'},
   {label: 'Aguardando aprovação', value: '12', tone: 'amber'},
   {label: 'Peças para comprar', value: '8', tone: 'slate'},
@@ -32,9 +32,9 @@ const workshopStats = [
 
 const orderRows = [
   ['MCA1D23', 'Freios', 'Em execução', 'Hoje'],
-  ['RCA3F67', 'Diagnóstico', 'Finalizado', 'Ontem'],
-  ['TLG5H10', 'Preventiva', 'Recebido', 'Amanhã'],
-  ['JPR8L76', 'Revisão', 'Aprovar', '2 dias'],
+  ['RCA3F67', 'Diagnóstico', 'Finalizada', 'Ontem'],
+  ['TLG5H10', 'Preventiva', 'Recebida', 'Amanhã'],
+  ['JPR8L76', 'Revisão', 'Aguardando aprovação', '2 dias'],
 ];
 
 const customerBenefits = [
@@ -50,7 +50,7 @@ const customerBenefits = [
   },
   {
     title: 'Tudo acompanhado no site',
-    text: 'Comunicação, orçamento, aceite, status da execução e finalização ficam centralizados no AutoCare.',
+    text: 'Comunicação, orçamento, aceite, status da execução e finalização ficam centralizados no AutoCare Hub.',
     icon: MessageCircle,
   },
 ];
@@ -75,7 +75,7 @@ const partnerBenefits = [
 
 const partnerDeliveries = [
   {
-    title: 'Oficina admin',
+    title: 'Admin de oficina',
     text: 'Dono ou gerente controla acessos, permissões, faturamento, clientes, estoque, ordens e relatórios.',
     icon: ShieldCheck,
   },
@@ -90,8 +90,8 @@ const partnerDeliveries = [
     icon: Package,
   },
   {
-    title: 'Admin master',
-    text: 'Visão de plataforma com leads, clientes ativos, uso por empresa, assinaturas e faturamento do app.',
+    title: 'Admin Master',
+    text: 'Visão de plataforma com interessados, clientes ativos, uso por empresa, assinaturas e faturamento da plataforma.',
     icon: BarChart3,
   },
 ];
@@ -105,7 +105,7 @@ const mobileActions = [
 
 const mobileUpdates = [
   {plate: 'MRA2E19', status: 'Em diagnóstico', note: 'Oficina analisando relato inicial'},
-  {plate: 'VRA7B42', status: 'Aprovar', note: 'Orçamento aguardando aceite'},
+  {plate: 'VRA7B42', status: 'Aguardando aprovação', note: 'Orçamento aguardando aceite'},
 ];
 
 function switchAudience(audience) {
@@ -345,7 +345,7 @@ function scrollToSection(id) {
               </section>
               <div class="phone-alert">
                 <CheckCircle2 :size="15"/>
-                <span>App focado no que precisa de resposta rápida.</span>
+                <span>Aplicativo focado no que precisa de resposta rápida.</span>
               </div>
               <div class="phone-grid">
                 <article v-for="action in mobileActions" :key="action.label">

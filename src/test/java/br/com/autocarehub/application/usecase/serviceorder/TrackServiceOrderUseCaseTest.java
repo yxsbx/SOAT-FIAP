@@ -53,13 +53,39 @@ class TrackServiceOrderUseCaseTest {
   }
 
   @Test
+  void shouldTrackServiceOrdersByCustomerDocumentOnly() {
+    Seed seed = seed();
+    TrackServiceOrderUseCase useCase = useCase();
+
+    List<TrackServiceOrderUseCase.Output> outputs =
+        useCase.execute(
+            new TrackServiceOrderUseCase.Query(null, seed.customer().document().value(), null));
+
+    assertThat(outputs)
+        .extracting(output -> output.serviceOrder().id())
+        .containsExactly(seed.serviceOrder().id());
+  }
+
+  @Test
+  void shouldTrackServiceOrdersByPlateOnly() {
+    Seed seed = seed();
+    TrackServiceOrderUseCase useCase = useCase();
+
+    List<TrackServiceOrderUseCase.Output> outputs =
+        useCase.execute(new TrackServiceOrderUseCase.Query(null, null, "ABC1D23"));
+
+    assertThat(outputs)
+        .extracting(output -> output.serviceOrder().id())
+        .containsExactly(seed.serviceOrder().id());
+  }
+
+  @Test
   void shouldRejectTrackingWithoutEnoughFilters() {
     TrackServiceOrderUseCase useCase = useCase();
 
     assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(null, null, null)))
         .isInstanceOf(ApplicationException.class)
-        .hasMessage(
-            "Provide serviceOrderId or both customerDocument and plate to track a service order");
+        .hasMessage("Provide serviceOrderId, customerDocument or plate to track a service order");
   }
 
   private TrackServiceOrderUseCase useCase() {

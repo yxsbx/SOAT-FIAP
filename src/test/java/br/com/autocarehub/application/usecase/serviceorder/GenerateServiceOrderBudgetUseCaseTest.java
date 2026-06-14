@@ -60,6 +60,20 @@ class GenerateServiceOrderBudgetUseCaseTest {
   }
 
   @Test
+  void shouldNotReservePartsAgainWhenBudgetWasAlreadyGenerated() {
+    Part part = partRepository.save(part(10));
+    ServiceOrder serviceOrder = serviceOrderWithPart(part, 3);
+    serviceOrderRepository.save(serviceOrder);
+    GenerateServiceOrderBudgetUseCase useCase =
+        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository);
+
+    useCase.execute(serviceOrder.id());
+    useCase.execute(serviceOrder.id());
+
+    assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(3);
+  }
+
+  @Test
   void shouldRejectBudgetGenerationWhenPartStockCannotBeReserved() {
     Part part = partRepository.save(part(2));
     ServiceOrder serviceOrder = serviceOrderWithPart(part, 2);

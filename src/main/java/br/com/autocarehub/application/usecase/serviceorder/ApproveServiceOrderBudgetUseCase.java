@@ -23,6 +23,9 @@ public class ApproveServiceOrderBudgetUseCase {
         serviceOrderRepository
             .findById(serviceOrderId)
             .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+    if (serviceOrder.approvedAt() != null) {
+      return serviceOrder;
+    }
     serviceOrder.approveBudget();
     for (ServiceOrder.ServiceOrderPart orderPart : serviceOrder.parts()) {
       Part part =

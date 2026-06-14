@@ -1,13 +1,13 @@
 # AutoCare Hub Web
 
-Frontend Vue 3 para a API AutoCare Hub.
+Interface web em Vue 3 para a API AutoCare Hub.
 
 ## Requisitos
 
 - Node 18+
-- API rodando em `http://localhost:8080`
+- API em execução em `http://localhost:8080`
 
-## Rodar
+## Executar
 
 ```bash
 npm install
@@ -20,7 +20,7 @@ Abra:
 http://localhost:5173
 ```
 
-Login local:
+Acesso local:
 
 ```text
 Admin Master: master@autocarehub.com / <SENHA_DEMO_LOCAL>
@@ -31,7 +31,7 @@ Funcionário de loja de peças: loja.funcionario@autocarehub.com / <SENHA_DEMO_L
 Cliente: cliente@autocarehub.com / <SENHA_DEMO_LOCAL>
 ```
 
-## Scripts uteis
+## Scripts úteis
 
 ```bash
 npm run backend:db
