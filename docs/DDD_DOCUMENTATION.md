@@ -233,7 +233,7 @@ Eventos usados como linguagem de modelagem:
 - `OrcamentoGerado`
 - `OrcamentoEnviado`
 - `OrcamentoAprovado`
-- `OrdemServicoEmExecucao`
+- `OrdemServicoEmExecução`
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 - `EstoqueAtualizado`
@@ -257,7 +257,7 @@ Comandos principais do domínio:
 - `GerarOrcamento`
 - `AprovarOrcamento`
 - `IniciarDiagnostico`
-- `IniciarExecucao`
+- `IniciarExecução`
 - `FinalizarOrdemServico`
 - `EntregarVeiculo`
 - `CadastrarPeca`

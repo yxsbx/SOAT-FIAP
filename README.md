@@ -1,248 +1,89 @@
 # AutoCare Hub
 
-MVP backend monolitico para gestao de uma oficina mecanica, desenvolvido para o Tech Challenge FIAP. A API cobre
-clientes, veiculos, servicos, pecas e insumos, estoque, ordens de servico, orçamentos, aprovacao pelo cliente,
-acompanhamento da OS e APIs administrativas protegidas por JWT.
+MVP academico do Tech Challenge FIAP para gestao de oficina mecanica. O projeto principal e uma API REST em backend monolitico, com arquitetura em camadas, DDD, JWT, OpenAPI/Swagger, Flyway, Docker, testes automatizados e relatorio de vulnerabilidades.
 
-## Problema
+Existe um frontend Vue 3 no repositorio para demonstracao, mas a entrega principal e o backend.
 
-Oficinas pequenas e medias costumam controlar atendimento, orçamentos, estoque e andamento de servicos em ferramentas
-separadas ou planilhas. Isso dificulta rastreabilidade da ordem de servico, controle de pecas usadas, comunicacao com o
-cliente e gestao do faturamento operacional.
+## Visao Geral
 
-## Objetivo
+O AutoCare Hub cobre o ciclo basico de atendimento de uma oficina:
 
-Entregar um MVP backend RESTful que centraliza o fluxo essencial de uma oficina:
+- cadastro de clientes com validacao de CPF/CNPJ;
+- cadastro de veiculos com validacao de placa brasileira antiga e Mercosul;
+- cadastro de servicos da oficina;
+- cadastro de pecas e insumos;
+- controle de estoque com entrada, saida, reserva, liberacao e baixa;
+- criacao de Ordem de Servico com cliente, veiculo, servicos e pecas;
+- geracao e aprovacao de orcamento;
+- acompanhamento da OS pelo cliente;
+- administracao protegida por JWT.
 
-- cadastrar clientes e veiculos;
-- cadastrar servicos, pecas e insumos;
-- criar ordens de servico;
-- gerar orçamentos a partir de servicos e pecas;
-- permitir aprovacao do orçamento;
-- acompanhar o status da OS;
-- controlar estoque com entradas, saidas, reservas e baixas;
-- proteger APIs administrativas com JWT;
-- documentar contrato via Swagger/OpenAPI;
-- executar localmente com Docker Compose.
+## Documentacao
 
-## Escopo do MVP
+| Documento | Finalidade |
+| --- | --- |
+| `docs/DDD_DOCUMENTATION.md` | DDD, linguagem ubiqua, entidades, value objects, agregados, bounded contexts e regras. |
+| `docs/EVENT_STORMING.md` | Event Storming dos fluxos de OS e estoque. |
+| `docs/SECURITY_SCAN_GUIDE.md` | Como executar scans de seguranca. |
+| `docs/SECURITY_REPORT.md` | Resultado real dos scans executados e analise dos achados. |
+| `docs/DELIVERY_DOCUMENT.md` | Documento final para gerar PDF de entrega academica. |
+| `docs/openapi/openapi.yaml` | Contrato OpenAPI versionado. |
+| `frontend/README.md` | Execucao do frontend demonstrativo. |
 
-O MVP foca no backend monolitico. Existe um frontend Vue 3 no repositorio para demonstracao, mas a entrega principal do
-Tech Challenge e a API.
-
-Incluido:
-
-- Auth/Login com JWT.
-- CRUD de clientes.
-- CRUD de veiculos.
-- CRUD de servicos da oficina.
-- CRUD de pecas e insumos.
-- Controle de estoque.
-- Criacao e acompanhamento de ordens de servico.
-- Geracao e aprovacao de orçamento.
-- Consulta de OS pelo cliente.
-- Validacao de CPF/CNPJ e placa.
-- Swagger/OpenAPI.
-- Testes unitarios e de integracao.
-- Dockerfile e docker-compose.
-- Documentacao DDD e Event Storming.
-
-Fora do escopo do MVP:
-
-- Pagamento online.
-- Envio real de e-mail, SMS ou WhatsApp.
-- Integracao com catalogos externos de pecas.
-- Multi-tenant completo por oficina.
-
-## Tecnologias
+## Stack
 
 - Java 21
-- Spring Boot 3.5
-- Spring Web
-- Spring Security
-- Spring Data JPA
+- Spring Boot 4.1
+- Maven
 - PostgreSQL 16
 - Flyway
-- Maven
-- OpenAPI Generator
-- Springdoc Swagger UI
-- JJWT
-- Docker e Docker Compose
-- JUnit 5
-- Testcontainers
+- Spring Security + JWT
+- OpenAPI Generator + Springdoc Swagger UI
 - JaCoCo
+- Testcontainers
 - OWASP Dependency-Check
-
-## Banco de Dados
-
-O PostgreSQL foi escolhido por ser relacional, robusto e adequado ao dominio. O sistema possui relacoes fortes entre
-clientes, veiculos, ordens de servico, servicos, pecas e movimentacoes de estoque. Tambem ha necessidade de consistencia
-transacional em operacoes como geracao de orçamento, reserva de pecas e baixa de estoque.
-
-PostgreSQL tambem se integra bem com Flyway, JPA, Testcontainers e Docker Compose.
+- Docker e Docker Compose
+- Vue 3 + Vite no frontend demonstrativo
 
 ## Arquitetura
 
-O backend usa monolito em camadas com conceitos de DDD:
+O backend continua sendo um monolito em camadas:
 
 ```text
 src/main/java/br/com/autocarehub
 ├── domain
-│   ├── model          Entidades, agregados e modelos do dominio
-│   ├── valueobject    Objetos de valor como Document, Plate, Money e Address
-│   ├── enums          Enumeracoes do dominio
-│   ├── exception      Excecoes de dominio
-│   ├── service        Validacoes/servicos de dominio
-│   └── policy         Politicas de negocio
+│   ├── model
+│   ├── valueobject
+│   ├── enums
+│   ├── exception
+│   ├── service
+│   └── policy
 ├── application
-│   ├── usecase        Casos de uso por contexto funcional
-│   ├── service        Reservado para servicos de aplicacao
-│   ├── dto            Reservado para DTOs de aplicacao
+│   ├── usecase
+│   ├── service
+│   ├── dto
 │   └── port
-│       ├── in         Reservado para portas de entrada
-│       └── out        Portas de saida, incluindo repositorios
+│       ├── in
+│       └── out
 ├── infrastructure
 │   ├── persistence
-│   │   ├── entity     Entidades JPA
-│   │   ├── repository Repositorios Spring Data e adapters das portas
-│   │   └── mapper     Mappers JPA/dominio
-│   ├── security       JWT, autorizacao e configuracao de seguranca
-│   └── config         Beans e compatibilidade de infraestrutura
+│   ├── security
+│   └── config
 └── interfaces
     └── rest
-        ├── controller Controllers REST
-        ├── request    Reservado para requests manuais
-        ├── response   Reservado para responses manuais
-        ├── mapper     Mappers REST/dominio
-        └── exception  Tratamento padronizado de erros REST
 ```
 
-Outras pastas importantes:
+Regras de negocio ficam no dominio. Use cases coordenam fluxos na camada de aplicacao. Persistencia, seguranca e configuracao ficam em infraestrutura. Controllers REST ficam em interfaces e nao acessam repositories diretamente.
+
+## Banco de Dados
+
+O banco principal e PostgreSQL. As migrations Flyway ficam em:
 
 ```text
-docs/openapi/openapi.yaml              Contrato REST OpenAPI
-docs/ddd/DDD_DOCUMENTATION.md          Documentacao DDD consolidada
-docs/ddd/EVENT_STORMING.md             Event Storming consolidado
-docs/security/SECURITY_SCAN_GUIDE.md   Guia de scans de seguranca
-docs/security/SECURITY_REPORT.md       Relatorio de seguranca
-docs/delivery/DELIVERY_DOCUMENT.md     Documento de entrega FIAP
-src/main/resources/db/migration        Migrations Flyway
-src/test/java                          Testes unitarios e integracao
-frontend/src/pages                     Paginas do frontend Vue 3 demonstrativo
-frontend/src/styles/main.css           Estilos globais do frontend
+src/main/resources/db/migration
 ```
 
-## DDD Aplicado
-
-Entidades principais:
-
-- `Customer`: cliente da oficina.
-- `Vehicle`: veiculo vinculado ao cliente.
-- `WorkshopService`: servico oferecido pela oficina.
-- `Part`: peca ou insumo em estoque.
-- `ServiceOrder`: ordem de servico.
-- `Budget` e `BudgetItem`: composicao financeira do orçamento.
-- `StockMovement`: movimentacao de estoque.
-
-Value Objects:
-
-- `Document`: CPF/CNPJ normalizado e validado.
-- `Plate`: placa brasileira antiga ou Mercosul normalizada.
-- `Money`: valores monetarios nao negativos.
-- `Address`: endereco normalizado.
-
-Agregados:
-
-- `ServiceOrder` agrega servicos e pecas solicitadas.
-- `Part` controla estoque disponivel, reservado e minimo.
-- `Customer` e `Vehicle` mantem identidade e vinculo do atendimento.
-
-Servicos e politicas de dominio:
-
-- `PlatformFeePolicy`: calcula taxa por tiers de faturamento.
-- Regras internas de `ServiceOrder`: transicoes de status e invariantes.
-- Regras internas de `Part`: impedir estoque negativo, reservar, liberar e baixar.
-
-## Linguagem Ubiqua
-
-- Cliente: pessoa ou empresa atendida.
-- Veiculo: bem do cliente atendido pela oficina.
-- Ordem de Servico: registro operacional do atendimento.
-- Diagnostico: etapa inicial de verificacao.
-- Orçamento: calculo de servicos e pecas a aprovar.
-- Aprovacao: aceite do cliente para execucao.
-- Execucao: realizacao do servico.
-- Finalizacao: servico concluido.
-- Entrega: veiculo entregue ao cliente.
-- Peca/Insumo: item de estoque usado ou vendido.
-- Reserva: bloqueio temporario de peca para orçamento.
-- Baixa: reducao definitiva do estoque.
-
-## Fluxos Principais
-
-### Criacao da OS
-
-1. Identificar cliente por CPF/CNPJ.
-2. Cadastrar cliente se nao existir.
-3. Vincular ou cadastrar veiculo por placa.
-4. Incluir servicos solicitados.
-5. Incluir pecas e insumos, se houver.
-6. Criar OS com status inicial `RECEBIDA` ou gerar orçamento automaticamente.
-
-### Geracao de Orçamento
-
-1. Somar servicos solicitados.
-2. Somar pecas e insumos.
-3. Calcular total geral.
-4. Reservar pecas no estoque quando aplicavel.
-5. Alterar OS para `AGUARDANDO_APROVACAO`.
-
-### Aprovacao do Orçamento
-
-1. Cliente ou usuario autorizado aprova o orçamento.
-2. OS registra data de aprovacao.
-3. Pecas reservadas sao baixadas do estoque.
-4. OS fica liberada para `EM_EXECUCAO`.
-
-### Acompanhamento da OS
-
-O cliente pode consultar o progresso por endpoint protegido/autorizado, recebendo status, veiculo, servicos, pecas,
-orçamento e historico basico.
-
-Status:
-
-- `RECEBIDA`
-- `EM_DIAGNOSTICO`
-- `AGUARDANDO_APROVACAO`
-- `EM_EXECUCAO`
-- `FINALIZADA`
-- `ENTREGUE`
-
-### Gestao de Estoque
-
-- Entrada aumenta quantidade.
-- Saida reduz quantidade.
-- Reserva bloqueia peca para orçamento.
-- Liberacao remove bloqueio.
-- Confirmacao baixa estoque.
-- Estoque negativo e baixa acima do disponivel sao bloqueados.
-
-## Seguranca
-
-- Login via `POST /api/v1/auth/login`.
-- JWT assinado com segredo configurado por variavel de ambiente.
-- APIs administrativas exigem Bearer Token.
-- Roles e permissoes restringem acessos.
-- Senhas usam BCrypt.
-- CPF/CNPJ e placa sao normalizados antes de persistir.
-- Requests usam DTOs explicitos para reduzir risco de mass assignment.
-- Campos de entrada possuem limites de tamanho nos fluxos administrativos.
-- Jackson rejeita campos desconhecidos.
-- Respostas de erro sao padronizadas.
-- CORS e exposicao do Swagger sao configuraveis por variaveis de ambiente.
-- Dados sensiveis nao devem ser logados.
-- `APP_CORS_ALLOWED_ORIGINS` deve listar origens explicitas. O backend rejeita `*` e `null`.
-- Em listagens, documentos de clientes podem ser mascarados; consulte o detalhe individual apenas quando houver necessidade operacional.
+O `docker-compose.yml` sobe PostgreSQL e API. Para testes de integracao, o projeto usa Testcontainers quando aplicavel.
 
 ## Execucao Local com Docker
 
@@ -251,23 +92,26 @@ Pre-requisitos:
 - Docker
 - Docker Compose
 
-Crie um `.env` local a partir do exemplo:
+Crie o arquivo local de variaveis:
 
 ```bash
 cp .env.example .env
 ```
 
-Edite o `.env` antes de subir o ambiente. O `docker-compose.yml` exige `POSTGRES_PASSWORD` e `JWT_SECRET` definidos
-localmente e nao possui fallback com segredo fixo. Nao versionar `.env`. O `JWT_SECRET` deve ter pelo menos 32 bytes e
-nao deve ser reutilizado entre ambientes.
+Preencha pelo menos:
 
-Suba API e banco:
+```text
+POSTGRES_PASSWORD=[PREENCHER - SENHA_LOCAL_DO_POSTGRES]
+JWT_SECRET=[PREENCHER - SEGREDO_LOCAL_COM_PELO_MENOS_32_BYTES]
+```
+
+Subir ambiente completo:
 
 ```bash
 docker compose up --build
 ```
 
-Em background:
+Subir em background:
 
 ```bash
 docker compose up -d --build
@@ -279,13 +123,13 @@ Parar:
 docker compose down
 ```
 
-Parar e remover volume do banco:
+Remover volumes locais:
 
 ```bash
 docker compose down -v
 ```
 
-URLs:
+URLs locais:
 
 ```text
 API: http://localhost:8080
@@ -293,15 +137,15 @@ Swagger: http://localhost:8080/swagger-ui.html
 PostgreSQL: localhost:5432
 ```
 
-## Execucao Local sem Docker
+## Execucao Local sem Docker para a API
 
 Pre-requisitos:
 
 - Java 21
 - Maven 3.9+
-- PostgreSQL 16 local ou via compose
+- PostgreSQL 16 local ou via Compose
 
-Subir somente o banco:
+Subir somente o banco pelo Compose:
 
 ```bash
 docker compose up -d postgres
@@ -313,7 +157,7 @@ Executar a API:
 mvn spring-boot:run
 ```
 
-Variaveis usadas pela aplicacao:
+Variaveis principais:
 
 ```text
 DB_URL=jdbc:postgresql://localhost:5432/autocarehub
@@ -321,24 +165,18 @@ DB_USERNAME=autocarehub
 DB_PASSWORD=replace-with-local-postgres-password
 JWT_SECRET=replace-with-local-jwt-secret-at-least-32-bytes
 JWT_EXPIRATION_MINUTES=60
-SERVER_PORT=8080
 APP_CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
-SPRINGDOC_API_DOCS_ENABLED=true
-SPRINGDOC_SWAGGER_UI_ENABLED=true
 ```
-
-Nao use `APP_CORS_ALLOWED_ORIGINS=*`. A aplicacao rejeita wildcard para evitar CORS permissivo em ambientes de scan,
-homologacao ou producao.
 
 ## Testes e Cobertura
 
-Rodar testes:
+Executar testes:
 
 ```bash
 mvn test
 ```
 
-Rodar testes e checagem de cobertura:
+Executar testes, gerar relatorio e validar cobertura:
 
 ```bash
 mvn verify
@@ -350,8 +188,9 @@ Relatorio JaCoCo:
 target/site/jacoco/index.html
 ```
 
-O projeto possui regra JaCoCo para cobertura minima de 80% no pacote de dominio. Os testes de integracao usam
-Testcontainers com PostgreSQL, portanto o Docker precisa estar ativo.
+A regra atual exige cobertura minima de 95% para instrucoes e linhas no escopo de negocio medido pelo JaCoCo (`domain` e `application`). A ultima validacao local registrou 108 testes, 95,36% de instrucoes e 97,35% de linhas cobertas.
+
+Essa meta atende e supera o criterio academico de cobertura minima de 80%.
 
 ## Swagger/OpenAPI
 
@@ -361,7 +200,7 @@ Swagger UI local:
 http://localhost:8080/swagger-ui.html
 ```
 
-Contrato:
+Contrato versionado:
 
 ```text
 docs/openapi/openapi.yaml
@@ -370,46 +209,32 @@ docs/openapi/openapi.yaml
 Para autenticar no Swagger:
 
 1. Execute `POST /api/v1/auth/login`.
-2. Copie o campo `accessToken`.
+2. Copie o token retornado.
 3. Clique em `Authorize`.
-4. Informe `Bearer <accessToken>`.
+4. Informe `Bearer <token>`.
 
-No MVP academico, Swagger e OpenAPI ficam publicos para facilitar avaliacao. Em producao, desative por ambiente com:
+No MVP academico, Swagger e OpenAPI ficam publicos para facilitar avaliacao local. Em ambiente produtivo, desative com:
 
 ```text
 SPRINGDOC_API_DOCS_ENABLED=false
 SPRINGDOC_SWAGGER_UI_ENABLED=false
 ```
 
-Tambem recomenda-se restringir `/swagger-ui/**`, `/swagger-ui.html`, `/v3/api-docs/**` e `/openapi.yaml` por rede ou
-perfil administrativo quando houver ambiente produtivo. Nunca publique Swagger produtivo com credenciais reais nos
-exemplos.
+## Usuarios Demo
 
-## Usuarios de Teste
-
-Senha padrao dos seeds academicos locais:
-
-```text
-autocare123
-```
-
-Essa senha existe apenas para demonstracao do MVP. Nao reutilize em producao e redefina as senhas apos carregar dados
-reais. No frontend, o preenchimento automatico da senha demo deve ser configurado via `VITE_DEMO_PASSWORD` no `.env`
-local, nao no codigo versionado.
-
-Contas:
+Os usuarios demo sao carregados pela migration inicial. A senha nao deve ser escrita no repositorio; use o valor local configurado para demonstracao.
 
 ```text
 admin@autocarehub.com              ADMIN tecnico inicial
-master@autocarehub.com             Admin Master
+master@autocarehub.com             Admin master da plataforma
 oficina.admin@autocarehub.com      Admin de oficina
 loja.admin@autocarehub.com         Admin de loja de pecas
 oficina.funcionario@autocarehub.com Funcionario de oficina
 loja.funcionario@autocarehub.com   Funcionario de loja de pecas
-cliente@autocarehub.com            Cliente final
+cliente@autocarehub.com            Cliente demo
 ```
 
-Login via curl:
+Exemplo de login:
 
 ```bash
 curl -X POST http://localhost:8080/api/v1/auth/login \
@@ -419,7 +244,7 @@ curl -X POST http://localhost:8080/api/v1/auth/login \
 
 ## Endpoints Principais
 
-Auth:
+Autenticacao:
 
 - `POST /api/v1/auth/login`
 
@@ -430,6 +255,8 @@ Clientes:
 - `GET /api/v1/customers/{customerId}`
 - `PUT /api/v1/customers/{customerId}`
 - `DELETE /api/v1/customers/{customerId}`
+- `GET /api/v1/customers/{customerId}/vehicles`
+- `GET /api/v1/customers/{customerId}/service-orders`
 
 Veiculos:
 
@@ -438,7 +265,6 @@ Veiculos:
 - `GET /api/v1/vehicles/{vehicleId}`
 - `PUT /api/v1/vehicles/{vehicleId}`
 - `DELETE /api/v1/vehicles/{vehicleId}`
-- `GET /api/v1/customers/{customerId}/vehicles`
 
 Servicos:
 
@@ -456,13 +282,13 @@ Pecas e estoque:
 - `PUT /api/v1/parts/{partId}`
 - `DELETE /api/v1/parts/{partId}`
 - `PATCH /api/v1/parts/{partId}/stock`
-- `PATCH /api/v1/parts/{partId}/stock-movement`
+- `POST /api/v1/parts/{partId}/stock-movement`
 - `PATCH /api/v1/parts/{partId}/reservation`
-- `PATCH /api/v1/parts/{partId}/reserve`
-- `PATCH /api/v1/parts/{partId}/release-reservation`
-- `PATCH /api/v1/parts/{partId}/commit-reservation`
+- `POST /api/v1/parts/{partId}/reserve`
+- `POST /api/v1/parts/{partId}/release-reservation`
+- `POST /api/v1/parts/{partId}/commit-reservation`
 
-Ordens de servico e orçamentos:
+Ordens de Servico:
 
 - `GET /api/v1/service-orders`
 - `POST /api/v1/service-orders`
@@ -473,10 +299,9 @@ Ordens de servico e orçamentos:
 - `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`
 - `PATCH /api/v1/service-orders/{serviceOrderId}/status`
 - `GET /api/v1/service-orders/tracking`
-- `GET /api/v1/customers/{customerId}/service-orders`
 - `GET /api/v1/service-orders/metrics/average-execution-time`
 
-Usuarios e interessados:
+Usuarios:
 
 - `GET /api/v1/users/me`
 - `PUT /api/v1/users/me`
@@ -485,59 +310,73 @@ Usuarios e interessados:
 - `PUT /api/v1/users/me/preferences/home`
 - `GET /api/v1/users`
 - `POST /api/v1/users`
+- `GET /api/v1/users/partners`
 - `PUT /api/v1/users/{userId}`
 - `PATCH /api/v1/users/{userId}/password`
-- `POST /api/v1/demo-leads`
+
+Demo leads:
+
 - `GET /api/v1/demo-leads`
+- `POST /api/v1/demo-leads`
 
-## Scan de Vulnerabilidades
+## Seguranca
 
-Executar:
+- JWT assinado com segredo vindo de variavel de ambiente.
+- APIs administrativas protegidas por Spring Security.
+- Senhas persistidas com BCrypt.
+- CPF/CNPJ e placa validados por value objects.
+- DTOs separados das entidades de persistencia.
+- CORS configuravel por ambiente.
+- Swagger desabilitavel por variavel de ambiente.
+
+Guia de scans:
+
+```text
+docs/SECURITY_SCAN_GUIDE.md
+```
+
+Relatorio de vulnerabilidades:
+
+```text
+docs/SECURITY_REPORT.md
+```
+
+Executar Dependency-Check:
 
 ```bash
 mvn dependency-check:check
 ```
 
-Relatorios:
+## Frontend Demonstrativo
 
-```text
-target/dependency-check
+O frontend fica em `frontend/`.
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
-Documento de apoio:
+URL padrao do Vite:
 
 ```text
-docs/security/SECURITY_REPORT.md
+http://localhost:5173
 ```
-
-O arquivo `docs/security/SECURITY_REPORT.md` registra a execucao dos scans. Novos achados devem ser atualizados apenas
-com evidencia gerada pela ferramenta.
 
 ## Decisoes Tecnicas
 
-- Monolito em camadas para reduzir complexidade operacional no MVP.
-- DDD no dominio para concentrar regras e linguagem de negocio.
-- OpenAPI First para alinhar contrato, DTOs e Swagger.
-- PostgreSQL para consistencia relacional e transacional.
-- Flyway para versionar schema e seeds.
-- Testcontainers para validar integracao com banco real.
+- Monolito em camadas para manter simplicidade operacional no MVP academico.
+- DDD aplicado no dominio e nos use cases, sem separar em microsservicos.
+- PostgreSQL para consistencia relacional entre clientes, veiculos, ordens, pecas e estoque.
+- Flyway para versionamento de schema.
+- OpenAPI First para manter contrato REST e Swagger alinhados.
 - JWT stateless para proteger APIs administrativas.
 - Docker Compose para ambiente local reproduzivel.
 
 ## Limitacoes Conhecidas
 
-- O envio de orçamento ao cliente e representado pela API, sem integracao real de mensageria.
-- O historico de status da OS e derivado de timestamps simples.
-- O controle de parceiros e lojas foi mantido no mesmo monolito para fins demonstrativos.
-- O Swagger fica publico no perfil local academico.
-- A massa demo e fixa e voltada para avaliacao.
-
-## Melhorias Futuras
-
-- Auditoria detalhada de alteracoes por usuario.
-- Eventos de dominio persistidos em outbox.
-- Integracao real com e-mail/WhatsApp.
-- Multi-tenant por oficina/parceiro.
-- Controle fiscal e pagamentos.
-- Observabilidade com metricas, tracing e dashboards.
-- Politicas de acesso mais granulares por permissao.
+- Nao ha pagamento online.
+- Nao ha envio real de e-mail, SMS ou WhatsApp.
+- O historico de status da OS e simplificado para o escopo do MVP.
+- O controle de parceiros e lojas permanece no mesmo monolito.
+- O Swagger fica publico no ambiente local academico.

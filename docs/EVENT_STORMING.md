@@ -144,7 +144,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `ConsultarAcompanhamentoOS`
 - `IniciarDiagnostico`
 - `AprovarOrcamento`
-- `IniciarExecucao`
+- `IniciarExecução`
 - `FinalizarOrdemServico`
 - `EntregarVeiculo`
 
@@ -153,7 +153,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `AcompanhamentoOSConsultado`
 - `DiagnosticoIniciado`
 - `OrcamentoAprovado`
-- `OrdemServicoEmExecucao`
+- `OrdemServicoEmExecução`
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 
@@ -190,7 +190,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `AcessoNaoAutorizado`
 - `OrcamentoNaoGerado`
 - `OrcamentoJaAprovado`
-- `TransicaoStatusInvalida`
+- `TransiçãoStatusInvalida`
 - `ClienteNaoVinculadoAOrdem`
 
 ### Fluxo principal
@@ -305,7 +305,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `PrecoInvalido`
 - `EstoqueInsuficiente`
 - `ReservaInexistente`
-- `MovimentacaoEstoqueInvalida`
+- `MovimentaçãoEstoqueInvalida`
 
 ### Fluxo principal
 
@@ -394,8 +394,8 @@ flowchart TD
     C3 --> D2{Orçamento gerado?}
     D2 -- "Não" --> X2["Exceção: OrcamentoNaoGerado"]
     D2 -- "Sim" --> E3["Evento: OrcamentoAprovado"]
-    E3 --> C4["Comando: IniciarExecucao"]
-    C4 --> E4["Evento: OrdemServicoEmExecucao"]
+    E3 --> C4["Comando: IniciarExecução"]
+    C4 --> E4["Evento: OrdemServicoEmExecução"]
     E4 --> C5["Comando: FinalizarOrdemServico"]
     C5 --> E5["Evento: OrdemServicoFinalizada"]
     E5 --> C6["Comando: EntregarVeiculo"]

@@ -26,7 +26,7 @@ class RegisterDemoLeadUseCaseTest {
                 "ANA@EXAMPLE.COM",
                 "11999999999",
                 "11.222.333/0001-81",
-                "Sao Paulo",
+                "São Paulo",
                 "Quero uma demo"));
 
     assertThat(demoLead.cnpj()).isEqualTo("11222333000181");
@@ -45,7 +45,7 @@ class RegisterDemoLeadUseCaseTest {
                         "ana@example.com",
                         "11999999999",
                         "11.222.333/0001-82",
-                        "Sao Paulo",
+                        "São Paulo",
                         "Quero uma demo")))
         .isInstanceOf(DomainException.class)
         .hasMessage("Invalid document");
@@ -63,7 +63,7 @@ class RegisterDemoLeadUseCaseTest {
                         "ana@example.com",
                         "11999999999",
                         "529.982.247-25",
-                        "Sao Paulo",
+                        "São Paulo",
                         "Quero uma demo")))
         .isInstanceOf(DomainException.class)
         .hasMessage("Demo lead document must be CNPJ");

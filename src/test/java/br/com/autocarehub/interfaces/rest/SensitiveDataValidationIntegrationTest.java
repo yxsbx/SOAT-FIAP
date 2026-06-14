@@ -142,7 +142,7 @@ class SensitiveDataValidationIntegrationTest {
                 "neighborhood",
                 "Bela Vista",
                 "city",
-                "Sao Paulo",
+                "São Paulo",
                 "state",
                 "SP",
                 "zipCode",

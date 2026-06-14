@@ -30,7 +30,7 @@ class TrackServiceOrderUseCaseTest {
 
   private static Address address() {
     return new Address(
-        "Avenida Paulista", "1000", null, "Bela Vista", "Sao Paulo", "SP", "01310-100");
+        "Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
   }
 
   @Test
@@ -113,8 +113,7 @@ class TrackServiceOrderUseCaseTest {
     assertThatThrownBy(
             () ->
                 useCase.execute(
-                    new TrackServiceOrderUseCase.Query(
-                        seed.serviceOrder().id(), null, "DEF2G34")))
+                    new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, "DEF2G34")))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("Service order not found for vehicle plate");
   }
@@ -135,7 +134,8 @@ class TrackServiceOrderUseCaseTest {
     assertThatThrownBy(
             () ->
                 useCase.execute(
-                    new TrackServiceOrderUseCase.Query(null, seed.customer().document().value(), null)))
+                    new TrackServiceOrderUseCase.Query(
+                        null, seed.customer().document().value(), null)))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("Vehicle not found");
   }

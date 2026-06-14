@@ -64,7 +64,7 @@ class CustomerTest {
   @Test
   void shouldUpdateCustomerData() {
     Customer customer = customer();
-    Address address = new Address("Rua A", "10", null, "Centro", "Sao Paulo", "SP", "01001000");
+    Address address = new Address("Rua A", "10", null, "Centro", "São Paulo", "SP", "01001000");
 
     customer.rename("Maria Souza");
     customer.updateContact("11888888888", "souza@example.com");

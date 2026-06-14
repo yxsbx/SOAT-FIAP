@@ -113,7 +113,8 @@ class DomainAdditionalCoverageTest {
         .isInstanceOf(DomainException.class)
         .hasMessage("Text exceeds maximum length");
 
-    Address address = new Address("Rua A", "10", "Apto 1", "Centro", "Sao Paulo", "SP", "01001-000");
+    Address address =
+        new Address("Rua A", "10", "Apto 1", "Centro", "São Paulo", "SP", "01001-000");
 
     assertThat(address.complement()).isEqualTo("Apto 1");
     assertThat(address.zipCode()).isEqualTo("01001000");

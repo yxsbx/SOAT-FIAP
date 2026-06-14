@@ -38,7 +38,7 @@ class CreateServiceOrderUseCaseTest {
 
   private static Address address() {
     return new Address(
-        "Avenida Paulista", "1000", null, "Bela Vista", "Sao Paulo", "SP", "01310-100");
+        "Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
   }
 
   @Test

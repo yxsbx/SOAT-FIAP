@@ -162,16 +162,7 @@ class PartTest {
             2);
     Part second =
         new Part(
-            id,
-            "Cabin filter",
-            "CAB-001",
-            "Filters",
-            null,
-            "Mann",
-            Money.of("60.00"),
-            6,
-            2,
-            true);
+            id, "Cabin filter", "CAB-001", "Filters", null, "Mann", Money.of("60.00"), 6, 2, true);
     Part third =
         new Part(
             UUID.randomUUID(),

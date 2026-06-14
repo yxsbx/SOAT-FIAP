@@ -85,7 +85,7 @@ class ServiceOrderFlowIntegrationTest {
                                     "street", "Avenida Paulista",
                                     "number", "1000",
                                     "neighborhood", "Bela Vista",
-                                    "city", "Sao Paulo",
+                                    "city", "São Paulo",
                                     "state", "SP",
                                     "zipCode", "01310-100")))))
             .andExpect(status().isCreated())
