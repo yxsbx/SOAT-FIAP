@@ -41,7 +41,6 @@ desktop.ini
 
 # Build output
 build/
-out/
 bin/
 node_modules/
 dist/
