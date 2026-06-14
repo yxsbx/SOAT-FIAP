@@ -1,16 +1,34 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
-import br.com.autocarehub.application.usecase.part.*;
+import br.com.autocarehub.application.usecase.part.CommitPartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.ConfigurePartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
+import br.com.autocarehub.application.usecase.part.DeletePartUseCase;
+import br.com.autocarehub.application.usecase.part.FindPartUseCase;
+import br.com.autocarehub.application.usecase.part.ListPartsUseCase;
+import br.com.autocarehub.application.usecase.part.RegisterPartStockMovementUseCase;
+import br.com.autocarehub.application.usecase.part.ReleasePartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.ReservePartStockUseCase;
+import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
+import br.com.autocarehub.application.usecase.part.UpdatePartUseCase;
 import br.com.autocarehub.domain.Money;
 import br.com.autocarehub.domain.Part;
 import br.com.autocarehub.interfaces.rest.generated.api.PartsApi;
-import br.com.autocarehub.interfaces.rest.generated.model.*;
+import br.com.autocarehub.interfaces.rest.generated.model.CommitPartReservationRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ConfigurePartReservationRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.CreatePartRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.PartListResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.PartQuantityRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.PartResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.StockMovementRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
 import br.com.autocarehub.interfaces.rest.impl.mapper.PartRestMapper;
 import java.math.BigDecimal;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

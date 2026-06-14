@@ -8,8 +8,13 @@ import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.domain.Address;
 import br.com.autocarehub.domain.Customer;
 import br.com.autocarehub.domain.Document;
-import java.util.*;
 import org.junit.jupiter.api.Test;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 class CreateCustomerUseCaseTest {
 

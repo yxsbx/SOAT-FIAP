@@ -4087,8 +4087,12 @@ button.billing-metric {
     color: #102a43;
 }
 
+#preview-mobile-band-p {
+    color: #102a43;
+}
+
 .preview-mobile-band p {
-    color: #506982;
+    color: #ffffff;
 }
 
 .preview-mobile-band ul {

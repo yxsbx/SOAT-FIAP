@@ -5,8 +5,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.autocarehub.application.repository.PartRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
-import br.com.autocarehub.domain.*;
-import java.util.*;
+import br.com.autocarehub.domain.DomainException;
+import br.com.autocarehub.domain.InvalidServiceOrderStatusTransitionException;
+import br.com.autocarehub.domain.Money;
+import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.domain.ServiceOrder;
+import br.com.autocarehub.domain.ServiceOrderStatus;
+import br.com.autocarehub.domain.WorkshopService;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class UpdateServiceOrderStatusUseCaseTest {

@@ -6,6 +6,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
+import static java.util.Objects.requireNonNull;
+
 public class LoginUseCase {
 
   private final AuthenticationManager authenticationManager;
@@ -21,7 +23,7 @@ public class LoginUseCase {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(command.username(), command.password()));
     JwtService.IssuedToken token =
-        jwtService.generateToken((AuthenticatedUser) authentication.getPrincipal());
+        jwtService.generateToken((AuthenticatedUser) requireNonNull(authentication.getPrincipal()));
     return new Output(token.accessToken(), token.tokenType(), token.expiresIn());
   }
 

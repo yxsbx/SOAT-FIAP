@@ -1,6 +1,11 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
-import br.com.autocarehub.application.usecase.vehicle.*;
+import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.DeleteVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.FindVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.ListVehiclesByCustomerUseCase;
+import br.com.autocarehub.application.usecase.vehicle.ListVehiclesUseCase;
+import br.com.autocarehub.application.usecase.vehicle.UpdateVehicleUseCase;
 import br.com.autocarehub.domain.Vehicle;
 import br.com.autocarehub.interfaces.rest.generated.api.VehiclesApi;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateVehicleRequest;
@@ -11,7 +16,7 @@ import br.com.autocarehub.interfaces.rest.impl.mapper.VehicleRestMapper;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 

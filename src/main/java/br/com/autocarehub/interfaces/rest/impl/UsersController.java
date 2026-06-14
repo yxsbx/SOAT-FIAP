@@ -1,6 +1,12 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
-import br.com.autocarehub.application.usecase.user.*;
+import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
+import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
+import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
+import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserUseCase;
+import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
 import br.com.autocarehub.domain.User;
 import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,7 +24,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/users")

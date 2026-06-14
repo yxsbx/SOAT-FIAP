@@ -1,14 +1,19 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.ApplicationException;
 import br.com.autocarehub.application.ResourceNotFoundException;
 import br.com.autocarehub.application.repository.CustomerRepository;
 import br.com.autocarehub.application.repository.ServiceOrderRepository;
 import br.com.autocarehub.application.repository.VehicleRepository;
-import br.com.autocarehub.domain.*;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import br.com.autocarehub.domain.Customer;
+import br.com.autocarehub.domain.Vehicle;
+import br.com.autocarehub.domain.ServiceOrder;
+import br.com.autocarehub.domain.Plate;
+import br.com.autocarehub.domain.Document;
 
 public class TrackServiceOrderUseCase {
 

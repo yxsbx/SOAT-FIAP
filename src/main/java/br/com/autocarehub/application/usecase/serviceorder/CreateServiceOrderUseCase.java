@@ -2,8 +2,21 @@ package br.com.autocarehub.application.usecase.serviceorder;
 
 import br.com.autocarehub.application.ApplicationException;
 import br.com.autocarehub.application.ResourceNotFoundException;
-import br.com.autocarehub.application.repository.*;
-import br.com.autocarehub.domain.*;
+import br.com.autocarehub.application.repository.ServiceOrderRepository;
+import br.com.autocarehub.application.repository.CustomerRepository;
+import br.com.autocarehub.application.repository.VehicleRepository;
+import br.com.autocarehub.application.repository.WorkshopServiceRepository;
+import br.com.autocarehub.application.repository.PartRepository;
+import br.com.autocarehub.domain.Document;
+import br.com.autocarehub.domain.Customer;
+import br.com.autocarehub.domain.Vehicle;
+import br.com.autocarehub.domain.ServiceOrder;
+import br.com.autocarehub.domain.Plate;
+import br.com.autocarehub.domain.Address;
+import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.domain.WorkshopService;
+import br.com.autocarehub.domain.DomainException;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;

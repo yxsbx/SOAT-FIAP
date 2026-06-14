@@ -1,15 +1,62 @@
 package br.com.autocarehub.infrastructure.config;
 
-import br.com.autocarehub.application.repository.*;
+import br.com.autocarehub.application.repository.CustomerRepository;
+import br.com.autocarehub.application.repository.DemoLeadRepository;
+import br.com.autocarehub.application.repository.PartRepository;
+import br.com.autocarehub.application.repository.ServiceOrderRepository;
+import br.com.autocarehub.application.repository.StockMovementRepository;
+import br.com.autocarehub.application.repository.UserPreferenceRepository;
+import br.com.autocarehub.application.repository.UserRepository;
+import br.com.autocarehub.application.repository.VehicleRepository;
+import br.com.autocarehub.application.repository.WorkshopServiceRepository;
 import br.com.autocarehub.application.usecase.auth.LoginUseCase;
-import br.com.autocarehub.application.usecase.customer.*;
+import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.DeleteCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.FindCustomerUseCase;
+import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
+import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
 import br.com.autocarehub.application.usecase.demo.ListDemoLeadsUseCase;
 import br.com.autocarehub.application.usecase.demo.RegisterDemoLeadUseCase;
-import br.com.autocarehub.application.usecase.part.*;
-import br.com.autocarehub.application.usecase.serviceorder.*;
-import br.com.autocarehub.application.usecase.user.*;
-import br.com.autocarehub.application.usecase.vehicle.*;
-import br.com.autocarehub.application.usecase.workshopservice.*;
+import br.com.autocarehub.application.usecase.part.CommitPartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.ConfigurePartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
+import br.com.autocarehub.application.usecase.part.DeletePartUseCase;
+import br.com.autocarehub.application.usecase.part.FindPartUseCase;
+import br.com.autocarehub.application.usecase.part.ListPartsUseCase;
+import br.com.autocarehub.application.usecase.part.RegisterPartStockMovementUseCase;
+import br.com.autocarehub.application.usecase.part.ReleasePartReservationUseCase;
+import br.com.autocarehub.application.usecase.part.ReservePartStockUseCase;
+import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
+import br.com.autocarehub.application.usecase.part.UpdatePartUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersByCustomerUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
+import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
+import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserUseCase;
+import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
+import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
+import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.DeleteVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.FindVehicleUseCase;
+import br.com.autocarehub.application.usecase.vehicle.ListVehiclesByCustomerUseCase;
+import br.com.autocarehub.application.usecase.vehicle.ListVehiclesUseCase;
+import br.com.autocarehub.application.usecase.vehicle.UpdateVehicleUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
 import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,7 +103,7 @@ public class ApplicationUseCaseConfig {
 
   @Bean
   ChangeUserPasswordUseCase changeUserPasswordUseCase(
-      UserRepository repository, PasswordEncoder passwordEncoder) {
+          UserRepository repository, PasswordEncoder passwordEncoder) {
     return new ChangeUserPasswordUseCase(repository, passwordEncoder);
   }
 

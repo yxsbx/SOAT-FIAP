@@ -7,7 +7,11 @@ import br.com.autocarehub.domain.Money;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.domain.ServiceOrderStatus;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class ListServiceOrdersUseCaseTest {

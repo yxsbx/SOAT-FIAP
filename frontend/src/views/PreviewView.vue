@@ -412,7 +412,7 @@ function scrollToSection(id) {
         <div>
           <span>Responsivo</span>
           <h2>Mobile para respostas rápidas, desktop para gestão completa</h2>
-          <p>
+          <p id="preview-mobile-band-p">
             No celular, o parceiro acompanha status, mensagens, aprovações e alertas. Permissões,
             faturamento, relatórios e cadastros complexos ficam melhores na visão desktop.
           </p>

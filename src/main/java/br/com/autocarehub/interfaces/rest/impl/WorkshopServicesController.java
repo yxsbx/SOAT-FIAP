@@ -1,6 +1,10 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
-import br.com.autocarehub.application.usecase.workshopservice.*;
+import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
+import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
 import br.com.autocarehub.domain.WorkshopService;
 import br.com.autocarehub.interfaces.rest.generated.api.WorkshopServicesApi;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateWorkshopServiceRequest;
@@ -11,7 +15,7 @@ import br.com.autocarehub.interfaces.rest.impl.mapper.WorkshopServiceRestMapper;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

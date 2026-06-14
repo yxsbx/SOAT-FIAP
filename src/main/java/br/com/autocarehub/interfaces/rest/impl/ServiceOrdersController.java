@@ -1,15 +1,33 @@
 package br.com.autocarehub.interfaces.rest.impl;
 
-import br.com.autocarehub.application.usecase.serviceorder.*;
+import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersByCustomerUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.domain.ServiceOrder;
 import br.com.autocarehub.interfaces.rest.generated.api.ServiceOrdersApi;
-import br.com.autocarehub.interfaces.rest.generated.model.*;
+import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.AverageExecutionTimeResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus;
+import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingListResponse;
+import br.com.autocarehub.interfaces.rest.generated.model.UpdateServiceOrderStatusRequest;
 import br.com.autocarehub.interfaces.rest.impl.mapper.ServiceOrderRestMapper;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
