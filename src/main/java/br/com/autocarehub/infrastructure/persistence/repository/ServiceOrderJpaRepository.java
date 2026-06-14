@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.lang.NonNull;
+import org.jspecify.annotations.NonNull;
 
 public interface ServiceOrderJpaRepository extends JpaRepository<ServiceOrderJpaEntity, UUID> {
 

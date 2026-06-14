@@ -1,8 +1,8 @@
 package br.com.autocarehub.infrastructure.security;
 
-import br.com.autocarehub.application.repository.CustomerRepository;
-import br.com.autocarehub.application.repository.ServiceOrderRepository;
-import br.com.autocarehub.domain.Document;
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.domain.valueobject.Document;
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

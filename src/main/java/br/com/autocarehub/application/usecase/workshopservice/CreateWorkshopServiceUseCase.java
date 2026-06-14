@@ -1,8 +1,8 @@
 package br.com.autocarehub.application.usecase.workshopservice;
 
-import br.com.autocarehub.application.repository.WorkshopServiceRepository;
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.WorkshopService;
+import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.WorkshopService;
 
 public class CreateWorkshopServiceUseCase {
 

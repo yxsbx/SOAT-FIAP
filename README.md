@@ -88,24 +88,48 @@ O backend usa monolito em camadas com conceitos de DDD:
 ```text
 src/main/java/br/com/autocarehub
 ├── domain
-│   ├── entidades, value objects, enums e regras de negocio
+│   ├── model          Entidades, agregados e modelos do dominio
+│   ├── valueobject    Objetos de valor como Document, Plate, Money e Address
+│   ├── enums          Enumeracoes do dominio
+│   ├── exception      Excecoes de dominio
+│   ├── service        Validacoes/servicos de dominio
+│   └── policy         Politicas de negocio
 ├── application
-│   ├── use cases, portas de repositorio e orquestracao
+│   ├── usecase        Casos de uso por contexto funcional
+│   ├── service        Reservado para servicos de aplicacao
+│   ├── dto            Reservado para DTOs de aplicacao
+│   └── port
+│       ├── in         Reservado para portas de entrada
+│       └── out        Portas de saida, incluindo repositorios
 ├── infrastructure
-│   ├── persistencia JPA, repositories, seguranca e configuracao
+│   ├── persistence
+│   │   ├── entity     Entidades JPA
+│   │   ├── repository Repositorios Spring Data e adapters das portas
+│   │   └── mapper     Mappers JPA/dominio
+│   ├── security       JWT, autorizacao e configuracao de seguranca
+│   └── config         Beans e compatibilidade de infraestrutura
 └── interfaces
-    ├── controllers REST, mappers e DTOs gerados pelo OpenAPI
+    └── rest
+        ├── controller Controllers REST
+        ├── request    Reservado para requests manuais
+        ├── response   Reservado para responses manuais
+        ├── mapper     Mappers REST/dominio
+        └── exception  Tratamento padronizado de erros REST
 ```
 
 Outras pastas importantes:
 
 ```text
 docs/openapi/openapi.yaml              Contrato REST OpenAPI
-docs/ddd/                              Documentacao DDD
-docs/security/                         Analise de vulnerabilidades
+docs/ddd/DDD_DOCUMENTATION.md          Documentacao DDD consolidada
+docs/ddd/EVENT_STORMING.md             Event Storming consolidado
+docs/security/SECURITY_SCAN_GUIDE.md   Guia de scans de seguranca
+docs/security/SECURITY_REPORT.md       Relatorio de seguranca
+docs/delivery/DELIVERY_DOCUMENT.md     Documento de entrega FIAP
 src/main/resources/db/migration        Migrations Flyway
 src/test/java                          Testes unitarios e integracao
-frontend/                              Frontend Vue 3 demonstrativo
+frontend/src/pages                     Paginas do frontend Vue 3 demonstrativo
+frontend/src/styles/main.css           Estilos globais do frontend
 ```
 
 ## DDD Aplicado
@@ -483,11 +507,11 @@ target/dependency-check
 Documento de apoio:
 
 ```text
-SECURITY_REPORT.md
+docs/security/SECURITY_REPORT.md
 ```
 
-O arquivo `SECURITY_REPORT.md` e um modelo para registrar a execucao real do scan. Nao preencher vulnerabilidades sem
-evidencia gerada pela ferramenta.
+O arquivo `docs/security/SECURITY_REPORT.md` registra a execucao dos scans. Novos achados devem ser atualizados apenas
+com evidencia gerada pela ferramenta.
 
 ## Decisoes Tecnicas
 

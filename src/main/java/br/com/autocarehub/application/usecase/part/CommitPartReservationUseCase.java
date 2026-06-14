@@ -1,9 +1,9 @@
 package br.com.autocarehub.application.usecase.part;
 
-import br.com.autocarehub.application.ResourceNotFoundException;
-import br.com.autocarehub.application.repository.PartRepository;
-import br.com.autocarehub.application.repository.StockMovementRepository;
-import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.StockMovementRepository;
+import br.com.autocarehub.domain.model.Part;
 import java.util.UUID;
 
 public class CommitPartReservationUseCase {

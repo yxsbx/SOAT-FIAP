@@ -1,0 +1,106 @@
+package br.com.autocarehub.domain.model;
+
+import br.com.autocarehub.domain.exception.DomainException;
+
+import br.com.autocarehub.domain.valueobject.Plate;
+import br.com.autocarehub.domain.service.DomainValidation;
+
+import java.util.Objects;
+import java.util.UUID;
+
+public class Vehicle {
+
+  private final UUID id;
+  private final UUID customerId;
+  private Plate plate;
+  private String brand;
+  private String model;
+  private int year;
+  private int mileage;
+  private boolean active;
+
+  public Vehicle(UUID customerId, Plate plate, String brand, String model, int year, int mileage) {
+    this(UUID.randomUUID(), customerId, plate, brand, model, year, mileage, true);
+  }
+
+  public Vehicle(
+      UUID id,
+      UUID customerId,
+      Plate plate,
+      String brand,
+      String model,
+      int year,
+      int mileage,
+      boolean active) {
+    this.id = Objects.requireNonNull(id, "id is required");
+    this.customerId = Objects.requireNonNull(customerId, "customerId is required");
+    this.plate = Objects.requireNonNull(plate, "plate is required");
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
+    this.model = DomainValidation.requireText(model, "Model is required", 80);
+    this.year = DomainValidation.requireVehicleYear(year);
+    this.mileage = requireMileage(mileage);
+    this.active = active;
+  }
+
+  private static int requireMileage(int value) {
+    if (value < 0) {
+      throw new DomainException("Mileage cannot be negative");
+    }
+    return value;
+  }
+
+  public void update(Plate plate, String brand, String model, int year, int mileage) {
+    this.plate = Objects.requireNonNull(plate, "plate is required");
+    this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
+    this.model = DomainValidation.requireText(model, "Model is required", 80);
+    this.year = DomainValidation.requireVehicleYear(year);
+    this.mileage = requireMileage(mileage);
+  }
+
+  public void updateMileage(int mileage) {
+    if (mileage < this.mileage) {
+      throw new DomainException("Mileage cannot decrease");
+    }
+    this.mileage = requireMileage(mileage);
+  }
+
+  public void activate() {
+    this.active = true;
+  }
+
+  public void deactivate() {
+    this.active = false;
+  }
+
+  public UUID id() {
+    return id;
+  }
+
+  public UUID customerId() {
+    return customerId;
+  }
+
+  public Plate plate() {
+    return plate;
+  }
+
+  public String brand() {
+    return brand;
+  }
+
+  public String model() {
+    return model;
+  }
+
+  public int year() {
+    return year;
+  }
+
+  public int mileage() {
+    return mileage;
+  }
+
+  public boolean active() {
+    return active;
+  }
+}

@@ -1,14 +1,14 @@
 package br.com.autocarehub.infrastructure.config;
 
-import br.com.autocarehub.application.repository.CustomerRepository;
-import br.com.autocarehub.application.repository.DemoLeadRepository;
-import br.com.autocarehub.application.repository.PartRepository;
-import br.com.autocarehub.application.repository.ServiceOrderRepository;
-import br.com.autocarehub.application.repository.StockMovementRepository;
-import br.com.autocarehub.application.repository.UserPreferenceRepository;
-import br.com.autocarehub.application.repository.UserRepository;
-import br.com.autocarehub.application.repository.VehicleRepository;
-import br.com.autocarehub.application.repository.WorkshopServiceRepository;
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.DemoLeadRepository;
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.application.port.out.StockMovementRepository;
+import br.com.autocarehub.application.port.out.UserPreferenceRepository;
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.application.port.out.VehicleRepository;
+import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
 import br.com.autocarehub.application.usecase.auth.LoginUseCase;
 import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.DeleteCustomerUseCase;

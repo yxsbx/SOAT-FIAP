@@ -1,6 +1,6 @@
 package br.com.autocarehub.application.usecase.user;
 
-import br.com.autocarehub.application.repository.UserPreferenceRepository;
+import br.com.autocarehub.application.port.out.UserPreferenceRepository;
 import java.util.UUID;
 
 public class SaveUserPreferenceUseCase {

@@ -1,17 +1,17 @@
-package br.com.autocarehub.interfaces.rest.impl.mapper;
+package br.com.autocarehub.interfaces.rest.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
-import br.com.autocarehub.domain.Address;
-import br.com.autocarehub.domain.Customer;
-import br.com.autocarehub.domain.Document;
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.Part;
-import br.com.autocarehub.domain.Plate;
-import br.com.autocarehub.domain.ServiceOrder;
-import br.com.autocarehub.domain.Vehicle;
-import br.com.autocarehub.domain.WorkshopService;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.model.Customer;
+import br.com.autocarehub.domain.valueobject.Document;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.valueobject.Plate;
+import br.com.autocarehub.domain.model.ServiceOrder;
+import br.com.autocarehub.domain.model.Vehicle;
+import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatusHistoryItem;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingResponse;
 import java.util.List;

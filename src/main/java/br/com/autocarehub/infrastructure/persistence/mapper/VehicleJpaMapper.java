@@ -1,7 +1,7 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.Plate;
-import br.com.autocarehub.domain.Vehicle;
+import br.com.autocarehub.domain.valueobject.Plate;
+import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.infrastructure.persistence.entity.VehicleJpaEntity;
 
 public final class VehicleJpaMapper {

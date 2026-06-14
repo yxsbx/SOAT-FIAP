@@ -1,8 +1,8 @@
 package br.com.autocarehub.application.usecase.part;
 
-import br.com.autocarehub.application.repository.PartRepository;
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.Part;
 
 public class CreatePartUseCase {
 

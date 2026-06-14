@@ -3,11 +3,11 @@ package br.com.autocarehub.application.usecase.customer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import br.com.autocarehub.application.ApplicationException;
-import br.com.autocarehub.application.repository.CustomerRepository;
-import br.com.autocarehub.domain.Address;
-import br.com.autocarehub.domain.Customer;
-import br.com.autocarehub.domain.Document;
+import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.model.Customer;
+import br.com.autocarehub.domain.valueobject.Document;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;

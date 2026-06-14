@@ -1,8 +1,8 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
-import br.com.autocarehub.application.ResourceNotFoundException;
-import br.com.autocarehub.application.repository.VehicleRepository;
-import br.com.autocarehub.domain.Vehicle;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.application.port.out.VehicleRepository;
+import br.com.autocarehub.domain.model.Vehicle;
 import java.util.UUID;
 
 public class FindVehicleUseCase {

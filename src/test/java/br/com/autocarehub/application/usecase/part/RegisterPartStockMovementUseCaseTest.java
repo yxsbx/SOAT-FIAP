@@ -3,11 +3,11 @@ package br.com.autocarehub.application.usecase.part;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import br.com.autocarehub.application.repository.PartRepository;
-import br.com.autocarehub.application.repository.StockMovementRepository;
-import br.com.autocarehub.domain.DomainException;
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.StockMovementRepository;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.Part;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

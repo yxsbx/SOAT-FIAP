@@ -1,7 +1,7 @@
 package br.com.autocarehub.application.usecase.demo;
 
-import br.com.autocarehub.application.repository.DemoLeadRepository;
-import br.com.autocarehub.domain.DemoLead;
+import br.com.autocarehub.application.port.out.DemoLeadRepository;
+import br.com.autocarehub.domain.model.DemoLead;
 import java.util.List;
 
 public class ListDemoLeadsUseCase {

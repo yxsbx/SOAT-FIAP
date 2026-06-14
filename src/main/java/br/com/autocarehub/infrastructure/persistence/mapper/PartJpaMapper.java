@@ -1,7 +1,7 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.Part;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.infrastructure.persistence.entity.PartJpaEntity;
 
 public final class PartJpaMapper {

@@ -1,12 +1,14 @@
 package br.com.autocarehub.application.usecase.user;
 
-import br.com.autocarehub.application.ApplicationException;
-import br.com.autocarehub.application.repository.UserRepository;
-import br.com.autocarehub.domain.User;
-import br.com.autocarehub.domain.UserRole;
+import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.domain.model.User;
+import br.com.autocarehub.domain.enums.UserRole;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static java.util.Objects.requireNonNull;
 
 public class CreateUserUseCase {
 
@@ -29,7 +31,7 @@ public class CreateUserUseCase {
         new User(
             UUID.randomUUID(),
             command.username(),
-            passwordEncoder.encode(command.password()),
+            requireNonNull(passwordEncoder.encode(command.password())),
             UserRole.valueOf(command.role()),
             command.customerId(),
             command.fullName(),

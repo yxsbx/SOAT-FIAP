@@ -1,8 +1,8 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.Money;
-import br.com.autocarehub.domain.ServiceOrder;
-import br.com.autocarehub.domain.ServiceOrderStatus;
+import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.model.ServiceOrder;
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderPartJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderServiceJpaEntity;

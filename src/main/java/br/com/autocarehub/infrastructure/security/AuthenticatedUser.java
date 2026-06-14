@@ -1,6 +1,6 @@
 package br.com.autocarehub.infrastructure.security;
 
-import br.com.autocarehub.domain.User;
+import br.com.autocarehub.domain.model.User;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;

@@ -1,10 +1,10 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import br.com.autocarehub.application.ResourceNotFoundException;
-import br.com.autocarehub.application.repository.PartRepository;
-import br.com.autocarehub.application.repository.ServiceOrderRepository;
-import br.com.autocarehub.domain.Part;
-import br.com.autocarehub.domain.ServiceOrder;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.model.ServiceOrder;
 import java.util.UUID;
 
 public class AddPartToServiceOrderUseCase {

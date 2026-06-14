@@ -1,9 +1,9 @@
 package br.com.autocarehub.application.usecase.customer;
 
-import br.com.autocarehub.application.ResourceNotFoundException;
-import br.com.autocarehub.application.repository.CustomerRepository;
-import br.com.autocarehub.domain.Address;
-import br.com.autocarehub.domain.Customer;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.model.Customer;
 import java.util.UUID;
 
 public class UpdateCustomerUseCase {
