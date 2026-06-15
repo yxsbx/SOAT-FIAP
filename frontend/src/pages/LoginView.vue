@@ -7,7 +7,7 @@ import {useAuthStore} from '@/stores/auth';
 const router = useRouter();
 const auth = useAuthStore();
 const username = ref('master@autocarehub.com');
-const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || '';
+const demoPassword = import.meta.env.VITE_DEMO_PASSWORD || 'autocare123';
 const password = ref(demoPassword);
 const loading = ref(false);
 const error = ref('');
@@ -103,6 +103,7 @@ async function submit() {
         <section class="login-copy">
           <h1>Acesse sua área</h1>
           <p>Use login manual ou escolha um perfil acadêmico de demonstração.</p>
+          <p class="demo-password-hint">Senha demo: <strong>{{ demoPassword }}</strong></p>
 
           <form class="login-form" @submit.prevent="submit">
             <label>

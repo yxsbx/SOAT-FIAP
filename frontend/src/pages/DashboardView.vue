@@ -55,8 +55,20 @@ const vehicleModalOpen = ref(false);
 const partModalOpen = ref(false);
 const serviceModalOpen = ref(false);
 const storeQuoteModalOpen = ref(false);
+const orderModalOpen = ref(false);
+const confirmDialogOpen = ref(false);
+const confirmDialog = reactive({
+  title: '',
+  message: '',
+  confirmLabel: 'Confirmar',
+  cancelLabel: 'Cancelar',
+  tone: 'default',
+  onConfirm: null,
+});
 const selectedRecord = ref(null);
 const selectedRecordType = ref('');
+const userFormInitial = ref('');
+const accountInitial = ref('');
 const modalDraft = reactive({
   customer: {},
   vehicle: {
@@ -158,6 +170,75 @@ function profileTypeLabel(profileType) {
 
 function companyTypeLabel(companyType) {
   return companyTypeLabels[companyType] || companyType || 'Sem empresa vinculada';
+}
+
+const detailFieldLabels = {
+  fullName: 'Nome',
+  username: 'E-mail',
+  role: 'Permissão',
+  profileType: 'Perfil',
+  companyName: 'Empresa',
+  companyType: 'Tipo de empresa',
+  employeeSubRole: 'Função',
+  active: 'Status',
+  name: 'Nome',
+  email: 'E-mail',
+  phone: 'Telefone',
+  document: 'Documento',
+  status: 'Status',
+  totalAmount: 'Valor total',
+};
+
+const hiddenDetailFields = new Set([
+  'id',
+  'customerId',
+  'vehicleId',
+  'password',
+  'passwordHash',
+  'createdBy',
+  'updatedBy',
+]);
+
+function displayRecordValue(key, value) {
+  if (key === 'role') {
+    return roleDisplayLabel(value);
+  }
+  if (key === 'profileType') {
+    return profileTypeLabel(value);
+  }
+  if (key === 'companyType') {
+    return companyTypeLabel(value);
+  }
+  if (key === 'employeeSubRole') {
+    return employeeSubRoleLabels[value] || value;
+  }
+  if (key === 'active') {
+    return value === false ? 'Inativo' : 'Ativo';
+  }
+  if (key === 'status') {
+    return statusLabels[value] || value;
+  }
+  if (key === 'totalAmount') {
+    return `R$ ${money(value)}`;
+  }
+  if (Array.isArray(value)) {
+    return value.length ? `${value.length} registro(s)` : '';
+  }
+  if (typeof value === 'object') {
+    return '';
+  }
+  return value;
+}
+
+function displayRecordEntries(record) {
+  return Object.entries(record || {})
+      .filter(([key, value]) => !hiddenDetailFields.has(key) && value !== null && value !== undefined && value !== '')
+      .map(([key, value]) => ({
+        key,
+        label: detailFieldLabels[key] || key,
+        value: displayRecordValue(key, value),
+      }))
+      .filter((entry) => entry.value !== '');
 }
 
 const homePreferences = reactive({
@@ -551,10 +632,10 @@ const availableTabs = computed(() => {
     },
     {
       id: 'users',
-      label: 'Conta',
-      description: 'Dados do usuário e permissões',
+      label: 'Contas',
+      description: 'Contas, perfis e permissões',
       icon: UserCog,
-      roles: ['ADMIN', 'EMPLOYEE', 'CUSTOMER'],
+      roles: ['ADMIN'],
     },
     {
       id: 'customer-partners',
@@ -631,6 +712,45 @@ const availableTabs = computed(() => {
 
 const availableTabIds = computed(() => new Set(availableTabs.value.map((tab) => tab.id)));
 
+const accountDirty = computed(() =>
+    (forms.account.fullName || '') !== (accountInitial.value || ''),
+);
+
+const passwordDirty = computed(() =>
+    Boolean(forms.password.currentPassword || forms.password.newPassword),
+);
+
+function comparableUserForm() {
+  return JSON.stringify({
+    id: forms.user.id || '',
+    fullName: forms.user.fullName || '',
+    username: forms.user.username || '',
+    password: forms.user.password || '',
+    role: forms.user.role || '',
+    profileType: forms.user.profileType || '',
+    companyName: forms.user.companyName || '',
+    companyType: forms.user.companyType || '',
+    employeeSubRole: forms.user.employeeSubRole || '',
+    permissions: [...(forms.user.permissions || [])].sort(),
+    customerId: forms.user.customerId || '',
+    active: forms.user.active !== false,
+  });
+}
+
+const userFormDirty = computed(() => comparableUserForm() !== userFormInitial.value);
+
+const homePreferenceDirty = computed(() =>
+    JSON.stringify({
+      userWidgets: [...homePreferences.userWidgets].sort(),
+      globalWidgets: [...homePreferences.globalWidgets].sort(),
+      showAlertsOnHome: homePreferences.showAlertsOnHome,
+    }) !== JSON.stringify({
+      userWidgets: [...homePreferenceDraft.userWidgets].sort(),
+      globalWidgets: [...homePreferenceDraft.globalWidgets].sort(),
+      showAlertsOnHome: homePreferenceDraft.showAlertsOnHome,
+    }),
+);
+
 const userInitials = computed(() => {
   const fallback = currentUser.value?.fullName || auth.user?.username || 'Usuário AutoCare';
   const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
@@ -691,6 +811,20 @@ const selectedOrderService = computed(() =>
 
 const selectedOrderPart = computed(() =>
     data.parts.find((part) => part.id === forms.orderWizard.partId),
+);
+
+const orderWizardDirty = computed(() =>
+    forms.orderWizard.step > 0
+    || Boolean(
+        forms.orderWizard.customerId
+        || forms.orderWizard.vehicleId
+        || forms.orderWizard.defects
+        || forms.orderWizard.initialValueNotes
+        || forms.orderWizard.serviceId
+        || forms.orderWizard.partId
+        || forms.orderWizard.customer.name
+        || forms.orderWizard.vehicle.plate,
+    ),
 );
 
 const estimatedOrderTotal = computed(() => {
@@ -1847,6 +1981,10 @@ function isHomeWidgetSelected(widgetId, scope = 'user') {
 }
 
 async function saveHomePreferenceDraft() {
+  if (!homePreferenceDirty.value) {
+    return;
+  }
+
   const nextUserWidgets = sanitizeHomeWidgets(homePreferenceDraft.userWidgets);
   const nextGlobalWidgets = sanitizeHomeWidgets(homePreferenceDraft.globalWidgets);
   const nextShowAlertsOnHome = Boolean(homePreferenceDraft.showAlertsOnHome);
@@ -1870,9 +2008,12 @@ async function saveHomePreferenceDraft() {
   }
 }
 
-async function loadDashboard() {
+async function loadDashboard(options = {}) {
+  const {silent = false} = options;
   loading.value = true;
-  resetMessage();
+  if (!silent) {
+    resetMessage();
+  }
 
   try {
     if (auth.role === 'CUSTOMER' && auth.customerId) {
@@ -1892,6 +2033,7 @@ async function loadDashboard() {
       data.users = partners.status === 'fulfilled' ? listItems(partners.value) : [];
       if (currentUser.value) {
         forms.account.fullName = currentUser.value.fullName;
+        accountInitial.value = currentUser.value.fullName || '';
       }
 
       const failed = [serviceOrders, vehicles, user, parts, partners].filter((request) => request.status === 'rejected');
@@ -1927,6 +2069,7 @@ async function loadDashboard() {
     currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
     if (currentUser.value) {
       forms.account.fullName = currentUser.value.fullName;
+      accountInitial.value = currentUser.value.fullName || '';
     }
     data.users = users.status === 'fulfilled' && users.value ? listItems(users.value) : [];
     data.customers =
@@ -1965,8 +2108,8 @@ async function runAction(action, message) {
 
   try {
     await action();
+    await loadDashboard({silent: true});
     showSuccess(message);
-    await loadDashboard();
   } catch (err) {
     showError(err.message || 'Não foi possível concluir a operação.');
   } finally {
@@ -2010,6 +2153,16 @@ function resetOrderWizard() {
       mileage: 0,
     },
   });
+}
+
+function openOrderModal() {
+  resetOrderWizard();
+  orderModalOpen.value = true;
+}
+
+function closeOrderModal() {
+  orderModalOpen.value = false;
+  resetOrderWizard();
 }
 
 function selectOrderScenario(scenario) {
@@ -2093,14 +2246,14 @@ async function createOrderFromWizard(createBudgetNow) {
     forms.orderAction.serviceOrderId = order.id;
     if (createBudgetNow) {
       pagination.serviceOrders.status = 'WAITING_APPROVAL';
-      showSuccess('Ordem salva e orçamento gerado.');
     } else {
       pagination.serviceOrders.status = 'RECEIVED';
-      showSuccess('Ordem salva como orçamento pendente.');
     }
 
+    orderModalOpen.value = false;
     resetOrderWizard();
-    await loadDashboard();
+    await loadDashboard({silent: true});
+    showSuccess(createBudgetNow ? 'Ordem salva e orçamento gerado.' : 'Ordem salva como orçamento pendente.');
   } catch (err) {
     showError(err.message || 'Não foi possível criar a ordem.');
   } finally {
@@ -2828,10 +2981,7 @@ function openRecord(type, record) {
   }
 }
 
-function closeRecord(force = false) {
-  if (!force && detailModalDirty.value && !window.confirm('Existem alterações não salvas. Deseja fechar mesmo assim?')) {
-    return;
-  }
+function closeRecord() {
   selectedRecord.value = null;
   selectedRecordType.value = '';
   Object.assign(modalDraft.customer, {});
@@ -2960,6 +3110,7 @@ function editUser(user) {
     customerId: user.customerId || '',
     active: user.active,
   });
+  userFormInitial.value = comparableUserForm();
   userModalOpen.value = true;
 }
 
@@ -2978,6 +3129,7 @@ function resetUserForm() {
     customerId: '',
     active: true,
   });
+  userFormInitial.value = comparableUserForm();
 }
 
 function openCreateUserModal() {
@@ -2994,6 +3146,7 @@ function openCreatePartnerAdminModal(profileType = 'WORKSHOP_ADMIN') {
     employeeSubRole: '',
     permissions: ['VIEW_BILLING', 'MANAGE_STOCK', 'CREATE_BUDGET', 'EDIT_EMPLOYEES', 'VIEW_STATS'],
   });
+  userFormInitial.value = comparableUserForm();
   userModalOpen.value = true;
 }
 
@@ -3006,6 +3159,7 @@ function openCreateWorkshopEmployeeModal() {
     employeeSubRole: 'UNSPECIFIED',
     permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
   });
+  userFormInitial.value = comparableUserForm();
   userModalOpen.value = true;
 }
 
@@ -3018,6 +3172,7 @@ function openCreateStoreEmployeeModal() {
     employeeSubRole: 'ATTENDANT',
     permissions: ['MANAGE_STOCK', 'CREATE_BUDGET'],
   });
+  userFormInitial.value = comparableUserForm();
   userModalOpen.value = true;
 }
 
@@ -3074,6 +3229,10 @@ function toggleUserPermission(permissionId) {
 }
 
 function saveUser() {
+  if (forms.user.id && !userFormDirty.value) {
+    return Promise.resolve();
+  }
+
   const isEmployee = ['WORKSHOP_EMPLOYEE', 'PARTS_STORE_EMPLOYEE'].includes(forms.user.profileType);
   const successMessage = forms.user.id
       ? (isEmployee ? 'Funcionário atualizado.' : 'Conta atualizada.')
@@ -3113,12 +3272,20 @@ function saveStoreEmployee() {
 }
 
 function saveAccount() {
+  if (!accountDirty.value) {
+    return Promise.resolve();
+  }
+
   return runAction(async () => {
     currentUser.value = await resources.updateCurrentUser({fullName: forms.account.fullName});
   }, 'Dados do usuário atualizados.');
 }
 
 function changePassword() {
+  if (!passwordDirty.value) {
+    return Promise.resolve();
+  }
+
   return runAction(async () => {
     await resources.changeCurrentPassword(forms.password);
     forms.password.currentPassword = '';
@@ -3149,21 +3316,51 @@ function selectSearchResult(result) {
   globalSearch.value = '';
 }
 
+function openConfirmDialog(options) {
+  Object.assign(confirmDialog, {
+    title: options.title || 'Confirmar ação',
+    message: options.message || 'Deseja continuar?',
+    confirmLabel: options.confirmLabel || 'Confirmar',
+    cancelLabel: options.cancelLabel || 'Cancelar',
+    tone: options.tone || 'default',
+    onConfirm: options.onConfirm || null,
+  });
+  confirmDialogOpen.value = true;
+}
+
+function closeConfirmDialog() {
+  confirmDialogOpen.value = false;
+  confirmDialog.onConfirm = null;
+}
+
+function confirmDialogAction() {
+  const action = confirmDialog.onConfirm;
+  closeConfirmDialog();
+  if (typeof action === 'function') {
+    action();
+  }
+}
+
 function showProfileAction(action) {
   profileMenuOpen.value = false;
-  if (action === 'Editar informações do usuário') {
-    activeTab.value = 'users';
+  if (['Editar informações do usuário', 'Alterar senha', 'Minha conta'].includes(action)) {
+    activeTab.value = 'account';
     return;
-  }
-  if (action === 'Alterar senha') {
-    activeTab.value = 'users';
   }
 }
 
 function logout() {
   profileMenuOpen.value = false;
-  auth.logout();
-  router.push({name: 'login'});
+  openConfirmDialog({
+    title: 'Sair da conta?',
+    message: 'Você será direcionado para a tela de login.',
+    confirmLabel: 'Sair',
+    tone: 'danger',
+    onConfirm: () => {
+      auth.logout();
+      router.push({name: 'login'});
+    },
+  });
 }
 
 onMounted(async () => {
@@ -3233,9 +3430,9 @@ onMounted(async () => {
               {{ userInitials }}
             </button>
             <div v-if="profileMenuOpen" class="profile-popover" role="menu">
-              <button role="menuitem" type="button" @click="showProfileAction('Editar informações do usuário')">
+              <button role="menuitem" type="button" @click="showProfileAction('Minha conta')">
                 <UserCog :size="17"/>
-                <span>Editar informações do usuário</span>
+                <span>Minha conta</span>
               </button>
               <button role="menuitem" type="button" @click="showProfileAction('Alterar senha')">
                 <KeyRound :size="17"/>
@@ -3435,8 +3632,8 @@ onMounted(async () => {
             </div>
             <div class="home-settings-actions">
               <button
-                  :disabled="homePreferencesSaving"
-                  class="primary-button"
+                  :disabled="homePreferencesSaving || !homePreferenceDirty"
+                  class="primary-button home-save-button"
                   type="button"
                   @click="saveHomePreferenceDraft"
               >
@@ -4611,27 +4808,43 @@ onMounted(async () => {
           </section>
         </section>
 
-        <section v-if="activeTab === 'users'" class="screen-stack">
-          <section v-if="!isMasterAdmin" class="section-block">
+        <section v-if="activeTab === 'account'" class="screen-stack account-screen">
+          <section class="section-block account-profile-card">
             <div class="section-heading">
               <h2>Minha conta</h2>
               <span>{{ currentUser?.username }}</span>
             </div>
-            <form class="form-grid compact" @submit.prevent="saveAccount">
-              <input v-model="forms.account.fullName" placeholder="Nome completo" required/>
-              <button :disabled="saving" class="primary-button" type="submit">Salvar dados</button>
+            <form class="form-grid account-form" @submit.prevent="saveAccount">
+              <label class="form-field">
+                <span>Nome completo</span>
+                <input v-model="forms.account.fullName" placeholder="Nome completo" required/>
+              </label>
+              <label class="form-field">
+                <span>E-mail de login</span>
+                <input :value="currentUser?.username || auth.user?.username || ''" disabled/>
+              </label>
+              <button :disabled="saving || !accountDirty" class="primary-button account-save-button" type="submit">
+                Salvar dados
+              </button>
             </form>
-            <form class="form-grid compact" @submit.prevent="changePassword">
-              <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
-              <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required
-                     type="password"/>
-              <button :disabled="saving" class="secondary-button" type="submit">Alterar senha</button>
+            <form class="form-grid account-form" @submit.prevent="changePassword">
+              <label class="form-field">
+                <span>Senha atual</span>
+                <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
+              </label>
+              <label class="form-field">
+                <span>Nova senha</span>
+                <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required type="password"/>
+              </label>
+              <button :disabled="saving || !passwordDirty" class="secondary-button" type="submit">Alterar senha</button>
             </form>
           </section>
+        </section>
 
+        <section v-if="activeTab === 'users'" class="screen-stack">
           <section v-if="auth.role === 'ADMIN'" class="section-block">
             <div class="section-heading">
-              <h2>Contas do sistema</h2>
+              <h2>Contas</h2>
               <span>{{ listTotal('users') }} contas</span>
               <button class="primary-button" type="button" @click="openCreateUserModal">
                 <UserPlus :size="18"/>
@@ -4985,12 +5198,25 @@ onMounted(async () => {
             </article>
           </section>
 
-          <section v-if="auth.role !== 'CUSTOMER' && can('CREATE_ORDER')" class="section-block">
+          <section v-if="auth.role !== 'CUSTOMER' && can('CREATE_ORDER')" class="section-block action-hero">
             <div class="section-heading">
-              <h2>Nova ordem de serviço</h2>
-              <span>{{ orderSteps[forms.orderWizard.step] }}</span>
+              <h2>Ordens de serviço</h2>
+              <span>Crie uma nova OS em um fluxo guiado.</span>
             </div>
+            <button class="primary-button action-hero-button" type="button" @click="openOrderModal">
+              <Plus :size="18"/>
+              <span>Criar nova ordem de serviço</span>
+            </button>
+          </section>
 
+          <AppModal
+              :dirty="orderWizardDirty"
+              :open="orderModalOpen"
+              :subtitle="orderSteps[forms.orderWizard.step]"
+              title="Criar nova ordem de serviço"
+              @close="closeOrderModal"
+          >
+            <div class="order-wizard-modal">
             <div aria-label="Etapas da ordem" class="order-stepper">
               <button
                   v-for="(step, index) in orderSteps"
@@ -5185,65 +5411,8 @@ onMounted(async () => {
                 Avançar
               </button>
             </div>
-          </section>
-
-          <section v-if="auth.role !== 'CUSTOMER' && (can('EDIT_ORDER') || can('CREATE_BUDGET'))" class="section-block">
-            <div class="section-heading">
-              <h2>Orçamento e execução</h2>
-              <span>Criar agora ou depois</span>
             </div>
-            <form class="form-grid" @submit.prevent="updateOrderStatus">
-              <select v-model="forms.orderAction.serviceOrderId" required>
-                <option value="">Selecione a ordem</option>
-                <option v-for="order in data.serviceOrders" :key="order.id" :value="order.id">
-                  {{ orderCustomerName(order) }} · {{ orderVehicleLabel(order) }} · {{ orderPlate(order) }} · {{ statusLabels[order.status] || order.status }}
-                </option>
-              </select>
-              <select v-model="forms.orderAction.status">
-                <option v-for="status in statuses" :key="status" :value="status">
-                  {{ statusLabels[status] || status }}
-                </option>
-              </select>
-              <button :disabled="saving" class="primary-button" type="submit">Atualizar status</button>
-              <button
-                  :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
-                  @click="generateBudget"
-              >
-                Gerar orçamento
-              </button>
-              <button
-                  :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="button"
-                  @click="approveBudget"
-              >
-                Aprovar orçamento
-              </button>
-            </form>
-            <form class="form-grid compact" @submit.prevent="addServiceToOrder">
-              <select v-model="forms.orderAction.serviceId" required>
-                <option value="">Serviço</option>
-                <option v-for="service in data.services" :key="service.id" :value="service.id">
-                  {{ service.name }}
-                </option>
-              </select>
-              <input
-                  v-model.number="forms.orderAction.serviceQuantity" min="1" placeholder="Qtd." required
-                  type="number"
-              />
-              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="submit">
-                Adicionar serviço
-              </button>
-            </form>
-            <form class="form-grid compact" @submit.prevent="addPartToOrder">
-              <select v-model="forms.orderAction.partId" required>
-                <option value="">Peça</option>
-                <option v-for="part in data.parts" :key="part.id" :value="part.id">{{ part.name }}</option>
-              </select>
-              <input v-model.number="forms.orderAction.partQuantity" min="1" placeholder="Qtd." required type="number"/>
-              <button :disabled="saving || !forms.orderAction.serviceOrderId" class="secondary-button" type="submit">
-                Adicionar peça
-              </button>
-            </form>
-          </section>
+          </AppModal>
 
           <section class="section-block">
             <div class="section-heading">
@@ -5669,9 +5838,9 @@ onMounted(async () => {
                 <option value="UNSPECIFIED">Funcionário sem especificação</option>
               </select>
             </label>
-            <label class="form-field">
-              <span>ID do cliente</span>
-              <input v-model="forms.user.customerId" placeholder="Usado apenas em conta de cliente"/>
+            <label v-if="forms.user.profileType === 'CUSTOMER_OWNER'" class="form-field">
+              <span>Cliente vinculado</span>
+              <input v-model="forms.user.customerId" placeholder="Informe apenas se já existir vínculo com cliente"/>
             </label>
             <label class="check-row">
               <input v-model="forms.user.active" type="checkbox"/>
@@ -5692,7 +5861,7 @@ onMounted(async () => {
                 <span>{{ permission.label }}</span>
               </label>
             </div>
-            <button :disabled="saving" class="primary-button modal-save" type="submit">
+            <button :disabled="saving || (Boolean(forms.user.id) && !userFormDirty)" class="primary-button modal-save" type="submit">
               <UserPlus :size="18"/>
               <span>{{ forms.user.id ? (userModalIsEmployee ? 'Salvar funcionário' : 'Salvar conta') : (userModalIsEmployee ? 'Criar funcionário' : 'Criar conta') }}</span>
             </button>
@@ -5849,19 +6018,31 @@ onMounted(async () => {
                 <button :disabled="!detailModalDirty || saving" class="primary-button" type="submit">
                   Salvar ajustes
                 </button>
-                <button :disabled="saving" class="secondary-button" type="button" @click="generateBudgetFromSelectedOrder">
+                <button
+                    v-if="!isCustomerProfile && can('CREATE_BUDGET')"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="generateBudgetFromSelectedOrder"
+                >
                   Gerar orçamento
                 </button>
-                <button :disabled="saving" class="secondary-button" type="button" @click="approveBudgetFromSelectedOrder">
+                <button
+                    v-if="!isCustomerProfile"
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="approveBudgetFromSelectedOrder"
+                >
                   Aprovar orçamento
                 </button>
               </div>
             </form>
 
             <dl v-else>
-              <template v-for="(value, key) in selectedRecord" :key="key">
-                <dt>{{ key }}</dt>
-                <dd>{{ typeof value === 'object' ? JSON.stringify(value) : value }}</dd>
+              <template v-for="entry in displayRecordEntries(selectedRecord)" :key="entry.key">
+                <dt>{{ entry.label }}</dt>
+                <dd>{{ entry.value }}</dd>
               </template>
             </dl>
 
@@ -5891,6 +6072,30 @@ onMounted(async () => {
                 Contatar oficina
               </button>
             </div>
+        </AppModal>
+
+        <AppModal
+            :open="confirmDialogOpen"
+            :title="confirmDialog.title"
+            subtitle="Confirmação"
+            @close="closeConfirmDialog"
+        >
+          <div class="confirmation-content" :class="`tone-${confirmDialog.tone}`">
+            <p>{{ confirmDialog.message }}</p>
+            <div class="confirmation-actions">
+              <button class="secondary-button" type="button" @click="closeConfirmDialog">
+                {{ confirmDialog.cancelLabel }}
+              </button>
+              <button
+                  class="primary-button"
+                  :class="{ 'danger-action': confirmDialog.tone === 'danger' }"
+                  type="button"
+                  @click="confirmDialogAction"
+              >
+                {{ confirmDialog.confirmLabel }}
+              </button>
+            </div>
+          </div>
         </AppModal>
 
         <div v-if="loading" class="loading-bar">Carregando dados...</div>

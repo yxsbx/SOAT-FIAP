@@ -28,7 +28,7 @@ AutoCare Hub.
 
 ## 5. Resumo da Solucao
 
-O AutoCare Hub e um MVP de backend monolitico para gestao de oficina mecanica, desenvolvido para o Tech Challenge FIAP. A API centraliza cadastro de clientes, veiculos, servicos, pecas e insumos, controle de estoque, criacao de Ordens de Servico, geracao e aprovacao de orcamentos e acompanhamento da OS pelo cliente.
+O AutoCare Hub e um MVP de backend monolitico para gestao de oficina mecanica, desenvolvido para o Tech Challenge FIAP. A API centraliza cadastro de clientes, veículos, servicos, pecas e insumos, controle de estoque, criacao de Ordens de Servico, geracao e aprovacao de orcamentos e acompanhamento da OS pelo cliente.
 
 A solucao aplica arquitetura em camadas, DDD, APIs REST documentadas com Swagger/OpenAPI, autenticacao JWT, validacoes de CPF/CNPJ e placa, Flyway, PostgreSQL, Docker, testes automatizados e analise de vulnerabilidades.
 
@@ -127,11 +127,11 @@ A regra de 95% supera o criterio academico de 80%. Os testes de integracao depen
 ## 9. Funcionalidades Entregues
 
 - CRUD de clientes com validacao de CPF/CNPJ.
-- CRUD de veiculos com validacao de placa.
+- CRUD de veículos com validacao de placa.
 - CRUD de servicos da oficina.
 - CRUD de pecas e insumos.
 - Controle de estoque com entrada, saida, reserva, liberacao e baixa.
-- Criacao de Ordem de Servico com cliente, veiculo, servicos e pecas.
+- Criacao de Ordem de Servico com cliente, veículo, servicos e pecas.
 - Geracao automatica de orcamento.
 - Aprovacao de orcamento.
 - Transicoes controladas de status da OS.

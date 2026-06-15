@@ -1,4 +1,5 @@
 <script setup>
+import {ref} from 'vue';
 import {X} from 'lucide-vue-next';
 
 const props = defineProps({
@@ -21,6 +22,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
+const confirmCloseOpen = ref(false);
 
 function requestClose() {
   if (confirmUnsaved()) {
@@ -29,7 +31,20 @@ function requestClose() {
 }
 
 function confirmUnsaved() {
-  return !props.dirty || window.confirm('Existem alterações não salvas. Deseja fechar mesmo assim?');
+  if (!props.dirty) {
+    return true;
+  }
+  confirmCloseOpen.value = true;
+  return false;
+}
+
+function cancelClose() {
+  confirmCloseOpen.value = false;
+}
+
+function confirmClose() {
+  confirmCloseOpen.value = false;
+  emit('close');
 }
 </script>
 
@@ -47,10 +62,21 @@ function confirmUnsaved() {
               <X :size="18" />
             </button>
           </header>
-          <slot />
+          <div class="app-modal-body">
+            <slot />
+          </div>
           <footer v-if="$slots.actions" class="app-modal-actions">
             <slot name="actions" />
           </footer>
+
+          <div v-if="confirmCloseOpen" class="modal-confirm-panel">
+            <strong>Descartar alterações?</strong>
+            <span>Existem alterações não salvas neste formulário.</span>
+            <div>
+              <button class="secondary-button" type="button" @click="cancelClose">Continuar editando</button>
+              <button class="primary-button danger-action" type="button" @click="confirmClose">Descartar</button>
+            </div>
+          </div>
         </section>
       </div>
     </Transition>
