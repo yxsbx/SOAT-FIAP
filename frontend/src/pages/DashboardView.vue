@@ -882,6 +882,61 @@ function orderBudgetStatus(order) {
   return 'Orçamento pendente';
 }
 
+function onlyDigits(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function hasSameDigits(value) {
+  return value.split('').every((digit) => digit === value[0]);
+}
+
+function cpfCheckDigit(value, length) {
+  const sum = value
+      .slice(0, length)
+      .split('')
+      .reduce((total, digit, index) => total + Number(digit) * (length + 1 - index), 0);
+  const remainder = sum % 11;
+  return remainder < 2 ? 0 : 11 - remainder;
+}
+
+function cnpjCheckDigit(value, weights) {
+  const sum = weights.reduce((total, weight, index) => total + Number(value[index]) * weight, 0);
+  const remainder = sum % 11;
+  return remainder < 2 ? 0 : 11 - remainder;
+}
+
+function isValidCpf(value) {
+  const document = onlyDigits(value);
+  return document.length === 11
+      && !hasSameDigits(document)
+      && cpfCheckDigit(document, 9) === Number(document[9])
+      && cpfCheckDigit(document, 10) === Number(document[10]);
+}
+
+function isValidCnpj(value) {
+  const document = onlyDigits(value);
+  const firstWeights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  const secondWeights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+  return document.length === 14
+      && !hasSameDigits(document)
+      && cnpjCheckDigit(document, firstWeights) === Number(document[12])
+      && cnpjCheckDigit(document, secondWeights) === Number(document[13]);
+}
+
+function isValidCustomerDocument(value) {
+  return isValidCpf(value) || isValidCnpj(value);
+}
+
+function canGenerateBudget(order) {
+  return Boolean(order?.id)
+      && !order.budgetGeneratedAt
+      && ['RECEIVED', 'IN_DIAGNOSIS'].includes(order.status);
+}
+
+function canApproveBudget(order) {
+  return Boolean(order?.id) && !order.approvedAt && order.status === 'WAITING_APPROVAL';
+}
+
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
@@ -2207,24 +2262,41 @@ async function createOrderFromWizard(createBudgetNow) {
       throw new Error('Selecione ao menos um serviço para criar a ordem.');
     }
 
-    let customer = selectedOrderCustomer.value;
-    if (isNewCustomerScenario.value) {
-      customer = await resources.createCustomer(forms.orderWizard.customer);
+    if (!isNewCustomerScenario.value && !selectedOrderCustomer.value?.id) {
+      throw new Error('Selecione um cliente para criar a ordem.');
     }
 
-    let vehicle = selectedOrderVehicle.value;
-    if (needsNewVehicle.value) {
-      vehicle = await resources.createVehicle({
-        ...forms.orderWizard.vehicle,
-        customerId: customer.id,
-        year: Number(forms.orderWizard.vehicle.year),
-        mileage: Number(forms.orderWizard.vehicle.mileage),
-      });
+    if (!needsNewVehicle.value && !selectedOrderVehicle.value?.id) {
+      throw new Error('Selecione um veículo para criar a ordem.');
+    }
+
+    const customer = isNewCustomerScenario.value
+        ? forms.orderWizard.customer
+        : await resources.customer(selectedOrderCustomer.value.id);
+    const customerDocument = customer?.document;
+
+    if (!isValidCustomerDocument(customerDocument)) {
+      throw new Error('Informe um CPF ou CNPJ válido para criar a ordem.');
     }
 
     const order = await resources.createServiceOrder({
-      customerDocument: customer.document,
-      vehicleId: vehicle.id,
+      customerDocument: onlyDigits(customerDocument),
+      customer: isNewCustomerScenario.value
+          ? {
+            name: customer.name,
+            phone: customer.phone,
+            email: customer.email,
+            address: customer.address,
+          }
+          : undefined,
+      vehicleId: needsNewVehicle.value ? undefined : selectedOrderVehicle.value.id,
+      vehicle: needsNewVehicle.value
+          ? {
+            ...forms.orderWizard.vehicle,
+            year: Number(forms.orderWizard.vehicle.year),
+            mileage: Number(forms.orderWizard.vehicle.mileage),
+          }
+          : undefined,
       diagnosticNotes: buildOrderNotes(),
       services: [
         {
@@ -2806,10 +2878,17 @@ function generateBudgetFromSelectedOrder() {
   if (!selectedRecord.value?.id) {
     return Promise.resolve();
   }
+  if (!canGenerateBudget(selectedRecord.value)) {
+    showError('Esta ordem não está em um status que permita gerar orçamento.');
+    return Promise.resolve();
+  }
   return runAction(async () => {
     await resources.generateBudget(selectedRecord.value.id);
     selectedRecord.value.status = 'WAITING_APPROVAL';
     modalDraft.order.status = 'WAITING_APPROVAL';
+    if (pagination.serviceOrders.status) {
+      pagination.serviceOrders.status = 'WAITING_APPROVAL';
+    }
   }, 'Orçamento gerado.');
 }
 
@@ -2823,10 +2902,14 @@ function approveBudgetFromSelectedOrder() {
   if (!selectedRecord.value?.id) {
     return Promise.resolve();
   }
+  if (!canApproveBudget(selectedRecord.value)) {
+    showError('Esta ordem não está aguardando aprovação de orçamento.');
+    return Promise.resolve();
+  }
   return runAction(async () => {
-    await resources.approveBudget(selectedRecord.value.id);
-    selectedRecord.value.status = 'IN_PROGRESS';
-    modalDraft.order.status = 'IN_PROGRESS';
+    const approvedOrder = await resources.approveBudget(selectedRecord.value.id);
+    Object.assign(selectedRecord.value, approvedOrder);
+    modalDraft.order.status = approvedOrder.status;
   }, 'Orçamento aprovado.');
 }
 
@@ -3029,11 +3112,15 @@ async function saveDetailModal() {
 
   if (isOrderDetail.value) {
     await runAction(async () => {
-      if (modalDraft.order.status !== selectedRecord.value.status) {
+      const statusChanged = modalDraft.order.status !== selectedRecord.value.status;
+      if (statusChanged) {
         await resources.updateOrderStatus(selectedRecord.value.id, modalDraft.order.status);
       }
       selectedRecord.value.diagnosticNotes = modalDraft.order.diagnosticNotes;
       selectedRecord.value.status = modalDraft.order.status;
+      if (statusChanged && pagination.serviceOrders.status) {
+        pagination.serviceOrders.status = modalDraft.order.status;
+      }
       closeRecord(true);
     }, 'Ordem atualizada.');
     return;
@@ -6019,7 +6106,7 @@ onMounted(async () => {
                   Salvar ajustes
                 </button>
                 <button
-                    v-if="!isCustomerProfile && can('CREATE_BUDGET')"
+                    v-if="!isCustomerProfile && can('CREATE_BUDGET') && canGenerateBudget(selectedRecord)"
                     :disabled="saving"
                     class="secondary-button"
                     type="button"
@@ -6028,7 +6115,7 @@ onMounted(async () => {
                   Gerar orçamento
                 </button>
                 <button
-                    v-if="!isCustomerProfile"
+                    v-if="!isCustomerProfile && canApproveBudget(selectedRecord)"
                     :disabled="saving"
                     class="secondary-button"
                     type="button"

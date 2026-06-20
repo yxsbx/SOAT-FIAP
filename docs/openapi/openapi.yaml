@@ -1385,7 +1385,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 400
             error: Bad Request
             message: Invalid request body
@@ -1399,7 +1399,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 401
             error: Unauthorized
             message: Missing or invalid credentials
@@ -1412,7 +1412,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 403
             error: Forbidden
             message: Access denied
@@ -1425,7 +1425,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 404
             error: Not Found
             message: Resource not found
@@ -1438,7 +1438,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 409
             error: Conflict
             message: Resource already exists
@@ -1451,7 +1451,7 @@ components:
           schema:
             $ref: "#/components/schemas/ErrorResponse"
           example:
-            timestamp: "2026-05-27T17:00:00-03:00"
+            timestamp: "2026-06-20T17:00:00-03:00"
             status: 500
             error: Internal Server Error
             message: Unexpected error

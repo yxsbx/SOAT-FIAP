@@ -96,6 +96,7 @@ export const resources = {
             body: JSON.stringify({newPassword}),
         }),
     customers: (params) => apiRequest(`/api/v1/customers${toQueryString(params)}`),
+    customer: (customerId) => apiRequest(`/api/v1/customers/${customerId}`),
     updateCustomer: (customerId, payload) =>
         apiRequest(`/api/v1/customers/${customerId}`, {
             method: 'PUT',

@@ -302,10 +302,10 @@ Endpoints principais:
 GET /api/v1/parts
 POST /api/v1/parts
 PATCH /api/v1/parts/{partId}/stock
-POST /api/v1/parts/{partId}/stock-movement
-POST /api/v1/parts/{partId}/reserve
-POST /api/v1/parts/{partId}/release-reservation
-POST /api/v1/parts/{partId}/commit-reservation
+PATCH /api/v1/parts/{partId}/stock-movement
+PATCH /api/v1/parts/{partId}/reserve
+PATCH /api/v1/parts/{partId}/release-reservation
+PATCH /api/v1/parts/{partId}/commit-reservation
 ```
 
 ## Seguranca
@@ -488,17 +488,19 @@ Abrir:
 target/site/jacoco/index.html
 ```
 
-Cobertura local atual apos exclusao de classes geradas pelo OpenAPI:
+Cobertura validada em 20/06/2026 no núcleo de negócio medido pelo JaCoCo:
 
 | Metrica | Cobertura |
 | --- | ---: |
-| Instrucoes | 72,02% |
-| Branches | 58,30% |
-| Linhas | 74,93% |
-| Complexidade | 62,38% |
-| Metodos | 71,61% |
+| Instrucoes | 95,36% |
+| Branches | 78,45% |
+| Linhas | 97,35% |
+| Metodos | 94,31% |
+| Classes | 100,00% |
 
-Observacao: o JaCoCo esta configurado para ignorar classes geradas pelo OpenAPI. A cobertura ainda pode ser ampliada com mais testes de use cases, controllers e adapters.
+Resultado: 108 testes automatizados, 0 falhas, 0 erros e `mvn verify` concluído com sucesso.
+
+Observacao: o JaCoCo exclui classes geradas pelo OpenAPI, a camada REST, a infraestrutura e records auxiliares de comando/consulta/saida. Os percentuais representam o núcleo de negócio medido, não a cobertura global de todas as classes. A cobertura de controllers e adapters ainda pode ser ampliada.
 
 ## Como Acessar Swagger
 
@@ -536,7 +538,11 @@ SPRINGDOC_SWAGGER_UI_ENABLED=false
 
 Os usuarios demo sao carregados por `src/main/resources/db/migration/V1__create_autocarehub_baseline.sql`.
 
-A senha demo deve ser informada pelo avaliador/professor ou configurada localmente. Por seguranca, o README nao documenta senha real fixa.
+A senha acadêmica dos usuários seed é exclusiva do ambiente local e não deve ser reutilizada em produção:
+
+```text
+autocare123
+```
 
 | Usuario | Perfil |
 | --- | --- |
@@ -553,7 +559,7 @@ Exemplo de login:
 ```powershell
 curl -X POST http://localhost:8080/api/v1/auth/login `
   -H "Content-Type: application/json" `
-  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"[PREENCHER_SENHA_DEMO_LOCAL]\"}"
+  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
 ```
 
 ## Endpoints Principais
@@ -605,11 +611,11 @@ GET    /api/v1/parts/{partId}
 PUT    /api/v1/parts/{partId}
 DELETE /api/v1/parts/{partId}
 PATCH  /api/v1/parts/{partId}/stock
-POST   /api/v1/parts/{partId}/stock-movement
+PATCH  /api/v1/parts/{partId}/stock-movement
 PATCH  /api/v1/parts/{partId}/reservation
-POST   /api/v1/parts/{partId}/reserve
-POST   /api/v1/parts/{partId}/release-reservation
-POST   /api/v1/parts/{partId}/commit-reservation
+PATCH  /api/v1/parts/{partId}/reserve
+PATCH  /api/v1/parts/{partId}/release-reservation
+PATCH  /api/v1/parts/{partId}/commit-reservation
 ```
 
 Ordens de Servico:
@@ -696,7 +702,9 @@ Resultado atual documentado:
 
 - Dependency-Check backend: 0 vulnerabilidades.
 - npm audit frontend: 0 vulnerabilidades.
-- Docker, secrets e analise estatica: pendentes de execucao complementar.
+- Docker Scout: 0 vulnerabilidades na imagem final distroless.
+- Gitleaks: 0 leaks em 35 commits.
+- Semgrep: 0 achados e 0 erros em 190 arquivos.
 
 ## Decisoes Tecnicas
 
@@ -719,7 +727,7 @@ Resultado atual documentado:
 - Historico de status da OS e simplificado para o MVP.
 - Controle de multiplas oficinas/lojas existe de forma simplificada no mesmo monolito.
 - Swagger fica publico no ambiente local academico.
-- Scans de Docker, secrets e analise estatica ainda precisam ser executados se exigidos como evidencia final.
+- Um teste dinamico dedicado de segurança permanece como melhoria futura.
 - Cobertura global ainda pode ser ampliada para se aproximar da meta desejada de 95%.
 
 ## Melhorias Futuras
@@ -731,5 +739,5 @@ Resultado atual documentado:
 - Restringir Swagger por ambiente/perfil em producao.
 - Evoluir multiempresa/multitenancy.
 - Adicionar pipeline CI com testes, cobertura e scans de seguranca.
-- Executar e anexar scans Docker, secrets e SAST.
+- Reexecutar Docker Scout, Gitleaks e Semgrep em cada ciclo de entrega.
 - Evoluir metricas operacionais da oficina.
