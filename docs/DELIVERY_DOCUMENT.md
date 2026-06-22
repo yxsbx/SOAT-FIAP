@@ -16,7 +16,7 @@
 
 | Participante | Username no Discord |
 | --- | --- |
-| Yasmin Barcelos Pires | **Não informado - substituir pelo username do Discord antes da entrega** |
+| Yasmin Barcelos Pires | `yxsbx` |
 
 ## 4. Nome do projeto
 
@@ -26,19 +26,18 @@
 
 <https://github.com/yxsbx/SOAT-FIAP>
 
+O acesso de leitura ao repositório privado foi concedido ao usuário `soatarchitecture`. A branch final
+de entrega é `main`.
+
 ## 6. Link da documentação DDD ou Miro
 
 Documentação DDD versionada no repositório:
 
-```text
-docs/DDD_DOCUMENTATION.md
-```
+<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DDD_DOCUMENTATION.md>
 
 Event Storming versionado no repositório:
 
-```text
-docs/EVENT_STORMING.md
-```
+<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/EVENT_STORMING.md>
 
 Não foi informado um quadro externo no Miro. A documentação oficial da entrega está versionada nos arquivos acima.
 
@@ -52,9 +51,7 @@ http://localhost:8080/swagger-ui.html
 
 Contrato OpenAPI versionado:
 
-```text
-docs/openapi/openapi.yaml
-```
+<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/openapi/openapi.yaml>
 
 Não há URL pública informada. Para avaliação local, usar a rota do Swagger apresentada acima.
 
@@ -275,17 +272,19 @@ target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
 ```
 
-Cobertura documentada no relatório de segurança, considerando a configuração Maven que ignora classes geradas pelo OpenAPI e componentes fora do escopo de negócio. Além das classes geradas, a configuração exclui a camada REST, a infraestrutura e records auxiliares de comando, consulta e saída. Portanto, os percentuais representam o núcleo de negócio medido, e não a cobertura global de todo o repositório:
+Cobertura global documentada no relatório de segurança. A medição inclui domínio, aplicação,
+controllers REST, segurança, mappers e adapters de persistência. São excluídos apenas o bootstrap da
+aplicação, código gerado automaticamente pelo OpenAPI e records estruturais sem lógica própria:
 
 | Métrica | Coberto | Não coberto | Cobertura |
 | --- | ---: | ---: | ---: |
-| Instruções | 5.082 | 247 | 95,36% |
-| Branches | 284 | 78 | 78,45% |
-| Linhas | 1.250 | 34 | 97,35% |
-| Métodos | 348 | 21 | 94,31% |
-| Classes | 81 | 0 | 100,00% |
+| Instruções | 9.533 | 616 | 93,93% |
+| Branches | 385 | 121 | 76,09% |
+| Linhas | 2.385 | 130 | 94,83% |
+| Métodos | 626 | 44 | 93,43% |
 
-Resultado documentado: 108 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado documentado: 109 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige
+no mínimo 90% de instruções e linhas e 70% de branches.
 
 ## 18. Docker e execução local
 
@@ -309,13 +308,7 @@ POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
 JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
 ```
 
-Executar API e banco com Docker Compose:
-
-```powershell
-docker compose up --build
-```
-
-Executar em background:
+Executar PostgreSQL, API e frontend com um único comando:
 
 ```powershell
 docker compose up -d --build
@@ -343,38 +336,30 @@ mvn spring-boot:run
 Serviços locais:
 
 ```text
+Frontend: http://localhost:5173
 API: http://localhost:8080
 Swagger: http://localhost:8080/swagger-ui.html
 PostgreSQL: localhost:5432
 ```
 
-Frontend demonstrativo:
+O frontend usa proxy reverso para a API e pode ser acessado por `localhost` ou pelo IP local da
+máquina sem depender de uma origem CORS adicional. Para desenvolvimento com hot reload:
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
-```
-
-URL padrão do frontend:
-
-```text
-http://localhost:5173
 ```
 
 ## 19. Relatório de vulnerabilidades
 
 Relatório oficial:
 
-```text
-docs/SECURITY_REPORT.md
-```
+<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>
 
 Relatório consolidado de validação executado em 20/06/2026:
 
-```text
-docs/FINAL_VALIDATION_REPORT.md
-```
+<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/FINAL_VALIDATION_REPORT.md>
 
 Guia de execução de scans:
 
@@ -388,6 +373,7 @@ Evidências documentadas:
 target/dependency-check/dependency-check-report.html
 target/dependency-check/dependency-check-report.json
 security-reports/frontend-dependencies/npm-audit-report.json
+security-reports/docker/docker-scout-frontend-cves.txt
 target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
 ```
@@ -396,9 +382,10 @@ Resumo dos scans documentados:
 
 - OWASP Dependency-Check backend: scan final com 0 vulnerabilidades reportadas.
 - `npm audit` frontend: scan final com 0 vulnerabilidades reportadas.
-- Docker Scout da imagem final: 0 vulnerabilidades.
-- Gitleaks: 0 leaks em 35 commits.
-- Semgrep: 0 achados e 0 erros em 190 arquivos.
+- Docker Scout backend: 0 vulnerabilidades na imagem final distroless.
+- Docker Scout frontend: 0 críticas, 0 altas e 1 média sem correção disponível na base.
+- Gitleaks: 0 leaks em 36 commits.
+- Semgrep: 0 achados e 0 erros em 200 arquivos com 187 regras.
 
 ## 20. Vulnerabilidades encontradas
 
@@ -418,8 +405,11 @@ As vulnerabilidades encontradas nos scans iniciais foram registradas no relatór
 | VULN-010 | npm audit | Alta | `vite`, `esbuild`, `@vitejs/plugin-vue` | Corrigido |
 | VULN-011 | npm audit | Média | `js-yaml-4.1.1` transitivo do ESLint | Corrigido |
 | VULN-012 | Docker Scout | Crítica/Alta/Média | `/usr/bin/pebble` da imagem runtime anterior | Corrigido |
+| VULN-013 | Docker Scout | Crítica/Alta/Média | Imagem frontend Nginx 1.27/Alpine antiga | Corrigido |
+| RISK-001 | Docker Scout | Média | BusyBox da imagem frontend atual | Aceito temporariamente |
 
-Não há vulnerabilidades ou leaks pendentes no escopo do OWASP Dependency-Check, `npm audit`, Docker Scout, Gitleaks e Semgrep após os scans finais documentados.
+Não há vulnerabilidades críticas ou altas pendentes nos scans finais. Permanece 1 CVE média no
+BusyBox da imagem frontend, sem versão corrigida disponível na base analisada em 20/06/2026.
 
 ## 21. Correções aplicadas
 
@@ -438,9 +428,11 @@ Correções aplicadas:
 - Atualização transitiva do `js-yaml` via `npm audit fix`.
 - Regeneração do `package-lock.json`.
 - Migração da imagem runtime para `gcr.io/distroless/java21-debian12:nonroot`.
-- Reexecução dos scans finais com 0 vulnerabilidades reportadas para backend, frontend e imagem Docker.
+- Migração do frontend para imagem Nginx unprivileged `mainline-alpine-slim`, fixada por digest.
+- Reexecução dos scans finais: backend e dependências sem vulnerabilidades; frontend sem críticas ou altas.
 
-Nenhuma vulnerabilidade foi formalmente aceita como risco na análise documentada.
+A CVE média do BusyBox foi aceita temporariamente porque o scanner não informa versão corrigida. O
+container permanece non-root, read-only e sem novos privilégios.
 
 ## 22. Limitações conhecidas
 
@@ -453,14 +445,14 @@ Limitações do MVP:
 - Swagger fica público no ambiente local acadêmico.
 - Não há event store para eventos de domínio.
 - Um teste dinâmico dedicado de segurança permanece como melhoria futura.
-- A cobertura pode ser ampliada em controllers, adapters e fluxos negativos.
-- Frontend é demonstrativo e complementar ao backend.
+- A cobertura de branches e fluxos negativos pode ser ampliada.
+- A imagem frontend mantém 1 CVE média de base sem correção disponível.
 
 ## 23. Melhorias futuras
 
 Melhorias planejadas ou recomendadas:
 
-- Ampliar cobertura automatizada de controllers, adapters e cenários negativos.
+- Ampliar cobertura de branches e cenários negativos.
 - Criar auditoria de ações sensíveis.
 - Melhorar histórico detalhado de status da OS.
 - Integrar notificações reais por e-mail, SMS ou WhatsApp.

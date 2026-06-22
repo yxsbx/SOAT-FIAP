@@ -12,7 +12,7 @@ Use este checklist antes de gravar o vídeo. A ideia é chegar no dia da gravaç
 - [ ] Confirmar que o arquivo `.env` existe.
 - [ ] Confirmar que `POSTGRES_PASSWORD` está preenchido no `.env`.
 - [ ] Confirmar que `JWT_SECRET` está preenchido e tem pelo menos 32 bytes.
-- [ ] Subir API e banco:
+- [x] Subir PostgreSQL, API e frontend:
 
 ```powershell
 docker compose up -d --build
@@ -35,7 +35,7 @@ http://localhost:8080
 - [ ] Confirmar que a aplicação subiu sem erro nos logs:
 
 ```powershell
-docker compose logs api
+docker compose logs app
 ```
 
 - [ ] Se estiver rodando a API pelo Maven, confirmar:
@@ -44,20 +44,9 @@ docker compose logs api
 mvn spring-boot:run
 ```
 
-### 3. Confirmar frontend funcionando, se houver demonstração visual
+### 3. Confirmar frontend funcionando
 
-- [ ] Instalar dependências, se necessário:
-
-```powershell
-cd frontend
-npm install
-```
-
-- [ ] Subir frontend:
-
-```powershell
-npm run dev
-```
+- [x] Confirmar o container `autocarehub-web` em `docker compose ps`.
 
 - [ ] Abrir:
 
@@ -66,6 +55,8 @@ http://localhost:5173
 ```
 
 - [ ] Confirmar que a tela carrega sem erro visível.
+- [ ] Confirmar login sem erro de CORS por `http://localhost:5173`.
+- [ ] Opcional: confirmar acesso pelo IP local da máquina.
 
 ### 4. Confirmar banco populado com dados de demo
 
@@ -105,7 +96,7 @@ POST /api/v1/auth/login
 ```
 
 - [ ] Usar um usuário admin válido dos dados de demo.
-- [ ] Senha local dos usuários seed: `autocare123`.
+- [x] Senha universal de todos os usuários seed: `autocare123`.
 - [ ] Copiar o token retornado.
 - [ ] Clicar em `Authorize`.
 - [ ] Informar:
@@ -390,7 +381,7 @@ docs/DELIVERY_DOCUMENT.md
   - [x] entrega individual;
   - [x] participante;
   - [x] RM;
-  - [ ] username do Discord;
+  - [x] username do Discord: `yxsbx`;
   - [x] link do repositório privado;
   - [x] documentação DDD e Event Storming no repositório;
   - [x] rota local do Swagger.
@@ -401,12 +392,12 @@ docs/DELIVERY_DOCUMENT.md
 
 - [x] Converter o Markdown final para PDF.
 - [x] Abrir o PDF gerado.
-- [ ] Clicar nos links principais:
+- [x] Clicar nos links principais:
   - [x] repositório privado;
-  - [ ] documentação DDD/Miro;
-  - [ ] Swagger;
-  - [ ] arquivos citados, se o conversor preservar links.
-- [ ] Conferir se placeholders foram removidos ou mantidos apenas quando realmente não há link externo.
+  - [x] documentação DDD e Event Storming;
+  - [x] contrato OpenAPI;
+  - [x] relatórios de segurança e validação.
+- [x] Conferir que os únicos placeholders restantes são secrets locais do `.env`.
 - [x] Conferir legibilidade de tabelas no PDF.
 
 ### 25. Conferir acesso ao repositório privado para o usuário soatarchitecture
@@ -414,16 +405,16 @@ docs/DELIVERY_DOCUMENT.md
 - [x] Confirmar que `https://github.com/yxsbx/SOAT-FIAP` é privado.
 - [x] Confirmar que a conta `yxsbx` possui permissão administrativa.
 - [x] Consultar colaboradores e convites pendentes em 20/06/2026.
-- [ ] Enviar convite para `soatarchitecture` - atualmente não há acesso ativo nem convite pendente.
-- [ ] Confirmar que o usuário abaixo possui acesso:
+- [x] Acesso Read concedido a `soatarchitecture`, conforme confirmação da responsável.
+- [x] Confirmar que o usuário abaixo possui acesso:
 
 ```text
 soatarchitecture
 ```
 
-- [ ] No GitHub, abrir `Settings > Collaborators > Add people`.
-- [ ] Buscar `soatarchitecture` e conceder acesso de leitura.
-- [ ] Confirmar o envio do convite e, depois, a aceitação pelo usuário.
+- [x] No GitHub, abrir `Settings > Collaborators`.
+- [x] Buscar `soatarchitecture` e conferir a permissão de leitura.
+- [ ] Confirmar novamente o acesso após o push final na branch `main`.
 - [ ] Validar que o link do repositório no documento final aponta para o repositório correto.
 
 ## Versão resumida para o dia da gravação
@@ -434,7 +425,7 @@ Use esta versão como checklist rápido logo antes de clicar em gravar.
 - [ ] `docker compose up -d --build` executado com sucesso.
 - [ ] Backend ativo em `http://localhost:8080`.
 - [ ] Swagger abre em `http://localhost:8080/swagger-ui.html`.
-- [ ] Frontend ativo em `http://localhost:5173`, se for usado.
+- [ ] Frontend ativo em `http://localhost:5173`.
 - [ ] Banco tem dados de demo.
 - [ ] Login admin testado e token JWT pronto.
 - [ ] `Authorize` do Swagger configurado com `Bearer <token>`.
@@ -458,6 +449,7 @@ Use esta versão como checklist rápido logo antes de clicar em gravar.
 - [ ] `docs/EVENT_STORMING.md` conferido.
 - [ ] `docs/DELIVERY_DOCUMENT.md` preenchido e revisado.
 - [ ] PDF final aberto e links conferidos.
-- [ ] Usuário `soatarchitecture` com acesso ao repositório privado.
+- [x] Usuário `soatarchitecture` com acesso Read ao repositório privado.
+- [ ] Alterações finais disponíveis na branch `main`.
 - [ ] Roteiro do vídeo aberto em `docs/VIDEO_SCRIPT.md`.
 - [ ] Abas já preparadas: Swagger, README, DDD, Event Storming, relatório de segurança e sistema.

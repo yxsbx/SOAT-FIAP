@@ -10,7 +10,15 @@ export default defineConfig({
         },
     },
     server: {
+        host: '0.0.0.0',
         port: 5173,
         strictPort: false,
+        allowedHosts: true,
+        proxy: {
+            '/api': 'http://localhost:8080',
+            '/v3/api-docs': 'http://localhost:8080',
+            '/swagger-ui': 'http://localhost:8080',
+            '/openapi.yaml': 'http://localhost:8080',
+        },
     },
 });

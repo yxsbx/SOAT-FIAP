@@ -18,9 +18,9 @@ Este relatorio nao inventa resultados de ferramentas nao executadas. Quando nao 
 | Dependencias backend | Analisado e corrigido | Relatorios em `target/dependency-check/dependency-check-report.html` e `target/dependency-check/dependency-check-report.json`. |
 | Frontend Vue/Vite | Analisado | Dependencias npm analisadas por `npm audit` e codigo incluído no Semgrep. |
 | Dependencias frontend | Analisado e corrigido | Relatorio em `security-reports/frontend-dependencies/npm-audit-report.json`. |
-| Dockerfile | Analisado e corrigido | Docker Scout executado sobre a imagem final. |
-| docker-compose.yml | Revisado em execução | Container validado como non-root, read-only e com `no-new-privileges`. |
-| Secrets | Analisado | Gitleaks executado sobre 35 commits, sem leaks encontrados. |
+| Dockerfiles | Analisados e corrigidos | Docker Scout executado nas imagens finais de backend e frontend. |
+| docker-compose.yml | Revisado em execução | Containers validados como non-root, read-only e com `no-new-privileges`. |
+| Secrets | Analisado | Gitleaks executado sobre 36 commits, sem leaks encontrados. |
 | OpenAPI/Swagger | Analisado indiretamente | Vulnerabilidades anteriores em Swagger UI foram corrigidas por atualização de versao. |
 | Cobertura de testes | Analisado | Relatorio JaCoCo em `target/site/jacoco/index.html` e `target/site/jacoco/jacoco.csv`. |
 
@@ -35,7 +35,7 @@ Item fora do escopo desta versao:
 | Data de consolidação | 20/06/2026 |
 | Horario do relatorio Dependency-Check | 17:07:53 UTC |
 | Responsavel | Yasmin Barcelos Pires - RM370897 |
-| Branch/estado analisado | `dev`, working tree validada em 20/06/2026 |
+| Branch final de entrega | `main` |
 
 ## 5. Ferramentas utilizadas
 
@@ -44,7 +44,7 @@ Item fora do escopo desta versao:
 | OWASP Dependency-Check Maven Plugin | 12.1.1 | Dependencias backend | `mvn dependency-check:check -DautoUpdate=false` | `target/dependency-check/dependency-check-report.html` e `target/dependency-check/dependency-check-report.json` |
 | JaCoCo | 0.8.12 | Cobertura de testes | `mvn test` | `target/site/jacoco/index.html` e `target/site/jacoco/jacoco.csv` |
 | npm audit | 9.6.6 | Dependencias frontend | `npm audit --json` | `security-reports/frontend-dependencies/npm-audit-report.json` |
-| Docker Scout | 1.20.4 | Imagem Docker | `docker scout cves soat-fiap-app:latest --only-severity critical,high,medium` | `security-reports/docker/docker-scout-cves.txt` |
+| Docker Scout | 1.20.4 | Imagens Docker | `docker scout cves <imagem> --only-severity critical,high,medium` | `security-reports/docker/docker-scout-cves.txt` e `security-reports/docker/docker-scout-frontend-cves.txt` |
 | Semgrep | 1.166.0 | Analise estatica Java/JavaScript/Dockerfile | Regras `p/java`, `p/javascript` e `p/security-audit` | `security-reports/static-analysis/semgrep.json` |
 | Gitleaks | Imagem Docker latest em 20/06/2026 | Secrets no historico Git | `gitleaks detect` | `security-reports/secrets/gitleaks.json` |
 
@@ -63,7 +63,12 @@ Item fora do escopo desta versao:
 
 O primeiro scan de dependencias backend apontou vulnerabilidades em bibliotecas centrais do runtime, incluindo Spring Boot, Spring Framework, Spring Security, Tomcat, PostgreSQL JDBC, Log4j API, Commons Compress, Commons Lang e Swagger UI. O scan inicial do frontend apontou vulnerabilidades altas transitivas em Vite/esbuild. Em 20/06/2026, um novo `npm audit` identificou uma vulnerabilidade moderada transitiva em `js-yaml`, corrigida com atualização do lockfile.
 
-O primeiro Docker Scout executado em 20/06/2026 encontrou 1 vulnerabilidade critica, 2 altas e 9 medias em `/usr/bin/pebble`, presente na imagem base Ubuntu do runtime. A imagem final foi migrada para `gcr.io/distroless/java21-debian12:nonroot`, removendo o pacote desnecessario e reduzindo a superficie de ataque.
+O primeiro Docker Scout do backend encontrou 1 vulnerabilidade critica, 2 altas e 9 medias em
+`/usr/bin/pebble`, presente na imagem base Ubuntu. O runtime foi migrado para
+`gcr.io/distroless/java21-debian12:nonroot`, eliminando os achados. No frontend, a imagem Nginx
+1.27/Alpine inicialmente apresentou 75 CVEs. A troca para `mainline-alpine-slim`, fixada por digest,
+reduziu o resultado para 0 criticas, 0 altas e 1 media em BusyBox, sem versao corrigida indicada pelo
+scanner em 20/06/2026.
 
 As dependencias foram atualizadas e o OWASP Dependency-Check foi executado novamente. No scan final, o resultado foi:
 
@@ -76,7 +81,8 @@ As dependencias foram atualizadas e o OWASP Dependency-Check foi executado novam
 | Excecoes de analise | 0 |
 | Status do build do Dependency-Check | Sucesso |
 
-Com base nos scans finais de dependencias backend, frontend, imagem Docker, secrets e analise estatica, nao ha vulnerabilidades ou leaks abertos reportados pelas ferramentas executadas.
+Os scans finais não apresentam vulnerabilidades críticas ou altas, nem leaks ou achados estáticos.
+Permanece 1 CVE média aceita temporariamente na imagem frontend.
 
 ## 8. Resultado geral dos scans
 
@@ -84,29 +90,26 @@ Com base nos scans finais de dependencias backend, frontend, imagem Docker, secr
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
 | Dependencias backend | 0 | 0 | 0 | 0 | 0 | Corrigido |
 | Dependencias frontend | 0 | 0 | 0 | 0 | 0 | Corrigido |
-| Imagem Docker | 0 | 0 | 0 | 0 | 0 | Corrigido |
+| Imagem backend | 0 | 0 | 0 | 0 | 0 | Corrigido |
+| Imagem frontend | 0 | 0 | 1 | 0 | 0 | Risco médio aceito temporariamente |
 | Analise estatica | 0 | 0 | 0 | 0 | 0 | Semgrep sem achados |
 | Secrets | 0 | 0 | 0 | 0 | 0 | Gitleaks sem leaks |
 
 ## 9. Cobertura de testes
 
-O relatorio JaCoCo atual ignora classes geradas pelo OpenAPI e componentes fora do escopo de negocio na
-configuração do Maven. A regra academica de 95% e validada por `mvn verify` sobre o bundle medido de
-`domain` e `application`, com minimo de 95% para instrucoes e linhas.
-
-Tambem sao excluidas da metrica a camada REST, a infraestrutura e records auxiliares de
-comando/consulta/saida. Assim, a cobertura apresentada representa o nucleo de negocio medido, e nao a
-cobertura global de todas as classes do repositorio.
+O relatório JaCoCo mede domínio, aplicação, controllers REST, segurança, mappers e adapters de
+persistência. São excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pelo
+OpenAPI e records estruturais de comando, consulta e saída sem lógica própria. O gate executado por
+`mvn verify` exige no mínimo 90% de instruções e linhas e 70% de branches.
 
 | Metrica | Coberto | Nao coberto | Cobertura |
 | --- | ---: | ---: | ---: |
-| Instrucoes | 5.082 | 247 | 95,36% |
-| Branches | 284 | 78 | 78,45% |
-| Linhas | 1.250 | 34 | 97,35% |
-| Metodos | 348 | 21 | 94,31% |
-| Classes | 81 | 0 | 100,00% |
+| Instrucoes | 9.533 | 616 | 93,93% |
+| Branches | 385 | 121 | 76,09% |
+| Linhas | 2.385 | 130 | 94,83% |
+| Metodos | 626 | 44 | 93,43% |
 
-Resultado validado com 108 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 109 testes automatizados e `mvn verify` concluindo com sucesso.
 
 ## 10. Tabela de vulnerabilidades encontradas
 
@@ -123,7 +126,9 @@ Resultado validado com 108 testes automatizados e `mvn verify` concluindo com su
 | VULN-009 | OWASP Dependency-Check | Media/Desconhecida | `swagger-ui-5.32.2.jar` | CVEs/achados DOMPurify no bundle JavaScript do Swagger UI. | Risco na interface de documentação se exposta fora do ambiente academico. | Atualização direta para Swagger UI 5.32.6. | Corrigido | Scan final sem achados. |
 | VULN-010 | npm audit | Alta | `vite`, `esbuild`, `@vitejs/plugin-vue` | `npm audit` apontou 3 vulnerabilidades altas, com origem em `esbuild` e efeito transitivo em Vite/plugin Vue. | Risco de supply chain/RCE em ambiente de build conforme advisory do pacote. | Atualização para `vite` 8.0.16 e `@vitejs/plugin-vue` 6.0.7; lockfile regenerado. | Corrigido | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades. |
 | VULN-011 | npm audit | Media | `js-yaml-4.1.1` transitivo do ESLint | GHSA-h67p-54hq-rp68, com risco de DoS por complexidade quadratica. | Impacto no ferramental de desenvolvimento/lint. | Execução de `npm audit fix`, atualização transitiva e regeneração do lockfile. | Corrigido | `npm audit --json` de 20/06/2026 com 0 vulnerabilidades. |
-| VULN-012 | Docker Scout | Critica/Alta/Media | `/usr/bin/pebble` na imagem `eclipse-temurin:21-jre` | 12 CVEs em pacotes Go embutidos no utilitario não utilizado pelo runtime Java. | Aumento desnecessario da superficie de ataque da imagem. | Migração do runtime para `gcr.io/distroless/java21-debian12:nonroot`. | Corrigido | Docker Scout final com 0 vulnerabilidades em `security-reports/docker/docker-scout-cves.txt`. |
+| VULN-012 | Docker Scout | Critica/Alta/Media | `/usr/bin/pebble` na imagem backend anterior | 12 CVEs em pacote não utilizado pelo runtime Java. | Superfície de ataque desnecessária. | Migração para distroless Java 21 non-root. | Corrigido | `security-reports/docker/docker-scout-cves.txt` sem vulnerabilidades. |
+| VULN-013 | Docker Scout | Critica/Alta/Media | Nginx 1.27 sobre Alpine 3.21 | 75 CVEs na imagem frontend inicial. | Vulnerabilidades do sistema operacional do container web. | Migração para `mainline-alpine-slim` fixada por digest. | Corrigido | Scan final sem críticas ou altas. |
+| RISK-001 | Docker Scout | Media | BusyBox 1.37.0-r30 | CVE-2025-60876. | Risco residual na imagem base frontend. | Container non-root, read-only e sem novos privilégios; monitoramento da base. | Aceito temporariamente | Scanner informa `Fixed version: not fixed`. |
 
 ## 11. Analise por ferramenta
 
@@ -158,11 +163,12 @@ Observação tecnica: o analisador Sonatype OSS Index estava retornando 401 sem 
 | Campo | Valor |
 | --- | --- |
 | Ferramenta | Docker Scout 1.20.4 |
-| Imagem analisada | `soat-fiap-app:latest` |
-| Relatorio | `security-reports/docker/docker-scout-cves.txt` |
-| Resultado inicial | 1 critica, 2 altas e 9 medias em `/usr/bin/pebble` da imagem base. |
-| Resultado final | 0 criticas, 0 altas, 0 medias e 0 baixas. |
-| Ação tomada | Migração para runtime distroless Java 21 non-root. |
+| Imagens analisadas | `soat-fiap-app:latest` e `soat-fiap-frontend:latest` |
+| Relatorios | `security-reports/docker/docker-scout-cves.txt` e `security-reports/docker/docker-scout-frontend-cves.txt` |
+| Backend final | 0 criticas, 0 altas, 0 medias e 0 baixas. |
+| Frontend inicial | 4 criticas, 26 altas e 45 medias. |
+| Frontend final | 0 criticas, 0 altas e 1 media sem correção disponível. |
+| Ação tomada | Backend distroless; frontend Nginx unprivileged slim fixado por digest. |
 
 ### 11.4 Analise estatica de codigo
 
@@ -170,7 +176,7 @@ Observação tecnica: o analisador Sonatype OSS Index estava retornando 401 sem 
 | --- | --- |
 | Ferramenta | Semgrep 1.166.0 |
 | Relatorio | `security-reports/static-analysis/semgrep.json` |
-| Escopo | 190 arquivos, 178 regras, Java, JavaScript, JSON, Dockerfile e regras multilinguagem. |
+| Escopo | 200 arquivos, 187 regras, Java, JavaScript, JSON, Dockerfile e regras multilinguagem. |
 | Resumo | 0 achados e 0 erros. |
 
 ### 11.5 Scan de secrets
@@ -179,7 +185,7 @@ Observação tecnica: o analisador Sonatype OSS Index estava retornando 401 sem 
 | --- | --- |
 | Ferramenta | Gitleaks |
 | Relatorio | `security-reports/secrets/gitleaks.json` |
-| Escopo | 35 commits e aproximadamente 3,16 MB analisados. |
+| Escopo | 36 commits e aproximadamente 3,24 MB analisados. |
 | Resumo | 0 leaks encontrados. |
 
 ## 12. Vulnerabilidades corrigidas
@@ -190,24 +196,21 @@ Observação tecnica: o analisador Sonatype OSS Index estava retornando 401 sem 
 | VULN-010 | Alta | Atualização de dependencias frontend e novo audit limpo. | `frontend/package.json`, `frontend/package-lock.json` | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades. |
 | VULN-011 | Media | Atualização transitiva de `js-yaml` via `npm audit fix`. | `frontend/package-lock.json` | Audit de 20/06/2026 com 0 vulnerabilidades. |
 | VULN-012 | Critica/Alta/Media | Substituição da imagem runtime Ubuntu/Temurin por distroless Java 21 non-root. | `Dockerfile`, `docker-compose.yml` | Docker Scout final com 0 vulnerabilidades. |
+| VULN-013 | Critica/Alta/Media | Substituição da imagem Nginx/Alpine antiga por variante unprivileged slim atual. | `frontend/Dockerfile` | Scan final sem vulnerabilidades críticas ou altas. |
 
 ## 13. Vulnerabilidades aceitas como risco
 
-Nenhuma vulnerabilidade foi aceita formalmente como risco nesta analise. O scan final de dependencias backend nao manteve CVEs abertos.
-
 | ID | Severidade | Justificativa | Mitigação existente | Responsavel pela aceitação | Revisar em |
 | --- | --- | --- | --- | --- | --- |
-| N/A | N/A | Nenhum risco aceito formalmente. | N/A | N/A | N/A |
+| RISK-001 | Media | BusyBox não possui versão corrigida indicada pelo scanner na base atual. | Imagem slim, usuário não privilegiado, filesystem read-only e `no-new-privileges`. | Yasmin Barcelos Pires | Próxima atualização da imagem base |
 
 ## 14. Vulnerabilidades pendentes
 
-Nao ha vulnerabilidades pendentes no escopo do OWASP Dependency-Check backend, `npm audit` frontend ou Docker Scout apos os scans finais.
-
 | ID | Severidade | Motivo da pendencia | Plano de correção | Prioridade | Prazo |
 | --- | --- | --- | --- | --- | --- |
-| N/A | N/A | Nao ha pendencias de dependencias backend/frontend nos scans finais. | N/A | N/A | N/A |
+| RISK-001 | Media | Não existe versão corrigida indicada pelo Docker Scout. | Atualizar a imagem fixada quando uma base corrigida estiver disponível e repetir o scan. | Média | Próximo ciclo |
 
-Nao ha pendencias nos scans de dependencias, imagem Docker, secrets e analise estatica executados. Um DAST dedicado permanece como melhoria futura, fora do escopo atual.
+Não há pendências críticas ou altas. Um DAST dedicado permanece como melhoria futura.
 
 ## 15. Boas praticas de seguranca implementadas
 
@@ -229,9 +232,10 @@ Nao ha pendencias nos scans de dependencias, imagem Docker, secrets e analise es
 | Dependencias frontend sem vulnerabilidades no audit final | Corrigido | `npm audit --json` final com 0 vulnerabilidades. |
 | Runtime distroless non-root | Implementado | Imagem final sem shell ou gerenciador de pacotes, executada como `nonroot`. |
 | Container read-only e sem novos privilegios | Implementado | `read_only: true` e `no-new-privileges:true` no Compose. |
-| Imagem Docker sem vulnerabilidades no Scout final | Corrigido | Relatorio final com 0 vulnerabilidades. |
-| Historico Git sem secrets detectados | Validado | Gitleaks analisou 35 commits e encontrou 0 leaks. |
-| Analise estatica sem achados | Validado | Semgrep executou 178 regras em 190 arquivos com 0 achados. |
+| Imagem backend sem vulnerabilidades no Scout final | Corrigido | Relatorio final com 0 vulnerabilidades. |
+| Imagem frontend sem críticas ou altas | Validado | 1 CVE média aceita temporariamente. |
+| Historico Git sem secrets detectados | Validado | Gitleaks analisou 36 commits e encontrou 0 leaks. |
+| Analise estatica sem achados | Validado | Semgrep executou 187 regras em 200 arquivos com 0 achados. |
 
 ## 16. Evidencias
 
@@ -241,6 +245,7 @@ Nao ha pendencias nos scans de dependencias, imagem Docker, secrets e analise es
 | Relatorio Dependency-Check JSON | `target/dependency-check/dependency-check-report.json` | Evidencia estruturada usada para consolidar este relatorio. |
 | Relatorio npm audit JSON | `security-reports/frontend-dependencies/npm-audit-report.json` | Evidencia estruturada do frontend com 0 vulnerabilidades. |
 | Relatorio Docker Scout | `security-reports/docker/docker-scout-cves.txt` | Evidencia do scan final da imagem com 0 vulnerabilidades. |
+| Relatorio Docker Scout frontend | `security-reports/docker/docker-scout-frontend-cves.txt` | Evidencia do scan final com 1 CVE média e nenhuma crítica/alta. |
 | Relatorio Gitleaks | `security-reports/secrets/gitleaks.json` | Evidencia estruturada com 0 leaks. |
 | Relatorio Semgrep | `security-reports/static-analysis/semgrep.json` | Evidencia estruturada com 0 achados e 0 erros. |
 | Relatorio JaCoCo HTML | `target/site/jacoco/index.html` | Relatorio navegavel de cobertura atual. |
@@ -253,6 +258,7 @@ target/dependency-check/dependency-check-report.html
 target/dependency-check/dependency-check-report.json
 security-reports/frontend-dependencies/npm-audit-report.json
 security-reports/docker/docker-scout-cves.txt
+security-reports/docker/docker-scout-frontend-cves.txt
 security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
 target/site/jacoco/index.html
@@ -261,7 +267,9 @@ target/site/jacoco/jacoco.csv
 
 ## 18. Conclusao
 
-O projeto AutoCare Hub corrigiu as vulnerabilidades de dependencias backend, frontend e imagem Docker identificadas nos scans. O scan final do OWASP Dependency-Check nao reportou vulnerabilidades abertas nas dependencias Maven analisadas. O `npm audit` e o Docker Scout finais tambem retornaram 0 vulnerabilidades.
+O projeto AutoCare Hub corrigiu as vulnerabilidades de dependências backend, frontend e imagens
+identificadas nos scans. Dependency-Check, npm audit e a imagem backend ficaram sem vulnerabilidades.
+A imagem frontend ficou sem críticas ou altas e mantém 1 CVE média sem correção disponível.
 
 Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, Gitleaks e Semgrep, o sistema esta apto para entrega academica. Um teste dinamico dedicado contra a API permanece como evolução futura.
 
@@ -275,7 +283,7 @@ Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, G
 6. Reexecutar Semgrep e avaliar integração futura com SonarQube.
 7. Configurar CI para bloquear vulnerabilidades criticas e altas sem aceite formal.
 8. Restringir Swagger em ambientes produtivos.
-9. Manter a cobertura automatizada acima da meta academica de 95% em cada alteração relevante.
+9. Manter a cobertura global acima dos gates de 90% para instruções/linhas e 70% para branches.
 
 ## Checklist de seguranca
 
@@ -283,13 +291,13 @@ Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, G
 | --- | --- | --- | --- |
 | JWT | OK | Configuração por variavel de ambiente | Validar segredo real apenas fora do repositorio. |
 | Senhas | OK | BCrypt | Nao retornar senha/hash em DTOs. |
-| Secrets | OK | Gitleaks com 0 leaks em 35 commits | Reexecutar antes de cada entrega. |
+| Secrets | OK | Gitleaks com 0 leaks em 36 commits | Reexecutar antes de cada entrega. |
 | Logs | OK no escopo estatico | Semgrep sem achados | Complementar futuramente com DAST. |
 | Validação de entrada | OK | CPF/CNPJ e placa em value objects | Manter testes cobrindo documentos e placas invalidos. |
 | Tratamento de erros | OK | Handler global esperado | Confirmar sem stacktrace em ambiente produtivo. |
 | CORS | OK | Configuração sem wildcard | Revisar origens permitidas por ambiente. |
 | Swagger | OK no MVP | Versao atualizada e flags para desabilitar | Restringir em produção. |
-| Docker | OK | Docker Scout final com 0 vulnerabilidades; runtime distroless non-root | Reexecutar a cada atualização da imagem. |
+| Docker | OK com risco médio documentado | Backend sem vulnerabilidades; frontend sem críticas/altas e com 1 média aceita | Reexecutar a cada atualização da imagem. |
 | Banco de dados | Parcial | Credenciais por `.env` | Sem scan especifico de banco. |
 | Dependencias backend | OK | Dependency-Check final | Zero vulnerabilidades reportadas. |
 | Dependencias frontend | OK | `npm audit` final | Zero vulnerabilidades reportadas. |

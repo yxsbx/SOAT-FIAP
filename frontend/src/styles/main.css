@@ -3489,7 +3489,7 @@ button.billing-metric {
 
 .preview-hero {
     width: min(100% - 48px, 1420px);
-    min-height: min(650px, calc(100vh - 70px));
+    min-height: min(550px, calc(100vh - 70px));
     display: grid;
     grid-template-columns: minmax(320px, 0.82fr) minmax(560px, 1.18fr);
     gap: 28px;
@@ -3849,142 +3849,6 @@ button.billing-metric {
     color: #2563eb;
 }
 
-.phone-mockup {
-    position: absolute;
-    z-index: 2;
-    right: 18px;
-    bottom: 0;
-    width: 258px;
-    border: 10px solid #111827;
-    border-radius: 38px;
-    background: #111827;
-    box-shadow: 0 28px 62px rgba(15, 47, 74, 0.28);
-}
-
-.phone-screen {
-    overflow: hidden;
-    border-radius: 28px;
-    background: #f8fbff;
-}
-
-.phone-screen header {
-    min-height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    color: #102a43;
-}
-
-.phone-screen section {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 20px 16px 18px;
-    color: #ffffff;
-    background: linear-gradient(135deg, #064e9e, #06b6d4);
-}
-
-.phone-screen section div {
-    display: grid;
-    gap: 4px;
-}
-
-.phone-screen section span,
-.phone-screen section small {
-    color: rgba(255, 255, 255, 0.84);
-}
-
-.phone-screen section strong {
-    font-size: 1.45rem;
-}
-
-.phone-alert {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin: 12px 14px 0;
-    border: 1px solid #bfdbfe;
-    border-radius: 12px;
-    padding: 9px 10px;
-    color: #064e9e;
-    background: #e0f2fe;
-    font-size: 0.72rem;
-    font-weight: 850;
-}
-
-.phone-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 9px;
-    padding: 12px 14px;
-}
-
-.phone-grid article {
-    min-height: 78px;
-    display: grid;
-    place-items: center;
-    gap: 7px;
-    border: 1px solid #e4edf5;
-    border-radius: 14px;
-    color: #3b82f6;
-    font-size: 0.76rem;
-    font-weight: 900;
-    background: #ffffff;
-    box-shadow: 0 12px 24px rgba(15, 47, 74, 0.07);
-}
-
-.phone-updates {
-    display: grid;
-    gap: 8px;
-    padding: 0 14px 12px;
-}
-
-.phone-updates article {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 3px 8px;
-    border: 1px solid #e4edf5;
-    border-radius: 12px;
-    padding: 10px;
-    background: #ffffff;
-}
-
-.phone-updates strong {
-    color: #102a43;
-    font-size: 0.8rem;
-}
-
-.phone-updates span {
-    justify-self: end;
-    border-radius: 999px;
-    padding: 3px 7px;
-    color: #064e9e;
-    background: #e0f2fe;
-    font-size: 0.67rem;
-    font-weight: 950;
-}
-
-.phone-updates small {
-    grid-column: 1 / -1;
-    color: #647b91;
-}
-
-.phone-tabbar {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    border-top: 1px solid #e4edf5;
-    padding: 9px 8px 10px;
-    background: #ffffff;
-}
-
-.phone-tabbar span {
-    color: #647b91;
-    font-size: 0.68rem;
-    font-weight: 900;
-    text-align: center;
-}
-
 .preview-features {
     width: min(100% - 48px, 1420px);
     min-height: auto;
@@ -4178,7 +4042,6 @@ button.billing-metric {
     overflow: hidden;
     margin: 0 auto 24px;
     border-radius: 18px;
-    padding: 30px;
     color: #ffffff;
 }
 
@@ -4953,10 +4816,6 @@ button.billing-metric {
         min-height: auto;
     }
 
-    .phone-mockup {
-        right: 6px;
-    }
-
     .feature-list {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
@@ -5406,13 +5265,6 @@ button.billing-metric {
         padding: 9px 10px;
     }
 
-    .phone-mockup {
-        right: 50%;
-        bottom: 0;
-        width: 210px;
-        transform: translateX(50%);
-    }
-
     .preview-features {
         min-height: auto;
         padding: 18px 0;
@@ -5629,11 +5481,6 @@ button.billing-metric {
         right: 10px;
         bottom: 10px;
         left: 10px;
-    }
-
-    .device-showcase,
-    .phone-mockup {
-        display: none;
     }
 
     .primary-button,

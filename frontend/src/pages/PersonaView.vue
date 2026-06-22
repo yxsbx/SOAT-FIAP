@@ -113,7 +113,7 @@ const nearbyPlaces = computed(() => {
   <main class="persona-shell">
     <header class="persona-header">
       <strong>
-        <Wrench :size="22"/>
+        <Wrench :size="22" />
         AutoCare Hub</strong>
     </header>
 
@@ -123,7 +123,7 @@ const nearbyPlaces = computed(() => {
         <h1>{{ config.title }}</h1>
         <p>{{ config.text }}</p>
       </div>
-      <component :is="config.icon" :size="96"/>
+      <component :is="config.icon" :size="96" />
     </section>
 
     <section class="persona-stats">
@@ -135,26 +135,26 @@ const nearbyPlaces = computed(() => {
 
     <section class="persona-grid">
       <article v-for="card in config.cards" :key="card[0]" class="persona-card">
-        <component :is="card[2]" :size="28"/>
+        <component :is="card[2]" :size="28" />
         <h2>{{ card[0] }}</h2>
         <p>{{ card[1] }}</p>
       </article>
 
       <article v-if="persona === 'workshopAdmin' || persona === 'employee'" class="persona-card permission-card">
-        <ShieldCheck :size="28"/>
+        <ShieldCheck :size="28" />
         <h2>Exemplo de permissões por usuário</h2>
         <p>Esse bloco mostra como a tela de funcionário deve variar conforme as permissões definidas pelo administrador.</p>
         <div class="permission-list">
           <label v-for="row in permissionRows" :key="row.key">
-            <input v-model="permissions[row.key]" type="checkbox"/>
+            <input v-model="permissions[row.key]" type="checkbox" />
             <span>{{ row.label }}</span>
-            <CheckCircle2 v-if="row.enabled" :size="16"/>
+            <CheckCircle2 v-if="row.enabled" :size="16" />
           </label>
         </div>
       </article>
 
       <article v-if="persona === 'master'" class="persona-card span-2">
-        <BarChart3 :size="28"/>
+        <BarChart3 :size="28" />
         <h2>Indicadores que cabem na sua visão</h2>
         <p>
           Empresas por plano, receita recorrente, interessados da demo, conversão, inadimplência,
@@ -163,7 +163,7 @@ const nearbyPlaces = computed(() => {
       </article>
 
       <article v-if="persona === 'customer'" class="persona-card span-2 customer-cep-card">
-        <MapPin :size="28"/>
+        <MapPin :size="28" />
         <h2>Busca por CEP após cadastro</h2>
         <p>
           O cliente não acessa uma demo pública. Depois do cadastro, ele informa o CEP para
@@ -171,7 +171,7 @@ const nearbyPlaces = computed(() => {
         </p>
         <label>
           CEP
-          <input v-model="customerZipCode" placeholder="00000-000"/>
+          <input v-model="customerZipCode" placeholder="00000-000" />
         </label>
         <div class="nearby-list">
           <article v-for="place in nearbyPlaces" :key="place[0]">

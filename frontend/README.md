@@ -2,43 +2,52 @@
 
 Interface web em Vue 3 para a API AutoCare Hub.
 
-## Requisitos
+## Executar com o projeto completo
 
-- Node 18+
+Na raiz do repositório:
+
+```powershell
+docker compose up -d --build
+```
+
+Abra `http://localhost:5173`. O container Nginx encaminha `/api` para o backend, portanto o frontend
+também pode ser acessado pelo IP local da máquina sem configuração adicional de CORS.
+
+## Desenvolvimento com hot reload
+
+Requisitos:
+
+- Node.js `^20.19.0 || >=22.12.0`
 - API em execução em `http://localhost:8080`
 
-## Executar
-
-```bash
-npm install
+```powershell
+npm ci
 npm run dev
 ```
 
-Abra:
+O Vite aceita hostnames externos e encaminha `/api` para a API local.
 
-```text
-http://localhost:5173
-```
+## Usuários seed
 
-Acesso local:
+A senha universal de todos os usuários abaixo é `autocare123`.
 
-```text
-Admin Master: master@autocarehub.com / <SENHA_DEMO_LOCAL>
-Admin de oficina: oficina.admin@autocarehub.com / <SENHA_DEMO_LOCAL>
-Admin de loja de peças: loja.admin@autocarehub.com / <SENHA_DEMO_LOCAL>
-Funcionário de oficina: oficina.funcionario@autocarehub.com / <SENHA_DEMO_LOCAL>
-Funcionário de loja de peças: loja.funcionario@autocarehub.com / <SENHA_DEMO_LOCAL>
-Cliente: cliente@autocarehub.com / <SENHA_DEMO_LOCAL>
-```
+| Usuário | Perfil |
+| --- | --- |
+| `admin@autocarehub.com` | Admin técnico |
+| `master@autocarehub.com` | Admin Master |
+| `oficina.admin@autocarehub.com` | Admin de oficina |
+| `loja.admin@autocarehub.com` | Admin de loja de peças |
+| `oficina.funcionario@autocarehub.com` | Funcionário de oficina |
+| `loja.funcionario@autocarehub.com` | Funcionário de loja de peças |
+| `cliente@autocarehub.com` | Cliente |
 
-## Scripts úteis
+## Verificações
 
-```bash
-npm run backend:db
-npm run backend:api
-npm run backend:test
-npm run backend:security
+```powershell
+npm run lint
 npm run build
+npm audit --audit-level=low
 ```
 
-Para mudar a URL da API, copie `.env.example` para `.env` e ajuste `VITE_API_BASE_URL`.
+`VITE_API_BASE_URL` é opcional. Sem essa variável, a aplicação usa URLs relativas e os proxies do
+Vite ou do Nginx.

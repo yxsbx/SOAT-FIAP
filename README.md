@@ -343,11 +343,13 @@ PATCH /api/v1/parts/{partId}/commit-reservation
 
 ## Como Executar Localmente
 
-Pre-requisitos:
+Pre-requisitos para desenvolvimento sem containers:
 
 - Java 21
 - Maven 3.9+
-- Docker e Docker Compose para subir PostgreSQL
+- Node.js `^20.19.0 || >=22.12.0`
+- npm
+- Docker e Docker Compose para o PostgreSQL
 
 Crie o arquivo `.env` a partir do exemplo:
 
@@ -380,7 +382,7 @@ URL padrao:
 http://localhost:8080
 ```
 
-## Como Executar com Docker
+## Como Executar Tudo com Docker
 
 Pre-requisitos:
 
@@ -393,13 +395,7 @@ Crie e edite o `.env`:
 Copy-Item .env.example .env
 ```
 
-Suba API e banco:
-
-```powershell
-docker compose up --build
-```
-
-Em background:
+Suba PostgreSQL, API e frontend com um único comando:
 
 ```powershell
 docker compose up -d --build
@@ -420,12 +416,16 @@ docker compose down -v
 Servicos:
 
 ```text
+Frontend: http://localhost:5173
 API: http://localhost:8080
 PostgreSQL: localhost:5432
 Swagger: http://localhost:8080/swagger-ui.html
 ```
 
-## Frontend Demonstrativo
+O frontend usa proxy reverso para a API. Assim, também pode ser aberto pelo IP local da máquina, por
+exemplo `http://192.168.x.x:5173`, sem depender de CORS entre o navegador e o backend.
+
+## Frontend em Desenvolvimento
 
 Pre-requisitos:
 
@@ -436,7 +436,7 @@ Executar:
 
 ```powershell
 cd frontend
-npm install
+npm ci
 npm run dev
 ```
 
@@ -488,19 +488,21 @@ Abrir:
 target/site/jacoco/index.html
 ```
 
-Cobertura validada em 20/06/2026 no núcleo de negócio medido pelo JaCoCo:
+Cobertura global validada em 20/06/2026 pelo JaCoCo:
 
-| Metrica | Cobertura |
-| --- | ---: |
-| Instrucoes | 95,36% |
-| Branches | 78,45% |
-| Linhas | 97,35% |
-| Metodos | 94,31% |
-| Classes | 100,00% |
+| Metrica | Coberto | Nao coberto | Cobertura |
+| --- | ---: | ---: | ---: |
+| Instrucoes | 9.533 | 616 | 93,93% |
+| Branches | 385 | 121 | 76,09% |
+| Linhas | 2.385 | 130 | 94,83% |
+| Metodos | 626 | 44 | 93,43% |
 
-Resultado: 108 testes automatizados, 0 falhas, 0 erros e `mvn verify` concluído com sucesso.
+Resultado: 109 testes automatizados, 0 falhas, 0 erros e `mvn verify` concluído com sucesso.
 
-Observacao: o JaCoCo exclui classes geradas pelo OpenAPI, a camada REST, a infraestrutura e records auxiliares de comando/consulta/saida. Os percentuais representam o núcleo de negócio medido, não a cobertura global de todas as classes. A cobertura de controllers e adapters ainda pode ser ampliada.
+O relatório inclui domínio, aplicação, controllers REST, segurança, mappers e adapters de persistência.
+São excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pelo OpenAPI e records
+estruturais de comando, consulta e saída sem lógica própria. O gate do Maven exige no mínimo 90% de
+instruções e linhas e 70% de branches para o conjunto medido.
 
 ## Como Acessar Swagger
 
@@ -538,21 +540,22 @@ SPRINGDOC_SWAGGER_UI_ENABLED=false
 
 Os usuarios demo sao carregados por `src/main/resources/db/migration/V1__create_autocarehub_baseline.sql`.
 
-A senha acadêmica dos usuários seed é exclusiva do ambiente local e não deve ser reutilizada em produção:
+A senha universal de **todos os usuários seed abaixo** é exclusiva do ambiente local e não deve ser
+reutilizada em produção:
 
 ```text
 autocare123
 ```
 
-| Usuario | Perfil |
-| --- | --- |
-| `admin@autocarehub.com` | Admin tecnico inicial |
-| `master@autocarehub.com` | Admin Master da plataforma |
-| `oficina.admin@autocarehub.com` | Admin de oficina |
-| `loja.admin@autocarehub.com` | Admin de loja de pecas |
-| `oficina.funcionario@autocarehub.com` | Funcionario de oficina |
-| `loja.funcionario@autocarehub.com` | Funcionario de loja de pecas |
-| `cliente@autocarehub.com` | Cliente final demo |
+| Usuario | Perfil | Senha |
+| --- | --- | --- |
+| `admin@autocarehub.com` | Admin tecnico inicial | `autocare123` |
+| `master@autocarehub.com` | Admin Master da plataforma | `autocare123` |
+| `oficina.admin@autocarehub.com` | Admin de oficina | `autocare123` |
+| `loja.admin@autocarehub.com` | Admin de loja de pecas | `autocare123` |
+| `oficina.funcionario@autocarehub.com` | Funcionario de oficina | `autocare123` |
+| `loja.funcionario@autocarehub.com` | Funcionario de loja de pecas | `autocare123` |
+| `cliente@autocarehub.com` | Cliente final demo | `autocare123` |
 
 Exemplo de login:
 
@@ -702,9 +705,22 @@ Resultado atual documentado:
 
 - Dependency-Check backend: 0 vulnerabilidades.
 - npm audit frontend: 0 vulnerabilidades.
-- Docker Scout: 0 vulnerabilidades na imagem final distroless.
-- Gitleaks: 0 leaks em 35 commits.
-- Semgrep: 0 achados e 0 erros em 190 arquivos.
+- Docker Scout backend: 0 vulnerabilidades na imagem final distroless.
+- Docker Scout frontend: 0 críticas, 0 altas e 1 média sem correção disponível na imagem base.
+- Gitleaks: 0 leaks em 36 commits.
+- Semgrep: 0 achados e 0 erros em 200 arquivos com 187 regras.
+
+## Validação Automatizada da Entrega
+
+Com o ambiente Docker ativo:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/validate-delivery.ps1
+```
+
+O script valida frontend, OpenAPI, login JWT e leitura dos dados seed. O workflow
+`.github/workflows/quality.yml` executa Spotless, testes, cobertura, lint sem warnings, build,
+`npm audit`, validação do Compose e build das imagens em pushes e pull requests para `main`.
 
 ## Decisoes Tecnicas
 
@@ -718,7 +734,7 @@ Resultado atual documentado:
 - Senhas com BCrypt.
 - Segredos por variaveis de ambiente.
 - Migrations consolidadas para facilitar recriacao limpa do banco academico.
-- Frontend mantido como demonstracao complementar, sem ser o foco da entrega backend.
+- Frontend demonstrativo incluído no mesmo Docker Compose da API e do banco.
 
 ## Limitacoes Conhecidas
 
@@ -728,11 +744,11 @@ Resultado atual documentado:
 - Controle de multiplas oficinas/lojas existe de forma simplificada no mesmo monolito.
 - Swagger fica publico no ambiente local academico.
 - Um teste dinamico dedicado de segurança permanece como melhoria futura.
-- Cobertura global ainda pode ser ampliada para se aproximar da meta desejada de 95%.
+- A imagem frontend mantém 1 CVE média de BusyBox sem versão corrigida disponível na base analisada.
 
 ## Melhorias Futuras
 
-- Ampliar cobertura automatizada de controllers, adapters e fluxos negativos.
+- Ampliar cobertura de branches e fluxos negativos.
 - Criar auditoria de acoes sensiveis.
 - Melhorar historico detalhado de status da OS.
 - Integrar notificacoes reais para cliente.

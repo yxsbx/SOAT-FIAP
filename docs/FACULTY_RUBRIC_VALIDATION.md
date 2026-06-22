@@ -8,36 +8,36 @@
 
 | Risco de perda de nota | Estado atual | Evidência | Ação restante |
 | --- | --- | --- | --- |
-| DDD superficial | Atendido | `docs/DDD_DOCUMENTATION.md` documenta linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados, repositórios, serviços, políticas, eventos, comandos e diagramas. | Apresentar apenas os pontos centrais no vídeo. |
-| Event Storming fraco | Atendido | `docs/EVENT_STORMING.md` contém 3 fluxos, atores, comandos, eventos, agregados, políticas, exceções, decisões e 4 diagramas Mermaid. | Mostrar ao menos um fluxo e o diagrama de estados no vídeo. |
-| README sem execução clara | Atendido | `README.md` documenta `.env`, Docker Compose, Maven, frontend, testes, Swagger e scans. | Nenhuma ação técnica. |
-| Docker não sobe de primeira | Atendido para o escopo principal | `docker compose up -d --build` validado com API e PostgreSQL. Runtime distroless, non-root e banco healthy. | O frontend demonstrativo ainda sobe separadamente com `npm run dev`; deixar isso claro na gravação. |
-| Swagger incompleto | Atendido | OpenAPI versionado com 34 paths e 51 operações; `/v3/api-docs` retornou 200. | Demonstrar login, Authorize e endpoints principais. |
-| Testes sem fluxo principal | Atendido | `ServiceOrderFlowIntegrationTest` cobre cliente, veículo, serviço, peça, OS, orçamento, aprovação, status e métrica. | Nenhuma ação técnica. |
-| Cobertura abaixo de 80% | Atendido no núcleo medido | 95,36% de instruções e 97,35% de linhas; 108 testes; `mvn verify` aprovado. | Explicar que REST e infraestrutura estão excluídos. Cobertura global não deve ser apresentada como 95%. |
-| JWT parcial | Atendido | Login JWT, filtro Bearer, expiração, BCrypt, rotas por papel e autorização por propriedade de cliente/OS. | Mostrar login administrativo e acesso de cliente no vídeo. |
-| Cliente não consulta OS | Atendido | Teste autoriza cliente apenas nas próprias OS; endpoint `GET /api/v1/customers/{customerId}/service-orders` e tracking protegido. | Demonstrar com usuário `cliente@autocarehub.com`. |
-| Orçamento não automático | Atendido | `generateBudget` tem default `true`; criação da OS pode gerar orçamento automaticamente. | Demonstrar uma criação com orçamento automático ou explicar a opção manual. |
-| Status não acompanha ações | Atendido | Geração muda para `WAITING_APPROVAL`; aprovação registra aceite; início muda para `IN_PROGRESS`; finalização e entrega têm transições controladas. | Não afirmar que aprovação inicia execução automaticamente. |
-| Relatório genérico | Atendido | Dependency-Check, npm audit, Docker Scout, Gitleaks e Semgrep possuem resultados e arquivos de evidência reais. | Manter relatórios junto da entrega. |
-| PDF sem links/evidências | Parcial | PDF A4 com 9 páginas, link clicável do repositório e caminhos das evidências. | Os caminhos internos não são hyperlinks; o repositório precisa estar acessível ao avaliador. |
-| Vídeo só de tela | Preparado, ainda não comprovado | `docs/VIDEO_SCRIPT.md` reserva tempo para arquitetura, DDD, Event Storming, segurança, testes e vulnerabilidades. | Ensaiar e gravar seguindo o roteiro, não apenas navegar pela interface. |
+| DDD superficial | Atendido | `docs/DDD_DOCUMENTATION.md` descreve subdomínios, bounded contexts, entidades, value objects, agregado, repositórios, serviços e linguagem ubíqua. | Mostrar apenas decisões centrais no vídeo. |
+| Event Storming fraco | Atendido | `docs/EVENT_STORMING.md` contém atores, comandos, eventos, políticas, exceções e diagramas Mermaid. | Mostrar o fluxo da OS e a máquina de estados. |
+| README sem execução clara | Atendido | `README.md` documenta `.env`, comando Docker único, URLs, testes, Swagger, usuários e scans. | Nenhuma ação técnica. |
+| Docker não sobe de primeira | Atendido | `docker compose up -d --build` validado com PostgreSQL, API e frontend. | Demonstrar o comando e `docker compose ps`. |
+| Swagger incompleto | Atendido | OpenAPI versionado e `/v3/api-docs` validado com HTTP 200. | Demonstrar login, Authorize e endpoints principais. |
+| Testes sem fluxo principal | Atendido | Testes de integração cobrem OS, orçamento, estoque, segurança, CRUD administrativo e persistência. | Nenhuma ação técnica. |
+| Cobertura abaixo de 80% | Atendido globalmente | 93,93% de instruções, 94,83% de linhas e 76,09% de branches; gates de 90/90/70; 109 testes. | Explicar apenas os excludes técnicos legítimos. |
+| JWT parcial | Atendido | Login JWT, filtro Bearer, expiração, BCrypt e autorização por papel/propriedade. | Mostrar login e acesso autorizado no vídeo. |
+| Cliente não consulta OS | Atendido | Endpoint por cliente e tracking protegido, com teste de autorização. | Demonstrar com `cliente@autocarehub.com`. |
+| Orçamento não automático | Atendido | A criação aceita `generateBudget`; também existe geração manual controlada por status. | Demonstrar um dos fluxos e explicar o outro. |
+| Status não acompanha ações | Atendido | Geração muda para `WAITING_APPROVAL`; aprovação registra aceite; execução e finalização têm transições explícitas. | Não afirmar que aprovação inicia execução automaticamente. |
+| Relatório genérico | Atendido | Dependency-Check, npm audit, Docker Scout, Gitleaks e Semgrep têm evidências reais. | Mencionar a CVE média aceita no frontend. |
+| PDF sem links/evidências | Atendido após regeneração | Documento de entrega contém links GitHub apontando para `main` e rotas locais. | Abrir os links do PDF final antes do envio. |
+| Vídeo só de tela | Preparado | `docs/VIDEO_SCRIPT.md` reserva tempo para arquitetura, DDD, Event Storming, segurança, testes e vulnerabilidades. | Ensaiar e gravar em até 15 minutos. |
 
-## Riscos residuais antes da entrega
+## Riscos residuais
 
 ### Prioridade máxima
 
-1. Conceder acesso de leitura ao repositório privado para `soatarchitecture`.
-2. Informar o username de Discord no documento final.
-3. Ensaiar e gravar o vídeo em até 15 minutos.
-4. Fazer commit e push de todas as correções e evidências finais.
+1. Gravar o vídeo seguindo o roteiro.
+2. Confirmar novamente o acesso de `soatarchitecture` após o push final.
+3. Executar o checklist rápido imediatamente antes da gravação.
+4. Manter as evidências do commit final junto da entrega.
 
 ### Prioridade média
 
-1. No vídeo, explicar que a cobertura de 95% é do núcleo de negócio medido.
-2. Mostrar que aprovação e início da execução são ações separadas.
-3. Demonstrar o cliente consultando somente as próprias Ordens de Serviço.
-4. Deixar claro que Docker Compose sobe backend e banco; o frontend demonstrativo é iniciado separadamente.
+1. Explicar que a cobertura é global e que apenas código gerado/estrutural está excluído.
+2. Mostrar aprovação e início da execução como ações separadas.
+3. Demonstrar a consulta da OS pelo cliente.
+4. Informar com transparência a CVE média da imagem frontend sem correção disponível.
 
 ## Evidências principais
 
@@ -52,6 +52,7 @@ target/site/jacoco/index.html
 target/dependency-check/dependency-check-report.html
 security-reports/frontend-dependencies/npm-audit-report.json
 security-reports/docker/docker-scout-cves.txt
+security-reports/docker/docker-scout-frontend-cves.txt
 security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
 ```

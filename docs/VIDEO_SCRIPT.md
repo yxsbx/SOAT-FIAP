@@ -428,20 +428,24 @@ docs/openapi/openapi.yaml
 **O que falar**
 
 - O projeto possui Dockerfile e Docker Compose.
-- O Compose sobe API e PostgreSQL.
+- O Compose sobe PostgreSQL, API e frontend com um único comando.
 - Variáveis sensíveis ficam em `.env`, com exemplo em `.env.example`.
-- A execução local padrão expõe API em `8080` e PostgreSQL em `5432`.
+- A execução local expõe frontend em `5173`, API em `8080` e PostgreSQL em `5432`.
+- O frontend usa proxy reverso para a API, evitando erro de CORS ao acessar pelo IP local.
 
 **O que mostrar na tela**
 
 - Abrir `docker-compose.yml`.
 - Abrir `Dockerfile`.
+- Abrir `frontend/Dockerfile` e `frontend/nginx.conf`.
 - Mostrar comandos no terminal, sem precisar executar se o tempo estiver curto.
 
 **Arquivos ou endpoints**
 
 ```text
 Dockerfile
+frontend/Dockerfile
+frontend/nginx.conf
 docker-compose.yml
 .env.example
 ```
@@ -450,7 +454,8 @@ Comandos:
 
 ```powershell
 Copy-Item .env.example .env
-docker compose up --build
+docker compose up -d --build
+docker compose ps
 docker compose down
 ```
 
@@ -467,7 +472,10 @@ docker compose down
 - O projeto possui testes unitários e de integração.
 - Os testes cobrem domínio, use cases, segurança, autorização e fluxos REST.
 - O relatório JaCoCo está configurado no Maven.
-- A documentação registra 108 testes automatizados e `mvn verify` com sucesso.
+- A documentação registra 109 testes automatizados e `mvn verify` com sucesso.
+- A cobertura global é 93,93% de instruções, 94,83% de linhas e 76,09% de branches.
+- Os gates automatizados exigem 90% de instruções/linhas e 70% de branches.
+- REST e infraestrutura entram na medição; apenas código gerado e records sem lógica são excluídos.
 
 **O que mostrar na tela**
 
@@ -505,9 +513,10 @@ mvn verify
 - Foram executados OWASP Dependency-Check para backend e `npm audit` para frontend.
 - Vulnerabilidades iniciais foram corrigidas por atualização de dependências.
 - O resultado final documentado é 0 vulnerabilidades no backend e 0 no frontend para os scans executados.
-- O Docker Scout final retornou 0 vulnerabilidades após a migração para runtime distroless.
-- Gitleaks analisou 35 commits sem encontrar secrets.
-- Semgrep analisou 190 arquivos sem encontrar problemas.
+- O Docker Scout do backend retornou 0 vulnerabilidades após a migração para runtime distroless.
+- A imagem frontend foi reduzida de 75 CVEs para 1 CVE média sem correção disponível, sem críticas ou altas.
+- Gitleaks analisou 36 commits sem encontrar secrets.
+- Semgrep executou 187 regras em 200 arquivos sem encontrar problemas.
 
 **O que mostrar na tela**
 
@@ -523,6 +532,8 @@ docs/SECURITY_REPORT.md
 docs/SECURITY_SCAN_GUIDE.md
 target/dependency-check/dependency-check-report.html
 security-reports/frontend-dependencies/npm-audit-report.json
+security-reports/docker/docker-scout-cves.txt
+security-reports/docker/docker-scout-frontend-cves.txt
 ```
 
 Comandos:
@@ -637,23 +648,23 @@ README.md
 
 - Confirmar que nome, RM e informação do Discord estão corretos em `docs/DELIVERY_DOCUMENT.md`.
 - Confirmar o link do repositório privado.
+- Confirmar que `soatarchitecture` mantém acesso Read e que a entrega está na branch `main`.
 - Confirmar se haverá link externo de Miro ou se será usado apenas `docs/EVENT_STORMING.md`.
 - Subir a API localmente.
 - Abrir o Swagger antes de iniciar a gravação.
 - Separar um usuário válido para login.
 - Usar a senha acadêmica local `autocare123` para os usuários seed.
 - Separar IDs de cliente, veículo, OS e peça para não perder tempo.
-- Se usar frontend, deixar backend e frontend rodando antes da gravação.
+- Deixar os três containers rodando antes da gravação.
 - Evitar executar comandos demorados durante o vídeo; mostrar comandos e resultados já gerados quando possível.
 
 ## Comandos úteis para preparar a gravação
 
-Backend e banco:
+Ambiente completo:
 
 ```powershell
 Copy-Item .env.example .env
-docker compose up -d postgres
-mvn spring-boot:run
+docker compose up -d --build
 ```
 
 Swagger:
@@ -662,13 +673,7 @@ Swagger:
 http://localhost:8080/swagger-ui.html
 ```
 
-Frontend:
-
-```powershell
-cd frontend
-npm install
-npm run dev
-```
+Frontend: `http://localhost:5173`
 
 Testes:
 

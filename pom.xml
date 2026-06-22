@@ -259,8 +259,6 @@
           <excludes>
             <exclude>br/com/autocarehub/AutoCareHubApiApplication.class</exclude>
             <exclude>br/com/autocarehub/interfaces/rest/generated/**/*.class</exclude>
-            <exclude>br/com/autocarehub/interfaces/rest/**/*.class</exclude>
-            <exclude>br/com/autocarehub/infrastructure/**/*.class</exclude>
             <exclude>br/com/autocarehub/application/usecase/**/*$Command.class</exclude>
             <exclude>br/com/autocarehub/application/usecase/**/*$Query.class</exclude>
             <exclude>br/com/autocarehub/application/usecase/**/*$Output.class</exclude>
@@ -283,7 +281,7 @@
           </execution>
 
           <execution>
-            <id>check-business-coverage</id>
+            <id>check-project-coverage</id>
             <phase>verify</phase>
             <goals>
               <goal>check</goal>
@@ -296,12 +294,17 @@
                     <limit>
                       <counter>INSTRUCTION</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.95</minimum>
+                      <minimum>0.90</minimum>
                     </limit>
                     <limit>
                       <counter>LINE</counter>
                       <value>COVEREDRATIO</value>
-                      <minimum>0.95</minimum>
+                      <minimum>0.90</minimum>
+                    </limit>
+                    <limit>
+                      <counter>BRANCH</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.70</minimum>
                     </limit>
                   </limits>
                 </rule>
