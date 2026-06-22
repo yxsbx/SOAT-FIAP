@@ -4,6 +4,7 @@
 **Responsável:** Yasmin Barcelos Pires - RM370897  
 **Data:** 20/06/2026  
 **Branch final de entrega:** `main`
+**Commit técnico validado:** `dbed819`
 
 ## Resultado geral
 
@@ -110,4 +111,3 @@ security-reports/static-analysis/semgrep.json
 ## Pendências de entrega
 
 - Gravar o vídeo seguindo `docs/VIDEO_SCRIPT.md`.
-- Confirmar o acesso de `soatarchitecture` após o push final.

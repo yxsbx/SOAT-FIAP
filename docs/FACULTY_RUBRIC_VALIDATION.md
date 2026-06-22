@@ -28,9 +28,9 @@
 ### Prioridade máxima
 
 1. Gravar o vídeo seguindo o roteiro.
-2. Confirmar novamente o acesso de `soatarchitecture` após o push final.
-3. Executar o checklist rápido imediatamente antes da gravação.
-4. Manter as evidências do commit final junto da entrega.
+2. Executar o checklist rápido imediatamente antes da gravação.
+3. Manter as evidências do commit final junto da entrega.
+4. Confirmar que o link enviado à faculdade aponta para a branch `main`.
 
 ### Prioridade média
 

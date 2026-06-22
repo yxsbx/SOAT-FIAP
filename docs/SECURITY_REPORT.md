@@ -36,6 +36,7 @@ Item fora do escopo desta versao:
 | Horario do relatorio Dependency-Check | 17:07:53 UTC |
 | Responsavel | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega | `main` |
+| Commit técnico validado | `dbed819` |
 
 ## 5. Ferramentas utilizadas
 

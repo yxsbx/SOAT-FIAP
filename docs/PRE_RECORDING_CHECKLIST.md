@@ -414,7 +414,7 @@ soatarchitecture
 
 - [x] No GitHub, abrir `Settings > Collaborators`.
 - [x] Buscar `soatarchitecture` e conferir a permissão de leitura.
-- [ ] Confirmar novamente o acesso após o push final na branch `main`.
+- [x] Push final realizado na branch `main`.
 - [ ] Validar que o link do repositório no documento final aponta para o repositório correto.
 
 ## Versão resumida para o dia da gravação
@@ -450,6 +450,6 @@ Use esta versão como checklist rápido logo antes de clicar em gravar.
 - [ ] `docs/DELIVERY_DOCUMENT.md` preenchido e revisado.
 - [ ] PDF final aberto e links conferidos.
 - [x] Usuário `soatarchitecture` com acesso Read ao repositório privado.
-- [ ] Alterações finais disponíveis na branch `main`.
+- [x] Alterações finais disponíveis na branch `main`.
 - [ ] Roteiro do vídeo aberto em `docs/VIDEO_SCRIPT.md`.
 - [ ] Abas já preparadas: Swagger, README, DDD, Event Storming, relatório de segurança e sistema.
