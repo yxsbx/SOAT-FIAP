@@ -1,20 +1,17 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import java.util.List;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderPartJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderServiceJpaEntity;
+import java.util.List;
+import java.util.UUID;
 
 public final class ServiceOrderJpaMapper {
 
-    private ServiceOrderJpaMapper() {
-
-    }
+    private ServiceOrderJpaMapper() {}
 
     public static ServiceOrderJpaEntity toEntity(ServiceOrder serviceOrder) {
         ServiceOrderJpaEntity entity = new ServiceOrderJpaEntity();
@@ -30,18 +27,22 @@ public final class ServiceOrderJpaMapper {
         entity.setStartedAt(serviceOrder.startedAt());
         entity.setFinishedAt(serviceOrder.finishedAt());
         entity.setDeliveredAt(serviceOrder.deliveredAt());
-        entity.replaceServices(
-                serviceOrder.services().stream().map(ServiceOrderJpaMapper::toServiceEntity).toList());
-        entity.replaceParts(
-                serviceOrder.parts().stream().map(ServiceOrderJpaMapper::toPartEntity).toList());
+        entity.replaceServices(serviceOrder.services().stream()
+                .map(ServiceOrderJpaMapper::toServiceEntity)
+                .toList());
+        entity.replaceParts(serviceOrder.parts().stream()
+                .map(ServiceOrderJpaMapper::toPartEntity)
+                .toList());
         return entity;
     }
 
     public static ServiceOrder toDomain(ServiceOrderJpaEntity entity) {
-        List<ServiceOrder.ServiceOrderService> services =
-                entity.getServices().stream().map(ServiceOrderJpaMapper::toServiceDomain).toList();
-        List<ServiceOrder.ServiceOrderPart> parts =
-                entity.getParts().stream().map(ServiceOrderJpaMapper::toPartDomain).toList();
+        List<ServiceOrder.ServiceOrderService> services = entity.getServices().stream()
+                .map(ServiceOrderJpaMapper::toServiceDomain)
+                .toList();
+        List<ServiceOrder.ServiceOrderPart> parts = entity.getParts().stream()
+                .map(ServiceOrderJpaMapper::toPartDomain)
+                .toList();
         return new ServiceOrder(
                 entity.getId(),
                 entity.getCustomerId(),
@@ -59,8 +60,7 @@ public final class ServiceOrderJpaMapper {
                 entity.getDeliveredAt());
     }
 
-    private static ServiceOrderServiceJpaEntity toServiceEntity(
-            ServiceOrder.ServiceOrderService service) {
+    private static ServiceOrderServiceJpaEntity toServiceEntity(ServiceOrder.ServiceOrderService service) {
         ServiceOrderServiceJpaEntity entity = new ServiceOrderServiceJpaEntity();
         entity.setId(UUID.randomUUID());
         entity.setServiceId(service.serviceId());
@@ -83,8 +83,7 @@ public final class ServiceOrderJpaMapper {
         return entity;
     }
 
-    private static ServiceOrder.ServiceOrderService toServiceDomain(
-            ServiceOrderServiceJpaEntity entity) {
+    private static ServiceOrder.ServiceOrderService toServiceDomain(ServiceOrderServiceJpaEntity entity) {
         return new ServiceOrder.ServiceOrderService(
                 entity.getServiceId(),
                 entity.getName(),

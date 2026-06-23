@@ -1,10 +1,5 @@
 package br.com.autocarehub.infrastructure.config;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.application.port.out.PartRepository;
@@ -63,6 +58,10 @@ import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServic
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
 import br.com.autocarehub.infrastructure.security.JwtService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ApplicationUseCaseConfig {
@@ -103,8 +102,7 @@ public class ApplicationUseCaseConfig {
     }
 
     @Bean
-    ChangeUserPasswordUseCase changeUserPasswordUseCase(
-            UserRepository repository, PasswordEncoder passwordEncoder) {
+    ChangeUserPasswordUseCase changeUserPasswordUseCase(UserRepository repository, PasswordEncoder passwordEncoder) {
         return new ChangeUserPasswordUseCase(repository, passwordEncoder);
     }
 
@@ -284,8 +282,7 @@ public class ApplicationUseCaseConfig {
 
     @Bean
     AddServiceToServiceOrderUseCase addServiceToServiceOrderUseCase(
-            ServiceOrderRepository serviceOrderRepository,
-            WorkshopServiceRepository workshopServiceRepository) {
+            ServiceOrderRepository serviceOrderRepository, WorkshopServiceRepository workshopServiceRepository) {
         return new AddServiceToServiceOrderUseCase(serviceOrderRepository, workshopServiceRepository);
     }
 
@@ -330,7 +327,6 @@ public class ApplicationUseCaseConfig {
             ServiceOrderRepository serviceOrderRepository,
             CustomerRepository customerRepository,
             VehicleRepository vehicleRepository) {
-        return new TrackServiceOrderUseCase(
-                serviceOrderRepository, customerRepository, vehicleRepository);
+        return new TrackServiceOrderUseCase(serviceOrderRepository, customerRepository, vehicleRepository);
     }
 }

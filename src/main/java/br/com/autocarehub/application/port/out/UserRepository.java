@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.port.out;
 
+import br.com.autocarehub.domain.model.User;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import br.com.autocarehub.domain.model.User;
 
 public interface UserRepository {
 

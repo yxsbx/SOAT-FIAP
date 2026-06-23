@@ -3,19 +3,6 @@ package br.com.autocarehub.application.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -76,6 +63,17 @@ import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 class ApplicationUseCaseAdditionalCoverageTest {
 
@@ -84,8 +82,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
     }
 
     private static Customer customer() {
-        return new Customer(
-                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
+        return new Customer("Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
     }
 
     private static Part part(String sku) {
@@ -123,14 +120,8 @@ class ApplicationUseCaseAdditionalCoverageTest {
     void shouldCoverCustomerFindListUpdateAndDeleteUseCases() {
         InMemoryCustomerRepository repository = new InMemoryCustomerRepository();
         Customer active = repository.save(customer());
-        Customer inactive =
-                repository.save(
-                        new Customer(
-                                "Joao Souza",
-                                Document.from("11222333000181"),
-                                "11888888888",
-                                "joao@example.com",
-                                address()));
+        Customer inactive = repository.save(new Customer(
+                "Joao Souza", Document.from("11222333000181"), "11888888888", "joao@example.com", address()));
         inactive.deactivate();
         repository.save(inactive);
 
@@ -140,16 +131,9 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .extracting(Customer::id)
                 .containsExactly(active.id());
 
-        Customer updated =
-                new UpdateCustomerUseCase(repository)
-                        .execute(
-                                new UpdateCustomerUseCase.Command(
-                                        active.id(),
-                                        "Maria Souza",
-                                        "11777777777",
-                                        "souza@example.com",
-                                        address(),
-                                        false));
+        Customer updated = new UpdateCustomerUseCase(repository)
+                .execute(new UpdateCustomerUseCase.Command(
+                        active.id(), "Maria Souza", "11777777777", "souza@example.com", address(), false));
 
         assertThat(updated.name()).isEqualTo("Maria Souza");
         assertThat(updated.active()).isFalse();
@@ -167,47 +151,35 @@ class ApplicationUseCaseAdditionalCoverageTest {
         InMemoryCustomerRepository customerRepository = new InMemoryCustomerRepository();
         Customer customer = customerRepository.save(customer());
         InMemoryVehicleRepository vehicleRepository = new InMemoryVehicleRepository();
-        Vehicle vehicle =
-                new CreateVehicleUseCase(vehicleRepository, customerRepository)
-                        .execute(
-                                new CreateVehicleUseCase.Command(
-                                        customer.id(), "ABC1D23", "Honda", "Civic", 2020, 35000));
+        Vehicle vehicle = new CreateVehicleUseCase(vehicleRepository, customerRepository)
+                .execute(new CreateVehicleUseCase.Command(customer.id(), "ABC1D23", "Honda", "Civic", 2020, 35000));
 
-        assertThat(new FindVehicleUseCase(vehicleRepository).execute(vehicle.id())).isEqualTo(vehicle);
+        assertThat(new FindVehicleUseCase(vehicleRepository).execute(vehicle.id()))
+                .isEqualTo(vehicle);
         assertThat(new ListVehiclesUseCase(vehicleRepository).execute()).hasSize(1);
-        assertThat(
-                new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository)
-                        .execute(customer.id()))
+        assertThat(new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository).execute(customer.id()))
                 .containsExactly(vehicle);
 
-        Vehicle updated =
-                new UpdateVehicleUseCase(vehicleRepository)
-                        .execute(
-                                new UpdateVehicleUseCase.Command(
-                                        vehicle.id(), "DEF2G34", "Toyota", "Corolla", 2021, 36000, false));
+        Vehicle updated = new UpdateVehicleUseCase(vehicleRepository)
+                .execute(new UpdateVehicleUseCase.Command(
+                        vehicle.id(), "DEF2G34", "Toyota", "Corolla", 2021, 36000, false));
 
         assertThat(updated.plate()).isEqualTo(new Plate("DEF2G34"));
         assertThat(updated.active()).isFalse();
-        assertThat(
-                new ListVehiclesUseCase(vehicleRepository)
-                        .execute(new ListVehiclesUseCase.Query(false)))
+        assertThat(new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(false)))
                 .containsExactly(updated);
-        assertThat(
-                new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(null)))
+        assertThat(new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(null)))
                 .containsExactly(updated);
-        assertThat(
-                new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(true)))
+        assertThat(new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(true)))
                 .isEmpty();
 
         new DeleteVehicleUseCase(vehicleRepository).execute(vehicle.id());
 
-        assertThat(vehicleRepository.findById(vehicle.id()).orElseThrow().active()).isFalse();
-        assertThatThrownBy(
-                () ->
-                        new CreateVehicleUseCase(vehicleRepository, customerRepository)
-                                .execute(
-                                        new CreateVehicleUseCase.Command(
-                                                UUID.randomUUID(), "GHI3J45", "Fiat", "Argo", 2022, 10000)))
+        assertThat(vehicleRepository.findById(vehicle.id()).orElseThrow().active())
+                .isFalse();
+        assertThatThrownBy(() -> new CreateVehicleUseCase(vehicleRepository, customerRepository)
+                        .execute(new CreateVehicleUseCase.Command(
+                                UUID.randomUUID(), "GHI3J45", "Fiat", "Argo", 2022, 10000)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
     }
@@ -215,39 +187,30 @@ class ApplicationUseCaseAdditionalCoverageTest {
     @Test
     void shouldCoverWorkshopServiceUseCases() {
         InMemoryWorkshopServiceRepository repository = new InMemoryWorkshopServiceRepository();
-        WorkshopService service =
-                new CreateWorkshopServiceUseCase(repository)
-                        .execute(
-                                new CreateWorkshopServiceUseCase.Command(
-                                        "Troca de oleo", "Troca de oleo e filtro", Money.of("120.00"), 60));
+        WorkshopService service = new CreateWorkshopServiceUseCase(repository)
+                .execute(new CreateWorkshopServiceUseCase.Command(
+                        "Troca de oleo", "Troca de oleo e filtro", Money.of("120.00"), 60));
 
-        assertThat(new FindWorkshopServiceUseCase(repository).execute(service.id())).isEqualTo(service);
+        assertThat(new FindWorkshopServiceUseCase(repository).execute(service.id()))
+                .isEqualTo(service);
         assertThat(new ListWorkshopServicesUseCase(repository).execute()).containsExactly(service);
 
-        WorkshopService updated =
-                new UpdateWorkshopServiceUseCase(repository)
-                        .execute(
-                                new UpdateWorkshopServiceUseCase.Command(
-                                        service.id(),
-                                        "Troca completa",
-                                        "Troca completa de oleo e filtros",
-                                        Money.of("180.00"),
-                                        90,
-                                        false));
+        WorkshopService updated = new UpdateWorkshopServiceUseCase(repository)
+                .execute(new UpdateWorkshopServiceUseCase.Command(
+                        service.id(),
+                        "Troca completa",
+                        "Troca completa de oleo e filtros",
+                        Money.of("180.00"),
+                        90,
+                        false));
 
         assertThat(updated.active()).isFalse();
         assertThat(updated.basePrice().value()).isEqualByComparingTo("180.00");
-        assertThat(
-                new ListWorkshopServicesUseCase(repository)
-                        .execute(new ListWorkshopServicesUseCase.Query(false)))
+        assertThat(new ListWorkshopServicesUseCase(repository).execute(new ListWorkshopServicesUseCase.Query(false)))
                 .containsExactly(updated);
-        assertThat(
-                new ListWorkshopServicesUseCase(repository)
-                        .execute(new ListWorkshopServicesUseCase.Query(null)))
+        assertThat(new ListWorkshopServicesUseCase(repository).execute(new ListWorkshopServicesUseCase.Query(null)))
                 .containsExactly(updated);
-        assertThat(
-                new ListWorkshopServicesUseCase(repository)
-                        .execute(new ListWorkshopServicesUseCase.Query(true)))
+        assertThat(new ListWorkshopServicesUseCase(repository).execute(new ListWorkshopServicesUseCase.Query(true)))
                 .isEmpty();
 
         new DeleteWorkshopServiceUseCase(repository).execute(service.id());
@@ -262,70 +225,67 @@ class ApplicationUseCaseAdditionalCoverageTest {
     void shouldCoverPartUseCases() {
         InMemoryPartRepository partRepository = new InMemoryPartRepository();
         InMemoryStockMovementRepository movementRepository = new InMemoryStockMovementRepository();
-        Part part =
-                new CreatePartUseCase(partRepository)
-                        .execute(
-                                new CreatePartUseCase.Command(
-                                        "Filtro de oleo",
-                                        "Filtro de oleo do motor",
-                                        "OIL-001",
-                                        "Filtros",
-                                        "Oleo",
-                                        "Bosch",
-                                        Money.of("25.00"),
-                                        Money.of("50.00"),
-                                        10,
-                                        2));
+        Part part = new CreatePartUseCase(partRepository)
+                .execute(new CreatePartUseCase.Command(
+                        "Filtro de oleo",
+                        "Filtro de oleo do motor",
+                        "OIL-001",
+                        "Filtros",
+                        "Oleo",
+                        "Bosch",
+                        Money.of("25.00"),
+                        Money.of("50.00"),
+                        10,
+                        2));
 
         assertThat(new FindPartUseCase(partRepository).execute(part.id())).isEqualTo(part);
         assertThat(new ListPartsUseCase(partRepository).execute()).containsExactly(part);
 
-        new ReservePartStockUseCase(partRepository)
-                .execute(new ReservePartStockUseCase.Command(part.id(), 3));
-        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(3);
+        new ReservePartStockUseCase(partRepository).execute(new ReservePartStockUseCase.Command(part.id(), 3));
+        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity())
+                .isEqualTo(3);
 
         new ReleasePartReservationUseCase(partRepository)
                 .execute(new ReleasePartReservationUseCase.Command(part.id(), 1));
-        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(2);
+        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity())
+                .isEqualTo(2);
 
         new CommitPartReservationUseCase(partRepository, movementRepository)
                 .execute(new CommitPartReservationUseCase.Command(part.id(), 2, "Venda"));
-        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(8);
+        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity())
+                .isEqualTo(8);
         assertThat(movementRepository.movements).hasSize(1);
 
         new ConfigurePartReservationUseCase(partRepository)
                 .execute(new ConfigurePartReservationUseCase.Command(part.id(), 5));
-        assertThat(partRepository.findById(part.id()).orElseThrow().reservationDays()).isEqualTo(5);
+        assertThat(partRepository.findById(part.id()).orElseThrow().reservationDays())
+                .isEqualTo(5);
 
-        new UpdatePartStockUseCase(partRepository)
-                .execute(new UpdatePartStockUseCase.Command(part.id(), 12));
-        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(12);
-        new UpdatePartStockUseCase(partRepository)
-                .execute(new UpdatePartStockUseCase.Command(part.id(), 9));
-        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(9);
+        new UpdatePartStockUseCase(partRepository).execute(new UpdatePartStockUseCase.Command(part.id(), 12));
+        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity())
+                .isEqualTo(12);
+        new UpdatePartStockUseCase(partRepository).execute(new UpdatePartStockUseCase.Command(part.id(), 9));
+        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity())
+                .isEqualTo(9);
 
-        Part updated =
-                new UpdatePartUseCase(partRepository)
-                        .execute(
-                                new UpdatePartUseCase.Command(
-                                        part.id(),
-                                        "Filtro premium",
-                                        "Filtro premium do motor",
-                                        "OIL-002",
-                                        "Filtros",
-                                        "Oleo",
-                                        "Bosch",
-                                        Money.of("30.00"),
-                                        Money.of("80.00"),
-                                        4,
-                                        false));
+        Part updated = new UpdatePartUseCase(partRepository)
+                .execute(new UpdatePartUseCase.Command(
+                        part.id(),
+                        "Filtro premium",
+                        "Filtro premium do motor",
+                        "OIL-002",
+                        "Filtros",
+                        "Oleo",
+                        "Bosch",
+                        Money.of("30.00"),
+                        Money.of("80.00"),
+                        4,
+                        false));
         assertThat(updated.active()).isFalse();
 
-        assertThat(
-                new ListPartsUseCase(partRepository).execute(new ListPartsUseCase.Query(false, false)))
+        assertThat(new ListPartsUseCase(partRepository).execute(new ListPartsUseCase.Query(false, false)))
                 .containsExactly(updated);
-        new UpdatePartStockUseCase(partRepository)
-                .execute(new UpdatePartStockUseCase.Command(part.id(), 4));
+        new UpdatePartStockUseCase(partRepository).execute(new UpdatePartStockUseCase.Command(part.id(), 4));
         assertThat(new ListPartsUseCase(partRepository).execute(new ListPartsUseCase.Query(null, true)))
                 .containsExactly(updated);
 
@@ -343,84 +303,72 @@ class ApplicationUseCaseAdditionalCoverageTest {
         InMemoryPasswordEncoder passwordEncoder = new InMemoryPasswordEncoder();
         InMemoryUserPreferenceRepository preferenceRepository = new InMemoryUserPreferenceRepository();
         User admin = userRepository.save(user("admin", "Admin User", UserRole.ADMIN, true));
-        User employee =
-                userRepository.save(user("employee", "Employee User", UserRole.EMPLOYEE, false));
+        User employee = userRepository.save(user("employee", "Employee User", UserRole.EMPLOYEE, false));
 
         assertThat(new GetUserUseCase(userRepository).execute(admin.id())).isEqualTo(admin);
         assertThat(new ListUsersUseCase(userRepository).execute(null))
                 .extracting(User::id)
                 .contains(admin.id(), employee.id());
-        assertThat(
-                new ListUsersUseCase(userRepository)
+        assertThat(new ListUsersUseCase(userRepository)
                         .execute(new ListUsersUseCase.Query(true, "ADMIN", "admin", "admin")))
                 .extracting(User::id)
                 .containsExactly(admin.id());
-        assertThat(
-                new ListUsersUseCase(userRepository)
+        assertThat(new ListUsersUseCase(userRepository)
                         .execute(new ListUsersUseCase.Query(false, "EMPLOYEE", "employee", "consultor")))
                 .extracting(User::id)
                 .containsExactly(employee.id());
-        assertThat(
-                new ListUsersUseCase(userRepository)
-                        .execute(new ListUsersUseCase.Query(null, null, null, "user")))
+        assertThat(new ListUsersUseCase(userRepository).execute(new ListUsersUseCase.Query(null, null, null, "user")))
                 .extracting(User::id)
                 .contains(admin.id(), employee.id());
-        assertThat(
-                new ListUsersUseCase(userRepository)
+        assertThat(new ListUsersUseCase(userRepository)
                         .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
                 .isEmpty();
 
-        User created =
-                new CreateUserUseCase(userRepository, passwordEncoder)
-                        .execute(
-                                new CreateUserUseCase.Command(
-                                        "consultor",
-                                        "plain",
-                                        "EMPLOYEE",
-                                        null,
-                                        "Consultor",
-                                        "employee",
-                                        "AutoCare",
-                                        "Oficina",
-                                        "Consultor",
-                                        List.of("orders:read"),
-                                        true));
+        User created = new CreateUserUseCase(userRepository, passwordEncoder)
+                .execute(new CreateUserUseCase.Command(
+                        "consultor",
+                        "plain",
+                        "EMPLOYEE",
+                        null,
+                        "Consultor",
+                        "employee",
+                        "AutoCare",
+                        "Oficina",
+                        "Consultor",
+                        List.of("orders:read"),
+                        true));
         assertThat(created.passwordHash()).isEqualTo("encoded:plain");
 
-        User updated =
-                new UpdateUserUseCase(userRepository)
-                        .execute(
-                                new UpdateUserUseCase.Command(
-                                        created.id(),
-                                        "consultor2",
-                                        "ADMIN",
-                                        null,
-                                        "Consultor Dois",
-                                        "admin",
-                                        "AutoCare",
-                                        "Oficina",
-                                        "Gestor",
-                                        List.of("users:write"),
-                                        false));
+        User updated = new UpdateUserUseCase(userRepository)
+                .execute(new UpdateUserUseCase.Command(
+                        created.id(),
+                        "consultor2",
+                        "ADMIN",
+                        null,
+                        "Consultor Dois",
+                        "admin",
+                        "AutoCare",
+                        "Oficina",
+                        "Gestor",
+                        List.of("users:write"),
+                        false));
         assertThat(updated.username()).isEqualTo("consultor2");
         assertThat(updated.role()).isEqualTo(UserRole.ADMIN);
         assertThat(updated.active()).isFalse();
 
-        User keptIdentity =
-                new UpdateUserUseCase(userRepository)
-                        .execute(
-                                new UpdateUserUseCase.Command(
-                                        updated.id(),
-                                        "   ",
-                                        "",
-                                        null,
-                                        "Consultor Tres",
-                                        "admin",
-                                        "AutoCare",
-                                        "Oficina",
-                                        "Gestor",
-                                        List.of("users:read"),
-                                        true));
+        User keptIdentity = new UpdateUserUseCase(userRepository)
+                .execute(new UpdateUserUseCase.Command(
+                        updated.id(),
+                        "   ",
+                        "",
+                        null,
+                        "Consultor Tres",
+                        "admin",
+                        "AutoCare",
+                        "Oficina",
+                        "Gestor",
+                        List.of("users:read"),
+                        true));
         assertThat(keptIdentity.username()).isEqualTo("consultor2");
         assertThat(keptIdentity.role()).isEqualTo(UserRole.ADMIN);
         assertThat(keptIdentity.active()).isTrue();
@@ -430,32 +378,22 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThat(userRepository.findById(updated.id()).orElseThrow().passwordHash())
                 .isEqualTo("encoded:new-secret");
 
-        assertThat(
-                new GetUserPreferenceUseCase(preferenceRepository)
+        assertThat(new GetUserPreferenceUseCase(preferenceRepository)
                         .execute(admin.id(), "home", "{\"page\":\"dashboard\"}"))
                 .isEqualTo("{\"page\":\"dashboard\"}");
-        assertThat(
-                new SaveUserPreferenceUseCase(preferenceRepository)
+        assertThat(new SaveUserPreferenceUseCase(preferenceRepository)
                         .execute(admin.id(), "home", "{\"page\":\"orders\"}"))
                 .isEqualTo("{\"page\":\"orders\"}");
         assertThat(new GetUserPreferenceUseCase(preferenceRepository).execute(admin.id(), "home", "{}"))
                 .isEqualTo("{\"page\":\"orders\"}");
 
-        assertThatThrownBy(
-                () ->
-                        new CreateUserUseCase(userRepository, passwordEncoder)
-                                .execute(
-                                        new CreateUserUseCase.Command(
-                                                "admin", "plain", "ADMIN", null, "Admin", "admin", "", "", "",
-                                                List.of(), true)))
+        assertThatThrownBy(() -> new CreateUserUseCase(userRepository, passwordEncoder)
+                        .execute(new CreateUserUseCase.Command(
+                                "admin", "plain", "ADMIN", null, "Admin", "admin", "", "", "", List.of(), true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Username already exists");
-        assertThatThrownBy(
-                () ->
-                        new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
-                                .execute(
-                                        new ChangeUserPasswordUseCase.Command(
-                                                updated.id(), "wrong", "new-secret", true)))
+        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
+                        .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "wrong", "new-secret", true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Current password is invalid");
     }
@@ -465,20 +403,16 @@ class ApplicationUseCaseAdditionalCoverageTest {
         UUID missingId = UUID.randomUUID();
         InMemoryCustomerRepository customerRepository = new InMemoryCustomerRepository();
         InMemoryVehicleRepository vehicleRepository = new InMemoryVehicleRepository();
-        InMemoryWorkshopServiceRepository workshopServiceRepository =
-                new InMemoryWorkshopServiceRepository();
+        InMemoryWorkshopServiceRepository workshopServiceRepository = new InMemoryWorkshopServiceRepository();
         InMemoryPartRepository partRepository = new InMemoryPartRepository();
         InMemoryServiceOrderRepository serviceOrderRepository = new InMemoryServiceOrderRepository();
         InMemoryStockMovementRepository movementRepository = new InMemoryStockMovementRepository();
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
         InMemoryPasswordEncoder passwordEncoder = new InMemoryPasswordEncoder();
 
-        assertThatThrownBy(
-                () ->
-                        new UpdateCustomerUseCase(customerRepository)
-                                .execute(
-                                        new UpdateCustomerUseCase.Command(
-                                                missingId, "Nome", "11999999999", "mail@example.com", address(), true)))
+        assertThatThrownBy(() -> new UpdateCustomerUseCase(customerRepository)
+                        .execute(new UpdateCustomerUseCase.Command(
+                                missingId, "Nome", "11999999999", "mail@example.com", address(), true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
         assertThatThrownBy(() -> new DeleteCustomerUseCase(customerRepository).execute(missingId))
@@ -490,120 +424,85 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThatThrownBy(() -> new DeleteVehicleUseCase(vehicleRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
-        assertThatThrownBy(
-                () ->
-                        new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository)
-                                .execute(missingId))
+        assertThatThrownBy(() ->
+                        new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
-        assertThatThrownBy(
-                () ->
-                        new UpdateVehicleUseCase(vehicleRepository)
-                                .execute(
-                                        new UpdateVehicleUseCase.Command(
-                                                missingId, "ABC1D23", "Honda", "Civic", 2020, 10000, true)))
+        assertThatThrownBy(() -> new UpdateVehicleUseCase(vehicleRepository)
+                        .execute(new UpdateVehicleUseCase.Command(
+                                missingId, "ABC1D23", "Honda", "Civic", 2020, 10000, true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
 
-        assertThatThrownBy(
-                () -> new FindWorkshopServiceUseCase(workshopServiceRepository).execute(missingId))
+        assertThatThrownBy(() -> new FindWorkshopServiceUseCase(workshopServiceRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
-        assertThatThrownBy(
-                () -> new DeleteWorkshopServiceUseCase(workshopServiceRepository).execute(missingId))
+        assertThatThrownBy(() -> new DeleteWorkshopServiceUseCase(workshopServiceRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
-        assertThatThrownBy(
-                () ->
-                        new UpdateWorkshopServiceUseCase(workshopServiceRepository)
-                                .execute(
-                                        new UpdateWorkshopServiceUseCase.Command(
-                                                missingId, "Servico", "Descrição", Money.of("10.00"), 30, true)))
+        assertThatThrownBy(() -> new UpdateWorkshopServiceUseCase(workshopServiceRepository)
+                        .execute(new UpdateWorkshopServiceUseCase.Command(
+                                missingId, "Servico", "Descrição", Money.of("10.00"), 30, true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
 
         assertThatThrownBy(() -> new DeletePartUseCase(partRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
-        assertThatThrownBy(
-                () ->
-                        new ReservePartStockUseCase(partRepository)
-                                .execute(new ReservePartStockUseCase.Command(missingId, 1)))
+        assertThatThrownBy(() -> new ReservePartStockUseCase(partRepository)
+                        .execute(new ReservePartStockUseCase.Command(missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
-        assertThatThrownBy(
-                () ->
-                        new ReleasePartReservationUseCase(partRepository)
-                                .execute(new ReleasePartReservationUseCase.Command(missingId, 1)))
+        assertThatThrownBy(() -> new ReleasePartReservationUseCase(partRepository)
+                        .execute(new ReleasePartReservationUseCase.Command(missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
-        assertThatThrownBy(
-                () ->
-                        new ConfigurePartReservationUseCase(partRepository)
-                                .execute(new ConfigurePartReservationUseCase.Command(missingId, 3)))
+        assertThatThrownBy(() -> new ConfigurePartReservationUseCase(partRepository)
+                        .execute(new ConfigurePartReservationUseCase.Command(missingId, 3)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
-        assertThatThrownBy(
-                () ->
-                        new UpdatePartStockUseCase(partRepository)
-                                .execute(new UpdatePartStockUseCase.Command(missingId, 10)))
+        assertThatThrownBy(() -> new UpdatePartStockUseCase(partRepository)
+                        .execute(new UpdatePartStockUseCase.Command(missingId, 10)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
-        assertThatThrownBy(
-                () ->
-                        new CommitPartReservationUseCase(partRepository, movementRepository)
-                                .execute(new CommitPartReservationUseCase.Command(missingId, 1, "Venda")))
+        assertThatThrownBy(() -> new CommitPartReservationUseCase(partRepository, movementRepository)
+                        .execute(new CommitPartReservationUseCase.Command(missingId, 1, "Venda")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
 
         assertThatThrownBy(() -> new FindServiceOrderUseCase(serviceOrderRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new AddServiceToServiceOrderUseCase(
-                                serviceOrderRepository, workshopServiceRepository)
-                                .execute(new AddServiceToServiceOrderUseCase.Command(missingId, missingId, 1)))
+        assertThatThrownBy(() -> new AddServiceToServiceOrderUseCase(serviceOrderRepository, workshopServiceRepository)
+                        .execute(new AddServiceToServiceOrderUseCase.Command(missingId, missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new AddPartToServiceOrderUseCase(serviceOrderRepository, partRepository)
-                                .execute(new AddPartToServiceOrderUseCase.Command(missingId, missingId, 1)))
+        assertThatThrownBy(() -> new AddPartToServiceOrderUseCase(serviceOrderRepository, partRepository)
+                        .execute(new AddPartToServiceOrderUseCase.Command(missingId, missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                                .execute(missingId))
+        assertThatThrownBy(() -> new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
+                        .execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                                .execute(missingId))
+        assertThatThrownBy(() ->
+                        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository)
-                                .execute(new UpdateServiceOrderStatusUseCase.Command(missingId, null)))
+        assertThatThrownBy(() -> new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository)
+                        .execute(new UpdateServiceOrderStatusUseCase.Command(missingId, null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
-        assertThatThrownBy(
-                () ->
-                        new ListServiceOrdersByCustomerUseCase(serviceOrderRepository, customerRepository)
-                                .execute(missingId))
+        assertThatThrownBy(() -> new ListServiceOrdersByCustomerUseCase(serviceOrderRepository, customerRepository)
+                        .execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
 
         assertThatThrownBy(() -> new GetUserUseCase(userRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
-        assertThatThrownBy(
-                () ->
-                        new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
-                                .execute(new ChangeUserPasswordUseCase.Command(missingId, "old", "new", true)))
+        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
+                        .execute(new ChangeUserPasswordUseCase.Command(missingId, "old", "new", true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
     }
@@ -772,7 +671,9 @@ class ApplicationUseCaseAdditionalCoverageTest {
 
         @Override
         public Optional<User> findByUsername(String username) {
-            return users.values().stream().filter(user -> user.username().equals(username)).findFirst();
+            return users.values().stream()
+                    .filter(user -> user.username().equals(username))
+                    .findFirst();
         }
 
         @Override
@@ -808,7 +709,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         public boolean matches(@Nullable CharSequence rawPassword, @Nullable String encodedPassword) {
             return encodedPassword != null
                     && (encodedPassword.equals("encoded:" + rawPassword)
-                    || encodedPassword.equals("{encoded}" + rawPassword));
+                            || encodedPassword.equals("{encoded}" + rawPassword));
         }
     }
 }

@@ -1,8 +1,7 @@
 package br.com.autocarehub.application.port.out;
 
-import java.util.List;
-
 import br.com.autocarehub.domain.model.DemoLead;
+import java.util.List;
 
 public interface DemoLeadRepository {
 

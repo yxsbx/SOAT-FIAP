@@ -1,11 +1,10 @@
 package br.com.autocarehub.application.usecase.user;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.model.User;
+import java.util.UUID;
 
 public class UpdateUserUseCase {
 
@@ -16,29 +15,23 @@ public class UpdateUserUseCase {
     }
 
     public User execute(Command command) {
-        User current =
-                userRepository
-                        .findById(command.userId())
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        User updated =
-                new User(
-                        current.id(),
-                        command.username() == null || command.username().isBlank()
-                                ? current.username()
-                                : command.username(),
-                        current.passwordHash(),
-                        command.role() == null || command.role().isBlank()
-                                ? current.role()
-                                : UserRole.valueOf(command.role()),
-                        command.customerId(),
-                        command.fullName(),
-                        command.profileType(),
-                        command.companyName(),
-                        command.companyType(),
-                        command.employeeSubRole(),
-                        command.permissions(),
-                        command.active(),
-                        current.createdAt());
+        User current = userRepository
+                .findById(command.userId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User updated = new User(
+                current.id(),
+                command.username() == null || command.username().isBlank() ? current.username() : command.username(),
+                current.passwordHash(),
+                command.role() == null || command.role().isBlank() ? current.role() : UserRole.valueOf(command.role()),
+                command.customerId(),
+                command.fullName(),
+                command.profileType(),
+                command.companyName(),
+                command.companyType(),
+                command.employeeSubRole(),
+                command.permissions(),
+                command.active(),
+                current.createdAt());
         return userRepository.save(updated);
     }
 
@@ -53,7 +46,5 @@ public class UpdateUserUseCase {
             String companyType,
             String employeeSubRole,
             java.util.List<String> permissions,
-            boolean active) {
-
-    }
+            boolean active) {}
 }

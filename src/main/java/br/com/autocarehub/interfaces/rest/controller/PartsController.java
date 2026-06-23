@@ -1,13 +1,5 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.autocarehub.application.usecase.part.CommitPartReservationUseCase;
 import br.com.autocarehub.application.usecase.part.ConfigurePartReservationUseCase;
 import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
@@ -32,6 +24,12 @@ import br.com.autocarehub.interfaces.rest.generated.model.StockMovementRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
 import br.com.autocarehub.interfaces.rest.mapper.PartRestMapper;
+import java.math.BigDecimal;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PartsController implements PartsApi {
@@ -93,9 +91,8 @@ public class PartsController implements PartsApi {
     @Override
     public ResponseEntity<PartListResponse> listParts(
             Integer page, Integer size, @Nullable Boolean active, @Nullable Boolean lowStock) {
-        return ResponseEntity.ok(
-                PartRestMapper.toListResponse(
-                        listPartsUseCase.execute(PartRestMapper.toQuery(active, lowStock)), page, size));
+        return ResponseEntity.ok(PartRestMapper.toListResponse(
+                listPartsUseCase.execute(PartRestMapper.toQuery(active, lowStock)), page, size));
     }
 
     @Override
@@ -105,70 +102,55 @@ public class PartsController implements PartsApi {
     }
 
     @Override
-    public ResponseEntity<PartResponse> updatePartStock(
-            UUID partId, UpdatePartStockRequest updatePartStockRequest) {
-        Part part =
-                updatePartStockUseCase.execute(PartRestMapper.toCommand(partId, updatePartStockRequest));
+    public ResponseEntity<PartResponse> updatePartStock(UUID partId, UpdatePartStockRequest updatePartStockRequest) {
+        Part part = updatePartStockUseCase.execute(PartRestMapper.toCommand(partId, updatePartStockRequest));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 
     @Override
-    public ResponseEntity<PartResponse> registerStockMovement(
-            UUID partId, StockMovementRequest stockMovementRequest) {
-        Part part =
-                registerPartStockMovementUseCase.execute(
-                        new RegisterPartStockMovementUseCase.Command(
-                                partId,
-                                RegisterPartStockMovementUseCase.MovementType.valueOf(
-                                        stockMovementRequest.getType().getValue()),
-                                stockMovementRequest.getQuantity(),
-                                stockMovementRequest.getUnitCost() == null
-                                        ? null
-                                        : new Money(BigDecimal.valueOf(stockMovementRequest.getUnitCost())),
-                                stockMovementRequest.getUnitPrice() == null
-                                        ? null
-                                        : new Money(BigDecimal.valueOf(stockMovementRequest.getUnitPrice())),
-                                stockMovementRequest.getReason()));
+    public ResponseEntity<PartResponse> registerStockMovement(UUID partId, StockMovementRequest stockMovementRequest) {
+        Part part = registerPartStockMovementUseCase.execute(new RegisterPartStockMovementUseCase.Command(
+                partId,
+                RegisterPartStockMovementUseCase.MovementType.valueOf(
+                        stockMovementRequest.getType().getValue()),
+                stockMovementRequest.getQuantity(),
+                stockMovementRequest.getUnitCost() == null
+                        ? null
+                        : new Money(BigDecimal.valueOf(stockMovementRequest.getUnitCost())),
+                stockMovementRequest.getUnitPrice() == null
+                        ? null
+                        : new Money(BigDecimal.valueOf(stockMovementRequest.getUnitPrice())),
+                stockMovementRequest.getReason()));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 
     @Override
     public ResponseEntity<PartResponse> configurePartReservation(
             UUID partId, ConfigurePartReservationRequest configurePartReservationRequest) {
-        Part part =
-                configurePartReservationUseCase.execute(
-                        new ConfigurePartReservationUseCase.Command(
-                                partId, configurePartReservationRequest.getReservationDays()));
+        Part part = configurePartReservationUseCase.execute(new ConfigurePartReservationUseCase.Command(
+                partId, configurePartReservationRequest.getReservationDays()));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 
     @Override
-    public ResponseEntity<PartResponse> reservePart(
-            UUID partId, PartQuantityRequest partQuantityRequest) {
-        Part part =
-                reservePartStockUseCase.execute(
-                        new ReservePartStockUseCase.Command(partId, partQuantityRequest.getQuantity()));
+    public ResponseEntity<PartResponse> reservePart(UUID partId, PartQuantityRequest partQuantityRequest) {
+        Part part = reservePartStockUseCase.execute(
+                new ReservePartStockUseCase.Command(partId, partQuantityRequest.getQuantity()));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 
     @Override
-    public ResponseEntity<PartResponse> releaseReservation(
-            UUID partId, PartQuantityRequest partQuantityRequest) {
-        Part part =
-                releasePartReservationUseCase.execute(
-                        new ReleasePartReservationUseCase.Command(partId, partQuantityRequest.getQuantity()));
+    public ResponseEntity<PartResponse> releaseReservation(UUID partId, PartQuantityRequest partQuantityRequest) {
+        Part part = releasePartReservationUseCase.execute(
+                new ReleasePartReservationUseCase.Command(partId, partQuantityRequest.getQuantity()));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 
     @Override
     public ResponseEntity<PartResponse> commitReservation(
             UUID partId, CommitPartReservationRequest commitPartReservationRequest) {
-        Part part =
-                commitPartReservationUseCase.execute(
-                        new CommitPartReservationUseCase.Command(
-                                partId,
-                                commitPartReservationRequest.getQuantity(),
-                                commitPartReservationRequest.getReason()));
+        Part part = commitPartReservationUseCase.execute(new CommitPartReservationUseCase.Command(
+                partId, commitPartReservationRequest.getQuantity(), commitPartReservationRequest.getReason()));
         return ResponseEntity.ok(PartRestMapper.toResponse(part));
     }
 }

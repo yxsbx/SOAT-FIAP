@@ -1,8 +1,5 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
-import java.util.List;
-import java.util.UUID;
-
 import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
 import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
@@ -11,11 +8,12 @@ import br.com.autocarehub.interfaces.rest.generated.model.CreateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
+import java.util.List;
+import java.util.UUID;
 
 public final class CustomerRestMapper {
 
-    private CustomerRestMapper() {
-    }
+    private CustomerRestMapper() {}
 
     public static CreateCustomerUseCase.Command toCommand(CreateCustomerRequest request) {
         return new CreateCustomerUseCase.Command(
@@ -26,8 +24,7 @@ public final class CustomerRestMapper {
                 toDomainAddress(request.getAddress()));
     }
 
-    public static UpdateCustomerUseCase.Command toCommand(
-            UUID customerId, UpdateCustomerRequest request) {
+    public static UpdateCustomerUseCase.Command toCommand(UUID customerId, UpdateCustomerRequest request) {
         return new UpdateCustomerUseCase.Command(
                 customerId,
                 request.getName(),
@@ -53,12 +50,10 @@ public final class CustomerRestMapper {
                 RestMapperSupport.toOffsetDateTime(customer.createdAt()));
     }
 
-    public static CustomerListResponse toListResponse(
-            List<Customer> customers, Integer page, Integer size) {
-        List<CustomerResponse> items =
-                RestMapperSupport.page(customers, page, size).stream()
-                        .map(CustomerRestMapper::toListItemResponse)
-                        .toList();
+    public static CustomerListResponse toListResponse(List<Customer> customers, Integer page, Integer size) {
+        List<CustomerResponse> items = RestMapperSupport.page(customers, page, size).stream()
+                .map(CustomerRestMapper::toListItemResponse)
+                .toList();
 
         return new CustomerListResponse(
                 items,
@@ -110,12 +105,12 @@ public final class CustomerRestMapper {
             return null;
         }
         return new br.com.autocarehub.interfaces.rest.generated.model.Address(
-                address.street(),
-                address.number(),
-                address.neighborhood(),
-                address.city(),
-                address.state(),
-                address.zipCode())
+                        address.street(),
+                        address.number(),
+                        address.neighborhood(),
+                        address.city(),
+                        address.state(),
+                        address.zipCode())
                 .complement(address.complement());
     }
 }

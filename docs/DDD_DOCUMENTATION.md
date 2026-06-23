@@ -2,22 +2,15 @@
 
 ## 1. Introdução
 
-Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do
-Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e
-interfaces REST.
+Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e interfaces REST.
 
-O objetivo desta documentação é registrar as decisões de domínio usadas no MVP e servir como evidência técnica da
-aplicação de DDD.
+O objetivo desta documentação é registrar as decisões de domínio utilizadas no MVP e servir como evidência técnica da aplicação de DDD.
 
 ## 2. Contexto do problema
 
-Oficinas mecânicas precisam controlar clientes, veículos, ordens de serviço, serviços solicitados, peças, insumos,
-orçamentos, aprovações e estoque. Quando esses dados ficam dispersos em planilhas, mensagens ou controles manuais,
-surgem problemas de rastreabilidade, perda de histórico, divergência de estoque e baixa transparência para o cliente.
+Oficinas mecânicas precisam controlar clientes, veículos, ordens de serviço, serviços solicitados, peças, insumos, orçamentos, aprovações e estoque. Quando esses dados ficam dispersos em planilhas, mensagens ou controles manuais, surgem problemas de rastreabilidade, perda de histórico, divergência de estoque e baixa transparência para o cliente.
 
-O AutoCare Hub organiza o ciclo de atendimento da oficina: identificação do cliente, cadastro ou vinculação do veículo,
-criação da Ordem de Serviço, composição com serviços e peças, geração de orçamento, aprovação, execução, finalização e
-entrega do veículo.
+O AutoCare Hub organiza o ciclo de atendimento da oficina: identificação do cliente, cadastro ou vinculação do veículo, criação da Ordem de Serviço, composição com serviços e peças, geração de orçamento, aprovação, execução, finalização e entrega do veículo.
 
 ## 3. Objetivo do MVP
 
@@ -37,7 +30,7 @@ O MVP entrega uma API REST para uma oficina mecânica, com foco em:
 - documentação OpenAPI/Swagger;
 - testes automatizados dos fluxos críticos.
 
-Funcionalidades de marketplace, pagamentos, notificações, agenda e integrações externas são melhorias futuras e não
+Funcionalidades de ‘marketplace’, pagamentos, notificações, agenda e integrações externas são melhorias futuras e não
 fazem parte do núcleo obrigatório do MVP.
 
 ## 4. Visão geral do domínio
@@ -59,7 +52,7 @@ A arquitetura do projeto separa responsabilidades:
 | Cliente                 | `Customer`               | Pessoa física ou jurídica atendida pela oficina, identificada por CPF ou CNPJ. |
 | Documento               | `Document`               | CPF ou CNPJ validado, normalizado e usado para evitar duplicidade.             |
 | Veículo                 | `Vehicle`                | Veículo pertencente a um cliente, identificado por placa, marca, modelo e ano. |
-| Placa                   | `Plate`                  | Identificador do veículo, aceitando formato antigo brasileiro e Mercosul.      |
+| Placa                   | `Plate`                  | Identificador do veículo, aceitando o formato antigo brasileiro e o Mercosul.  |
 | Ordem de Serviço        | `ServiceOrder`           | Registro central do atendimento da oficina.                                    |
 | Status da OS            | `ServiceOrderStatus`     | Estado controlado da Ordem de Serviço.                                         |
 | Serviço                 | `WorkshopService`        | Atividade executável pela oficina.                                             |
@@ -72,7 +65,7 @@ A arquitetura do projeto separa responsabilidades:
 | Baixa de estoque        | métodos de `Part`        | Redução definitiva do estoque após aprovação ou saída registrada.              |
 
 Os nomes técnicos permanecem em inglês para manter compatibilidade com o código e com o contrato REST, mas a linguagem
-de negócio usada na documentação é em português.
+de negócio usada na documentação está em português.
 
 ## 6. Subdomínios
 
@@ -102,8 +95,7 @@ de negócio usada na documentação é em português.
 
 ### Atendimento de Oficina
 
-Contexto principal do MVP. Contém Ordem de Serviço, diagnóstico, serviços solicitados, peças vinculadas, orçamento,
-aprovação, status e acompanhamento pelo cliente.
+Contexto principal do MVP. Contém Ordem de Serviço, diagnóstico, serviços solicitados, peças vinculadas, orçamento, aprovação, status e acompanhamento pelo cliente.
 
 ### Cadastro de Clientes e Veículos
 
@@ -115,16 +107,15 @@ Responsável pelos serviços oferecidos pela oficina e que podem ser incluídos 
 
 ### Gestão de Peças e Estoque
 
-Responsável por peças, insumos, estoque, reservas, entradas, saídas e baixa.
+Responsável por peças, insumos, estoque, reservas, entradas, saídas e baixas.
 
 ### Orçamentos e Aprovação
 
-Responsável pela geração automática do orçamento, disponibilização ao cliente e aprovação. No MVP, esse contexto fica
-fortemente acoplado ao fluxo da Ordem de Serviço.
+Responsável pela geração automática do orçamento, disponibilização ao cliente e aprovação. No MVP, esse contexto fica fortemente acoplado ao fluxo da Ordem de Serviço.
 
 ### Identidade e Acesso
 
-Responsável por autenticação JWT, usuários, perfis e autorização de APIs administrativas.
+Responsável por autenticação JWT, usuários, perfis e autorização das APIs administrativas.
 
 ## 8. Entidades
 
@@ -142,12 +133,10 @@ Responsável por autenticação JWT, usuários, perfis e autorização de APIs a
 - `Document`: valida e normaliza CPF/CNPJ.
 - `Plate`: valida e normaliza placa.
 - `Money`: representa valores monetários não negativos.
-- `Address`: estrutura endereço do cliente.
+- `Address`: estrutura o endereço do cliente.
 - `BudgetItem`: item calculável do orçamento.
 
-O período de execução ainda não existe como value object próprio. No MVP, o tempo de execução é calculado a partir das
-datas registradas na Ordem de Serviço. Caso regras de SLA e prazo cresçam, uma melhoria futura é criar um value
-object `ExecutionPeriod`.
+O período de execução ainda não existe como value object próprio. No MVP, o tempo de execução é calculado a partir das datas registradas na Ordem de Serviço. Caso as regras de SLA e prazo evoluam, uma melhoria futura será criar um value object `ExecutionPeriod`.
 
 ## 10. Agregados
 
@@ -169,11 +158,11 @@ Invariantes:
 
 - uma OS não pode existir sem cliente;
 - uma OS não pode existir sem veículo;
-- uma OS precisa de ao menos um serviço solicitado;
-- itens não podem ser alterados após geração do orçamento;
-- execução exige orçamento aprovado;
-- finalização exige execução;
-- entrega exige finalização.
+- uma OS precisa ter ao menos um serviço solicitado;
+- itens não podem ser alterados após a geração do orçamento;
+- a execução exige orçamento aprovado;
+- a finalização exige execução;
+- a entrega exige finalização.
 
 ### Peça/Insumo
 
@@ -191,8 +180,7 @@ Responsabilidades:
 
 ### Cliente e Veículo
 
-`Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente, e a placa é tratada como
-identificador único do veículo.
+`Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente, e a placa é tratada como identificador único do veículo.
 
 ## 11. Repositórios
 
@@ -208,8 +196,7 @@ As portas de repositório ficam em `br.com.autocarehub.application.port.out`:
 - `UserPreferenceRepository`
 - `DemoLeadRepository`
 
-As implementações JPA ficam em `br.com.autocarehub.infrastructure.persistence.adapter`, separando persistência da regra
-de negócio.
+As implementações JPA ficam em `br.com.autocarehub.infrastructure.persistence.adapter`, separando a persistência das regras de negócio.
 
 ## 12. Serviços de domínio
 
@@ -220,8 +207,7 @@ Serviços e regras de domínio identificados no projeto:
 - `Part`: concentra regras de reserva, liberação, baixa e disponibilidade de estoque.
 - `Document`, `Plate` e `Money`: protegem regras de validação e consistência de valores.
 
-O projeto não usa um barramento de eventos de domínio no MVP. Os eventos são documentados como linguagem de modelagem e
-podem virar implementação explícita em evolução futura.
+O projeto não utiliza um barramento de eventos de domínio no MVP. Os eventos são documentados como linguagem de modelagem e podem se tornar uma implementação explícita em uma evolução futura.
 
 ## 13. Serviços de aplicação
 
@@ -229,18 +215,11 @@ Os serviços de aplicação estão organizados como use cases em `br.com.autocar
 
 Principais fluxos:
 
--
-
-Clientes: `CreateCustomerUseCase`, `UpdateCustomerUseCase`, `FindCustomerUseCase`, `ListCustomersUseCase`, `DeleteCustomerUseCase`.
--
-Veículos: `CreateVehicleUseCase`, `UpdateVehicleUseCase`, `FindVehicleUseCase`, `ListVehiclesUseCase`, `ListVehiclesByCustomerUseCase`, `DeleteVehicleUseCase`.
--
-Serviços: `CreateWorkshopServiceUseCase`, `UpdateWorkshopServiceUseCase`, `FindWorkshopServiceUseCase`, `ListWorkshopServicesUseCase`, `DeleteWorkshopServiceUseCase`.
--
-Peças/estoque: `CreatePartUseCase`, `UpdatePartUseCase`, `FindPartUseCase`, `ListPartsUseCase`, `RegisterPartStockMovementUseCase`, `ReservePartStockUseCase`, `ReleasePartReservationUseCase`, `CommitPartReservationUseCase`, `UpdatePartStockUseCase`.
-
-- Ordens de
-  Serviço: `CreateServiceOrderUseCase`, `AddServiceToServiceOrderUseCase`, `AddPartToServiceOrderUseCase`, `GenerateServiceOrderBudgetUseCase`, `ApproveServiceOrderBudgetUseCase`, `UpdateServiceOrderStatusUseCase`, `TrackServiceOrderUseCase`, `GetAverageServiceOrderExecutionTimeUseCase`.
+- Clientes: `CreateCustomerUseCase`, `UpdateCustomerUseCase`, `FindCustomerUseCase`, `ListCustomersUseCase`, `DeleteCustomerUseCase`.
+- Veículos: `CreateVehicleUseCase`, `UpdateVehicleUseCase`, `FindVehicleUseCase`, `ListVehiclesUseCase`, `ListVehiclesByCustomerUseCase`, `DeleteVehicleUseCase`.
+- Serviços: `CreateWorkshopServiceUseCase`, `UpdateWorkshopServiceUseCase`, `FindWorkshopServiceUseCase`, `ListWorkshopServicesUseCase`, `DeleteWorkshopServiceUseCase`.
+- Peças/estoque: `CreatePartUseCase`, `UpdatePartUseCase`, `FindPartUseCase`, `ListPartsUseCase`, `RegisterPartStockMovementUseCase`, `ReservePartStockUseCase`, `ReleasePartReservationUseCase`, `CommitPartReservationUseCase`, `UpdatePartStockUseCase`.
+- Ordens de Serviço: `CreateServiceOrderUseCase`, `AddServiceToServiceOrderUseCase`, `AddPartToServiceOrderUseCase`, `GenerateServiceOrderBudgetUseCase`, `ApproveServiceOrderBudgetUseCase`, `UpdateServiceOrderStatusUseCase`, `TrackServiceOrderUseCase`, `GetAverageServiceOrderExecutionTimeUseCase`.
 - Autenticação e usuários: `LoginUseCase`, `CreateUserUseCase`, `UpdateUserUseCase`, `ChangeUserPasswordUseCase`.
 
 ## 14. Eventos de domínio
@@ -257,7 +236,7 @@ Eventos usados como linguagem de modelagem:
 - `OrcamentoGerado`
 - `OrcamentoEnviado`
 - `OrcamentoAprovado`
-- `OrdemServicoEmExecução`
+- `OrdemServicoEmExecucao`
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 - `EstoqueAtualizado`
@@ -266,7 +245,7 @@ Eventos usados como linguagem de modelagem:
 - `PecaBaixadaDoEstoque`
 - `EstoqueInsuficienteIdentificado`
 
-No MVP, esses eventos não são persistidos em event store. Eles orientam o Event Storming, testes e nomeação dos fluxos.
+No MVP, esses eventos não são persistidos em event store. Eles orientam o Event Storming, os testes e a nomeação dos fluxos.
 
 ## 15. Comandos
 
@@ -281,7 +260,7 @@ Comandos principais do domínio:
 - `GerarOrcamento`
 - `AprovarOrcamento`
 - `IniciarDiagnostico`
-- `IniciarExecução`
+- `IniciarExecucao`
 - `FinalizarOrdemServico`
 - `EntregarVeiculo`
 - `CadastrarPeca`
@@ -291,7 +270,7 @@ Comandos principais do domínio:
 - `LiberarReservaPeca`
 - `BaixarPecaDoEstoque`
 
-## 16. Políticas/regras de negócio
+## 16. Políticas e regras de negócio
 
 - CPF/CNPJ inválido não pode ser salvo.
 - Placa inválida não pode ser salva.
@@ -300,34 +279,34 @@ Comandos principais do domínio:
 - Ordem de Serviço exige cliente, veículo e ao menos um serviço.
 - O veículo da OS deve pertencer ao cliente informado.
 - O orçamento é calculado automaticamente a partir dos serviços e peças.
-- Após geração de orçamento, a OS fica em `AGUARDANDO_APROVACAO`.
-- Orçamento só pode ser aprovado se foi gerado.
-- Execução só inicia após aprovação.
-- Finalização só ocorre após execução.
-- Entrega só ocorre após finalização.
+- Após a geração do orçamento, a OS fica em `AGUARDANDO_APROVACAO`.
+- O orçamento só pode ser aprovado se tiver sido gerado.
+- A execução só pode ser iniciada após a aprovação do orçamento.
+- A finalização só pode ocorrer após o início da execução.
+- A entrega só pode ocorrer após a finalização.
 - Transições inválidas geram exceção de domínio.
-- Estoque não pode ficar negativo.
-- Reserva não pode exceder estoque disponível.
-- Baixa não pode exceder estoque disponível ou reservado, conforme o fluxo.
+- O estoque não pode ficar negativo.
+- A reserva não pode exceder o estoque disponível.
+- A baixa não pode exceder o estoque disponível ou reservado, conforme o fluxo.
 
 ## 17. Fluxo de criação da OS
 
-1. Usuário administrativo identifica o cliente por CPF/CNPJ.
-2. Se o cliente não existir, cadastra o cliente.
-3. Usuário seleciona ou cadastra o veículo.
-4. Sistema valida se o veículo pertence ao cliente.
-5. Usuário informa diagnóstico ou problema percebido.
-6. Usuário inclui serviços solicitados.
-7. Usuário inclui peças ou insumos, se necessário.
-8. Sistema cria a Ordem de Serviço.
-9. Sistema pode gerar o orçamento automaticamente conforme dados informados.
-10. A OS fica em status adequado ao fluxo, como `RECEBIDA` ou `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
+1. O usuário administrativo identifica o cliente por CPF/CNPJ.
+2. Se o cliente não existir, o usuário cadastra o cliente.
+3. O usuário seleciona ou cadastra o veículo.
+4. O sistema valida se o veículo pertence ao cliente.
+5. O usuário informa o diagnóstico ou o problema percebido.
+6. O usuário inclui os serviços solicitados.
+7. O usuário inclui peças ou insumos, se necessário.
+8. O sistema cria a Ordem de Serviço.
+9. O sistema pode gerar o orçamento automaticamente conforme os dados informados.
+10. A OS fica com o status adequado ao fluxo, como `RECEBIDA` ou `AGUARDANDO_APROVACAO`, quando o orçamento é gerado.
 
 ## 18. Fluxo de acompanhamento da OS
 
-1. Cliente consulta a Ordem de Serviço via API.
-2. Sistema valida se o cliente pode acessar aquela OS.
-3. Sistema retorna dados básicos da OS, veículo, status, serviços, peças e orçamento.
+1. O cliente consulta a Ordem de Serviço via API.
+2. O sistema valida se o cliente pode acessar aquela OS.
+3. O sistema retorna os dados básicos da OS, veículo, status, serviços, peças e orçamento.
 4. O cliente acompanha a evolução pelos status:
     - `RECEBIDA`
     - `EM_DIAGNOSTICO`
@@ -338,33 +317,32 @@ Comandos principais do domínio:
 
 ## 19. Fluxo de aprovação de orçamento
 
-1. Oficina gera o orçamento.
-2. Sistema calcula total de serviços, total de peças e total geral.
-3. Sistema reserva peças vinculadas ao orçamento quando aplicável.
-4. Orçamento fica disponível para aprovação.
-5. Cliente aprova o orçamento.
-6. Sistema confirma a baixa das peças reservadas.
-7. Ordem de Serviço pode avançar para execução.
+1. A oficina gera o orçamento.
+2. O sistema calcula o total de serviços, o total de peças e o total geral.
+3. O sistema reserva as peças vinculadas ao orçamento, quando aplicável.
+4. O orçamento fica disponível para aprovação.
+5. O cliente aprova o orçamento.
+6. O sistema confirma a baixa das peças reservadas.
+7. A Ordem de Serviço pode avançar para execução.
 
-Recusa ou expiração de orçamento com liberação automática de reserva pode ser tratada como melhoria futura se não
-estiver ativa no fluxo executado.
+A recusa ou expiração de orçamento com liberação automática de reserva pode ser tratada como melhoria futura, caso ainda não esteja ativa no fluxo executado.
 
 ## 20. Fluxo de gestão de peças e insumos
 
-1. Usuário administrativo cadastra peça ou insumo.
-2. Sistema valida nome, preço, quantidade e estoque mínimo.
-3. Usuário registra entradas, saídas ou vendas isoladas.
-4. Sistema registra a movimentação de estoque.
-5. Sistema impede estoque negativo.
-6. Sistema identifica peças com baixo estoque a partir do estoque mínimo.
+1. O usuário administrativo cadastra a peça ou o insumo.
+2. O sistema valida nome, preço, quantidade e estoque mínimo.
+3. O usuário registra entradas, saídas ou vendas isoladas.
+4. O sistema registra a movimentação de estoque.
+5. O sistema impede estoque negativo.
+6. O sistema identifica peças com baixo estoque a partir do estoque mínimo.
 
 ## 21. Fluxo de baixa de estoque
 
-1. Peça é vinculada a orçamento ou movimentação.
+1. A peça é vinculada a um orçamento ou a uma movimentação.
 2. Se for orçamento, a peça pode ser reservada sem baixa imediata.
 3. Quando o orçamento é aprovado, a reserva é confirmada.
-4. Sistema reduz o estoque total e a quantidade reservada.
-5. Sistema registra a movimentação.
+4. O sistema reduz o estoque total e a quantidade reservada.
+5. O sistema registra a movimentação.
 6. Se não houver estoque suficiente, o sistema bloqueia a baixa.
 
 ## 22. Diagramas Mermaid

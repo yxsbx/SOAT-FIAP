@@ -1,13 +1,5 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
 import br.com.autocarehub.application.usecase.vehicle.DeleteVehicleUseCase;
 import br.com.autocarehub.application.usecase.vehicle.FindVehicleUseCase;
@@ -21,6 +13,12 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateVehicleRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleResponse;
 import br.com.autocarehub.interfaces.rest.mapper.VehicleRestMapper;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class VehiclesController implements VehiclesApi {
@@ -49,8 +47,7 @@ public class VehiclesController implements VehiclesApi {
 
     @Override
     public ResponseEntity<VehicleResponse> createVehicle(CreateVehicleRequest createVehicleRequest) {
-        Vehicle vehicle =
-                createVehicleUseCase.execute(VehicleRestMapper.toCommand(createVehicleRequest));
+        Vehicle vehicle = createVehicleUseCase.execute(VehicleRestMapper.toCommand(createVehicleRequest));
         return ResponseEntity.status(HttpStatus.CREATED).body(VehicleRestMapper.toResponse(vehicle));
     }
 
@@ -66,27 +63,21 @@ public class VehiclesController implements VehiclesApi {
     }
 
     @Override
-    public ResponseEntity<VehicleListResponse> listVehicles(
-            Integer page, Integer size, @Nullable Boolean active) {
-        return ResponseEntity.ok(
-                VehicleRestMapper.toListResponse(
-                        listVehiclesUseCase.execute(VehicleRestMapper.toQuery(active)), page, size));
+    public ResponseEntity<VehicleListResponse> listVehicles(Integer page, Integer size, @Nullable Boolean active) {
+        return ResponseEntity.ok(VehicleRestMapper.toListResponse(
+                listVehiclesUseCase.execute(VehicleRestMapper.toQuery(active)), page, size));
     }
 
     @Override
-    @PreAuthorize(
-            "hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessCustomer(#customerId)")
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessCustomer(#customerId)")
     public ResponseEntity<VehicleListResponse> listVehiclesByCustomer(UUID customerId) {
         return ResponseEntity.ok(
-                VehicleRestMapper.toListResponse(
-                        listVehiclesByCustomerUseCase.execute(customerId), null, null));
+                VehicleRestMapper.toListResponse(listVehiclesByCustomerUseCase.execute(customerId), null, null));
     }
 
     @Override
-    public ResponseEntity<VehicleResponse> updateVehicle(
-            UUID vehicleId, UpdateVehicleRequest updateVehicleRequest) {
-        Vehicle vehicle =
-                updateVehicleUseCase.execute(VehicleRestMapper.toCommand(vehicleId, updateVehicleRequest));
+    public ResponseEntity<VehicleResponse> updateVehicle(UUID vehicleId, UpdateVehicleRequest updateVehicleRequest) {
+        Vehicle vehicle = updateVehicleUseCase.execute(VehicleRestMapper.toCommand(vehicleId, updateVehicleRequest));
         return ResponseEntity.ok(VehicleRestMapper.toResponse(vehicle));
     }
 }

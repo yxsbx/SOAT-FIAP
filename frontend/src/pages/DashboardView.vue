@@ -1,6 +1,6 @@
 <script setup>
-import {computed, onMounted, reactive, ref} from 'vue';
-import {useRouter} from 'vue-router';
+import { computed, onMounted, reactive, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import {
   AlertTriangle,
   BadgePercent,
@@ -27,9 +27,9 @@ import {
   Wrench,
   X,
 } from 'lucide-vue-next';
-import {useAuthStore} from '@/stores/auth';
-import {resources} from '@/services/api';
-import {calculatePlatformFee} from '@/utils/platformFee';
+import { useAuthStore } from '@/stores/auth';
+import { resources } from '@/services/api';
+import { calculatePlatformFee } from '@/utils/platformFee';
 import AppModal from '@/components/AppModal.vue';
 import PaginationControl from '@/components/PaginationControl.vue';
 import StatusBadge from '@/components/StatusBadge.vue';
@@ -124,13 +124,13 @@ const defaultMasterHomeWidgetIds = [
 ];
 
 const permissionDefinitions = [
-  {id: 'VIEW_BILLING', label: 'Ver faturamento'},
-  {id: 'CREATE_ORDER', label: 'Criar ordem'},
-  {id: 'EDIT_ORDER', label: 'Editar ordem'},
-  {id: 'MANAGE_STOCK', label: 'Gerenciar estoque'},
-  {id: 'CREATE_BUDGET', label: 'Criar orçamento'},
-  {id: 'EDIT_EMPLOYEES', label: 'Editar funcionários'},
-  {id: 'VIEW_STATS', label: 'Ver estatísticas'},
+  { id: 'VIEW_BILLING', label: 'Ver faturamento' },
+  { id: 'CREATE_ORDER', label: 'Criar ordem' },
+  { id: 'EDIT_ORDER', label: 'Editar ordem' },
+  { id: 'MANAGE_STOCK', label: 'Gerenciar estoque' },
+  { id: 'CREATE_BUDGET', label: 'Criar orçamento' },
+  { id: 'EDIT_EMPLOYEES', label: 'Editar funcionários' },
+  { id: 'VIEW_STATS', label: 'Ver estatísticas' },
 ];
 
 const employeeSubRoleLabels = {
@@ -232,13 +232,13 @@ function displayRecordValue(key, value) {
 
 function displayRecordEntries(record) {
   return Object.entries(record || {})
-      .filter(([key, value]) => !hiddenDetailFields.has(key) && value !== null && value !== undefined && value !== '')
-      .map(([key, value]) => ({
-        key,
-        label: detailFieldLabels[key] || key,
-        value: displayRecordValue(key, value),
-      }))
-      .filter((entry) => entry.value !== '');
+    .filter(([key, value]) => !hiddenDetailFields.has(key) && value !== null && value !== undefined && value !== '')
+    .map(([key, value]) => ({
+      key,
+      label: detailFieldLabels[key] || key,
+      value: displayRecordValue(key, value),
+    }))
+    .filter((entry) => entry.value !== '');
 }
 
 const homePreferences = reactive({
@@ -282,14 +282,7 @@ const orderScenarios = [
   },
 ];
 
-const orderSteps = [
-  'Cenário',
-  'Cliente',
-  'Veículo',
-  'Defeitos',
-  'Valores',
-  'Finalização',
-];
+const orderSteps = ['Cenário', 'Cliente', 'Veículo', 'Defeitos', 'Valores', 'Finalização'];
 
 const data = reactive({
   users: [],
@@ -307,15 +300,15 @@ const storeQuotes = ref([]);
 const storeQuotesInitialized = ref(false);
 
 const pagination = reactive({
-  users: {page: 0, size: 10, active: '', role: '', profileType: '', search: '', sortBy: 'fullName', sortDir: 'asc'},
-  customers: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
-  vehicles: {page: 0, size: 10, active: '', search: '', sortBy: 'plate', sortDir: 'asc'},
-  parts: {page: 0, size: 10, active: '', lowStock: '', search: '', sortBy: 'name', sortDir: 'asc'},
-  serviceOrders: {page: 0, size: 10, status: '', search: '', sortBy: 'createdAt', sortDir: 'desc'},
-  services: {page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc'},
-  masterCustomers: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
-  masterWorkshops: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
-  masterStores: {page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc'},
+  users: { page: 0, size: 10, active: '', role: '', profileType: '', search: '', sortBy: 'fullName', sortDir: 'asc' },
+  customers: { page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc' },
+  vehicles: { page: 0, size: 10, active: '', search: '', sortBy: 'plate', sortDir: 'asc' },
+  parts: { page: 0, size: 10, active: '', lowStock: '', search: '', sortBy: 'name', sortDir: 'asc' },
+  serviceOrders: { page: 0, size: 10, status: '', search: '', sortBy: 'createdAt', sortDir: 'desc' },
+  services: { page: 0, size: 10, active: '', search: '', sortBy: 'name', sortDir: 'asc' },
+  masterCustomers: { page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc' },
+  masterWorkshops: { page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc' },
+  masterStores: { page: 0, size: 10, search: '', sortBy: 'name', sortDir: 'asc' },
 });
 
 const forms = reactive({
@@ -475,7 +468,15 @@ const demoProfile = computed(() => {
   const profiles = {
     'master@autocarehub.com': {
       label: 'Admin Master',
-      tabs: ['overview', 'master-customers', 'master-workshops', 'master-stores', 'master-leads', 'master-admins', 'users'],
+      tabs: [
+        'overview',
+        'master-customers',
+        'master-workshops',
+        'master-stores',
+        'master-leads',
+        'master-admins',
+        'users',
+      ],
     },
     'oficina.admin@autocarehub.com': {
       label: 'Admin de oficina',
@@ -515,24 +516,20 @@ const roleLabel = computed(() => {
   return labels[auth.role] || auth.role;
 });
 
-const isWorkshopAdmin = computed(() =>
-    auth.role === 'ADMIN' && currentUser.value?.profileType === 'WORKSHOP_ADMIN',
-);
+const isWorkshopAdmin = computed(() => auth.role === 'ADMIN' && currentUser.value?.profileType === 'WORKSHOP_ADMIN');
 
-const isMasterAdmin = computed(() =>
-    auth.role === 'ADMIN' && currentUser.value?.profileType === 'MASTER_ADMIN',
-);
+const isMasterAdmin = computed(() => auth.role === 'ADMIN' && currentUser.value?.profileType === 'MASTER_ADMIN');
 
-const isPartsStoreAdmin = computed(() =>
-    auth.role === 'ADMIN' && currentUser.value?.profileType === 'PARTS_STORE_ADMIN',
+const isPartsStoreAdmin = computed(
+  () => auth.role === 'ADMIN' && currentUser.value?.profileType === 'PARTS_STORE_ADMIN'
 );
 
 const isPartsStoreProfile = computed(() =>
-    ['PARTS_STORE_ADMIN', 'PARTS_STORE_EMPLOYEE'].includes(currentUser.value?.profileType),
+  ['PARTS_STORE_ADMIN', 'PARTS_STORE_EMPLOYEE'].includes(currentUser.value?.profileType)
 );
 
-const isCustomerProfile = computed(() =>
-    auth.role === 'CUSTOMER' || currentUser.value?.profileType === 'CUSTOMER_OWNER',
+const isCustomerProfile = computed(
+  () => auth.role === 'CUSTOMER' || currentUser.value?.profileType === 'CUSTOMER_OWNER'
 );
 
 const userPermissions = computed(() => currentUser.value?.permissions || []);
@@ -706,19 +703,23 @@ const availableTabs = computed(() => {
     const allowedByStoreType = !tab.partsStoreOnly || isPartsStoreProfile.value;
     const allowedByMasterType = !tab.masterOnly || isMasterAdmin.value;
     const allowedByCustomerType = !tab.customerOnly || isCustomerProfile.value;
-    return allowedByRole && allowedByProfile && allowedByAdminType && allowedByStoreAdminType && allowedByStoreType && allowedByMasterType && allowedByCustomerType;
+    return (
+      allowedByRole &&
+      allowedByProfile &&
+      allowedByAdminType &&
+      allowedByStoreAdminType &&
+      allowedByStoreType &&
+      allowedByMasterType &&
+      allowedByCustomerType
+    );
   });
 });
 
 const availableTabIds = computed(() => new Set(availableTabs.value.map((tab) => tab.id)));
 
-const accountDirty = computed(() =>
-    (forms.account.fullName || '') !== (accountInitial.value || ''),
-);
+const accountDirty = computed(() => (forms.account.fullName || '') !== (accountInitial.value || ''));
 
-const passwordDirty = computed(() =>
-    Boolean(forms.password.currentPassword || forms.password.newPassword),
-);
+const passwordDirty = computed(() => Boolean(forms.password.currentPassword || forms.password.newPassword));
 
 function comparableUserForm() {
   return JSON.stringify({
@@ -739,38 +740,39 @@ function comparableUserForm() {
 
 const userFormDirty = computed(() => comparableUserForm() !== userFormInitial.value);
 
-const homePreferenceDirty = computed(() =>
-        JSON.stringify({
-          userWidgets: [...homePreferences.userWidgets].sort(),
-          globalWidgets: [...homePreferences.globalWidgets].sort(),
-          showAlertsOnHome: homePreferences.showAlertsOnHome,
-        }) !== JSON.stringify({
-          userWidgets: [...homePreferenceDraft.userWidgets].sort(),
-          globalWidgets: [...homePreferenceDraft.globalWidgets].sort(),
-          showAlertsOnHome: homePreferenceDraft.showAlertsOnHome,
-        }),
+const homePreferenceDirty = computed(
+  () =>
+    JSON.stringify({
+      userWidgets: [...homePreferences.userWidgets].sort(),
+      globalWidgets: [...homePreferences.globalWidgets].sort(),
+      showAlertsOnHome: homePreferences.showAlertsOnHome,
+    }) !==
+    JSON.stringify({
+      userWidgets: [...homePreferenceDraft.userWidgets].sort(),
+      globalWidgets: [...homePreferenceDraft.globalWidgets].sort(),
+      showAlertsOnHome: homePreferenceDraft.showAlertsOnHome,
+    })
 );
 
 const userInitials = computed(() => {
   const fallback = currentUser.value?.fullName || auth.user?.username || 'Usuário AutoCare';
   const name = fallback.includes('@') ? fallback.split('@')[0] : fallback;
   const parts = name
-      .replace(/[._-]+/g, ' ')
-      .split(' ')
-      .map((part) => part.trim())
-      .filter(Boolean);
+    .replace(/[._-]+/g, ' ')
+    .split(' ')
+    .map((part) => part.trim())
+    .filter(Boolean);
 
   return parts
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join('');
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
 });
 
-const orderCountByStatus = (status) =>
-    data.serviceOrders.filter((order) => order.status === status).length;
+const orderCountByStatus = (status) => data.serviceOrders.filter((order) => order.status === status).length;
 
-const ordersWaitingContact = computed(() =>
-    data.serviceOrders.filter((order) => normalize(order.diagnosticNotes).includes('contato')).length,
+const ordersWaitingContact = computed(
+  () => data.serviceOrders.filter((order) => normalize(order.diagnosticNotes).includes('contato')).length
 );
 
 const orderFlowStats = computed(() => [
@@ -780,8 +782,7 @@ const orderFlowStats = computed(() => [
   },
   {
     label: 'Veículos em andamento',
-    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
-        .length,
+    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length,
   },
   {
     label: 'Clientes aguardando envio de orçamento',
@@ -794,46 +795,45 @@ const orderFlowStats = computed(() => [
 ]);
 
 const selectedOrderCustomer = computed(() =>
-    data.customers.find((customer) => customer.id === forms.orderWizard.customerId),
+  data.customers.find((customer) => customer.id === forms.orderWizard.customerId)
 );
 
 const orderCustomerVehicles = computed(() =>
-    data.vehicles.filter((vehicle) => vehicle.customerId === forms.orderWizard.customerId),
+  data.vehicles.filter((vehicle) => vehicle.customerId === forms.orderWizard.customerId)
 );
 
 const selectedOrderVehicle = computed(() =>
-    data.vehicles.find((vehicle) => vehicle.id === forms.orderWizard.vehicleId),
+  data.vehicles.find((vehicle) => vehicle.id === forms.orderWizard.vehicleId)
 );
 
 const selectedOrderService = computed(() =>
-    data.services.find((service) => service.id === forms.orderWizard.serviceId),
+  data.services.find((service) => service.id === forms.orderWizard.serviceId)
 );
 
-const selectedOrderPart = computed(() =>
-    data.parts.find((part) => part.id === forms.orderWizard.partId),
-);
+const selectedOrderPart = computed(() => data.parts.find((part) => part.id === forms.orderWizard.partId));
 
-const orderWizardDirty = computed(() =>
-        forms.orderWizard.step > 0
-        || Boolean(
-            forms.orderWizard.customerId
-            || forms.orderWizard.vehicleId
-            || forms.orderWizard.defects
-            || forms.orderWizard.initialValueNotes
-            || forms.orderWizard.serviceId
-            || forms.orderWizard.partId
-            || forms.orderWizard.customer.name
-            || forms.orderWizard.vehicle.plate,
-        ),
+const orderWizardDirty = computed(
+  () =>
+    forms.orderWizard.step > 0 ||
+    Boolean(
+      forms.orderWizard.customerId ||
+        forms.orderWizard.vehicleId ||
+        forms.orderWizard.defects ||
+        forms.orderWizard.initialValueNotes ||
+        forms.orderWizard.serviceId ||
+        forms.orderWizard.partId ||
+        forms.orderWizard.customer.name ||
+        forms.orderWizard.vehicle.plate
+    )
 );
 
 const estimatedOrderTotal = computed(() => {
   const serviceTotal = selectedOrderService.value
-      ? Number(selectedOrderService.value.basePrice || 0) * Number(forms.orderWizard.serviceQuantity || 0)
-      : 0;
+    ? Number(selectedOrderService.value.basePrice || 0) * Number(forms.orderWizard.serviceQuantity || 0)
+    : 0;
   const partTotal = selectedOrderPart.value
-      ? Number(selectedOrderPart.value.unitPrice || 0) * Number(forms.orderWizard.partQuantity || 0)
-      : 0;
+    ? Number(selectedOrderPart.value.unitPrice || 0) * Number(forms.orderWizard.partQuantity || 0)
+    : 0;
   return serviceTotal + partTotal;
 });
 
@@ -843,11 +843,13 @@ function orderVehicle(order) {
 
 function orderCustomer(order) {
   const vehicle = orderVehicle(order);
-  return order.customer
-      || data.customers.find((customer) => customer.id === order.customerId)
-      || data.customers.find((customer) => customer.id === vehicle.customerId)
-      || data.customers.find((customer) => customer.document === order.customerDocument)
-      || {};
+  return (
+    order.customer ||
+    data.customers.find((customer) => customer.id === order.customerId) ||
+    data.customers.find((customer) => customer.id === vehicle.customerId) ||
+    data.customers.find((customer) => customer.document === order.customerDocument) ||
+    {}
+  );
 }
 
 function orderCustomerName(order) {
@@ -892,9 +894,9 @@ function hasSameDigits(value) {
 
 function cpfCheckDigit(value, length) {
   const sum = value
-      .slice(0, length)
-      .split('')
-      .reduce((total, digit, index) => total + Number(digit) * (length + 1 - index), 0);
+    .slice(0, length)
+    .split('')
+    .reduce((total, digit, index) => total + Number(digit) * (length + 1 - index), 0);
   const remainder = sum % 11;
   return remainder < 2 ? 0 : 11 - remainder;
 }
@@ -907,20 +909,24 @@ function cnpjCheckDigit(value, weights) {
 
 function isValidCpf(value) {
   const document = onlyDigits(value);
-  return document.length === 11
-      && !hasSameDigits(document)
-      && cpfCheckDigit(document, 9) === Number(document[9])
-      && cpfCheckDigit(document, 10) === Number(document[10]);
+  return (
+    document.length === 11 &&
+    !hasSameDigits(document) &&
+    cpfCheckDigit(document, 9) === Number(document[9]) &&
+    cpfCheckDigit(document, 10) === Number(document[10])
+  );
 }
 
 function isValidCnpj(value) {
   const document = onlyDigits(value);
   const firstWeights = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   const secondWeights = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-  return document.length === 14
-      && !hasSameDigits(document)
-      && cnpjCheckDigit(document, firstWeights) === Number(document[12])
-      && cnpjCheckDigit(document, secondWeights) === Number(document[13]);
+  return (
+    document.length === 14 &&
+    !hasSameDigits(document) &&
+    cnpjCheckDigit(document, firstWeights) === Number(document[12]) &&
+    cnpjCheckDigit(document, secondWeights) === Number(document[13])
+  );
 }
 
 function isValidCustomerDocument(value) {
@@ -928,9 +934,7 @@ function isValidCustomerDocument(value) {
 }
 
 function canGenerateBudget(order) {
-  return Boolean(order?.id)
-      && !order.budgetGeneratedAt
-      && ['RECEIVED', 'IN_DIAGNOSIS'].includes(order.status);
+  return Boolean(order?.id) && !order.budgetGeneratedAt && ['RECEIVED', 'IN_DIAGNOSIS'].includes(order.status);
 }
 
 function canApproveBudget(order) {
@@ -940,25 +944,21 @@ function canApproveBudget(order) {
 const isNewCustomerScenario = computed(() => forms.orderWizard.scenario === 'new-customer');
 
 const needsNewVehicle = computed(() =>
-    ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario),
+  ['new-customer', 'existing-customer-new-vehicle'].includes(forms.orderWizard.scenario)
 );
 
 const criticalParts = computed(() =>
-    data.parts.filter((part) => (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock),
+  data.parts.filter((part) => (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock)
 );
 
-const reservedParts = computed(() =>
-    data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0),
-);
+const reservedParts = computed(() => data.parts.filter((part) => Number(part.reservedQuantity || 0) > 0));
 
 const partDuplicateMatches = computed(() => {
   const query = normalize(forms.part.name);
   if (forms.part.id || query.length < 2) {
     return [];
   }
-  return data.parts
-      .filter((part) => normalize(`${part.name} ${part.sku} ${part.brand}`).includes(query))
-      .slice(0, 5);
+  return data.parts.filter((part) => normalize(`${part.name} ${part.sku} ${part.brand}`).includes(query)).slice(0, 5);
 });
 
 const serviceDuplicateMatches = computed(() => {
@@ -967,8 +967,8 @@ const serviceDuplicateMatches = computed(() => {
     return [];
   }
   return data.services
-      .filter((service) => normalize(`${service.name} ${service.description}`).includes(query))
-      .slice(0, 5);
+    .filter((service) => normalize(`${service.name} ${service.description}`).includes(query))
+    .slice(0, 5);
 });
 
 const stockStatusLabels = {
@@ -984,7 +984,7 @@ const homeWidgetDefinitions = computed(() => [
     id: 'orders-progress',
     label: 'Ordens em andamento',
     value: data.serviceOrders.filter((order) =>
-        ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS'].includes(order.status),
+      ['RECEIVED', 'IN_DIAGNOSIS', 'WAITING_APPROVAL', 'IN_PROGRESS'].includes(order.status)
     ).length,
     icon: TrendingUp,
     tabId: 'orders',
@@ -1009,8 +1009,7 @@ const homeWidgetDefinitions = computed(() => [
   {
     id: 'vehicles-in-service',
     label: 'Veículos em atendimento',
-    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status))
-        .length,
+    value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length,
     icon: Car,
     tabId: 'vehicles',
     roles: ['ADMIN', 'EMPLOYEE'],
@@ -1047,18 +1046,16 @@ const homeWidgetDefinitions = computed(() => [
 const visibleHomeWidgetIds = computed(() => new Set(homePreferences.userWidgets));
 
 const availableHomeWidgetDefinitions = computed(() =>
-    (isMasterAdmin.value
-        ? masterHomeWidgetDefinitions.value
-        : isPartsStoreProfile.value
-            ? storeHomeWidgetDefinitions.value
-            : homeWidgetDefinitions.value).filter(
-        (widget) =>
-            widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)),
-    ),
+  (isMasterAdmin.value
+    ? masterHomeWidgetDefinitions.value
+    : isPartsStoreProfile.value
+      ? storeHomeWidgetDefinitions.value
+      : homeWidgetDefinitions.value
+  ).filter((widget) => widget.roles.includes(auth.role) && (!widget.tabId || availableTabIds.value.has(widget.tabId)))
 );
 
 const homeWidgets = computed(() =>
-    availableHomeWidgetDefinitions.value.filter((widget) => visibleHomeWidgetIds.value.has(widget.id)),
+  availableHomeWidgetDefinitions.value.filter((widget) => visibleHomeWidgetIds.value.has(widget.id))
 );
 
 const vehicleStatusWidgets = computed(() => [
@@ -1102,8 +1099,13 @@ const vehicleStatusWidgets = computed(() => [
 const billingSummary = computed(() => {
   const orders = data.serviceOrders;
   const gross = orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
-  const sentBudgets = orders.filter((order) => order.budgetGeneratedAt || ['WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
-  const approvedBudgets = orders.filter((order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
+  const sentBudgets = orders.filter(
+    (order) =>
+      order.budgetGeneratedAt || ['WAITING_APPROVAL', 'IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)
+  ).length;
+  const approvedBudgets = orders.filter(
+    (order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)
+  ).length;
   const completed = orders.filter((order) => ['FINISHED', 'DELIVERED'].includes(order.status)).length;
   const ticket = approvedBudgets ? gross / approvedBudgets : 0;
   const fee = calculatePlatformFee(gross);
@@ -1126,10 +1128,10 @@ const monthlyRevenue = computed(() => {
   const months = new Map();
   data.serviceOrders.forEach((order) => {
     const date = order.createdAt ? new Date(order.createdAt) : new Date();
-    const key = date.toLocaleDateString('pt-BR', {month: 'short', year: '2-digit'});
+    const key = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
     months.set(key, (months.get(key) || 0) + Number(order.totalAmount || 0));
   });
-  return [...months.entries()].slice(-6).map(([month, value]) => ({month, value}));
+  return [...months.entries()].slice(-6).map(([month, value]) => ({ month, value }));
 });
 
 const storeQuoteStatusLabels = {
@@ -1140,29 +1142,25 @@ const storeQuoteStatusLabels = {
   EXPIRED: 'Expirado',
 };
 
-const storeSales = computed(() =>
-    storeQuotes.value.filter((quote) => quote.status === 'APPROVED'),
-);
+const storeSales = computed(() => storeQuotes.value.filter((quote) => quote.status === 'APPROVED'));
 
 const storePendingQuotes = computed(() =>
-    storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status)),
+  storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status))
 );
 
-const storeActiveOrders = computed(() =>
-    storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status)),
-);
+const storeActiveOrders = computed(() => storeQuotes.value.filter((quote) => ['DRAFT', 'SENT'].includes(quote.status)));
 
 const storeWaitingContact = computed(() =>
-    storeQuotes.value.filter((quote) => quote.contactRequested && quote.status !== 'APPROVED'),
+  storeQuotes.value.filter((quote) => quote.contactRequested && quote.status !== 'APPROVED')
 );
 
-const storeRevenueGross = computed(() =>
-    storeSales.value.reduce((total, quote) => total + storeQuoteTotal(quote), 0),
-);
+const storeRevenueGross = computed(() => storeSales.value.reduce((total, quote) => total + storeQuoteTotal(quote), 0));
 
 const storeBillingSummary = computed(() => {
   const gross = storeRevenueGross.value;
-  const sentQuotes = storeQuotes.value.filter((quote) => ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)).length;
+  const sentQuotes = storeQuotes.value.filter((quote) =>
+    ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)
+  ).length;
   const approvedQuotes = storeSales.value.length;
   const ticket = approvedQuotes ? gross / approvedQuotes : 0;
   const fee = calculatePlatformFee(gross);
@@ -1185,17 +1183,17 @@ const storeMonthlyRevenue = computed(() => {
   const months = new Map();
   storeSales.value.forEach((quote) => {
     const date = quote.updatedAt ? new Date(quote.updatedAt) : new Date();
-    const key = date.toLocaleDateString('pt-BR', {month: 'short', year: '2-digit'});
+    const key = date.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
     months.set(key, (months.get(key) || 0) + storeQuoteTotal(quote));
   });
-  return [...months.entries()].slice(-6).map(([month, value]) => ({month, value}));
+  return [...months.entries()].slice(-6).map(([month, value]) => ({ month, value }));
 });
 
 const storeTopProducts = computed(() => {
   const products = new Map();
   storeSales.value.forEach((quote) => {
     quote.items.forEach((item) => {
-      const current = products.get(item.partId) || {name: item.name, quantity: 0, total: 0};
+      const current = products.get(item.partId) || { name: item.name, quantity: 0, total: 0 };
       current.quantity += Number(item.quantity || 0);
       current.total += Number(item.quantity || 0) * Number(item.quotedPrice || 0);
       products.set(item.partId, current);
@@ -1207,7 +1205,7 @@ const storeTopProducts = computed(() => {
 const storeFrequentCustomers = computed(() => {
   const customers = new Map();
   storeSales.value.forEach((quote) => {
-    const current = customers.get(quote.customerName) || {name: quote.customerName, count: 0, total: 0};
+    const current = customers.get(quote.customerName) || { name: quote.customerName, count: 0, total: 0 };
     current.count += 1;
     current.total += storeQuoteTotal(quote);
     customers.set(quote.customerName, current);
@@ -1216,32 +1214,28 @@ const storeFrequentCustomers = computed(() => {
 });
 
 const storeEmployees = computed(() =>
-    data.users.filter((user) =>
-        ['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType),
-    ),
+  data.users.filter((user) => ['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType))
 );
 
 const masterCustomers = computed(() =>
-    data.customers.map((customer) => {
-      const vehicles = data.vehicles.filter((vehicle) => vehicle.customerId === customer.id);
-      const orders = data.serviceOrders.filter((order) => order.customerId === customer.id);
-      const spent = orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
-      const partners = new Set(
-          [
-            ...orders.map(() => 'Oficina Central AutoCare'),
-            ...storeQuotes.value
-                .filter((quote) => normalize(quote.customerName).includes(normalize(customer.name)))
-                .map(() => 'Loja Peças Prime'),
-          ],
-      );
-      return {
-        ...customer,
-        vehiclesCount: vehicles.length,
-        spent,
-        frequency: orders.length,
-        partners: [...partners],
-      };
-    }),
+  data.customers.map((customer) => {
+    const vehicles = data.vehicles.filter((vehicle) => vehicle.customerId === customer.id);
+    const orders = data.serviceOrders.filter((order) => order.customerId === customer.id);
+    const spent = orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
+    const partners = new Set([
+      ...orders.map(() => 'Oficina Central AutoCare'),
+      ...storeQuotes.value
+        .filter((quote) => normalize(quote.customerName).includes(normalize(customer.name)))
+        .map(() => 'Loja Peças Prime'),
+    ]);
+    return {
+      ...customer,
+      vehiclesCount: vehicles.length,
+      spent,
+      frequency: orders.length,
+      partners: [...partners],
+    };
+  })
 );
 
 const workshopPartners = computed(() => {
@@ -1390,40 +1384,32 @@ const masterHomeWidgetDefinitions = computed(() => [
   },
 ]);
 
-const masterPlatformWidgets = computed(() =>
-    homeWidgets.value.filter((widget) => widget.category === 'platform'),
-);
+const masterPlatformWidgets = computed(() => homeWidgets.value.filter((widget) => widget.category === 'platform'));
 
-const masterFinancialWidgets = computed(() =>
-    homeWidgets.value.filter((widget) => widget.category === 'finance'),
-);
+const masterFinancialWidgets = computed(() => homeWidgets.value.filter((widget) => widget.category === 'finance'));
 
 const masterTopPlatformRevenuePartners = computed(() =>
-    [...workshopPartners.value, ...storePartners.value]
-        .sort((a, b) => b.feeAmount - a.feeAmount)
-        .slice(0, 5),
+  [...workshopPartners.value, ...storePartners.value].sort((a, b) => b.feeAmount - a.feeAmount).slice(0, 5)
 );
 
 const masterFrequentCustomers = computed(() =>
-    [...masterCustomers.value].sort((a, b) => b.frequency - a.frequency).slice(0, 5),
+  [...masterCustomers.value].sort((a, b) => b.frequency - a.frequency).slice(0, 5)
 );
 
-const masterTopSpenders = computed(() =>
-    [...masterCustomers.value].sort((a, b) => b.spent - a.spent).slice(0, 5),
-);
+const masterTopSpenders = computed(() => [...masterCustomers.value].sort((a, b) => b.spent - a.spent).slice(0, 5));
 
 const masterVehicleOwners = computed(() =>
-    [...masterCustomers.value].sort((a, b) => b.vehiclesCount - a.vehiclesCount).slice(0, 5),
+  [...masterCustomers.value].sort((a, b) => b.vehiclesCount - a.vehiclesCount).slice(0, 5)
 );
 
 const masterPotentialPartners = computed(() =>
-    data.demoLeads.map((lead) => ({
+  data.demoLeads
+    .map((lead) => ({
       ...lead,
       potential:
-          lead.demoProfile === 'workshop'
-              ? data.serviceOrders.length + 12
-              : data.parts.length + storeQuotes.value.length,
-    })).sort((a, b) => b.potential - a.potential),
+        lead.demoProfile === 'workshop' ? data.serviceOrders.length + 12 : data.parts.length + storeQuotes.value.length,
+    }))
+    .sort((a, b) => b.potential - a.potential)
 );
 
 const storeHomeWidgetDefinitions = computed(() => [
@@ -1486,51 +1472,57 @@ const storeHomeWidgetDefinitions = computed(() => [
 ]);
 
 const workshopEmployees = computed(() =>
-    data.users.filter((user) => user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE'),
+  data.users.filter((user) => user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE')
 );
 
 function storeEmployeeMetrics(user) {
   const employeeQuotes = storeQuotes.value.filter((quote) => quote.employeeId === user.id);
-  const sent = employeeQuotes.filter((quote) => ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)).length;
+  const sent = employeeQuotes.filter((quote) =>
+    ['SENT', 'APPROVED', 'REFUSED', 'EXPIRED'].includes(quote.status)
+  ).length;
   const approved = employeeQuotes.filter((quote) => quote.status === 'APPROVED');
   const gross = approved.reduce((total, quote) => total + storeQuoteTotal(quote), 0);
   return [
-    {label: 'Vendas', value: `R$ ${money(gross)}`},
-    {label: 'Orçamentos enviados', value: sent},
-    {label: 'Orçamentos aprovados', value: approved.length},
-    {label: 'Taxa de conversão', value: `${sent ? Math.round((approved.length / sent) * 100) : 0}%`},
+    { label: 'Vendas', value: `R$ ${money(gross)}` },
+    { label: 'Orçamentos enviados', value: sent },
+    { label: 'Orçamentos aprovados', value: approved.length },
+    { label: 'Taxa de conversão', value: `${sent ? Math.round((approved.length / sent) * 100) : 0}%` },
   ];
 }
 
 function employeeMetrics(user) {
   const index = Math.max(1, workshopEmployees.value.findIndex((employee) => employee.id === user.id) + 1);
-  const approved = data.serviceOrders.filter((order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)).length;
-  const sent = data.serviceOrders.filter((order) => order.budgetGeneratedAt || order.status === 'WAITING_APPROVAL').length || approved;
+  const approved = data.serviceOrders.filter(
+    (order) => order.approvedAt || ['IN_PROGRESS', 'FINISHED', 'DELIVERED'].includes(order.status)
+  ).length;
+  const sent =
+    data.serviceOrders.filter((order) => order.budgetGeneratedAt || order.status === 'WAITING_APPROVAL').length ||
+    approved;
   const completed = data.serviceOrders.filter((order) => ['FINISHED', 'DELIVERED'].includes(order.status)).length;
   if (user.employeeSubRole === 'ATTENDANT') {
     return [
-      {label: 'Clientes contatados', value: ordersWaitingContact.value + index * 3},
-      {label: 'Orçamentos enviados', value: sent},
-      {label: 'Orçamentos aprovados', value: approved},
-      {label: 'Taxa de conversão', value: `${sent ? Math.round((approved / sent) * 100) : 0}%`},
+      { label: 'Clientes contatados', value: ordersWaitingContact.value + index * 3 },
+      { label: 'Orçamentos enviados', value: sent },
+      { label: 'Orçamentos aprovados', value: approved },
+      { label: 'Taxa de conversão', value: `${sent ? Math.round((approved / sent) * 100) : 0}%` },
     ];
   }
   if (user.employeeSubRole === 'MECHANIC') {
     return [
-      {label: 'Veículos atendidos', value: completed + index},
-      {label: 'Serviços concluídos', value: completed},
-      {label: 'Tempo médio', value: formatDuration(data.averageExecutionTime?.averageExecutionTimeInMinutes || 0)},
-      {label: 'Meta concluídos', value: `${Math.min(100, Math.round(((completed + index) / 12) * 100))}%`},
+      { label: 'Veículos atendidos', value: completed + index },
+      { label: 'Serviços concluídos', value: completed },
+      { label: 'Tempo médio', value: formatDuration(data.averageExecutionTime?.averageExecutionTimeInMinutes || 0) },
+      { label: 'Meta concluídos', value: `${Math.min(100, Math.round(((completed + index) / 12) * 100))}%` },
     ];
   }
   return [
     {
       label: 'Ordens em aberto',
-      value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length
+      value: data.serviceOrders.filter((order) => !['FINISHED', 'DELIVERED'].includes(order.status)).length,
     },
-    {label: 'Orçamentos enviados', value: sent},
-    {label: 'Serviços concluídos', value: completed},
-    {label: 'Permissões ativas', value: user.permissions?.length || 0},
+    { label: 'Orçamentos enviados', value: sent },
+    { label: 'Serviços concluídos', value: completed },
+    { label: 'Permissões ativas', value: user.permissions?.length || 0 },
   ];
 }
 
@@ -1544,24 +1536,27 @@ function employeePerformanceScore(user) {
 const employeeMetricCards = computed(() => {
   const query = normalize(employeeMetricSearch.value);
   return workshopEmployees.value
-      .map((employee) => ({
-        employee,
-        metrics: employeeMetrics(employee),
-        score: employeePerformanceScore(employee),
-      }))
-      .filter(({employee}) => !query || normalize(`${employee.fullName} ${employee.username} ${employee.employeeSubRole}`).includes(query))
-      .sort((first, second) => second.score - first.score);
+    .map((employee) => ({
+      employee,
+      metrics: employeeMetrics(employee),
+      score: employeePerformanceScore(employee),
+    }))
+    .filter(
+      ({ employee }) =>
+        !query || normalize(`${employee.fullName} ${employee.username} ${employee.employeeSubRole}`).includes(query)
+    )
+    .sort((first, second) => second.score - first.score);
 });
 
 const featuredWorkshopEmployees = computed(() =>
-    workshopEmployees.value
-        .map((employee) => ({
-          employee,
-          metrics: employeeMetrics(employee),
-          score: employeePerformanceScore(employee),
-        }))
-        .sort((first, second) => second.score - first.score)
-        .slice(0, 3),
+  workshopEmployees.value
+    .map((employee) => ({
+      employee,
+      metrics: employeeMetrics(employee),
+      score: employeePerformanceScore(employee),
+    }))
+    .sort((first, second) => second.score - first.score)
+    .slice(0, 3)
 );
 
 const userModalIsWorkshopEmployee = computed(() => forms.user.profileType === 'WORKSHOP_EMPLOYEE');
@@ -1635,19 +1630,19 @@ const searchResults = computed(() => {
   ];
 
   return [...pageResults, ...entityResults]
-      .filter((item) => normalize(`${item.type} ${item.label} ${item.detail}`).includes(query))
-      .slice(0, 8);
+    .filter((item) => normalize(`${item.type} ${item.label} ${item.detail}`).includes(query))
+    .slice(0, 8);
 });
 
 const vehiclesWithCurrentStatus = computed(() =>
-    data.vehicles.map((vehicle) => {
-      const order = data.serviceOrders.find((item) => item.vehicleId === vehicle.id);
-      return {
-        ...vehicle,
-        currentStatus: order?.status || 'SEM_ORDEM',
-        diagnosticNotes: order?.diagnosticNotes || '',
-      };
-    }),
+  data.vehicles.map((vehicle) => {
+    const order = data.serviceOrders.find((item) => item.vehicleId === vehicle.id);
+    return {
+      ...vehicle,
+      currentStatus: order?.status || 'SEM_ORDEM',
+      diagnosticNotes: order?.diagnosticNotes || '',
+    };
+  })
 );
 
 function vehicleOwner(vehicle) {
@@ -1676,61 +1671,49 @@ const customerVehicles = computed(() => vehiclesWithCurrentStatus.value);
 const customerOrders = computed(() => data.serviceOrders);
 
 const customerBudgetAlerts = computed(() =>
-    customerOrders.value.filter((order) => order.status === 'WAITING_APPROVAL'),
+  customerOrders.value.filter((order) => order.status === 'WAITING_APPROVAL')
 );
 
-const customerFinishedAlerts = computed(() =>
-    customerOrders.value.filter((order) => order.status === 'DELIVERED'),
-);
+const customerFinishedAlerts = computed(() => customerOrders.value.filter((order) => order.status === 'DELIVERED'));
 
-const customerReadyAlerts = computed(() =>
-    customerOrders.value.filter((order) => order.status === 'FINISHED'),
-);
+const customerReadyAlerts = computed(() => customerOrders.value.filter((order) => order.status === 'FINISHED'));
 
 const customerRecentHistory = computed(() =>
-    [...customerOrders.value]
-        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-        .slice(0, 5),
+  [...customerOrders.value].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 5)
 );
 
 const workshopDirectory = computed(() =>
-    data.users
-        .filter((user) => user.profileType === 'WORKSHOP_ADMIN')
-        .map((user) => ({
-          ...user,
-          name: user.companyName || user.fullName,
-          location: 'São Paulo - SP',
-          specialty: 'Diagnóstico, revisão, manutenção preventiva e orçamento de veículos',
-        })),
+  data.users
+    .filter((user) => user.profileType === 'WORKSHOP_ADMIN')
+    .map((user) => ({
+      ...user,
+      name: user.companyName || user.fullName,
+      location: 'São Paulo - SP',
+      specialty: 'Diagnóstico, revisão, manutenção preventiva e orçamento de veículos',
+    }))
 );
 
 const storeDirectory = computed(() =>
-    data.users
-        .filter((user) => user.profileType === 'PARTS_STORE_ADMIN')
-        .map((user) => ({
-          ...user,
-          name: user.companyName || user.fullName,
-          location: 'São Paulo - SP',
-          specialty: 'Peças, filtros, freios, suspensão, óleo e acessórios',
-        })),
+  data.users
+    .filter((user) => user.profileType === 'PARTS_STORE_ADMIN')
+    .map((user) => ({
+      ...user,
+      name: user.companyName || user.fullName,
+      location: 'São Paulo - SP',
+      specialty: 'Peças, filtros, freios, suspensão, óleo e acessórios',
+    }))
 );
 
 const filteredWorkshopDirectory = computed(() =>
-    workshopDirectory.value.filter((partner) =>
-        smartMatch(
-            customerPartnerSearch.value,
-            [partner.name, partner.location, partner.specialty, partner.fullName],
-        ),
-    ),
+  workshopDirectory.value.filter((partner) =>
+    smartMatch(customerPartnerSearch.value, [partner.name, partner.location, partner.specialty, partner.fullName])
+  )
 );
 
 const filteredStoreDirectory = computed(() =>
-    storeDirectory.value.filter((partner) =>
-        smartMatch(
-            customerPartnerSearch.value,
-            [partner.name, partner.location, partner.specialty, partner.fullName],
-        ),
-    ),
+  storeDirectory.value.filter((partner) =>
+    smartMatch(customerPartnerSearch.value, [partner.name, partner.location, partner.specialty, partner.fullName])
+  )
 );
 
 const uniqueCustomerParts = computed(() => {
@@ -1746,13 +1729,17 @@ const uniqueCustomerParts = computed(() => {
 
 const filteredCustomerParts = computed(() => {
   const vehicleTerms = customerVehicles.value
-      .map((vehicle) => `${vehicle.brand} ${vehicle.model} ${vehicle.plate}`)
-      .join(' ');
+    .map((vehicle) => `${vehicle.brand} ${vehicle.model} ${vehicle.plate}`)
+    .join(' ');
   return uniqueCustomerParts.value.filter((part) =>
-      smartMatch(
-          customerPartSearch.value,
-          [part.name, part.brand, part.category, part.subcategory, part.sku, vehicleTerms],
-      ),
+    smartMatch(customerPartSearch.value, [
+      part.name,
+      part.brand,
+      part.category,
+      part.subcategory,
+      part.sku,
+      vehicleTerms,
+    ])
   );
 });
 
@@ -1765,7 +1752,10 @@ const selectedPartStores = computed(() => {
     partId: selectedCustomerPart.value.id,
     partName: selectedCustomerPart.value.name,
     price: Number(selectedCustomerPart.value.unitPrice || 0) * (1 + index * 0.04),
-    availableQuantity: Math.max(0, Number(selectedCustomerPart.value.availableQuantity ?? selectedCustomerPart.value.stockQuantity) - index),
+    availableQuantity: Math.max(
+      0,
+      Number(selectedCustomerPart.value.availableQuantity ?? selectedCustomerPart.value.stockQuantity) - index
+    ),
   }));
 });
 
@@ -1798,32 +1788,32 @@ function listRows(resource) {
   const query = normalize(config.search || '');
   const fields = listSearchFields[resource] || [];
   const rows = [...(listSources.value[resource] || [])]
-      .filter((item) => {
-        if (!query) {
-          return true;
-        }
-        if (resource === 'serviceOrders') {
-          return smartMatch(config.search, [
-            item.status,
-            statusLabels[item.status],
-            item.diagnosticNotes,
-            item.id,
-            orderCustomerName(item),
-            orderVehicleLabel(item),
-            orderPlate(item),
-          ]);
-        }
-        return fields.some((field) => normalize(item[field]).includes(query));
-      })
-      .sort((a, b) => {
-        const left = a[config.sortBy];
-        const right = b[config.sortBy];
-        const direction = config.sortDir === 'desc' ? -1 : 1;
-        if (typeof left === 'number' || typeof right === 'number') {
-          return (Number(left || 0) - Number(right || 0)) * direction;
-        }
-        return String(left || '').localeCompare(String(right || ''), 'pt-BR') * direction;
-      });
+    .filter((item) => {
+      if (!query) {
+        return true;
+      }
+      if (resource === 'serviceOrders') {
+        return smartMatch(config.search, [
+          item.status,
+          statusLabels[item.status],
+          item.diagnosticNotes,
+          item.id,
+          orderCustomerName(item),
+          orderVehicleLabel(item),
+          orderPlate(item),
+        ]);
+      }
+      return fields.some((field) => normalize(item[field]).includes(query));
+    })
+    .sort((a, b) => {
+      const left = a[config.sortBy];
+      const right = b[config.sortBy];
+      const direction = config.sortDir === 'desc' ? -1 : 1;
+      if (typeof left === 'number' || typeof right === 'number') {
+        return (Number(left || 0) - Number(right || 0)) * direction;
+      }
+      return String(left || '').localeCompare(String(right || ''), 'pt-BR') * direction;
+    });
   const start = config.page * config.size;
   return rows.slice(start, start + config.size);
 }
@@ -1865,16 +1855,16 @@ function money(value) {
 
 function normalize(value) {
   return String(value || '')
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase();
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
 }
 
 function smartMatch(query, values) {
   const tokens = normalize(query)
-      .split(/\s+/)
-      .map((token) => token.trim())
-      .filter(Boolean);
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
   if (!tokens.length) {
     return true;
   }
@@ -1943,9 +1933,7 @@ function homeDefaultWidgetIds() {
   if (isMasterAdmin.value || username.includes('master@')) {
     return defaultMasterHomeWidgetIds;
   }
-  return username.includes('loja.') || isPartsStoreProfile.value
-      ? defaultStoreHomeWidgetIds
-      : defaultHomeWidgetIds;
+  return username.includes('loja.') || isPartsStoreProfile.value ? defaultStoreHomeWidgetIds : defaultHomeWidgetIds;
 }
 
 function readStoredJson(key, fallback) {
@@ -1999,13 +1987,13 @@ async function loadHomePreferences() {
 }
 
 function persistHomePreferencesLocally() {
-  localStorage.setItem(userHomeKey(), JSON.stringify({widgets: homePreferences.userWidgets}));
+  localStorage.setItem(userHomeKey(), JSON.stringify({ widgets: homePreferences.userWidgets }));
   localStorage.setItem(
-      'autocare.home.workshop.global',
-      JSON.stringify({
-        widgets: homePreferences.globalWidgets,
-        showAlertsOnHome: homePreferences.showAlertsOnHome,
-      }),
+    'autocare.home.workshop.global',
+    JSON.stringify({
+      widgets: homePreferences.globalWidgets,
+      showAlertsOnHome: homePreferences.showAlertsOnHome,
+    })
   );
 }
 
@@ -2064,7 +2052,7 @@ async function saveHomePreferenceDraft() {
 }
 
 async function loadDashboard(options = {}) {
-  const {silent = false} = options;
+  const { silent = false } = options;
   loading.value = true;
   if (!silent) {
     resetMessage();
@@ -2076,12 +2064,11 @@ async function loadDashboard(options = {}) {
         resources.customerServiceOrders(auth.customerId),
         resources.customerVehicles(auth.customerId),
         resources.currentUser(),
-        resources.parts({active: true, size: API_MAX_PAGE_SIZE}),
+        resources.parts({ active: true, size: API_MAX_PAGE_SIZE }),
         resources.partners(),
       ]);
 
-      data.serviceOrders =
-          serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
+      data.serviceOrders = serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
       data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
       currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
       data.parts = parts.status === 'fulfilled' ? listItems(parts.value) : [];
@@ -2091,7 +2078,9 @@ async function loadDashboard(options = {}) {
         accountInitial.value = currentUser.value.fullName || '';
       }
 
-      const failed = [serviceOrders, vehicles, user, parts, partners].filter((request) => request.status === 'rejected');
+      const failed = [serviceOrders, vehicles, user, parts, partners].filter(
+        (request) => request.status === 'rejected'
+      );
       if (failed.length) {
         showError(failed.map((request) => request.reason.message).join(' | '));
       }
@@ -2100,26 +2089,35 @@ async function loadDashboard(options = {}) {
 
     const requests = await Promise.allSettled([
       resources.currentUser(),
-      auth.role === 'ADMIN' ? resources.users({
-        active: pagination.users.active,
-        role: pagination.users.role,
-        profileType: pagination.users.profileType,
-        search: pagination.users.search
-      }) : Promise.resolve(null),
-      auth.role !== 'CUSTOMER' ? resources.customers({
-        active: pagination.customers.active,
-        size: API_MAX_PAGE_SIZE
-      }) : Promise.resolve(null),
-      resources.vehicles({active: pagination.vehicles.active, size: API_MAX_PAGE_SIZE}),
-      resources.services({active: pagination.services.active, size: API_MAX_PAGE_SIZE}),
-      resources.parts({active: pagination.parts.active, lowStock: pagination.parts.lowStock, size: API_MAX_PAGE_SIZE}),
-      resources.lowStockParts({size: 20}),
-      resources.serviceOrders({status: pagination.serviceOrders.status, size: API_MAX_PAGE_SIZE}),
+      auth.role === 'ADMIN'
+        ? resources.users({
+            active: pagination.users.active,
+            role: pagination.users.role,
+            profileType: pagination.users.profileType,
+            search: pagination.users.search,
+          })
+        : Promise.resolve(null),
+      auth.role !== 'CUSTOMER'
+        ? resources.customers({
+            active: pagination.customers.active,
+            size: API_MAX_PAGE_SIZE,
+          })
+        : Promise.resolve(null),
+      resources.vehicles({ active: pagination.vehicles.active, size: API_MAX_PAGE_SIZE }),
+      resources.services({ active: pagination.services.active, size: API_MAX_PAGE_SIZE }),
+      resources.parts({
+        active: pagination.parts.active,
+        lowStock: pagination.parts.lowStock,
+        size: API_MAX_PAGE_SIZE,
+      }),
+      resources.lowStockParts({ size: 20 }),
+      resources.serviceOrders({ status: pagination.serviceOrders.status, size: API_MAX_PAGE_SIZE }),
       resources.averageExecutionTime(),
       auth.role === 'ADMIN' ? resources.demoLeads() : Promise.resolve([]),
     ]);
 
-    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average, demoLeads] = requests;
+    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average, demoLeads] =
+      requests;
 
     currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
     if (currentUser.value) {
@@ -2127,14 +2125,12 @@ async function loadDashboard(options = {}) {
       accountInitial.value = currentUser.value.fullName || '';
     }
     data.users = users.status === 'fulfilled' && users.value ? listItems(users.value) : [];
-    data.customers =
-        customers.status === 'fulfilled' && customers.value ? listItems(customers.value) : [];
+    data.customers = customers.status === 'fulfilled' && customers.value ? listItems(customers.value) : [];
     data.vehicles = vehicles.status === 'fulfilled' ? listItems(vehicles.value) : [];
     data.services = services.status === 'fulfilled' ? listItems(services.value) : [];
     data.parts = parts.status === 'fulfilled' ? listItems(parts.value) : [];
     data.lowStockParts = lowStockParts.status === 'fulfilled' ? listItems(lowStockParts.value) : [];
-    data.serviceOrders =
-        serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
+    data.serviceOrders = serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
     data.demoLeads = demoLeads.status === 'fulfilled' ? demoLeads.value || [] : [];
     ensureStoreQuotes();
@@ -2163,7 +2159,7 @@ async function runAction(action, message) {
 
   try {
     await action();
-    await loadDashboard({silent: true});
+    await loadDashboard({ silent: true });
     showSuccess(message);
   } catch (err) {
     showError(err.message || 'Não foi possível concluir a operação.');
@@ -2271,8 +2267,8 @@ async function createOrderFromWizard(createBudgetNow) {
     }
 
     const customer = isNewCustomerScenario.value
-        ? forms.orderWizard.customer
-        : await resources.customer(selectedOrderCustomer.value.id);
+      ? forms.orderWizard.customer
+      : await resources.customer(selectedOrderCustomer.value.id);
     const customerDocument = customer?.document;
 
     if (!isValidCustomerDocument(customerDocument)) {
@@ -2282,21 +2278,21 @@ async function createOrderFromWizard(createBudgetNow) {
     const order = await resources.createServiceOrder({
       customerDocument: onlyDigits(customerDocument),
       customer: isNewCustomerScenario.value
-          ? {
+        ? {
             name: customer.name,
             phone: customer.phone,
             email: customer.email,
             address: customer.address,
           }
-          : undefined,
+        : undefined,
       vehicleId: needsNewVehicle.value ? undefined : selectedOrderVehicle.value.id,
       vehicle: needsNewVehicle.value
-          ? {
+        ? {
             ...forms.orderWizard.vehicle,
             year: Number(forms.orderWizard.vehicle.year),
             mileage: Number(forms.orderWizard.vehicle.mileage),
           }
-          : undefined,
+        : undefined,
       diagnosticNotes: buildOrderNotes(),
       services: [
         {
@@ -2305,13 +2301,13 @@ async function createOrderFromWizard(createBudgetNow) {
         },
       ],
       parts: forms.orderWizard.partId
-          ? [
+        ? [
             {
               partId: forms.orderWizard.partId,
               quantity: Number(forms.orderWizard.partQuantity),
             },
           ]
-          : [],
+        : [],
       generateBudget: createBudgetNow,
     });
 
@@ -2324,7 +2320,7 @@ async function createOrderFromWizard(createBudgetNow) {
 
     orderModalOpen.value = false;
     resetOrderWizard();
-    await loadDashboard({silent: true});
+    await loadDashboard({ silent: true });
     showSuccess(createBudgetNow ? 'Ordem salva e orçamento gerado.' : 'Ordem salva como orçamento pendente.');
   } catch (err) {
     showError(err.message || 'Não foi possível criar a ordem.');
@@ -2334,32 +2330,38 @@ async function createOrderFromWizard(createBudgetNow) {
 }
 
 function createCustomer() {
-  return runAction(async () => {
-    if (forms.customer.id) {
-      await resources.updateCustomer(forms.customer.id, forms.customer);
-    } else {
-      await resources.createCustomer(forms.customer);
-    }
-    customerModalOpen.value = false;
-    resetCustomerForm();
-  }, forms.customer.id ? 'Cliente atualizado.' : 'Cliente cadastrado.');
+  return runAction(
+    async () => {
+      if (forms.customer.id) {
+        await resources.updateCustomer(forms.customer.id, forms.customer);
+      } else {
+        await resources.createCustomer(forms.customer);
+      }
+      customerModalOpen.value = false;
+      resetCustomerForm();
+    },
+    forms.customer.id ? 'Cliente atualizado.' : 'Cliente cadastrado.'
+  );
 }
 
 function createVehicle() {
-  return runAction(async () => {
-    const payload = {
-      ...forms.vehicle,
-      year: Number(forms.vehicle.year),
-      mileage: Number(forms.vehicle.mileage),
-    };
-    if (forms.vehicle.id) {
-      await resources.updateVehicle(forms.vehicle.id, payload);
-    } else {
-      await resources.createVehicle(payload);
-    }
-    vehicleModalOpen.value = false;
-    resetVehicleForm();
-  }, forms.vehicle.id ? 'Veículo atualizado.' : 'Veículo cadastrado.');
+  return runAction(
+    async () => {
+      const payload = {
+        ...forms.vehicle,
+        year: Number(forms.vehicle.year),
+        mileage: Number(forms.vehicle.mileage),
+      };
+      if (forms.vehicle.id) {
+        await resources.updateVehicle(forms.vehicle.id, payload);
+      } else {
+        await resources.createVehicle(payload);
+      }
+      vehicleModalOpen.value = false;
+      resetVehicleForm();
+    },
+    forms.vehicle.id ? 'Veículo atualizado.' : 'Veículo cadastrado.'
+  );
 }
 
 function resetCustomerForm() {
@@ -2413,38 +2415,41 @@ function closeVehicleModal() {
 
 function createPart() {
   const wasEditing = Boolean(forms.part.id);
-  return runAction(async () => {
-    const payload = {
-      ...forms.part,
-      costPrice: Number(forms.part.costPrice),
-      unitPrice: Number(forms.part.unitPrice),
-      stockQuantity: Number(forms.part.stockQuantity),
-      minimumStock: Number(forms.part.minimumStock),
-    };
-    if (forms.part.id) {
-      await resources.updatePart(forms.part.id, payload);
-      await resources.configurePartReservation(forms.part.id, forms.part.reservationDays);
-    } else {
-      const part = await resources.createPart(payload);
-      await resources.configurePartReservation(part.id, forms.part.reservationDays);
-    }
-    Object.assign(forms.part, {
-      id: '',
-      name: '',
-      description: '',
-      sku: '',
-      category: '',
-      subcategory: '',
-      brand: '',
-      costPrice: 0,
-      unitPrice: 0,
-      stockQuantity: 0,
-      minimumStock: 1,
-      active: true,
-      reservationDays: 3,
-    });
-    partModalOpen.value = false;
-  }, wasEditing ? 'Peça atualizada.' : 'Peça cadastrada.');
+  return runAction(
+    async () => {
+      const payload = {
+        ...forms.part,
+        costPrice: Number(forms.part.costPrice),
+        unitPrice: Number(forms.part.unitPrice),
+        stockQuantity: Number(forms.part.stockQuantity),
+        minimumStock: Number(forms.part.minimumStock),
+      };
+      if (forms.part.id) {
+        await resources.updatePart(forms.part.id, payload);
+        await resources.configurePartReservation(forms.part.id, forms.part.reservationDays);
+      } else {
+        const part = await resources.createPart(payload);
+        await resources.configurePartReservation(part.id, forms.part.reservationDays);
+      }
+      Object.assign(forms.part, {
+        id: '',
+        name: '',
+        description: '',
+        sku: '',
+        category: '',
+        subcategory: '',
+        brand: '',
+        costPrice: 0,
+        unitPrice: 0,
+        stockQuantity: 0,
+        minimumStock: 1,
+        active: true,
+        reservationDays: 3,
+      });
+      partModalOpen.value = false;
+    },
+    wasEditing ? 'Peça atualizada.' : 'Peça cadastrada.'
+  );
 }
 
 function resetPartForm() {
@@ -2520,8 +2525,8 @@ function registerStockMovement() {
 
 function storeQuoteTotal(quote) {
   return (quote.items || []).reduce(
-      (total, item) => total + Number(item.quantity || 0) * Number(item.quotedPrice || 0),
-      0,
+    (total, item) => total + Number(item.quantity || 0) * Number(item.quotedPrice || 0),
+    0
   );
 }
 
@@ -2636,7 +2641,7 @@ function removeStoreQuoteItem(index) {
   forms.storeQuote.items.splice(index, 1);
 }
 
-function saveStoreQuote({closeModal = true, notify = true} = {}) {
+function saveStoreQuote({ closeModal = true, notify = true } = {}) {
   if (!forms.storeQuote.customerName || !forms.storeQuote.items.length) {
     showError('Informe o cliente e ao menos uma peça para salvar o carrinho.');
     return null;
@@ -2680,7 +2685,7 @@ function editStoreQuote(quote) {
     partId: '',
     quantity: 1,
     quotedPrice: 0,
-    items: quote.items.map((item) => ({...item})),
+    items: quote.items.map((item) => ({ ...item })),
   });
   closeRecord();
   selectTab('store-quotes');
@@ -2698,13 +2703,11 @@ function storeQuoteMainItem(quote) {
 }
 
 function storeQuoteUpdatedAt(quote) {
-  return quote.updatedAt
-      ? new Date(quote.updatedAt).toLocaleDateString('pt-BR')
-      : '-';
+  return quote.updatedAt ? new Date(quote.updatedAt).toLocaleDateString('pt-BR') : '-';
 }
 
 function saveStoreQuoteStatusFromModal(status) {
-  const quote = saveStoreQuote({closeModal: false, notify: false});
+  const quote = saveStoreQuote({ closeModal: false, notify: false });
   if (!quote) {
     return null;
   }
@@ -2714,23 +2717,21 @@ function saveStoreQuoteStatusFromModal(status) {
 function updateStoreQuoteStatus(quote, status) {
   return runAction(async () => {
     if (status === 'SENT' && quote.status !== 'SENT') {
-      await Promise.all(
-          quote.items.map((item) => resources.reservePart(item.partId, Number(item.quantity))),
-      );
+      await Promise.all(quote.items.map((item) => resources.reservePart(item.partId, Number(item.quantity))));
     }
     if (status === 'APPROVED') {
       await Promise.all(
-          quote.items.map((item) =>
-              resources.commitPartReservation(item.partId, {
-                quantity: Number(item.quantity),
-                reason: `Carrinho ${quote.id} aprovado`,
-              }),
-          ),
+        quote.items.map((item) =>
+          resources.commitPartReservation(item.partId, {
+            quantity: Number(item.quantity),
+            reason: `Carrinho ${quote.id} aprovado`,
+          })
+        )
       );
     }
     if (['REFUSED', 'EXPIRED'].includes(status) && quote.status === 'SENT') {
       await Promise.all(
-          quote.items.map((item) => resources.releasePartReservation(item.partId, Number(item.quantity))),
+        quote.items.map((item) => resources.releasePartReservation(item.partId, Number(item.quantity)))
       );
     }
     quote.status = status;
@@ -2747,7 +2748,9 @@ function selectCustomerPart(part) {
 }
 
 function addCustomerPartRequest(part, store = null) {
-  const existing = forms.customerQuote.items.find((item) => item.partId === part.id && item.storeName === (store?.name || ''));
+  const existing = forms.customerQuote.items.find(
+    (item) => item.partId === part.id && item.storeName === (store?.name || '')
+  );
   if (existing) {
     existing.quantity += 1;
   } else {
@@ -2806,27 +2809,30 @@ function sendCustomerQuoteRequest() {
 
 function createWorkshopService() {
   const wasEditing = Boolean(forms.service.id);
-  return runAction(async () => {
-    const payload = {
-      ...forms.service,
-      basePrice: Number(forms.service.basePrice),
-      estimatedTimeInMinutes: Number(forms.service.estimatedTimeInMinutes),
-    };
-    if (forms.service.id) {
-      await resources.updateWorkshopService(forms.service.id, payload);
-    } else {
-      await resources.createWorkshopService(payload);
-    }
-    Object.assign(forms.service, {
-      id: '',
-      name: '',
-      description: '',
-      basePrice: 0,
-      estimatedTimeInMinutes: 60,
-      active: true,
-    });
-    serviceModalOpen.value = false;
-  }, wasEditing ? 'Serviço atualizado.' : 'Serviço cadastrado.');
+  return runAction(
+    async () => {
+      const payload = {
+        ...forms.service,
+        basePrice: Number(forms.service.basePrice),
+        estimatedTimeInMinutes: Number(forms.service.estimatedTimeInMinutes),
+      };
+      if (forms.service.id) {
+        await resources.updateWorkshopService(forms.service.id, payload);
+      } else {
+        await resources.createWorkshopService(payload);
+      }
+      Object.assign(forms.service, {
+        id: '',
+        name: '',
+        description: '',
+        basePrice: 0,
+        estimatedTimeInMinutes: 60,
+        active: true,
+      });
+      serviceModalOpen.value = false;
+    },
+    wasEditing ? 'Serviço atualizado.' : 'Serviço cadastrado.'
+  );
 }
 
 function resetServiceForm() {
@@ -2939,25 +2945,19 @@ function resetListPage(resource) {
   pagination[resource].page = 0;
 }
 
-const isCustomerDetail = computed(() =>
-    selectedRecord.value && selectedRecordType.value === 'Cliente',
+const isCustomerDetail = computed(() => selectedRecord.value && selectedRecordType.value === 'Cliente');
+
+const isWorkshopDetail = computed(
+  () => selectedRecord.value && ['Oficina', 'Oficina parceira', 'Loja parceira'].includes(selectedRecordType.value)
 );
 
-const isWorkshopDetail = computed(() =>
-    selectedRecord.value && ['Oficina', 'Oficina parceira', 'Loja parceira'].includes(selectedRecordType.value),
+const isOrderDetail = computed(
+  () => selectedRecord.value && ['Ordem de serviço', 'Histórico'].includes(selectedRecordType.value)
 );
 
-const isOrderDetail = computed(() =>
-    selectedRecord.value && ['Ordem de serviço', 'Histórico'].includes(selectedRecordType.value),
-);
+const isVehicleDetail = computed(() => selectedRecord.value && selectedRecordType.value === 'Veículo');
 
-const isVehicleDetail = computed(() =>
-    selectedRecord.value && selectedRecordType.value === 'Veículo',
-);
-
-const selectedPartnerUser = computed(() =>
-    data.users.find((user) => user.id === selectedRecord.value?.id),
-);
+const selectedPartnerUser = computed(() => data.users.find((user) => user.id === selectedRecord.value?.id));
 
 const detailModalTitle = computed(() => {
   if (!selectedRecord.value) {
@@ -2966,26 +2966,30 @@ const detailModalTitle = computed(() => {
   if (isOrderDetail.value) {
     return `Ordem de serviço - ${orderCustomerName(selectedRecord.value)}`;
   }
-  return selectedRecord.value.name
-      || selectedRecord.value.fullName
-      || selectedRecord.value.plate
-      || statusLabels[selectedRecord.value.status]
-      || selectedRecord.value.status
-      || 'Detalhes';
+  return (
+    selectedRecord.value.name ||
+    selectedRecord.value.fullName ||
+    selectedRecord.value.plate ||
+    statusLabels[selectedRecord.value.status] ||
+    selectedRecord.value.status ||
+    'Detalhes'
+  );
 });
 
 const detailModalDirty = computed(() => {
   if (isCustomerDetail.value) {
     const original = selectedRecord.value;
     const draft = modalDraft.customer;
-    return JSON.stringify({
-      name: original.name,
-      document: original.document,
-      phone: original.phone,
-      email: original.email,
-      address: original.address || {},
-      active: original.active !== false,
-    }) !== JSON.stringify(draft);
+    return (
+      JSON.stringify({
+        name: original.name,
+        document: original.document,
+        phone: original.phone,
+        email: original.email,
+        address: original.address || {},
+        active: original.active !== false,
+      }) !== JSON.stringify(draft)
+    );
   }
 
   if (isWorkshopDetail.value) {
@@ -2993,30 +2997,36 @@ const detailModalDirty = computed(() => {
     if (!user) {
       return false;
     }
-    return JSON.stringify({
-      companyName: user.companyName || '',
-      fullName: user.fullName || '',
-      active: user.active !== false,
-    }) !== JSON.stringify(modalDraft.partner);
+    return (
+      JSON.stringify({
+        companyName: user.companyName || '',
+        fullName: user.fullName || '',
+        active: user.active !== false,
+      }) !== JSON.stringify(modalDraft.partner)
+    );
   }
 
   if (isOrderDetail.value) {
-    return JSON.stringify({
-      diagnosticNotes: selectedRecord.value.diagnosticNotes || '',
-      status: selectedRecord.value.status || 'RECEIVED',
-    }) !== JSON.stringify(modalDraft.order);
+    return (
+      JSON.stringify({
+        diagnosticNotes: selectedRecord.value.diagnosticNotes || '',
+        status: selectedRecord.value.status || 'RECEIVED',
+      }) !== JSON.stringify(modalDraft.order)
+    );
   }
 
   if (isVehicleDetail.value) {
-    return JSON.stringify({
-      customerId: selectedRecord.value.customerId || '',
-      plate: selectedRecord.value.plate || '',
-      brand: selectedRecord.value.brand || '',
-      model: selectedRecord.value.model || '',
-      year: selectedRecord.value.year || new Date().getFullYear(),
-      mileage: selectedRecord.value.mileage || 0,
-      active: selectedRecord.value.active !== false,
-    }) !== JSON.stringify(modalDraft.vehicle);
+    return (
+      JSON.stringify({
+        customerId: selectedRecord.value.customerId || '',
+        plate: selectedRecord.value.plate || '',
+        brand: selectedRecord.value.brand || '',
+        model: selectedRecord.value.model || '',
+        year: selectedRecord.value.year || new Date().getFullYear(),
+        mileage: selectedRecord.value.mileage || 0,
+        active: selectedRecord.value.active !== false,
+      }) !== JSON.stringify(modalDraft.vehicle)
+    );
   }
 
   return false;
@@ -3031,7 +3041,7 @@ function openRecord(type, record) {
       document: record.document || '',
       phone: record.phone || '',
       email: record.email || '',
-      address: {...(record.address || forms.customer.address)},
+      address: { ...(record.address || forms.customer.address) },
       active: record.active !== false,
     });
   }
@@ -3069,7 +3079,7 @@ function closeRecord() {
   selectedRecordType.value = '';
   Object.assign(modalDraft.customer, {});
   Object.assign(modalDraft.partner, {});
-  Object.assign(modalDraft.order, {diagnosticNotes: '', status: 'RECEIVED'});
+  Object.assign(modalDraft.order, { diagnosticNotes: '', status: 'RECEIVED' });
   Object.assign(modalDraft.vehicle, {
     customerId: '',
     plate: '',
@@ -3141,7 +3151,7 @@ async function saveDetailModal() {
 function editCustomer(customer) {
   Object.assign(forms.customer, {
     ...customer,
-    address: {...(customer.address || forms.customer.address)},
+    address: { ...(customer.address || forms.customer.address) },
     active: customer.active !== false,
   });
   selectTab('customers');
@@ -3322,8 +3332,12 @@ function saveUser() {
 
   const isEmployee = ['WORKSHOP_EMPLOYEE', 'PARTS_STORE_EMPLOYEE'].includes(forms.user.profileType);
   const successMessage = forms.user.id
-      ? (isEmployee ? 'Funcionário atualizado.' : 'Conta atualizada.')
-      : (isEmployee ? 'Funcionário criado.' : 'Conta criada.');
+    ? isEmployee
+      ? 'Funcionário atualizado.'
+      : 'Conta atualizada.'
+    : isEmployee
+      ? 'Funcionário criado.'
+      : 'Conta criada.';
   return runAction(async () => {
     const payload = {
       fullName: forms.user.fullName,
@@ -3343,7 +3357,7 @@ function saveUser() {
         await resources.resetUserPassword(forms.user.id, forms.user.password);
       }
     } else {
-      await resources.createUser({...payload, password: forms.user.password});
+      await resources.createUser({ ...payload, password: forms.user.password });
     }
     closeUserModal();
   }, successMessage);
@@ -3364,7 +3378,7 @@ function saveAccount() {
   }
 
   return runAction(async () => {
-    currentUser.value = await resources.updateCurrentUser({fullName: forms.account.fullName});
+    currentUser.value = await resources.updateCurrentUser({ fullName: forms.account.fullName });
   }, 'Dados do usuário atualizados.');
 }
 
@@ -3445,7 +3459,7 @@ function logout() {
     tone: 'danger',
     onConfirm: () => {
       auth.logout();
-      router.push({name: 'login'});
+      router.push({ name: 'login' });
     },
   });
 }
@@ -3460,19 +3474,14 @@ onMounted(async () => {
   <main :class="{ 'mobile-sidebar-open': mobileMenuOpen }" class="app-shell">
     <header class="site-navbar">
       <div class="navbar-inner">
-        <button
-            class="menu-button"
-            title="Abrir menu"
-            type="button"
-            @click="mobileMenuOpen = !mobileMenuOpen"
-        >
-          <X v-if="mobileMenuOpen" :size="22"/>
-          <Menu v-else :size="22"/>
+        <button class="menu-button" title="Abrir menu" type="button" @click="mobileMenuOpen = !mobileMenuOpen">
+          <X v-if="mobileMenuOpen" :size="22" />
+          <Menu v-else :size="22" />
         </button>
 
         <div class="navbar-brand">
           <div class="brand-mark">
-            <Wrench :size="22"/>
+            <Wrench :size="22" />
           </div>
           <div>
             <strong>AutoCare Hub</strong>
@@ -3481,21 +3490,21 @@ onMounted(async () => {
         </div>
 
         <div class="navbar-search">
-          <Search :size="17"/>
+          <Search :size="17" />
           <input
-              v-model="globalSearch"
-              aria-label="Busca global"
-              placeholder="Buscar clientes, placas, peças, ordens..."
-              type="search"
+            v-model="globalSearch"
+            aria-label="Busca global"
+            placeholder="Buscar clientes, placas, peças, ordens..."
+            type="search"
           />
           <div v-if="searchResults.length" class="search-popover">
             <button
-                v-for="result in searchResults"
-                :key="`${result.type}-${result.label}-${result.detail}`"
-                type="button"
-                @click="selectSearchResult(result)"
+              v-for="result in searchResults"
+              :key="`${result.type}-${result.label}-${result.detail}`"
+              type="button"
+              @click="selectSearchResult(result)"
             >
-              <component :is="result.icon" :size="17"/>
+              <component :is="result.icon" :size="17" />
               <span>
                 <strong>{{ result.label }}</strong>
                 <small>{{ result.type }} - {{ result.detail }}</small>
@@ -3507,26 +3516,26 @@ onMounted(async () => {
         <div class="navbar-actions">
           <div class="profile-menu">
             <button
-                :aria-expanded="profileMenuOpen"
-                aria-haspopup="menu"
-                class="profile-trigger"
-                title="Menu do usuário"
-                type="button"
-                @click="profileMenuOpen = !profileMenuOpen"
+              :aria-expanded="profileMenuOpen"
+              aria-haspopup="menu"
+              class="profile-trigger"
+              title="Menu do usuário"
+              type="button"
+              @click="profileMenuOpen = !profileMenuOpen"
             >
               {{ userInitials }}
             </button>
             <div v-if="profileMenuOpen" class="profile-popover" role="menu">
               <button role="menuitem" type="button" @click="showProfileAction('Minha conta')">
-                <UserCog :size="17"/>
+                <UserCog :size="17" />
                 <span>Minha conta</span>
               </button>
               <button role="menuitem" type="button" @click="showProfileAction('Alterar senha')">
-                <KeyRound :size="17"/>
+                <KeyRound :size="17" />
                 <span>Alterar senha</span>
               </button>
               <button role="menuitem" type="button" @click="logout">
-                <LogOut :size="17"/>
+                <LogOut :size="17" />
                 <span>Sair</span>
               </button>
             </div>
@@ -3538,26 +3547,26 @@ onMounted(async () => {
     <div :class="{ 'sidebar-collapsed': sidebarCollapsed }" class="app-layout">
       <aside :class="{ collapsed: sidebarCollapsed }" class="app-sidebar">
         <button
-            :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
-            class="sidebar-toggle"
-            type="button"
-            @click="sidebarCollapsed = !sidebarCollapsed"
+          :title="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'"
+          class="sidebar-toggle"
+          type="button"
+          @click="sidebarCollapsed = !sidebarCollapsed"
         >
-          <ChevronRight v-if="sidebarCollapsed" :size="18"/>
-          <ChevronLeft v-else :size="18"/>
+          <ChevronRight v-if="sidebarCollapsed" :size="18" />
+          <ChevronLeft v-else :size="18" />
           <span>{{ sidebarCollapsed ? 'Expandir' : 'Recolher' }}</span>
         </button>
 
         <nav aria-label="Acessos principais" class="side-nav">
           <button
-              v-for="tab in availableTabs"
-              :key="tab.id"
-              :class="{ active: activeTab === tab.id }"
-              :title="tab.label"
-              type="button"
-              @click="selectTab(tab.id)"
+            v-for="tab in availableTabs"
+            :key="tab.id"
+            :class="{ active: activeTab === tab.id }"
+            :title="tab.label"
+            type="button"
+            @click="selectTab(tab.id)"
           >
-            <component :is="tab.icon" :size="20"/>
+            <component :is="tab.icon" :size="20" />
             <span>
               <strong>{{ tab.label }}</strong>
             </span>
@@ -3566,25 +3575,22 @@ onMounted(async () => {
       </aside>
 
       <button
-          v-if="mobileMenuOpen"
-          aria-label="Fechar menu"
-          class="sidebar-backdrop"
-          type="button"
-          @click="mobileMenuOpen = false"
+        v-if="mobileMenuOpen"
+        aria-label="Fechar menu"
+        class="sidebar-backdrop"
+        type="button"
+        @click="mobileMenuOpen = false"
       ></button>
 
       <section class="content">
-        <ToastAlert :message="success" type="success" @close="resetMessage"/>
-        <ToastAlert :message="error" type="error" @close="resetMessage"/>
+        <ToastAlert :message="success" type="success" @close="resetMessage" />
+        <ToastAlert :message="error" type="error" @close="resetMessage" />
 
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
-            <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
-            <button
-                v-if="!isCustomerProfile" class="secondary-button" type="button"
-                @click="toggleHomeSettings"
-            >
-              <Plus :size="17"/>
+            <span><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
+            <button v-if="!isCustomerProfile" class="secondary-button" type="button" @click="toggleHomeSettings">
+              <Plus :size="17" />
               Personalizar home
             </button>
           </div>
@@ -3597,10 +3603,10 @@ onMounted(async () => {
               </div>
               <div class="customer-vehicle-list">
                 <button
-                    v-for="vehicle in customerVehicles"
-                    :key="vehicle.id"
-                    type="button"
-                    @click="openRecord('Veículo', vehicle)"
+                  v-for="vehicle in customerVehicles"
+                  :key="vehicle.id"
+                  type="button"
+                  @click="openRecord('Veículo', vehicle)"
                 >
                   <strong>{{ vehicle.plate }} · {{ vehicle.brand }} {{ vehicle.model }}</strong>
                   <span>{{ statusLabels[vehicle.currentStatus] || vehicle.currentStatus || 'Sem ordem ativa' }}</span>
@@ -3617,32 +3623,38 @@ onMounted(async () => {
               </div>
               <div class="customer-alert-list">
                 <button
-                    v-for="order in customerBudgetAlerts" :key="`budget-${order.id}`" type="button"
-                    @click="openRecord('Orçamento pendente', order)"
+                  v-for="order in customerBudgetAlerts"
+                  :key="`budget-${order.id}`"
+                  type="button"
+                  @click="openRecord('Orçamento pendente', order)"
                 >
-                  <AlertTriangle :size="18"/>
+                  <AlertTriangle :size="18" />
                   <span>Orçamento pendente de aprovação</span>
                   <strong>R$ {{ money(order.totalAmount) }}</strong>
                 </button>
                 <button
-                    v-for="order in customerReadyAlerts" :key="`ready-${order.id}`" type="button"
-                    @click="openRecord('Veículo pronto', order)"
+                  v-for="order in customerReadyAlerts"
+                  :key="`ready-${order.id}`"
+                  type="button"
+                  @click="openRecord('Veículo pronto', order)"
                 >
-                  <CheckCircle2 :size="18"/>
+                  <CheckCircle2 :size="18" />
                   <span>Veículo pronto para retirada</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
                 <button
-                    v-for="order in customerFinishedAlerts" :key="`finished-${order.id}`" type="button"
-                    @click="openRecord('Veículo concluído', order)"
+                  v-for="order in customerFinishedAlerts"
+                  :key="`finished-${order.id}`"
+                  type="button"
+                  @click="openRecord('Veículo concluído', order)"
                 >
-                  <CheckCircle2 :size="18"/>
+                  <CheckCircle2 :size="18" />
                   <span>Atendimento concluído</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
                 <p
-                    v-if="!customerBudgetAlerts.length && !customerReadyAlerts.length && !customerFinishedAlerts.length"
-                    class="empty-state"
+                  v-if="!customerBudgetAlerts.length && !customerReadyAlerts.length && !customerFinishedAlerts.length"
+                  class="empty-state"
                 >
                   Nenhum alerta ativo.
                 </p>
@@ -3663,16 +3675,18 @@ onMounted(async () => {
                 <span>Total</span>
               </div>
               <article
-                  v-for="order in customerRecentHistory"
-                  :key="order.id"
-                  class="data-table-row orders-grid clickable-row"
-                  @click="openRecord('Histórico', order)"
+                v-for="order in customerRecentHistory"
+                :key="order.id"
+                class="data-table-row orders-grid clickable-row"
+                @click="openRecord('Histórico', order)"
               >
-                <StatusBadge :value="order.status"/>
-                <span>{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span>
-                <span>{{ order.services?.length || 0 }} serviços<small>{{
-                    order.parts?.length || 0
-                  }} peças</small></span>
+                <StatusBadge :value="order.status" />
+                <span
+                  >{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span
+                >
+                <span
+                  >{{ order.services?.length || 0 }} serviços<small>{{ order.parts?.length || 0 }} peças</small></span
+                >
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
             </div>
@@ -3683,17 +3697,17 @@ onMounted(async () => {
               <strong>Meus widgets</strong>
               <div class="home-option-grid">
                 <label
-                    v-for="widget in availableHomeWidgetDefinitions"
-                    :key="widget.id"
-                    :class="{
+                  v-for="widget in availableHomeWidgetDefinitions"
+                  :key="widget.id"
+                  :class="{
                     'is-active': isHomeWidgetSelected(widget.id),
                     'is-inactive': !isHomeWidgetSelected(widget.id),
                   }"
                 >
                   <input
-                      :checked="isHomeWidgetSelected(widget.id)"
-                      type="checkbox"
-                      @change="toggleHomeWidget(widget.id)"
+                    :checked="isHomeWidgetSelected(widget.id)"
+                    type="checkbox"
+                    @change="toggleHomeWidget(widget.id)"
                   />
                   <span>{{ widget.label }}</span>
                   <small>{{ isHomeWidgetSelected(widget.id) ? 'Ativo' : 'Inativo' }}</small>
@@ -3703,26 +3717,22 @@ onMounted(async () => {
             <div v-if="auth.role === 'ADMIN'">
               <strong>{{ isPartsStoreProfile ? 'Configuração da loja' : 'Configuração da oficina' }}</strong>
               <label class="home-alert-toggle">
-                <input
-                    :checked="homePreferenceDraft.showAlertsOnHome"
-                    type="checkbox"
-                    @change="toggleHomeAlerts"
-                />
+                <input :checked="homePreferenceDraft.showAlertsOnHome" type="checkbox" @change="toggleHomeAlerts" />
                 <span>Exibir avisos críticos de estoque para a equipe</span>
               </label>
               <div class="home-option-grid">
                 <label
-                    v-for="widget in availableHomeWidgetDefinitions"
-                    :key="`global-${widget.id}`"
-                    :class="{
+                  v-for="widget in availableHomeWidgetDefinitions"
+                  :key="`global-${widget.id}`"
+                  :class="{
                     'is-active': isHomeWidgetSelected(widget.id, 'global'),
                     'is-inactive': !isHomeWidgetSelected(widget.id, 'global'),
                   }"
                 >
                   <input
-                      :checked="isHomeWidgetSelected(widget.id, 'global')"
-                      type="checkbox"
-                      @change="toggleHomeWidget(widget.id, 'global')"
+                    :checked="isHomeWidgetSelected(widget.id, 'global')"
+                    type="checkbox"
+                    @change="toggleHomeWidget(widget.id, 'global')"
                   />
                   <span>{{ widget.label }}</span>
                   <small>{{ isHomeWidgetSelected(widget.id, 'global') ? 'Ativo' : 'Inativo' }}</small>
@@ -3731,10 +3741,10 @@ onMounted(async () => {
             </div>
             <div class="home-settings-actions">
               <button
-                  :disabled="homePreferencesSaving || !homePreferenceDirty"
-                  class="primary-button home-save-button"
-                  type="button"
-                  @click="saveHomePreferenceDraft"
+                :disabled="homePreferencesSaving || !homePreferenceDirty"
+                class="primary-button home-save-button"
+                type="button"
+                @click="saveHomePreferenceDraft"
               >
                 Salvar preferências
               </button>
@@ -3743,13 +3753,13 @@ onMounted(async () => {
 
           <section v-if="!isMasterAdmin && !isCustomerProfile" class="home-summary-grid">
             <button
-                v-for="widget in homeWidgets"
-                :key="widget.id"
-                class="home-widget"
-                type="button"
-                @click="openHomeWidget(widget)"
+              v-for="widget in homeWidgets"
+              :key="widget.id"
+              class="home-widget"
+              type="button"
+              @click="openHomeWidget(widget)"
             >
-              <component :is="widget.icon" :size="22"/>
+              <component :is="widget.icon" :size="22" />
               <strong>{{ widget.value }}</strong>
               <span>{{ widget.label }}</span>
             </button>
@@ -3762,10 +3772,10 @@ onMounted(async () => {
             </div>
             <div class="employee-metrics-grid featured-employee-grid">
               <article
-                  v-for="{ employee, metrics, score } in featuredWorkshopEmployees"
-                  :key="`featured-${employee.id}`"
-                  class="employee-card employee-card--highlight clickable-row"
-                  @click="editUser(employee)"
+                v-for="{ employee, metrics, score } in featuredWorkshopEmployees"
+                :key="`featured-${employee.id}`"
+                class="employee-card employee-card--highlight clickable-row"
+                @click="editUser(employee)"
               >
                 <div>
                   <strong>{{ employee.fullName }}</strong>
@@ -3791,14 +3801,14 @@ onMounted(async () => {
               </div>
               <div class="home-summary-grid">
                 <button
-                    v-for="widget in masterPlatformWidgets"
-                    :key="widget.id"
-                    :class="`tone-${widget.tone}`"
-                    class="home-widget"
-                    type="button"
-                    @click="openHomeWidget(widget)"
+                  v-for="widget in masterPlatformWidgets"
+                  :key="widget.id"
+                  :class="`tone-${widget.tone}`"
+                  class="home-widget"
+                  type="button"
+                  @click="openHomeWidget(widget)"
                 >
-                  <component :is="widget.icon" :size="22"/>
+                  <component :is="widget.icon" :size="22" />
                   <strong>{{ widget.value }}</strong>
                   <span>{{ widget.label }}</span>
                 </button>
@@ -3811,14 +3821,14 @@ onMounted(async () => {
               </div>
               <div class="home-summary-grid">
                 <button
-                    v-for="widget in masterFinancialWidgets"
-                    :key="widget.id"
-                    :class="`tone-${widget.tone}`"
-                    class="home-widget"
-                    type="button"
-                    @click="openHomeWidget(widget)"
+                  v-for="widget in masterFinancialWidgets"
+                  :key="widget.id"
+                  :class="`tone-${widget.tone}`"
+                  class="home-widget"
+                  type="button"
+                  @click="openHomeWidget(widget)"
                 >
-                  <component :is="widget.icon" :size="22"/>
+                  <component :is="widget.icon" :size="22" />
                   <strong>{{ widget.value }}</strong>
                   <span>{{ widget.label }}</span>
                 </button>
@@ -3887,22 +3897,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <article class="metric-card">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
                 <span>Vendas aprovadas</span>
               </article>
               <article class="metric-card">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ storeBillingSummary.conversion }}%</strong>
                 <span>Taxa de conversão</span>
               </article>
               <article class="metric-card">
-                <ShoppingCart :size="22"/>
+                <ShoppingCart :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
                 <span>Ticket médio</span>
               </article>
               <article class="metric-card">
-                <Package :size="22"/>
+                <Package :size="22" />
                 <strong>{{ storeTopProducts[0]?.name || 'Sem vendas' }}</strong>
                 <span>Produto mais vendido</span>
               </article>
@@ -3910,15 +3920,16 @@ onMounted(async () => {
           </section>
 
           <section
-              v-if="!isPartsStoreProfile && !isMasterAdmin && !isCustomerProfile"
-              aria-label="Status atual dos veículos" class="vehicle-status-grid"
+            v-if="!isPartsStoreProfile && !isMasterAdmin && !isCustomerProfile"
+            aria-label="Status atual dos veículos"
+            class="vehicle-status-grid"
           >
             <button
-                v-for="item in vehicleStatusWidgets"
-                :key="item.label"
-                class="status-widget"
-                type="button"
-                @click="openStatusWidget(item.statusFilter)"
+              v-for="item in vehicleStatusWidgets"
+              :key="item.label"
+              class="status-widget"
+              type="button"
+              @click="openStatusWidget(item.statusFilter)"
             >
               <strong>{{ item.value }}</strong>
               <span>{{ item.label }}</span>
@@ -3927,15 +3938,15 @@ onMounted(async () => {
 
           <section v-if="showHomeAlerts && data.lowStockParts.length" class="home-alerts-panel">
             <div class="home-alerts-heading">
-              <AlertTriangle :size="22"/>
+              <AlertTriangle :size="22" />
               <strong>Atenção necessária</strong>
             </div>
             <div class="home-alert-list">
               <button
-                  v-for="part in data.lowStockParts.slice(0, 4)"
-                  :key="part.id"
-                  type="button"
-                  @click="selectTab('parts')"
+                v-for="part in data.lowStockParts.slice(0, 4)"
+                :key="part.id"
+                type="button"
+                @click="selectTab('parts')"
               >
                 <strong>{{ part.name }}</strong>
                 <span>{{ part.stockQuantity }} un. disponíveis · mínimo {{ part.minimumStock }}</span>
@@ -3947,25 +3958,25 @@ onMounted(async () => {
         <section v-if="activeTab === 'billing' && isWorkshopAdmin" class="screen-stack billing-screen">
           <section class="billing-hero-grid">
             <button class="billing-card tone-green" type="button" @click="selectTab('orders')">
-              <DollarSign :size="22"/>
+              <DollarSign :size="22" />
               <span>Faturamento bruto</span>
               <strong>R$ {{ money(billingSummary.gross) }}</strong>
               <small>Ordens e orçamentos aprovados</small>
             </button>
             <article class="billing-card tone-blue">
-              <BadgePercent :size="22"/>
+              <BadgePercent :size="22" />
               <span>Taxa atual AutoCare Hub</span>
               <strong>{{ billingSummary.feeRateLabel }}</strong>
               <small>Aplicada sobre o faturamento mensal</small>
             </article>
             <article class="billing-card tone-teal billing-card--featured">
-              <CheckCircle2 :size="22"/>
+              <CheckCircle2 :size="22" />
               <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(billingSummary.net) }}</strong>
               <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
             <button class="billing-card tone-amber" type="button" @click="selectTab('orders')">
-              <TrendingUp :size="22"/>
+              <TrendingUp :size="22" />
               <span>Ticket médio</span>
               <strong>R$ {{ money(billingSummary.ticket) }}</strong>
               <small>Baseado nos orçamentos aprovados</small>
@@ -3977,8 +3988,8 @@ onMounted(async () => {
               <span class="tier-chip tier-chip--done">Taxa atual {{ billingSummary.feeRateLabel }}</span>
               <h2>Quanto maior o faturamento mensal, menor pode ser a taxa.</h2>
               <p>
-                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa,
-                a oficina passa a trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
+                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa, a oficina passa a
+                trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
               </p>
             </div>
             <div class="billing-tier-summary">
@@ -3993,8 +4004,8 @@ onMounted(async () => {
               <span>
                 Falta para a próxima faixa
                 <strong>{{
-                    billingSummary.nextTierGap > 0 ? `R$ ${money(billingSummary.nextTierGap)}` : 'Menor taxa ativa'
-                  }}</strong>
+                  billingSummary.nextTierGap > 0 ? `R$ ${money(billingSummary.nextTierGap)}` : 'Menor taxa ativa'
+                }}</strong>
               </span>
             </div>
             <div class="billing-progress-track">
@@ -4009,22 +4020,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('orders')">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ billingSummary.sentBudgets }}</strong>
                 <span>Orçamentos enviados</span>
               </button>
               <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('orders')">
-                <CheckCircle2 :size="22"/>
+                <CheckCircle2 :size="22" />
                 <strong>{{ billingSummary.approvedBudgets }}</strong>
                 <span>Orçamentos aprovados</span>
               </button>
               <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('orders')">
-                <Wrench :size="22"/>
+                <Wrench :size="22" />
                 <strong>{{ billingSummary.completed }}</strong>
                 <span>Serviços concluídos</span>
               </button>
               <article class="metric-card billing-metric tone-violet">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(billingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
               </article>
@@ -4046,15 +4057,19 @@ onMounted(async () => {
               </div>
             </div>
             <article class="selected-record billing-tier-callout">
-              <BarChart3 :size="20"/>
+              <BarChart3 :size="20" />
               <strong>
                 {{
-                  billingSummary.nextTierGap > 0 ? `Faltam R$ ${money(billingSummary.nextTierGap)}` : 'Melhor faixa atingida'
+                  billingSummary.nextTierGap > 0
+                    ? `Faltam R$ ${money(billingSummary.nextTierGap)}`
+                    : 'Melhor faixa atingida'
                 }}
               </strong>
               <span>
                 {{
-                  billingSummary.nextTierGap > 0 ? `Para atingir a próxima faixa de taxa (${billingSummary.nextTierLabel}).` : 'A oficina já está na menor taxa disponível.'
+                  billingSummary.nextTierGap > 0
+                    ? `Para atingir a próxima faixa de taxa (${billingSummary.nextTierLabel}).`
+                    : 'A oficina já está na menor taxa disponível.'
                 }}
               </span>
             </article>
@@ -4067,7 +4082,7 @@ onMounted(async () => {
               <h2>Funcionários</h2>
               <span>{{ workshopEmployees.length }} pessoas na oficina</span>
               <button class="primary-button" type="button" @click="openCreateWorkshopEmployeeModal">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar funcionário</span>
               </button>
             </div>
@@ -4079,15 +4094,17 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="employee in workshopEmployees"
-                  :key="employee.id"
-                  class="data-table-row employee-grid clickable-row"
-                  @click="editUser(employee)"
+                v-for="employee in workshopEmployees"
+                :key="employee.id"
+                class="data-table-row employee-grid clickable-row"
+                @click="editUser(employee)"
               >
-                <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
+                <strong
+                  >{{ employee.fullName }}<small>{{ employee.username }}</small></strong
+                >
                 <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <StatusBadge :value="employee.active"/>
+                <StatusBadge :value="employee.active" />
               </article>
             </div>
           </section>
@@ -4098,18 +4115,14 @@ onMounted(async () => {
               <span>Indicadores ordenados do maior para o menor desempenho</span>
             </div>
             <div class="filters">
-              <input
-                  v-model="employeeMetricSearch"
-                  placeholder="Buscar funcionário nas métricas"
-                  type="search"
-              />
+              <input v-model="employeeMetricSearch" placeholder="Buscar funcionário nas métricas" type="search" />
             </div>
             <div class="employee-metrics-grid">
               <article
-                  v-for="{ employee, metrics, score } in employeeMetricCards"
-                  :key="`metrics-${employee.id}`"
-                  class="employee-card employee-card--metric clickable-row"
-                  @click="editUser(employee)"
+                v-for="{ employee, metrics, score } in employeeMetricCards"
+                :key="`metrics-${employee.id}`"
+                class="employee-card employee-card--metric clickable-row"
+                @click="editUser(employee)"
               >
                 <div>
                   <strong>{{ employee.fullName }}</strong>
@@ -4131,25 +4144,25 @@ onMounted(async () => {
         <section v-if="activeTab === 'store-billing' && isPartsStoreAdmin" class="screen-stack billing-screen">
           <section class="billing-hero-grid">
             <button class="billing-card tone-green" type="button" @click="selectTab('store-quotes')">
-              <DollarSign :size="22"/>
+              <DollarSign :size="22" />
               <span>Faturamento bruto</span>
               <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
               <small>Carrinhos e orçamentos aprovados</small>
             </button>
             <article class="billing-card tone-blue">
-              <BadgePercent :size="22"/>
+              <BadgePercent :size="22" />
               <span>Taxa atual AutoCare Hub</span>
               <strong>{{ storeBillingSummary.feeRateLabel }}</strong>
               <small>Aplicada sobre o faturamento mensal</small>
             </article>
             <article class="billing-card tone-teal billing-card--featured">
-              <CheckCircle2 :size="22"/>
+              <CheckCircle2 :size="22" />
               <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(storeBillingSummary.net) }}</strong>
               <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
             <button class="billing-card tone-amber" type="button" @click="selectTab('store-quotes')">
-              <TrendingUp :size="22"/>
+              <TrendingUp :size="22" />
               <span>Ticket médio</span>
               <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
               <small>Baseado nos orçamentos aprovados</small>
@@ -4161,8 +4174,8 @@ onMounted(async () => {
               <span class="tier-chip tier-chip--done">Taxa atual {{ storeBillingSummary.feeRateLabel }}</span>
               <h2>Quanto maior o faturamento mensal, menor pode ser a taxa.</h2>
               <p>
-                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa,
-                a loja passa a trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
+                A AutoCare Hub calcula a taxa por faixa de faturamento. Ao atingir a próxima faixa, a loja passa a
+                trabalhar com uma taxa menor sobre vendas e orçamentos aprovados.
               </p>
             </div>
             <div class="billing-tier-summary">
@@ -4177,12 +4190,16 @@ onMounted(async () => {
               <span>
                 Falta para a próxima faixa
                 <strong>{{
-                    storeBillingSummary.nextTierGap > 0 ? `R$ ${money(storeBillingSummary.nextTierGap)}` : 'Menor taxa ativa'
-                  }}</strong>
+                  storeBillingSummary.nextTierGap > 0
+                    ? `R$ ${money(storeBillingSummary.nextTierGap)}`
+                    : 'Menor taxa ativa'
+                }}</strong>
               </span>
             </div>
             <div class="billing-progress-track">
-              <b :style="{ width: `${Math.min(100, Math.max(8, ((storeBillingSummary.gross % 5000) / 5000) * 100))}%` }"></b>
+              <b
+                :style="{ width: `${Math.min(100, Math.max(8, ((storeBillingSummary.gross % 5000) / 5000) * 100))}%` }"
+              ></b>
             </div>
           </section>
 
@@ -4193,22 +4210,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('store-quotes')">
-                <ClipboardList :size="22"/>
+                <ClipboardList :size="22" />
                 <strong>{{ storeBillingSummary.sentQuotes }}</strong>
                 <span>Orçamentos enviados</span>
               </button>
               <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('store-quotes')">
-                <CheckCircle2 :size="22"/>
+                <CheckCircle2 :size="22" />
                 <strong>{{ storeBillingSummary.approvedQuotes }}</strong>
                 <span>Orçamentos aprovados</span>
               </button>
               <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('store-quotes')">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ storeBillingSummary.conversion }}%</strong>
                 <span>Taxa de conversão</span>
               </button>
               <article class="metric-card billing-metric tone-violet">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
               </article>
@@ -4224,21 +4241,27 @@ onMounted(async () => {
               <div v-for="month in storeMonthlyRevenue" :key="month.month">
                 <span>{{ month.month }}</span>
                 <div>
-                  <b :style="{ width: `${Math.max(6, (month.value / Math.max(1, storeBillingSummary.gross)) * 100)}%` }"></b>
+                  <b
+                    :style="{ width: `${Math.max(6, (month.value / Math.max(1, storeBillingSummary.gross)) * 100)}%` }"
+                  ></b>
                 </div>
                 <strong>R$ {{ money(month.value) }}</strong>
               </div>
             </div>
             <article class="selected-record billing-tier-callout">
-              <BarChart3 :size="20"/>
+              <BarChart3 :size="20" />
               <strong>
                 {{
-                  storeBillingSummary.nextTierGap > 0 ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}` : 'Melhor faixa atingida'
+                  storeBillingSummary.nextTierGap > 0
+                    ? `Faltam R$ ${money(storeBillingSummary.nextTierGap)}`
+                    : 'Melhor faixa atingida'
                 }}
               </strong>
               <span>
                 {{
-                  storeBillingSummary.nextTierGap > 0 ? `Para atingir a próxima faixa de taxa (${storeBillingSummary.nextTierLabel}).` : 'A loja já está na menor taxa disponível.'
+                  storeBillingSummary.nextTierGap > 0
+                    ? `Para atingir a próxima faixa de taxa (${storeBillingSummary.nextTierLabel}).`
+                    : 'A loja já está na menor taxa disponível.'
                 }}
               </span>
             </article>
@@ -4285,7 +4308,7 @@ onMounted(async () => {
               <span>Atendentes, administradores e permissões comerciais</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateStoreEmployeeModal">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Criar funcionário</span>
             </button>
           </section>
@@ -4304,17 +4327,21 @@ onMounted(async () => {
                 <span>Ação</span>
               </div>
               <article
-                  v-for="employee in storeEmployees"
-                  :key="employee.id"
-                  class="data-table-row employee-grid clickable-row"
-                  @click="openRecord('Funcionário da loja', employee)"
+                v-for="employee in storeEmployees"
+                :key="employee.id"
+                class="data-table-row employee-grid clickable-row"
+                @click="openRecord('Funcionário da loja', employee)"
               >
-                <strong>{{ employee.fullName }}<small>{{ employee.username }}</small></strong>
+                <strong
+                  >{{ employee.fullName }}<small>{{ employee.username }}</small></strong
+                >
                 <span>{{
-                    employee.profileType === 'PARTS_STORE_ADMIN' ? 'Administrador' : employeeSubRoleLabels[employee.employeeSubRole]
-                  }}</span>
+                  employee.profileType === 'PARTS_STORE_ADMIN'
+                    ? 'Administrador'
+                    : employeeSubRoleLabels[employee.employeeSubRole]
+                }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <StatusBadge :value="employee.active"/>
+                <StatusBadge :value="employee.active" />
                 <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">
                   Editar
                 </button>
@@ -4332,8 +4359,10 @@ onMounted(async () => {
                 <div>
                   <strong>{{ employee.fullName }}</strong>
                   <span>{{
-                      employee.profileType === 'PARTS_STORE_ADMIN' ? 'Administrador' : employeeSubRoleLabels[employee.employeeSubRole]
-                    }}</span>
+                    employee.profileType === 'PARTS_STORE_ADMIN'
+                      ? 'Administrador'
+                      : employeeSubRoleLabels[employee.employeeSubRole]
+                  }}</span>
                 </div>
                 <dl>
                   <template v-for="metric in storeEmployeeMetrics(employee)" :key="metric.label">
@@ -4372,7 +4401,7 @@ onMounted(async () => {
               <span>Monte solicitações de peças, negocie valores e acompanhe a aprovação do cliente</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateStoreQuoteModal">
-              <ShoppingCart :size="18"/>
+              <ShoppingCart :size="18" />
               <span>Novo carrinho/orçamento</span>
             </button>
           </section>
@@ -4391,10 +4420,10 @@ onMounted(async () => {
                 <span>Total</span>
               </div>
               <article
-                  v-for="quote in storeQuotes"
-                  :key="quote.id"
-                  class="data-table-row store-quotes-grid clickable-row"
-                  @click="editStoreQuote(quote)"
+                v-for="quote in storeQuotes"
+                :key="quote.id"
+                class="data-table-row store-quotes-grid clickable-row"
+                @click="editStoreQuote(quote)"
               >
                 <span>
                   {{ quote.customerName }}
@@ -4403,10 +4432,10 @@ onMounted(async () => {
                 <span>
                   {{ storeQuoteMainItem(quote) }}
                   <small>{{
-                      quote.contactRequested ? 'Cliente aguardando contato' : `${quote.items.length} item(ns) no carrinho`
-                    }}</small>
+                    quote.contactRequested ? 'Cliente aguardando contato' : `${quote.items.length} item(ns) no carrinho`
+                  }}</small>
                 </span>
-                <StatusBadge :label="storeQuoteStatusLabels[quote.status]" :value="quote.status"/>
+                <StatusBadge :label="storeQuoteStatusLabels[quote.status]" :value="quote.status" />
                 <span class="table-center">{{ storeQuoteUpdatedAt(quote) }}</span>
                 <strong class="table-money">R$ {{ money(storeQuoteTotal(quote)) }}</strong>
               </article>
@@ -4414,27 +4443,31 @@ onMounted(async () => {
           </section>
 
           <AppModal
-              :dirty="Boolean(forms.storeQuote.customerName || forms.storeQuote.customerContact || forms.storeQuote.items.length)"
-              :open="storeQuoteModalOpen"
-              :title="forms.storeQuote.id ? 'Editar carrinho/orçamento' : 'Novo carrinho/orçamento'"
-              subtitle="Fluxo comercial da loja de peças"
-              @close="closeStoreQuoteModal"
+            :dirty="
+              Boolean(
+                forms.storeQuote.customerName || forms.storeQuote.customerContact || forms.storeQuote.items.length
+              )
+            "
+            :open="storeQuoteModalOpen"
+            :title="forms.storeQuote.id ? 'Editar carrinho/orçamento' : 'Novo carrinho/orçamento'"
+            subtitle="Fluxo comercial da loja de peças"
+            @close="closeStoreQuoteModal"
           >
             <form class="modal-form store-quote-modal-form" @submit.prevent="saveStoreQuote()">
               <label class="form-field">
                 <span>Cliente</span>
-                <input v-model="forms.storeQuote.customerName" placeholder="Nome do cliente ou empresa" required/>
+                <input v-model="forms.storeQuote.customerName" placeholder="Nome do cliente ou empresa" required />
               </label>
               <label class="form-field">
                 <span>Contato do cliente</span>
-                <input v-model="forms.storeQuote.customerContact" placeholder="Telefone ou e-mail"/>
+                <input v-model="forms.storeQuote.customerContact" placeholder="Telefone ou e-mail" />
               </label>
               <label class="form-field">
                 <span>Status atual</span>
-                <input :value="storeQuoteStatusLabels[forms.storeQuote.status] || forms.storeQuote.status" disabled/>
+                <input :value="storeQuoteStatusLabels[forms.storeQuote.status] || forms.storeQuote.status" disabled />
               </label>
               <label class="check-row">
-                <input v-model="forms.storeQuote.contactRequested" type="checkbox"/>
+                <input v-model="forms.storeQuote.contactRequested" type="checkbox" />
                 <span>Cliente quer ser contatado pela loja</span>
               </label>
 
@@ -4444,32 +4477,31 @@ onMounted(async () => {
                   <select v-model="forms.storeQuote.partId">
                     <option value="">Selecione uma peça</option>
                     <option v-for="part in data.parts" :key="part.id" :value="part.id">
-                      {{ part.name }} - R$ {{ money(part.unitPrice) }} - {{
-                        part.availableQuantity ?? part.stockQuantity
-                      }} un.
+                      {{ part.name }} - R$ {{ money(part.unitPrice) }} -
+                      {{ part.availableQuantity ?? part.stockQuantity }} un.
                     </option>
                   </select>
                 </label>
                 <label class="form-field">
                   <span>Quantidade</span>
-                  <input v-model.number="forms.storeQuote.quantity" min="1" type="number"/>
+                  <input v-model.number="forms.storeQuote.quantity" min="1" type="number" />
                 </label>
                 <label class="form-field">
                   <span>Valor unitário negociado</span>
-                  <input v-model.number="forms.storeQuote.quotedPrice" min="0" step="0.01" type="number"/>
+                  <input v-model.number="forms.storeQuote.quotedPrice" min="0" step="0.01" type="number" />
                 </label>
                 <button class="secondary-button" type="button" @click="addStoreQuoteItem">
-                  <Plus :size="18"/>
+                  <Plus :size="18" />
                   Adicionar peça
                 </button>
               </div>
 
               <div class="quote-items store-quote-items">
                 <button
-                    v-for="(item, index) in forms.storeQuote.items"
-                    :key="`${item.partId}-${index}`"
-                    type="button"
-                    @click="removeStoreQuoteItem(index)"
+                  v-for="(item, index) in forms.storeQuote.items"
+                  :key="`${item.partId}-${index}`"
+                  type="button"
+                  @click="removeStoreQuoteItem(index)"
                 >
                   <span>
                     <strong>{{ item.quantity }}x {{ item.name }}</strong>
@@ -4480,50 +4512,56 @@ onMounted(async () => {
               </div>
 
               <div class="modal-readonly-grid store-quote-summary">
-                <span>Peças no carrinho<strong>{{ forms.storeQuote.items.length }}</strong></span>
-                <span>Total negociado<strong>R$ {{ money(storeQuoteTotal(forms.storeQuote)) }}</strong></span>
-                <span>Status comercial<strong>{{ storeQuoteStatusLabels[forms.storeQuote.status] }}</strong></span>
+                <span
+                  >Peças no carrinho<strong>{{ forms.storeQuote.items.length }}</strong></span
+                >
+                <span
+                  >Total negociado<strong>R$ {{ money(storeQuoteTotal(forms.storeQuote)) }}</strong></span
+                >
+                <span
+                  >Status comercial<strong>{{ storeQuoteStatusLabels[forms.storeQuote.status] }}</strong></span
+                >
                 <span>Fluxo de estoque<strong>Reserva ao enviar, baixa ao aprovar</strong></span>
               </div>
 
               <div class="quote-status-actions modal-save">
                 <button :disabled="saving" class="primary-button" type="submit">
-                  <ShoppingCart :size="18"/>
+                  <ShoppingCart :size="18" />
                   <span>{{ forms.storeQuote.id ? 'Salvar ajustes' : 'Criar carrinho' }}</span>
                 </button>
                 <button
-                    v-if="forms.storeQuote.status === 'DRAFT'"
-                    :disabled="saving"
-                    class="secondary-button"
-                    type="button"
-                    @click="saveStoreQuoteStatusFromModal('SENT')"
+                  v-if="forms.storeQuote.status === 'DRAFT'"
+                  :disabled="saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="saveStoreQuoteStatusFromModal('SENT')"
                 >
                   Enviar orçamento
                 </button>
                 <button
-                    v-if="forms.storeQuote.status === 'SENT'"
-                    :disabled="saving"
-                    class="secondary-button"
-                    type="button"
-                    @click="saveStoreQuoteStatusFromModal('APPROVED')"
+                  v-if="forms.storeQuote.status === 'SENT'"
+                  :disabled="saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="saveStoreQuoteStatusFromModal('APPROVED')"
                 >
                   Aprovar venda
                 </button>
                 <button
-                    v-if="forms.storeQuote.status === 'SENT'"
-                    :disabled="saving"
-                    class="secondary-button"
-                    type="button"
-                    @click="saveStoreQuoteStatusFromModal('REFUSED')"
+                  v-if="forms.storeQuote.status === 'SENT'"
+                  :disabled="saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="saveStoreQuoteStatusFromModal('REFUSED')"
                 >
                   Recusar orçamento
                 </button>
                 <button
-                    v-if="forms.storeQuote.status === 'SENT'"
-                    :disabled="saving"
-                    class="secondary-button"
-                    type="button"
-                    @click="saveStoreQuoteStatusFromModal('EXPIRED')"
+                  v-if="forms.storeQuote.status === 'SENT'"
+                  :disabled="saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="saveStoreQuoteStatusFromModal('EXPIRED')"
                 >
                   Marcar expirado
                 </button>
@@ -4540,8 +4578,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.masterCustomers.search" placeholder="Buscar cliente, documento ou parceiro"
-                  type="search" @input="resetListPage('masterCustomers')"
+                v-model="pagination.masterCustomers.search"
+                placeholder="Buscar cliente, documento ou parceiro"
+                type="search"
+                @input="resetListPage('masterCustomers')"
               />
               <select v-model.number="pagination.masterCustomers.size" @change="resetListPage('masterCustomers')">
                 <option :value="5">5 por página</option>
@@ -4567,23 +4607,27 @@ onMounted(async () => {
                 <span>Interações</span>
               </div>
               <article
-                  v-for="customer in listRows('masterCustomers')"
-                  :key="customer.id"
-                  class="data-table-row master-customers-grid clickable-row"
-                  @click="openRecord('Cliente', customer)"
+                v-for="customer in listRows('masterCustomers')"
+                :key="customer.id"
+                class="data-table-row master-customers-grid clickable-row"
+                @click="openRecord('Cliente', customer)"
               >
-                <strong>{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong>
+                <strong
+                  >{{ customer.name }}<small>{{ customer.email }} · {{ customer.phone }}</small></strong
+                >
                 <span class="centered-number">{{ customer.vehiclesCount }}</span>
                 <strong class="money-value">R$ {{ money(customer.spent) }}</strong>
-                <span class="interaction-cell">{{ customer.frequency }} interações<small>{{
+                <span class="interaction-cell"
+                  >{{ customer.frequency }} interações<small>{{
                     customer.partners.join(', ') || 'Sem parceiro vinculado'
-                  }}</small></span>
+                  }}</small></span
+                >
               </article>
             </div>
             <PaginationControl
-                :page="pagination.masterCustomers.page"
-                :total-pages="listTotalPages('masterCustomers')"
-                @update:page="setListPage('masterCustomers', $event)"
+              :page="pagination.masterCustomers.page"
+              :total-pages="listTotalPages('masterCustomers')"
+              @update:page="setListPage('masterCustomers', $event)"
             />
           </section>
         </section>
@@ -4596,9 +4640,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.masterWorkshops.search" placeholder="Buscar oficina ou administrador"
-                  type="search"
-                  @input="resetListPage('masterWorkshops')"
+                v-model="pagination.masterWorkshops.search"
+                placeholder="Buscar oficina ou administrador"
+                type="search"
+                @input="resetListPage('masterWorkshops')"
               />
               <select v-model.number="pagination.masterWorkshops.size" @change="resetListPage('masterWorkshops')">
                 <option :value="5">5 por página</option>
@@ -4624,13 +4669,18 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="partner in listRows('masterWorkshops')"
-                  :key="partner.id"
-                  class="data-table-row master-partner-grid clickable-row"
-                  @click="openRecord('Oficina parceira', partner)"
+                v-for="partner in listRows('masterWorkshops')"
+                :key="partner.id"
+                class="data-table-row master-partner-grid clickable-row"
+                @click="openRecord('Oficina parceira', partner)"
               >
-                <strong>{{ partner.name }}<small>{{ partner.adminName }} · {{ partner.customersServed }} clientes ·
-                  {{ partner.vehiclesServed }} veículos</small></strong>
+                <strong
+                  >{{ partner.name
+                  }}<small
+                    >{{ partner.adminName }} · {{ partner.customersServed }} clientes ·
+                    {{ partner.vehiclesServed }} veículos</small
+                  ></strong
+                >
                 <span class="finance-stack">
                   <strong>R$ {{ money(partner.gross) }}</strong>
                   <small class="net-highlight">Líquido com taxa descontada R$ {{ money(partner.net) }}</small>
@@ -4638,20 +4688,23 @@ onMounted(async () => {
                 <span class="rate-stack">
                   <b class="fee-chip">{{ partner.feeRateLabel }}</b>
                   <small
-                      :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'">
+                    :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'"
+                  >
                     {{
-                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
+                      partner.nextTierGap > 0
+                        ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}`
+                        : 'Menor taxa ativa'
                     }}
                   </small>
                 </span>
                 <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
-                <StatusBadge :label="partner.status" :value="partner.status"/>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.masterWorkshops.page"
-                :total-pages="listTotalPages('masterWorkshops')"
-                @update:page="setListPage('masterWorkshops', $event)"
+              :page="pagination.masterWorkshops.page"
+              :total-pages="listTotalPages('masterWorkshops')"
+              @update:page="setListPage('masterWorkshops', $event)"
             />
           </section>
         </section>
@@ -4664,9 +4717,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.masterStores.search" placeholder="Buscar loja, administrador ou produto"
-                  type="search"
-                  @input="resetListPage('masterStores')"
+                v-model="pagination.masterStores.search"
+                placeholder="Buscar loja, administrador ou produto"
+                type="search"
+                @input="resetListPage('masterStores')"
               />
               <select v-model.number="pagination.masterStores.size" @change="resetListPage('masterStores')">
                 <option :value="5">5 por página</option>
@@ -4692,14 +4746,14 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="partner in listRows('masterStores')"
-                  :key="partner.id"
-                  class="data-table-row master-partner-grid clickable-row"
-                  @click="openRecord('Loja parceira', partner)"
+                v-for="partner in listRows('masterStores')"
+                :key="partner.id"
+                class="data-table-row master-partner-grid clickable-row"
+                @click="openRecord('Loja parceira', partner)"
               >
-                <strong>{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{
-                    partner.topProducts
-                  }}</small></strong>
+                <strong
+                  >{{ partner.name }}<small>{{ partner.salesCount }} vendas · {{ partner.topProducts }}</small></strong
+                >
                 <span class="finance-stack">
                   <strong>R$ {{ money(partner.gross) }}</strong>
                   <small class="net-highlight">Líquido com taxa descontada R$ {{ money(partner.net) }}</small>
@@ -4707,20 +4761,23 @@ onMounted(async () => {
                 <span class="rate-stack">
                   <b class="fee-chip">{{ partner.feeRateLabel }}</b>
                   <small
-                      :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'">
+                    :class="partner.nextTierGap > 0 ? 'tier-chip tier-chip--pending' : 'tier-chip tier-chip--done'"
+                  >
                     {{
-                      partner.nextTierGap > 0 ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}` : 'Menor taxa ativa'
+                      partner.nextTierGap > 0
+                        ? `Faltam R$ ${money(partner.nextTierGap)} para ${partner.nextTierLabel}`
+                        : 'Menor taxa ativa'
                     }}
                   </small>
                 </span>
                 <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
-                <StatusBadge :label="partner.status" :value="partner.status"/>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.masterStores.page"
-                :total-pages="listTotalPages('masterStores')"
-                @update:page="setListPage('masterStores', $event)"
+              :page="pagination.masterStores.page"
+              :total-pages="listTotalPages('masterStores')"
+              @update:page="setListPage('masterStores', $event)"
             />
           </section>
         </section>
@@ -4739,19 +4796,20 @@ onMounted(async () => {
                 <span>Data</span>
               </div>
               <article
-                  v-for="lead in masterPotentialPartners"
-                  :key="lead.id"
-                  class="data-table-row leads-grid clickable-row"
-                  @click="openRecord('Interessado', lead)"
+                v-for="lead in masterPotentialPartners"
+                :key="lead.id"
+                class="data-table-row leads-grid clickable-row"
+                @click="openRecord('Interessado', lead)"
               >
-                <strong>{{ lead.companyName }}<small>{{ lead.cnpj }} · {{ lead.city || 'Cidade não informada' }}</small></strong>
-                <span>{{ lead.contactName }}<small>{{ lead.email }} · {{
-                    lead.phone
-                  }} · {{ lead.message || 'Sem mensagem' }}</small></span>
-                <StatusBadge
-                    :label="lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças'"
-                    value="NEUTRAL"
-                />
+                <strong
+                  >{{ lead.companyName
+                  }}<small>{{ lead.cnpj }} · {{ lead.city || 'Cidade não informada' }}</small></strong
+                >
+                <span
+                  >{{ lead.contactName
+                  }}<small>{{ lead.email }} · {{ lead.phone }} · {{ lead.message || 'Sem mensagem' }}</small></span
+                >
+                <StatusBadge :label="lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças'" value="NEUTRAL" />
                 <span>{{ new Date(lead.createdAt).toLocaleDateString('pt-BR') }}</span>
               </article>
             </div>
@@ -4766,11 +4824,11 @@ onMounted(async () => {
             </div>
             <div class="account-cta-row">
               <button class="primary-button" type="button" @click="openCreatePartnerAdminModal('WORKSHOP_ADMIN')">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar administrador de oficina</span>
               </button>
               <button class="secondary-button" type="button" @click="openCreatePartnerAdminModal('PARTS_STORE_ADMIN')">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar administrador de loja</span>
               </button>
             </div>
@@ -4784,18 +4842,18 @@ onMounted(async () => {
               <span>Busque por nome, localização, especialidade ou produto</span>
             </div>
             <div class="filters">
-              <input v-model="customerPartnerSearch" placeholder="Buscar parceiro" type="search"/>
+              <input v-model="customerPartnerSearch" placeholder="Buscar parceiro" type="search" />
             </div>
             <div class="customer-partner-grid">
               <article>
                 <h3>Oficinas</h3>
                 <button
-                    v-for="workshop in filteredWorkshopDirectory"
-                    :key="workshop.id"
-                    type="button"
-                    @click="openRecord('Oficina', workshop)"
+                  v-for="workshop in filteredWorkshopDirectory"
+                  :key="workshop.id"
+                  type="button"
+                  @click="openRecord('Oficina', workshop)"
                 >
-                  <Wrench :size="20"/>
+                  <Wrench :size="20" />
                   <span>
                     <strong>{{ workshop.name }}</strong>
                     <small>{{ workshop.location }} · {{ workshop.specialty }}</small>
@@ -4806,12 +4864,12 @@ onMounted(async () => {
               <article>
                 <h3>Lojas de peças</h3>
                 <button
-                    v-for="store in filteredStoreDirectory"
-                    :key="store.id"
-                    type="button"
-                    @click="openRecord('Loja de peças', store)"
+                  v-for="store in filteredStoreDirectory"
+                  :key="store.id"
+                  type="button"
+                  @click="openRecord('Loja de peças', store)"
                 >
-                  <Package :size="20"/>
+                  <Package :size="20" />
                   <span>
                     <strong>{{ store.name }}</strong>
                     <small>{{ store.location }} · {{ store.specialty }}</small>
@@ -4830,16 +4888,16 @@ onMounted(async () => {
               <span>Pesquise por nome, marca, categoria ou modelo do veículo</span>
             </div>
             <div class="filters">
-              <input v-model="customerPartSearch" placeholder="Ex.: filtro, freio, civic, onix" type="search"/>
+              <input v-model="customerPartSearch" placeholder="Ex.: filtro, freio, civic, onix" type="search" />
             </div>
             <div class="customer-part-grid">
               <button
-                  v-for="part in filteredCustomerParts"
-                  :key="part.id"
-                  type="button"
-                  @click="selectCustomerPart(part)"
+                v-for="part in filteredCustomerParts"
+                :key="part.id"
+                type="button"
+                @click="selectCustomerPart(part)"
               >
-                <Package :size="20"/>
+                <Package :size="20" />
                 <span>
                   <strong>{{ part.name }}</strong>
                   <small>{{ part.brand }} · {{ part.category }} · R$ {{ money(part.unitPrice) }}</small>
@@ -4863,26 +4921,30 @@ onMounted(async () => {
                 <span>Ação</span>
               </div>
               <article
-                  v-for="store in selectedPartStores"
-                  :key="`${store.id}-${store.partId}`"
-                  class="data-table-row customer-price-grid"
+                v-for="store in selectedPartStores"
+                :key="`${store.id}-${store.partId}`"
+                class="data-table-row customer-price-grid"
               >
-                <strong>{{ store.name }}<small>{{ store.location }}</small></strong>
+                <strong
+                  >{{ store.name }}<small>{{ store.location }}</small></strong
+                >
                 <span>R$ {{ money(store.price) }}</span>
                 <StatusBadge
-                    :label="store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível'"
-                    :value="store.availableQuantity > 0 ? 'AVAILABLE' : 'OUT_OF_STOCK'"
+                  :label="store.availableQuantity > 0 ? `${store.availableQuantity} un.` : 'Indisponível'"
+                  :value="store.availableQuantity > 0 ? 'AVAILABLE' : 'OUT_OF_STOCK'"
                 />
                 <div class="row-actions">
                   <button
-                      class="secondary-button compact-action" type="button"
-                      @click="openRecord('Contato da loja', store)"
+                    class="secondary-button compact-action"
+                    type="button"
+                    @click="openRecord('Contato da loja', store)"
                   >
                     Contato
                   </button>
                   <button
-                      class="secondary-button compact-action" type="button"
-                      @click="addCustomerPartRequest(selectedCustomerPart, store)"
+                    class="secondary-button compact-action"
+                    type="button"
+                    @click="addCustomerPartRequest(selectedCustomerPart, store)"
                   >
                     Solicitar
                   </button>
@@ -4905,31 +4967,36 @@ onMounted(async () => {
                   {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
                 </option>
               </select>
-              <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada"/>
-              <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada"/>
+              <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada" />
+              <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada" />
               <textarea
-                  v-model="forms.customerQuote.problemDescription"
-                  placeholder="Descreva o problema do veículo ou observações da compra"
+                v-model="forms.customerQuote.problemDescription"
+                placeholder="Descreva o problema do veículo ou observações da compra"
               ></textarea>
               <div class="quote-items">
                 <button
-                    v-for="(item, index) in forms.customerQuote.items"
-                    :key="`${item.partId}-${index}`"
-                    type="button"
-                    @click="removeCustomerQuoteItem(index)"
+                  v-for="(item, index) in forms.customerQuote.items"
+                  :key="`${item.partId}-${index}`"
+                  type="button"
+                  @click="removeCustomerQuoteItem(index)"
                 >
                   <strong>{{ item.quantity }}x {{ item.name }}</strong>
                   <span>{{ item.storeName || 'Loja a definir' }} · R$ {{ money(item.estimatedPrice) }}</span>
                 </button>
               </div>
               <article class="selected-record">
-                <strong>R$ {{
-                    money(forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0))
-                  }}</strong>
+                <strong
+                  >R$
+                  {{
+                    money(
+                      forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0)
+                    )
+                  }}</strong
+                >
                 <span>Simulação de compra. O parceiro pode responder com outro valor.</span>
               </article>
               <button class="primary-button" type="submit">
-                <ShoppingCart :size="18"/>
+                <ShoppingCart :size="18" />
                 <span>Enviar solicitação</span>
               </button>
             </form>
@@ -4945,11 +5012,11 @@ onMounted(async () => {
             <form class="form-grid account-form" @submit.prevent="saveAccount">
               <label class="form-field">
                 <span>Nome completo</span>
-                <input v-model="forms.account.fullName" placeholder="Nome completo" required/>
+                <input v-model="forms.account.fullName" placeholder="Nome completo" required />
               </label>
               <label class="form-field">
                 <span>E-mail de login</span>
-                <input :value="currentUser?.username || auth.user?.username || ''" disabled/>
+                <input :value="currentUser?.username || auth.user?.username || ''" disabled />
               </label>
               <button :disabled="saving || !accountDirty" class="primary-button account-save-button" type="submit">
                 Salvar dados
@@ -4958,12 +5025,17 @@ onMounted(async () => {
             <form class="form-grid account-form" @submit.prevent="changePassword">
               <label class="form-field">
                 <span>Senha atual</span>
-                <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
+                <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password" />
               </label>
               <label class="form-field">
                 <span>Nova senha</span>
-                <input v-model="forms.password.newPassword" minlength="6" placeholder="Nova senha" required
-                       type="password"/>
+                <input
+                  v-model="forms.password.newPassword"
+                  minlength="6"
+                  placeholder="Nova senha"
+                  required
+                  type="password"
+                />
               </label>
               <button :disabled="saving || !passwordDirty" class="secondary-button" type="submit">Alterar senha</button>
             </form>
@@ -4976,21 +5048,29 @@ onMounted(async () => {
               <h2>Contas</h2>
               <span>{{ listTotal('users') }} contas</span>
               <button class="primary-button" type="button" @click="openCreateUserModal">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar nova conta</span>
               </button>
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.users.search" placeholder="Buscar usuário" type="search"
-                  @input="resetListPage('users')"
+                v-model="pagination.users.search"
+                placeholder="Buscar usuário"
+                type="search"
+                @input="resetListPage('users')"
               />
               <select v-model.number="pagination.users.size" @change="resetListPage('users')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
                 <option :value="20">20 por página</option>
               </select>
-              <select v-model="pagination.users.role" @change="resetListPage('users'); loadDashboard()">
+              <select
+                v-model="pagination.users.role"
+                @change="
+                  resetListPage('users');
+                  loadDashboard();
+                "
+              >
                 <option value="">Todos os perfis</option>
                 <option value="ADMIN">Administradores</option>
                 <option value="EMPLOYEE">Funcionários</option>
@@ -5015,22 +5095,26 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="user in listRows('users')"
-                  :key="user.id"
-                  class="data-table-row users-grid clickable-row"
-                  @click="editUser(user)"
+                v-for="user in listRows('users')"
+                :key="user.id"
+                class="data-table-row users-grid clickable-row"
+                @click="editUser(user)"
               >
-                <strong>{{ user.fullName }}<small>{{ user.username }}</small></strong>
+                <strong
+                  >{{ user.fullName }}<small>{{ user.username }}</small></strong
+                >
                 <span>{{ roleDisplayLabel(user.role) }}</span>
                 <span>{{ profileTypeLabel(user.profileType) }}</span>
-                <span>{{ user.companyName || '-' }}<small>{{ companyTypeLabel(user.companyType) }}</small></span>
-                <StatusBadge :value="user.active"/>
+                <span
+                  >{{ user.companyName || '-' }}<small>{{ companyTypeLabel(user.companyType) }}</small></span
+                >
+                <StatusBadge :value="user.active" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.users.page"
-                :total-pages="listTotalPages('users')"
-                @update:page="setListPage('users', $event)"
+              :page="pagination.users.page"
+              :total-pages="listTotalPages('users')"
+              @update:page="setListPage('users', $event)"
             />
           </section>
         </section>
@@ -5042,7 +5126,7 @@ onMounted(async () => {
               <span>Cria o cadastro base usado por veículos e ordens</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateCustomerModal">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Cadastrar cliente</span>
             </button>
           </section>
@@ -5054,8 +5138,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.customers.search" placeholder="Buscar cliente, e-mail ou documento"
-                  type="search" @input="resetListPage('customers')"
+                v-model="pagination.customers.search"
+                placeholder="Buscar cliente, e-mail ou documento"
+                type="search"
+                @input="resetListPage('customers')"
               />
               <select v-model.number="pagination.customers.size" @change="resetListPage('customers')">
                 <option :value="5">5 por página</option>
@@ -5085,21 +5171,23 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="customer in listRows('customers')"
-                  :key="customer.id"
-                  class="data-table-row customers-grid clickable-row"
-                  @click="openRecord('Cliente', customer)"
+                v-for="customer in listRows('customers')"
+                :key="customer.id"
+                class="data-table-row customers-grid clickable-row"
+                @click="openRecord('Cliente', customer)"
               >
                 <strong>{{ customer.name }}</strong>
-                <span>{{ customer.email }}<small>{{ customer.phone }}</small></span>
+                <span
+                  >{{ customer.email }}<small>{{ customer.phone }}</small></span
+                >
                 <code>{{ customer.document }}</code>
-                <StatusBadge :value="customer.active"/>
+                <StatusBadge :value="customer.active" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.customers.page"
-                :total-pages="listTotalPages('customers')"
-                @update:page="setListPage('customers', $event)"
+              :page="pagination.customers.page"
+              :total-pages="listTotalPages('customers')"
+              @update:page="setListPage('customers', $event)"
             />
           </section>
         </section>
@@ -5111,7 +5199,7 @@ onMounted(async () => {
               <span>Vinculado ao cliente</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateVehicleModal">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Cadastrar veículo</span>
             </button>
           </section>
@@ -5123,8 +5211,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.vehicles.search" placeholder="Buscar placa, marca ou status" type="search"
-                  @input="resetListPage('vehicles')"
+                v-model="pagination.vehicles.search"
+                placeholder="Buscar placa, marca ou status"
+                type="search"
+                @input="resetListPage('vehicles')"
               />
               <select v-model.number="pagination.vehicles.size" @change="resetListPage('vehicles')">
                 <option :value="5">5 por página</option>
@@ -5156,22 +5246,24 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="vehicle in listRows('vehicles')"
-                  :key="vehicle.id"
-                  class="data-table-row vehicles-grid clickable-row"
-                  @click="openRecord('Veículo', vehicle)"
+                v-for="vehicle in listRows('vehicles')"
+                :key="vehicle.id"
+                class="data-table-row vehicles-grid clickable-row"
+                @click="openRecord('Veículo', vehicle)"
               >
-                <span>{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span>
+                <span
+                  >{{ vehicle.brand }} {{ vehicle.model }}<small>{{ vehicle.year }}</small></span
+                >
                 <strong class="plate-chip">{{ vehicle.plate }}</strong>
                 <strong>{{ vehicleOwner(vehicle).name || 'Cliente não informado' }}</strong>
                 <span>{{ vehicleOwner(vehicle).document || '-' }}</span>
-                <StatusBadge :label="vehicleStatusLabel(vehicle)" :value="vehicleStatusValue(vehicle)"/>
+                <StatusBadge :label="vehicleStatusLabel(vehicle)" :value="vehicleStatusValue(vehicle)" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.vehicles.page"
-                :total-pages="listTotalPages('vehicles')"
-                @update:page="setListPage('vehicles', $event)"
+              :page="pagination.vehicles.page"
+              :total-pages="listTotalPages('vehicles')"
+              @update:page="setListPage('vehicles', $event)"
             />
           </section>
         </section>
@@ -5201,12 +5293,13 @@ onMounted(async () => {
               <h2>Cadastro de peças</h2>
               <span>Catálogo, custo, venda e reserva</span>
               <button class="primary-button" type="button" @click="openCreatePartModal">
-                <Plus :size="18"/>
+                <Plus :size="18" />
                 <span>Cadastrar peça</span>
               </button>
             </div>
-            <p class="hint">Use o cadastro guiado para criar uma peça nova ou localizar uma peça existente antes de
-              salvar.</p>
+            <p class="hint">
+              Use o cadastro guiado para criar uma peça nova ou localizar uma peça existente antes de salvar.
+            </p>
           </section>
 
           <section v-if="can('MANAGE_STOCK')" class="section-block">
@@ -5227,20 +5320,29 @@ onMounted(async () => {
                 <option value="SALE">Venda avulsa</option>
               </select>
               <input
-                  v-model.number="forms.stockMovement.quantity" min="1" placeholder="Quantidade" required
-                  type="number"
+                v-model.number="forms.stockMovement.quantity"
+                min="1"
+                placeholder="Quantidade"
+                required
+                type="number"
               />
               <input
-                  v-model.number="forms.stockMovement.unitCost" min="0" placeholder="Custo unitário"
-                  step="0.01" type="number"
+                v-model.number="forms.stockMovement.unitCost"
+                min="0"
+                placeholder="Custo unitário"
+                step="0.01"
+                type="number"
               />
               <input
-                  v-model.number="forms.stockMovement.unitPrice" min="0" placeholder="Venda unitária"
-                  step="0.01" type="number"
+                v-model.number="forms.stockMovement.unitPrice"
+                min="0"
+                placeholder="Venda unitária"
+                step="0.01"
+                type="number"
               />
-              <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação"/>
+              <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação" />
               <button :disabled="saving" class="primary-button" type="submit">
-                <Package :size="18"/>
+                <Package :size="18" />
                 <span>Registrar</span>
               </button>
             </form>
@@ -5253,19 +5355,33 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.parts.search" placeholder="Buscar peça, SKU, categoria ou marca" type="search"
-                  @input="resetListPage('parts')"
+                v-model="pagination.parts.search"
+                placeholder="Buscar peça, SKU, categoria ou marca"
+                type="search"
+                @input="resetListPage('parts')"
               />
               <select v-model.number="pagination.parts.size" @change="resetListPage('parts')">
                 <option :value="5">5 por página</option>
                 <option :value="10">10 por página</option>
                 <option :value="20">20 por página</option>
               </select>
-              <select v-model="pagination.parts.lowStock" @change="resetListPage('parts'); loadDashboard()">
+              <select
+                v-model="pagination.parts.lowStock"
+                @change="
+                  resetListPage('parts');
+                  loadDashboard();
+                "
+              >
                 <option value="">Todos</option>
                 <option value="true">Somente baixo estoque</option>
               </select>
-              <select v-model="pagination.parts.active" @change="resetListPage('parts'); loadDashboard()">
+              <select
+                v-model="pagination.parts.active"
+                @change="
+                  resetListPage('parts');
+                  loadDashboard();
+                "
+              >
                 <option value="">Todos</option>
                 <option value="true">Ativos</option>
                 <option value="false">Inativos</option>
@@ -5290,11 +5406,11 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="part in listRows('parts')"
-                  :key="part.id"
-                  :class="{ danger: (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock }"
-                  class="data-table-row parts-grid clickable-row"
-                  @click="editPart(part)"
+                v-for="part in listRows('parts')"
+                :key="part.id"
+                :class="{ danger: (part.availableQuantity ?? part.stockQuantity) <= part.minimumStock }"
+                class="data-table-row parts-grid clickable-row"
+                @click="editPart(part)"
               >
                 <strong>
                   {{ part.name }}
@@ -5307,23 +5423,25 @@ onMounted(async () => {
                 <span class="stock-number">
                   {{ part.reservedQuantity || 0 }} un.
                   <small>{{
-                      part.reservationExpiresAt ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}` : `${part.reservationDays || 3} dias`
-                    }}</small>
+                    part.reservationExpiresAt
+                      ? `Até ${new Date(part.reservationExpiresAt).toLocaleDateString('pt-BR')}`
+                      : `${part.reservationDays || 3} dias`
+                  }}</small>
                 </span>
                 <span>
                   Venda R$ {{ money(part.unitPrice) }}
                   <small>Custo R$ {{ money(part.costPrice) }}</small>
                 </span>
                 <StatusBadge
-                    :label="stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível'"
-                    :value="part.stockStatus || 'AVAILABLE'"
+                  :label="stockStatusLabels[part.stockStatus] || part.stockStatus || 'Disponível'"
+                  :value="part.stockStatus || 'AVAILABLE'"
                 />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.parts.page"
-                :total-pages="listTotalPages('parts')"
-                @update:page="setListPage('parts', $event)"
+              :page="pagination.parts.page"
+              :total-pages="listTotalPages('parts')"
+              @update:page="setListPage('parts', $event)"
             />
           </section>
         </section>
@@ -5342,26 +5460,26 @@ onMounted(async () => {
               <span>Crie uma nova OS em um fluxo guiado.</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openOrderModal">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Criar nova ordem de serviço</span>
             </button>
           </section>
 
           <AppModal
-              :dirty="orderWizardDirty"
-              :open="orderModalOpen"
-              :subtitle="orderSteps[forms.orderWizard.step]"
-              title="Criar nova ordem de serviço"
-              @close="closeOrderModal"
+            :dirty="orderWizardDirty"
+            :open="orderModalOpen"
+            :subtitle="orderSteps[forms.orderWizard.step]"
+            title="Criar nova ordem de serviço"
+            @close="closeOrderModal"
           >
             <div class="order-wizard-modal">
               <div aria-label="Etapas da ordem" class="order-stepper">
                 <button
-                    v-for="(step, index) in orderSteps"
-                    :key="step"
-                    :class="{ active: forms.orderWizard.step === index, done: forms.orderWizard.step > index }"
-                    type="button"
-                    @click="forms.orderWizard.step = index"
+                  v-for="(step, index) in orderSteps"
+                  :key="step"
+                  :class="{ active: forms.orderWizard.step === index, done: forms.orderWizard.step > index }"
+                  type="button"
+                  @click="forms.orderWizard.step = index"
                 >
                   <span>{{ index + 1 }}</span>
                   {{ step }}
@@ -5370,11 +5488,11 @@ onMounted(async () => {
 
               <div v-if="forms.orderWizard.step === 0" class="scenario-grid">
                 <button
-                    v-for="scenario in orderScenarios"
-                    :key="scenario.id"
-                    :class="{ active: forms.orderWizard.scenario === scenario.id }"
-                    type="button"
-                    @click="selectOrderScenario(scenario.id)"
+                  v-for="scenario in orderScenarios"
+                  :key="scenario.id"
+                  :class="{ active: forms.orderWizard.scenario === scenario.id }"
+                  type="button"
+                  @click="selectOrderScenario(scenario.id)"
                 >
                   <strong>{{ scenario.label }}</strong>
                   <span>{{ scenario.text }}</span>
@@ -5384,18 +5502,21 @@ onMounted(async () => {
               <div v-if="forms.orderWizard.step === 1" class="wizard-panel">
                 <template v-if="isNewCustomerScenario">
                   <div class="form-grid">
-                    <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required/>
-                    <input v-model="forms.orderWizard.customer.document" placeholder="CPF/CNPJ somente números"
-                           required/>
-                    <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required/>
-                    <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email"/>
-                    <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required/>
-                    <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required/>
-                    <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required/>
-                    <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required/>
-                    <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required/>
-                    <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required/>
-                    <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento"/>
+                    <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required />
+                    <input
+                      v-model="forms.orderWizard.customer.document"
+                      placeholder="CPF/CNPJ somente números"
+                      required
+                    />
+                    <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required />
+                    <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email" />
+                    <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required />
+                    <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required />
+                    <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required />
+                    <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required />
+                    <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required />
+                    <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required />
+                    <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento" />
                   </div>
                 </template>
                 <template v-else>
@@ -5420,11 +5541,11 @@ onMounted(async () => {
                     <span>Cliente confirmado para cadastro do veículo.</span>
                   </article>
                   <div class="form-grid compact">
-                    <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required/>
-                    <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required/>
-                    <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required/>
-                    <input v-model.number="forms.orderWizard.vehicle.year" placeholder="Ano" required type="number"/>
-                    <input v-model.number="forms.orderWizard.vehicle.mileage" placeholder="Km" required type="number"/>
+                    <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required />
+                    <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required />
+                    <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required />
+                    <input v-model.number="forms.orderWizard.vehicle.year" placeholder="Ano" required type="number" />
+                    <input v-model.number="forms.orderWizard.vehicle.mileage" placeholder="Km" required type="number" />
                   </div>
                 </template>
                 <template v-else>
@@ -5447,12 +5568,12 @@ onMounted(async () => {
 
               <div v-if="forms.orderWizard.step === 3" class="wizard-panel">
                 <textarea
-                    v-model="forms.orderWizard.defects"
-                    placeholder="Defeitos percebidos inicialmente, relatos do cliente, sintomas e observações da recepção"
-                    required
+                  v-model="forms.orderWizard.defects"
+                  placeholder="Defeitos percebidos inicialmente, relatos do cliente, sintomas e observações da recepção"
+                  required
                 ></textarea>
                 <label class="check-row">
-                  <input v-model="forms.orderWizard.contactRequested" type="checkbox"/>
+                  <input v-model="forms.orderWizard.contactRequested" type="checkbox" />
                   <span>Cliente quer ser contatado antes do envio do orçamento</span>
                 </label>
               </div>
@@ -5466,8 +5587,10 @@ onMounted(async () => {
                     </option>
                   </select>
                   <input
-                      v-model.number="forms.orderWizard.serviceQuantity" min="1" placeholder="Qtd. serviço"
-                      type="number"
+                    v-model.number="forms.orderWizard.serviceQuantity"
+                    min="1"
+                    placeholder="Qtd. serviço"
+                    type="number"
                   />
                   <select v-model="forms.orderWizard.partId">
                     <option value="">Peça inicial prevista</option>
@@ -5475,10 +5598,15 @@ onMounted(async () => {
                       {{ part.name }} - R$ {{ money(part.unitPrice) }}
                     </option>
                   </select>
-                  <input v-model.number="forms.orderWizard.partQuantity" min="1" placeholder="Qtd. peça" type="number"/>
+                  <input
+                    v-model.number="forms.orderWizard.partQuantity"
+                    min="1"
+                    placeholder="Qtd. peça"
+                    type="number"
+                  />
                   <textarea
-                      v-model="forms.orderWizard.initialValueNotes"
-                      placeholder="Observações de valores iniciais, se houver"
+                    v-model="forms.orderWizard.initialValueNotes"
+                    placeholder="Observações de valores iniciais, se houver"
                   ></textarea>
                 </div>
                 <article class="selected-record">
@@ -5498,8 +5626,10 @@ onMounted(async () => {
                     <span>
                       Veículo
                       <b>{{
-                          selectedOrderVehicle ? `${selectedOrderVehicle.brand} ${selectedOrderVehicle.model}` : `${forms.orderWizard.vehicle.brand} ${forms.orderWizard.vehicle.model}`
-                        }}</b>
+                        selectedOrderVehicle
+                          ? `${selectedOrderVehicle.brand} ${selectedOrderVehicle.model}`
+                          : `${forms.orderWizard.vehicle.brand} ${forms.orderWizard.vehicle.model}`
+                      }}</b>
                     </span>
                     <span>
                       Placa
@@ -5523,19 +5653,24 @@ onMounted(async () => {
                     </span>
                     <span>
                       Status
-                      <b>Sem orçamento: {{ statusLabels.RECEIVED }} · Com orçamento: {{
-                          statusLabels.WAITING_APPROVAL
-                        }}</b>
+                      <b
+                        >Sem orçamento: {{ statusLabels.RECEIVED }} · Com orçamento:
+                        {{ statusLabels.WAITING_APPROVAL }}</b
+                      >
                     </span>
                   </div>
                 </article>
                 <div class="wizard-actions">
-                  <button :disabled="saving" class="secondary-button" type="button"
-                          @click="createOrderFromWizard(false)">
+                  <button
+                    :disabled="saving"
+                    class="secondary-button"
+                    type="button"
+                    @click="createOrderFromWizard(false)"
+                  >
                     Salvar como orçamento pendente
                   </button>
                   <button :disabled="saving" class="primary-button" type="button" @click="createOrderFromWizard(true)">
-                    <Plus :size="18"/>
+                    <Plus :size="18" />
                     <span>Salvar e criar orçamento agora</span>
                   </button>
                 </div>
@@ -5543,14 +5678,18 @@ onMounted(async () => {
 
               <div class="wizard-actions">
                 <button
-                    :disabled="forms.orderWizard.step === 0 || saving" class="secondary-button" type="button"
-                    @click="previousOrderStep"
+                  :disabled="forms.orderWizard.step === 0 || saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="previousOrderStep"
                 >
                   Voltar
                 </button>
                 <button
-                    :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving" class="secondary-button"
-                    type="button" @click="nextOrderStep"
+                  :disabled="forms.orderWizard.step === orderSteps.length - 1 || saving"
+                  class="secondary-button"
+                  type="button"
+                  @click="nextOrderStep"
                 >
                   Avançar
                 </button>
@@ -5565,9 +5704,10 @@ onMounted(async () => {
             </div>
             <div v-if="auth.role !== 'CUSTOMER'" class="filters">
               <input
-                  v-model="pagination.serviceOrders.search" placeholder="Buscar cliente, veículo, placa, status ou ID"
-                  type="search"
-                  @input="resetListPage('serviceOrders')"
+                v-model="pagination.serviceOrders.search"
+                placeholder="Buscar cliente, veículo, placa, status ou ID"
+                type="search"
+                @input="resetListPage('serviceOrders')"
               />
               <select v-model.number="pagination.serviceOrders.size" @change="resetListPage('serviceOrders')">
                 <option :value="5">5 por página</option>
@@ -5575,8 +5715,11 @@ onMounted(async () => {
                 <option :value="20">20 por página</option>
               </select>
               <select
-                  v-model="pagination.serviceOrders.status"
-                  @change="resetListPage('serviceOrders'); loadDashboard()"
+                v-model="pagination.serviceOrders.status"
+                @change="
+                  resetListPage('serviceOrders');
+                  loadDashboard();
+                "
               >
                 <option value="">Todos os status</option>
                 <option v-for="status in statuses" :key="status" :value="status">
@@ -5603,31 +5746,35 @@ onMounted(async () => {
                 <span>Total</span>
               </div>
               <article
-                  v-for="order in listRows('serviceOrders')"
-                  :key="order.id"
-                  class="data-table-row service-orders-grid clickable-row"
-                  @click="openRecord('Ordem de serviço', order)"
+                v-for="order in listRows('serviceOrders')"
+                :key="order.id"
+                class="data-table-row service-orders-grid clickable-row"
+                @click="openRecord('Ordem de serviço', order)"
               >
-                <strong>{{
-                    orderCustomerName(order)
+                <strong
+                  >{{ orderCustomerName(order)
                   }}<small>{{
-                      orderCustomer(order).phone || orderCustomer(order).email || 'Sem contato'
-                    }}</small></strong>
-                <span>{{ orderVehicleLabel(order) }}<small>{{
-                    order.services?.length || 0
-                  }} serviços · {{ order.parts?.length || 0 }} peças</small></span>
+                    orderCustomer(order).phone || orderCustomer(order).email || 'Sem contato'
+                  }}</small></strong
+                >
+                <span
+                  >{{ orderVehicleLabel(order)
+                  }}<small
+                    >{{ order.services?.length || 0 }} serviços · {{ order.parts?.length || 0 }} peças</small
+                  ></span
+                >
                 <strong class="plate-chip">{{ orderPlate(order) }}</strong>
-                <StatusBadge :value="order.status"/>
+                <StatusBadge :value="order.status" />
                 <span>{{ orderDate(order) }}</span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
               <p v-if="!listTotal('serviceOrders') && !loading" class="empty-state">Nenhuma ordem encontrada.</p>
             </div>
             <PaginationControl
-                v-if="auth.role !== 'CUSTOMER'"
-                :page="pagination.serviceOrders.page"
-                :total-pages="listTotalPages('serviceOrders')"
-                @update:page="setListPage('serviceOrders', $event)"
+              v-if="auth.role !== 'CUSTOMER'"
+              :page="pagination.serviceOrders.page"
+              :total-pages="listTotalPages('serviceOrders')"
+              @update:page="setListPage('serviceOrders', $event)"
             />
           </section>
         </section>
@@ -5638,12 +5785,13 @@ onMounted(async () => {
               <h2>Cadastro de serviços</h2>
               <span>Catálogo da oficina</span>
               <button v-if="auth.role === 'ADMIN'" class="primary-button" type="button" @click="openCreateServiceModal">
-                <Plus :size="18"/>
+                <Plus :size="18" />
                 <span>Cadastrar serviço</span>
               </button>
             </div>
-            <p class="hint">Cadastre novos serviços em uma janela dedicada ou clique em um serviço da lista para
-              editar.</p>
+            <p class="hint">
+              Cadastre novos serviços em uma janela dedicada ou clique em um serviço da lista para editar.
+            </p>
           </section>
 
           <section class="section-block">
@@ -5653,8 +5801,10 @@ onMounted(async () => {
             </div>
             <div class="filters">
               <input
-                  v-model="pagination.services.search" placeholder="Buscar serviço" type="search"
-                  @input="resetListPage('services')"
+                v-model="pagination.services.search"
+                placeholder="Buscar serviço"
+                type="search"
+                @input="resetListPage('services')"
               />
               <select v-model.number="pagination.services.size" @change="resetListPage('services')">
                 <option :value="5">5 por página</option>
@@ -5679,92 +5829,94 @@ onMounted(async () => {
                 <span>Status</span>
               </div>
               <article
-                  v-for="service in listRows('services')"
-                  :key="service.id"
-                  class="data-table-row services-grid clickable-row"
-                  @click="editService(service)"
+                v-for="service in listRows('services')"
+                :key="service.id"
+                class="data-table-row services-grid clickable-row"
+                @click="editService(service)"
               >
-                <strong>{{ service.name }}<small>{{ service.description }}</small></strong>
+                <strong
+                  >{{ service.name }}<small>{{ service.description }}</small></strong
+                >
                 <span class="centered-number">{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
                 <strong class="money-value">R$ {{ money(service.basePrice) }}</strong>
-                <StatusBadge :value="service.active !== false"/>
+                <StatusBadge :value="service.active !== false" />
               </article>
             </div>
             <PaginationControl
-                :page="pagination.services.page"
-                :total-pages="listTotalPages('services')"
-                @update:page="setListPage('services', $event)"
+              :page="pagination.services.page"
+              :total-pages="listTotalPages('services')"
+              @update:page="setListPage('services', $event)"
             />
           </section>
         </section>
 
         <AppModal
-            :open="customerModalOpen"
-            subtitle="Dados cadastrais usados por veículos e ordens"
-            title="Cadastrar cliente"
-            @close="closeCustomerModal"
+          :open="customerModalOpen"
+          subtitle="Dados cadastrais usados por veículos e ordens"
+          title="Cadastrar cliente"
+          @close="closeCustomerModal"
         >
           <form class="modal-form" @submit.prevent="createCustomer">
             <label class="form-field">
               <span>Nome</span>
-              <input v-model="forms.customer.name" placeholder="Nome completo" required/>
+              <input v-model="forms.customer.name" placeholder="Nome completo" required />
             </label>
             <label class="form-field">
               <span>CPF/CNPJ</span>
-              <input v-model="forms.customer.document" placeholder="Somente números" required/>
+              <input v-model="forms.customer.document" placeholder="Somente números" required />
             </label>
             <label class="form-field">
               <span>Telefone</span>
-              <input v-model="forms.customer.phone" placeholder="Telefone" required/>
+              <input v-model="forms.customer.phone" placeholder="Telefone" required />
             </label>
             <label class="form-field">
               <span>E-mail</span>
-              <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email"/>
+              <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email" />
             </label>
             <label class="form-field">
               <span>Rua</span>
-              <input v-model="forms.customer.address.street" placeholder="Rua" required/>
+              <input v-model="forms.customer.address.street" placeholder="Rua" required />
             </label>
             <label class="form-field">
               <span>Número</span>
-              <input v-model="forms.customer.address.number" placeholder="Número" required/>
+              <input v-model="forms.customer.address.number" placeholder="Número" required />
             </label>
             <label class="form-field">
               <span>Bairro</span>
-              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required/>
+              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
             </label>
             <label class="form-field">
               <span>Cidade</span>
-              <input v-model="forms.customer.address.city" placeholder="Cidade" required/>
+              <input v-model="forms.customer.address.city" placeholder="Cidade" required />
             </label>
             <label class="form-field">
               <span>UF</span>
-              <input v-model="forms.customer.address.state" maxlength="2" placeholder="SP" required/>
+              <input v-model="forms.customer.address.state" maxlength="2" placeholder="SP" required />
             </label>
             <label class="form-field">
               <span>CEP</span>
-              <input v-model="forms.customer.address.zipCode" placeholder="00000-000" required/>
+              <input v-model="forms.customer.address.zipCode" placeholder="00000-000" required />
             </label>
             <label class="form-field">
               <span>Complemento</span>
-              <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
+              <input v-model="forms.customer.address.complement" placeholder="Complemento" />
             </label>
             <label class="check-row">
-              <input v-model="forms.customer.active" type="checkbox"/>
+              <input v-model="forms.customer.active" type="checkbox" />
               <span>Cliente ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Cadastrar cliente</span>
             </button>
           </form>
         </AppModal>
 
         <AppModal
-            :open="vehicleModalOpen"
-            subtitle="Vincule o veículo a um cliente"
-            title="Cadastrar veículo"
-            @close="closeVehicleModal"
+          :open="vehicleModalOpen"
+          subtitle="Vincule o veículo a um cliente"
+          title="Cadastrar veículo"
+          @close="closeVehicleModal"
         >
           <form class="modal-form" @submit.prevent="createVehicle">
             <label class="form-field">
@@ -5778,184 +5930,202 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required/>
+              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required/>
+              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
+              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number"/>
+              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
-              <input v-model.number="forms.vehicle.mileage" min="0" placeholder="Km" required type="number"/>
+              <input v-model.number="forms.vehicle.mileage" min="0" placeholder="Km" required type="number" />
             </label>
             <label class="check-row">
-              <input v-model="forms.vehicle.active" type="checkbox"/>
+              <input v-model="forms.vehicle.active" type="checkbox" />
               <span>Veículo ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Cadastrar veículo</span>
             </button>
           </form>
         </AppModal>
 
         <AppModal
-            :open="serviceModalOpen"
-            :title="forms.service.id ? 'Editar serviço' : 'Cadastrar serviço'"
-            subtitle="Catálogo da oficina"
-            @close="closeServiceModal"
+          :open="serviceModalOpen"
+          :title="forms.service.id ? 'Editar serviço' : 'Cadastrar serviço'"
+          subtitle="Catálogo da oficina"
+          @close="closeServiceModal"
         >
           <form class="modal-form service-modal-form" @submit.prevent="createWorkshopService">
             <label class="form-field">
               <span>Nome do serviço</span>
-              <input v-model="forms.service.name" placeholder="Ex.: Revisão preventiva" required/>
+              <input v-model="forms.service.name" placeholder="Ex.: Revisão preventiva" required />
             </label>
             <label class="form-field">
               <span>Preço base</span>
-              <input v-model.number="forms.service.basePrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.service.basePrice" min="0" required step="0.01" type="number" />
             </label>
 
             <div v-if="serviceDuplicateMatches.length" class="duplicate-suggestions">
               <strong>Serviços parecidos já cadastrados</strong>
               <button
-                  v-for="service in serviceDuplicateMatches"
-                  :key="`service-match-${service.id}`"
-                  type="button"
-                  @click="selectExistingServiceForModal(service)"
+                v-for="service in serviceDuplicateMatches"
+                :key="`service-match-${service.id}`"
+                type="button"
+                @click="selectExistingServiceForModal(service)"
               >
-                <span>{{ service.name }}<small>{{ service.description }}</small></span>
+                <span
+                  >{{ service.name }}<small>{{ service.description }}</small></span
+                >
                 <b>Editar existente</b>
               </button>
             </div>
 
             <label class="form-field">
               <span>Tempo previsto</span>
-              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" required type="number"/>
+              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" required type="number" />
             </label>
             <label class="form-field service-description-field">
               <span>Descrição</span>
-              <textarea v-model="forms.service.description" placeholder="Descrição do serviço, escopo e observações"
-                        required></textarea>
+              <textarea
+                v-model="forms.service.description"
+                placeholder="Descrição do serviço, escopo e observações"
+                required
+              ></textarea>
             </label>
             <label class="check-row">
-              <input v-model="forms.service.active" type="checkbox"/>
+              <input v-model="forms.service.active" type="checkbox" />
               <span>Serviço ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Wrench :size="18"/>
+              <Wrench :size="18" />
               <span>{{ forms.service.id ? 'Salvar serviço' : 'Cadastrar serviço' }}</span>
             </button>
           </form>
         </AppModal>
 
         <AppModal
-            :open="partModalOpen"
-            :title="forms.part.id ? 'Editar peça' : 'Cadastrar peça'"
-            subtitle="Estoque, preços e identificação da peça"
-            @close="closePartModal"
+          :open="partModalOpen"
+          :title="forms.part.id ? 'Editar peça' : 'Cadastrar peça'"
+          subtitle="Estoque, preços e identificação da peça"
+          @close="closePartModal"
         >
           <form class="modal-form part-modal-form" @submit.prevent="createPart">
             <label class="form-field">
               <span>Nome da peça</span>
-              <input v-model="forms.part.name" placeholder="Ex.: Filtro de óleo" required/>
+              <input v-model="forms.part.name" placeholder="Ex.: Filtro de óleo" required />
             </label>
             <label class="form-field">
               <span>SKU</span>
-              <input v-model="forms.part.sku" placeholder="Código interno ou SKU" required/>
+              <input v-model="forms.part.sku" placeholder="Código interno ou SKU" required />
             </label>
 
             <div v-if="partDuplicateMatches.length" class="duplicate-suggestions">
               <strong>Peças parecidas já cadastradas</strong>
               <button
-                  v-for="part in partDuplicateMatches"
-                  :key="`match-${part.id}`"
-                  type="button"
-                  @click="selectExistingPartForModal(part)"
+                v-for="part in partDuplicateMatches"
+                :key="`match-${part.id}`"
+                type="button"
+                @click="selectExistingPartForModal(part)"
               >
-                <span>{{ part.name }}<small>{{ part.sku }} · {{ part.brand }}</small></span>
+                <span
+                  >{{ part.name }}<small>{{ part.sku }} · {{ part.brand }}</small></span
+                >
                 <b>Editar existente</b>
               </button>
             </div>
 
             <label class="form-field">
               <span>Categoria</span>
-              <input v-model="forms.part.category" placeholder="Categoria" required/>
+              <input v-model="forms.part.category" placeholder="Categoria" required />
             </label>
             <label class="form-field">
               <span>Subcategoria</span>
-              <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
+              <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.part.brand" placeholder="Marca" required/>
+              <input v-model="forms.part.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Valor de custo</span>
-              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number" />
             </label>
             <label class="form-field">
               <span>Valor de venda</span>
-              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number" />
             </label>
             <label class="form-field">
               <span>Quantidade em estoque</span>
-              <input v-model.number="forms.part.stockQuantity" min="0" required type="number"/>
+              <input v-model.number="forms.part.stockQuantity" min="0" required type="number" />
             </label>
             <label class="form-field">
               <span>Estoque mínimo</span>
-              <input v-model.number="forms.part.minimumStock" min="0" required type="number"/>
+              <input v-model.number="forms.part.minimumStock" min="0" required type="number" />
             </label>
             <label class="form-field">
               <span>Dias de bloqueio em orçamento</span>
-              <input v-model.number="forms.part.reservationDays" min="1" required type="number"/>
+              <input v-model.number="forms.part.reservationDays" min="1" required type="number" />
             </label>
             <label class="form-field part-description-field">
               <span>Descrição</span>
-              <textarea v-model="forms.part.description" placeholder="Descrição da peça, aplicação ou observações"
-                        required></textarea>
+              <textarea
+                v-model="forms.part.description"
+                placeholder="Descrição da peça, aplicação ou observações"
+                required
+              ></textarea>
             </label>
             <label class="check-row">
-              <input v-model="forms.part.active" type="checkbox"/>
+              <input v-model="forms.part.active" type="checkbox" />
               <span>Peça ativa</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Package :size="18"/>
+              <Package :size="18" />
               <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
             </button>
           </form>
         </AppModal>
 
         <AppModal
-            :open="userModalOpen"
-            :subtitle="userModalIsEmployee ? 'Dados, função, permissões e status' : 'Conta do sistema'"
-            :title="forms.user.id ? (userModalIsEmployee ? 'Editar funcionário' : 'Editar conta') : (userModalIsEmployee ? 'Criar funcionário' : 'Criar nova conta')"
-            @close="closeUserModal"
+          :open="userModalOpen"
+          :subtitle="userModalIsEmployee ? 'Dados, função, permissões e status' : 'Conta do sistema'"
+          :title="
+            forms.user.id
+              ? userModalIsEmployee
+                ? 'Editar funcionário'
+                : 'Editar conta'
+              : userModalIsEmployee
+                ? 'Criar funcionário'
+                : 'Criar nova conta'
+          "
+          @close="closeUserModal"
         >
           <form class="modal-form account-modal-form" @submit.prevent="saveUser">
             <label class="form-field">
               <span>Nome completo</span>
-              <input v-model="forms.user.fullName" placeholder="Ex.: Carlos Atendimento" required/>
+              <input v-model="forms.user.fullName" placeholder="Ex.: Carlos Atendimento" required />
             </label>
             <label class="form-field">
               <span>E-mail de login</span>
-              <input v-model="forms.user.username" placeholder="email@autocarehub.com" required type="email"/>
+              <input v-model="forms.user.username" placeholder="email@autocarehub.com" required type="email" />
             </label>
             <label class="form-field">
               <span>{{ forms.user.id ? 'Nova senha' : 'Senha inicial' }}</span>
               <input
-                  v-model="forms.user.password"
-                  :placeholder="forms.user.id ? 'Preencha apenas se quiser alterar' : 'Mínimo 8 caracteres'"
-                  :required="!forms.user.id"
-                  minlength="8"
-                  type="password"
+                v-model="forms.user.password"
+                :placeholder="forms.user.id ? 'Preencha apenas se quiser alterar' : 'Mínimo 8 caracteres'"
+                :required="!forms.user.id"
+                minlength="8"
+                type="password"
               />
             </label>
             <label class="form-field">
@@ -5987,7 +6157,7 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Empresa vinculada</span>
-              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja"/>
+              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja" />
             </label>
             <label class="form-field">
               <span>Função do funcionário</span>
@@ -6000,10 +6170,10 @@ onMounted(async () => {
             </label>
             <label v-if="forms.user.profileType === 'CUSTOMER_OWNER'" class="form-field">
               <span>Cliente vinculado</span>
-              <input v-model="forms.user.customerId" placeholder="Informe apenas se já existir vínculo com cliente"/>
+              <input v-model="forms.user.customerId" placeholder="Informe apenas se já existir vínculo com cliente" />
             </label>
             <label class="check-row">
-              <input v-model="forms.user.active" type="checkbox"/>
+              <input v-model="forms.user.active" type="checkbox" />
               <span>{{ userModalIsEmployee ? 'Funcionário ativo' : 'Conta ativa' }}</span>
             </label>
             <div v-if="userModalEmployeeMetrics.length" class="modal-readonly-grid employee-modal-metrics">
@@ -6014,44 +6184,53 @@ onMounted(async () => {
             <div class="permission-grid account-permission-grid">
               <label v-for="permission in permissionDefinitions" :key="`account-${permission.id}`">
                 <input
-                    :checked="forms.user.permissions.includes(permission.id)"
-                    type="checkbox"
-                    @change="toggleUserPermission(permission.id)"
+                  :checked="forms.user.permissions.includes(permission.id)"
+                  type="checkbox"
+                  @change="toggleUserPermission(permission.id)"
                 />
                 <span>{{ permission.label }}</span>
               </label>
             </div>
-            <button :disabled="saving || (Boolean(forms.user.id) && !userFormDirty)" class="primary-button modal-save"
-                    type="submit">
-              <UserPlus :size="18"/>
+            <button
+              :disabled="saving || (Boolean(forms.user.id) && !userFormDirty)"
+              class="primary-button modal-save"
+              type="submit"
+            >
+              <UserPlus :size="18" />
               <span>{{
-                  forms.user.id ? (userModalIsEmployee ? 'Salvar funcionário' : 'Salvar conta') : (userModalIsEmployee ? 'Criar funcionário' : 'Criar conta')
-                }}</span>
+                forms.user.id
+                  ? userModalIsEmployee
+                    ? 'Salvar funcionário'
+                    : 'Salvar conta'
+                  : userModalIsEmployee
+                    ? 'Criar funcionário'
+                    : 'Criar conta'
+              }}</span>
             </button>
           </form>
         </AppModal>
 
         <AppModal
-            :dirty="detailModalDirty"
-            :open="Boolean(selectedRecord)"
-            :subtitle="selectedRecordType"
-            :title="detailModalTitle"
-            @close="closeRecord"
+          :dirty="detailModalDirty"
+          :open="Boolean(selectedRecord)"
+          :subtitle="selectedRecordType"
+          :title="detailModalTitle"
+          @close="closeRecord"
         >
           <form v-if="isCustomerDetail" class="modal-form" @submit.prevent="saveDetailModal">
-            <input v-model="modalDraft.customer.name" placeholder="Nome"/>
-            <input v-model="modalDraft.customer.document" placeholder="CPF/CNPJ"/>
-            <input v-model="modalDraft.customer.phone" placeholder="Telefone"/>
-            <input v-model="modalDraft.customer.email" placeholder="E-mail" type="email"/>
-            <input v-model="modalDraft.customer.address.street" placeholder="Rua"/>
-            <input v-model="modalDraft.customer.address.number" placeholder="Número"/>
-            <input v-model="modalDraft.customer.address.neighborhood" placeholder="Bairro"/>
-            <input v-model="modalDraft.customer.address.city" placeholder="Cidade"/>
-            <input v-model="modalDraft.customer.address.state" maxlength="2" placeholder="UF"/>
-            <input v-model="modalDraft.customer.address.zipCode" placeholder="CEP"/>
-            <input v-model="modalDraft.customer.address.complement" placeholder="Complemento"/>
+            <input v-model="modalDraft.customer.name" placeholder="Nome" />
+            <input v-model="modalDraft.customer.document" placeholder="CPF/CNPJ" />
+            <input v-model="modalDraft.customer.phone" placeholder="Telefone" />
+            <input v-model="modalDraft.customer.email" placeholder="E-mail" type="email" />
+            <input v-model="modalDraft.customer.address.street" placeholder="Rua" />
+            <input v-model="modalDraft.customer.address.number" placeholder="Número" />
+            <input v-model="modalDraft.customer.address.neighborhood" placeholder="Bairro" />
+            <input v-model="modalDraft.customer.address.city" placeholder="Cidade" />
+            <input v-model="modalDraft.customer.address.state" maxlength="2" placeholder="UF" />
+            <input v-model="modalDraft.customer.address.zipCode" placeholder="CEP" />
+            <input v-model="modalDraft.customer.address.complement" placeholder="Complemento" />
             <label class="check-row">
-              <input v-model="modalDraft.customer.active" type="checkbox"/>
+              <input v-model="modalDraft.customer.active" type="checkbox" />
               <span>Cliente ativo</span>
             </label>
             <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
@@ -6061,19 +6240,27 @@ onMounted(async () => {
 
           <form v-else-if="isWorkshopDetail" class="modal-form" @submit.prevent="saveDetailModal">
             <input
-                v-model="modalDraft.partner.companyName"
-                :placeholder="selectedRecordType === 'Loja parceira' ? 'Nome da loja' : 'Nome da oficina'"
+              v-model="modalDraft.partner.companyName"
+              :placeholder="selectedRecordType === 'Loja parceira' ? 'Nome da loja' : 'Nome da oficina'"
             />
-            <input v-model="modalDraft.partner.fullName" placeholder="Responsável"/>
+            <input v-model="modalDraft.partner.fullName" placeholder="Responsável" />
             <label class="check-row">
-              <input v-model="modalDraft.partner.active" type="checkbox"/>
+              <input v-model="modalDraft.partner.active" type="checkbox" />
               <span>{{ selectedRecordType === 'Loja parceira' ? 'Loja ativa' : 'Oficina ativa' }}</span>
             </label>
             <div class="modal-readonly-grid">
-              <span>Faturamento bruto<strong>R$ {{ money(selectedRecord.gross) }}</strong></span>
-              <span>Taxa AutoCare Hub<strong>{{ selectedRecord.feeRateLabel || '-' }}</strong></span>
-              <span>Valor líquido<strong>R$ {{ money(selectedRecord.net) }}</strong></span>
-              <span>Status<strong>{{ selectedRecord.status || 'Ativa' }}</strong></span>
+              <span
+                >Faturamento bruto<strong>R$ {{ money(selectedRecord.gross) }}</strong></span
+              >
+              <span
+                >Taxa AutoCare Hub<strong>{{ selectedRecord.feeRateLabel || '-' }}</strong></span
+              >
+              <span
+                >Valor líquido<strong>R$ {{ money(selectedRecord.net) }}</strong></span
+              >
+              <span
+                >Status<strong>{{ selectedRecord.status || 'Ativa' }}</strong></span
+              >
             </div>
             <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
               Salvar alterações
@@ -6092,32 +6279,40 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required/>
+              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required/>
+              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required/>
+              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number"/>
+              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
-              <input v-model.number="modalDraft.vehicle.mileage" min="0" required type="number"/>
+              <input v-model.number="modalDraft.vehicle.mileage" min="0" required type="number" />
             </label>
             <div class="modal-readonly-grid">
-              <span>Cliente atual<strong>{{ vehicleOwner(selectedRecord).name || '-' }}</strong></span>
-              <span>Documento<strong>{{ vehicleOwner(selectedRecord).document || '-' }}</strong></span>
-              <span>Status atual<strong>{{ vehicleStatusLabel(selectedRecord) }}</strong></span>
-              <span>OS vinculada<strong>{{ selectedRecord.diagnosticNotes || 'Sem ordem ativa' }}</strong></span>
+              <span
+                >Cliente atual<strong>{{ vehicleOwner(selectedRecord).name || '-' }}</strong></span
+              >
+              <span
+                >Documento<strong>{{ vehicleOwner(selectedRecord).document || '-' }}</strong></span
+              >
+              <span
+                >Status atual<strong>{{ vehicleStatusLabel(selectedRecord) }}</strong></span
+              >
+              <span
+                >OS vinculada<strong>{{ selectedRecord.diagnosticNotes || 'Sem ordem ativa' }}</strong></span
+              >
             </div>
             <label class="check-row">
-              <input v-model="modalDraft.vehicle.active" type="checkbox"/>
+              <input v-model="modalDraft.vehicle.active" type="checkbox" />
               <span>Veículo ativo</span>
             </label>
             <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
@@ -6127,14 +6322,26 @@ onMounted(async () => {
 
           <form v-else-if="isOrderDetail" class="modal-form order-detail-form" @submit.prevent="saveDetailModal">
             <div class="modal-readonly-grid order-detail-summary">
-              <span>Cliente<strong>{{ orderCustomerName(selectedRecord) }}</strong></span>
-              <span>Contato<strong>{{
+              <span
+                >Cliente<strong>{{ orderCustomerName(selectedRecord) }}</strong></span
+              >
+              <span
+                >Contato<strong>{{
                   orderCustomer(selectedRecord).phone || orderCustomer(selectedRecord).email || '-'
-                }}</strong></span>
-              <span>Veículo<strong>{{ orderVehicleLabel(selectedRecord) }}</strong></span>
-              <span>Placa<strong>{{ orderPlate(selectedRecord) }}</strong></span>
-              <span>Data<strong>{{ orderDate(selectedRecord) }}</strong></span>
-              <span>Orçamento<strong>{{ orderBudgetStatus(selectedRecord) }}</strong></span>
+                }}</strong></span
+              >
+              <span
+                >Veículo<strong>{{ orderVehicleLabel(selectedRecord) }}</strong></span
+              >
+              <span
+                >Placa<strong>{{ orderPlate(selectedRecord) }}</strong></span
+              >
+              <span
+                >Data<strong>{{ orderDate(selectedRecord) }}</strong></span
+              >
+              <span
+                >Orçamento<strong>{{ orderBudgetStatus(selectedRecord) }}</strong></span
+              >
             </div>
 
             <label class="form-field">
@@ -6147,20 +6354,20 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Valor total</span>
-              <input :value="`R$ ${money(selectedRecord.totalAmount)}`" disabled/>
+              <input :value="`R$ ${money(selectedRecord.totalAmount)}`" disabled />
             </label>
             <label class="form-field order-notes-field">
               <span>Problema relatado e observações</span>
               <textarea
-                  v-model="modalDraft.order.diagnosticNotes"
-                  placeholder="Descreva o problema relatado, diagnóstico inicial e observações da recepção"
+                v-model="modalDraft.order.diagnosticNotes"
+                placeholder="Descreva o problema relatado, diagnóstico inicial e observações da recepção"
               ></textarea>
             </label>
 
             <div class="order-detail-items">
               <article>
                 <strong>Serviços solicitados</strong>
-                <span v-if="!(selectedRecord.services?.length)">Nenhum serviço vinculado.</span>
+                <span v-if="!selectedRecord.services?.length">Nenhum serviço vinculado.</span>
                 <ul v-else>
                   <li v-for="service in selectedRecord.services" :key="service.serviceId || service.id || service.name">
                     {{ service.name || service.serviceName || service.serviceId }} · {{ service.quantity || 1 }} un.
@@ -6169,7 +6376,7 @@ onMounted(async () => {
               </article>
               <article>
                 <strong>Peças e insumos</strong>
-                <span v-if="!(selectedRecord.parts?.length)">Nenhuma peça vinculada.</span>
+                <span v-if="!selectedRecord.parts?.length">Nenhuma peça vinculada.</span>
                 <ul v-else>
                   <li v-for="part in selectedRecord.parts" :key="part.partId || part.id || part.name">
                     {{ part.name || part.partName || part.partId }} · {{ part.quantity || 1 }} un.
@@ -6183,20 +6390,20 @@ onMounted(async () => {
                 Salvar ajustes
               </button>
               <button
-                  v-if="!isCustomerProfile && can('CREATE_BUDGET') && canGenerateBudget(selectedRecord)"
-                  :disabled="saving"
-                  class="secondary-button"
-                  type="button"
-                  @click="generateBudgetFromSelectedOrder"
+                v-if="!isCustomerProfile && can('CREATE_BUDGET') && canGenerateBudget(selectedRecord)"
+                :disabled="saving"
+                class="secondary-button"
+                type="button"
+                @click="generateBudgetFromSelectedOrder"
               >
                 Gerar orçamento
               </button>
               <button
-                  v-if="!isCustomerProfile && canApproveBudget(selectedRecord)"
-                  :disabled="saving"
-                  class="secondary-button"
-                  type="button"
-                  @click="approveBudgetFromSelectedOrder"
+                v-if="!isCustomerProfile && canApproveBudget(selectedRecord)"
+                :disabled="saving"
+                class="secondary-button"
+                type="button"
+                @click="approveBudgetFromSelectedOrder"
               >
                 Aprovar orçamento
               </button>
@@ -6212,38 +6419,50 @@ onMounted(async () => {
 
           <div class="detail-actions">
             <button
-                v-if="selectedRecordType === 'Usuário'" class="secondary-button" type="button"
-                @click="editUser(selectedRecord)"
+              v-if="selectedRecordType === 'Usuário'"
+              class="secondary-button"
+              type="button"
+              @click="editUser(selectedRecord)"
             >
               Editar usuário
             </button>
             <button
-                v-if="selectedRecordType === 'Funcionário da loja'" class="secondary-button" type="button"
-                @click="editUser(selectedRecord)"
+              v-if="selectedRecordType === 'Funcionário da loja'"
+              class="secondary-button"
+              type="button"
+              @click="editUser(selectedRecord)"
             >
               Editar funcionário
             </button>
             <button
-                v-if="selectedRecordType === 'Carrinho da loja'" class="secondary-button" type="button"
-                @click="editStoreQuote(selectedRecord)"
+              v-if="selectedRecordType === 'Carrinho da loja'"
+              class="secondary-button"
+              type="button"
+              @click="editStoreQuote(selectedRecord)"
             >
               Editar carrinho
             </button>
             <button
-                v-if="selectedRecordType === 'Peça para comparar'" class="secondary-button" type="button"
-                @click="addCustomerPartRequest(selectedRecord)"
+              v-if="selectedRecordType === 'Peça para comparar'"
+              class="secondary-button"
+              type="button"
+              @click="addCustomerPartRequest(selectedRecord)"
             >
               Adicionar à solicitação
             </button>
             <button
-                v-if="selectedRecordType === 'Loja de peças'" class="secondary-button" type="button"
-                @click="requestStoreQuote(selectedRecord)"
+              v-if="selectedRecordType === 'Loja de peças'"
+              class="secondary-button"
+              type="button"
+              @click="requestStoreQuote(selectedRecord)"
             >
               Solicitar orçamento
             </button>
             <button
-                v-if="selectedRecordType === 'Oficina'" class="secondary-button" type="button"
-                @click="contactWorkshop(selectedRecord)"
+              v-if="selectedRecordType === 'Oficina'"
+              class="secondary-button"
+              type="button"
+              @click="contactWorkshop(selectedRecord)"
             >
               Contatar oficina
             </button>
@@ -6251,10 +6470,10 @@ onMounted(async () => {
         </AppModal>
 
         <AppModal
-            :open="confirmDialogOpen"
-            :title="confirmDialog.title"
-            subtitle="Confirmação"
-            @close="closeConfirmDialog"
+          :open="confirmDialogOpen"
+          :title="confirmDialog.title"
+          subtitle="Confirmação"
+          @close="closeConfirmDialog"
         >
           <div :class="`tone-${confirmDialog.tone}`" class="confirmation-content">
             <p>{{ confirmDialog.message }}</p>
@@ -6263,10 +6482,10 @@ onMounted(async () => {
                 {{ confirmDialog.cancelLabel }}
               </button>
               <button
-                  :class="{ 'danger-action': confirmDialog.tone === 'danger' }"
-                  class="primary-button"
-                  type="button"
-                  @click="confirmDialogAction"
+                :class="{ 'danger-action': confirmDialog.tone === 'danger' }"
+                class="primary-button"
+                type="button"
+                @click="confirmDialogAction"
               >
                 {{ confirmDialog.confirmLabel }}
               </button>

@@ -1,18 +1,16 @@
 package br.com.autocarehub.domain.model;
 
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
-
-import br.com.autocarehub.domain.enums.ServiceOrderStatus;
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
-import br.com.autocarehub.domain.valueobject.Money;
 
 public class ServiceOrder {
 
@@ -99,8 +97,7 @@ public class ServiceOrder {
     public void addService(WorkshopService service, int quantity) {
         Objects.requireNonNull(service, "service is required");
         ensureCanChangeBudgetItems();
-        this.services.add(
-                new ServiceOrderService(service.id(), service.name(), quantity, service.basePrice()));
+        this.services.add(new ServiceOrderService(service.id(), service.name(), quantity, service.basePrice()));
     }
 
     public void addPart(Part part, int quantity) {
@@ -109,8 +106,7 @@ public class ServiceOrder {
         if (!part.hasAvailableStock(quantity)) {
             throw new DomainException("Part stock is not available");
         }
-        this.parts.add(
-                new ServiceOrderPart(part.id(), part.name(), part.sku(), quantity, part.unitPrice()));
+        this.parts.add(new ServiceOrderPart(part.id(), part.name(), part.sku(), quantity, part.unitPrice()));
     }
 
     public Money generateBudget() {
@@ -122,9 +118,7 @@ public class ServiceOrder {
     }
 
     public void approveBudget() {
-        requireStatus(
-                ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                "Budget can only be approved while waiting approval");
+        requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Budget can only be approved while waiting approval");
         if (budgetGeneratedAt == null) {
             throw new DomainException("Budget must be generated before approval");
         }
@@ -132,9 +126,7 @@ public class ServiceOrder {
     }
 
     public void startExecution() {
-        requireStatus(
-                ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                "Execution can only start after budget generation");
+        requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Execution can only start after budget generation");
         if (approvedAt == null) {
             throw new DomainException("Execution cannot start without budget approval");
         }
@@ -143,15 +135,13 @@ public class ServiceOrder {
     }
 
     public void finish() {
-        requireStatus(
-                ServiceOrderStatus.EM_EXECUCAO, "Service order can only be finished while in progress");
+        requireStatus(ServiceOrderStatus.EM_EXECUCAO, "Service order can only be finished while in progress");
         this.status = ServiceOrderStatus.FINALIZADA;
         this.finishedAt = LocalDateTime.now();
     }
 
     public void deliver() {
-        requireStatus(
-                ServiceOrderStatus.FINALIZADA, "Service order can only be delivered after finished");
+        requireStatus(ServiceOrderStatus.FINALIZADA, "Service order can only be delivered after finished");
         this.status = ServiceOrderStatus.ENTREGUE;
         this.deliveredAt = LocalDateTime.now();
     }
@@ -222,15 +212,10 @@ public class ServiceOrder {
 
     private Budget createBudget() {
         List<BudgetItem> budgetItems = new ArrayList<>();
-        services.forEach(
-                service ->
-                        budgetItems.add(
-                                new BudgetItem(
-                                        service.serviceId(), service.name(), service.quantity(), service.unitPrice())));
+        services.forEach(service -> budgetItems.add(
+                new BudgetItem(service.serviceId(), service.name(), service.quantity(), service.unitPrice())));
         parts.forEach(
-                part ->
-                        budgetItems.add(
-                                new BudgetItem(part.partId(), part.name(), part.quantity(), part.unitPrice())));
+                part -> budgetItems.add(new BudgetItem(part.partId(), part.name(), part.quantity(), part.unitPrice())));
         return new Budget(budgetItems);
     }
 
@@ -250,8 +235,7 @@ public class ServiceOrder {
         }
     }
 
-    public record ServiceOrderService(
-            UUID serviceId, String name, int quantity, Money unitPrice, Money totalPrice) {
+    public record ServiceOrderService(UUID serviceId, String name, int quantity, Money unitPrice, Money totalPrice) {
 
         public ServiceOrderService(UUID serviceId, String name, int quantity, Money unitPrice) {
             this(serviceId, name, quantity, unitPrice, unitPrice.multiply(quantity));

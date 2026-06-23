@@ -1,9 +1,8 @@
 package br.com.autocarehub.domain.valueobject;
 
-import java.util.Objects;
-
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
+import java.util.Objects;
 
 public record Document(DocumentType type, String value) {
 
@@ -70,10 +69,9 @@ public record Document(DocumentType type, String value) {
     }
 
     private static int calculateCnpjDigit(String value, int length) {
-        int[] weights =
-                length == 12
-                        ? new int[]{5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2}
-                        : new int[]{6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+        int[] weights = length == 12
+                ? new int[] {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2}
+                : new int[] {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
         int sum = 0;
         for (int index = 0; index < length; index++) {
             sum += Character.getNumericValue(value.charAt(index)) * weights[index];

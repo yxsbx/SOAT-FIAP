@@ -1,11 +1,10 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.UUID;
 
 public class CommitPartReservationUseCase {
 
@@ -19,10 +18,9 @@ public class CommitPartReservationUseCase {
     }
 
     public Part execute(Command command) {
-        Part part =
-                partRepository
-                        .findById(command.partId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        Part part = partRepository
+                .findById(command.partId())
+                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
         part.commitReservedStock(command.quantity());
         Part saved = partRepository.save(part);
         stockMovementRepository.register(
@@ -35,7 +33,5 @@ public class CommitPartReservationUseCase {
         return saved;
     }
 
-    public record Command(UUID partId, int quantity, String reason) {
-
-    }
+    public record Command(UUID partId, int quantity, String reason) {}
 }

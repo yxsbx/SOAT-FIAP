@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.UUID;
 
 public class UpdatePartStockUseCase {
 
@@ -15,10 +14,9 @@ public class UpdatePartStockUseCase {
     }
 
     public Part execute(Command command) {
-        Part part =
-                partRepository
-                        .findById(command.partId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        Part part = partRepository
+                .findById(command.partId())
+                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
         int difference = command.stockQuantity() - part.stockQuantity();
         if (difference > 0) {
             part.increaseStock(difference);
@@ -29,7 +27,5 @@ public class UpdatePartStockUseCase {
         return partRepository.save(part);
     }
 
-    public record Command(UUID partId, int stockQuantity) {
-
-    }
+    public record Command(UUID partId, int stockQuantity) {}
 }

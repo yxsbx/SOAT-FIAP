@@ -7,9 +7,7 @@ import java.util.List;
 
 final class RestMapperSupport {
 
-    private RestMapperSupport() {
-
-    }
+    private RestMapperSupport() {}
 
     static OffsetDateTime toOffsetDateTime(LocalDateTime value) {
         return value == null ? null : value.atOffset(ZoneOffset.UTC);

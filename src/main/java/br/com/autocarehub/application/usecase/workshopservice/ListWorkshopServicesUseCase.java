@@ -1,9 +1,8 @@
 package br.com.autocarehub.application.usecase.workshopservice;
 
-import java.util.List;
-
 import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
 import br.com.autocarehub.domain.model.WorkshopService;
+import java.util.List;
 
 public class ListWorkshopServicesUseCase {
 
@@ -19,12 +18,9 @@ public class ListWorkshopServicesUseCase {
 
     public List<WorkshopService> execute(Query query) {
         return workshopServiceRepository.findAll().stream()
-                .filter(
-                        workshopService -> query.active() == null || workshopService.active() == query.active())
+                .filter(workshopService -> query.active() == null || workshopService.active() == query.active())
                 .toList();
     }
 
-    public record Query(Boolean active) {
-
-    }
+    public record Query(Boolean active) {}
 }

@@ -16,18 +16,12 @@ public class CreateCustomerUseCase {
 
     public Customer execute(Command command) {
         Document document = Document.from(command.document());
-        customerRepository
-                .findByDocument(document)
-                .ifPresent(
-                        customer -> {
-                            throw new ApplicationException("Customer document already exists");
-                        });
-        Customer customer =
-                new Customer(command.name(), document, command.phone(), command.email(), command.address());
+        customerRepository.findByDocument(document).ifPresent(customer -> {
+            throw new ApplicationException("Customer document already exists");
+        });
+        Customer customer = new Customer(command.name(), document, command.phone(), command.email(), command.address());
         return customerRepository.save(customer);
     }
 
-    public record Command(
-            String name, String document, String phone, String email, Address address) {
-    }
+    public record Command(String name, String document, String phone, String email, Address address) {}
 }

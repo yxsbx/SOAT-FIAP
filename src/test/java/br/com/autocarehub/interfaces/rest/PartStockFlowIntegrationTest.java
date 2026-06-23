@@ -5,18 +5,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,70 +38,57 @@ class PartStockFlowIntegrationTest {
     }
 
     private String login() throws Exception {
-        String response =
-                mockMvc
-                        .perform(
-                                post("/api/v1/auth/login")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(
-                                                json(
-                                                        Map.of(
-                                                                "username", "admin@autocarehub.com", "password", "autocare123"))))
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
+        String response = mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("username", "admin@autocarehub.com", "password", "autocare123"))))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
         return objectMapper.readTree(response).get("accessToken").asText();
     }
 
     private UUID createPart(String token) throws Exception {
         String sku = "TEST-STOCK-" + UUID.randomUUID();
-        String response =
-                mockMvc
-                        .perform(
-                                post("/api/v1/parts")
-                                        .header("Authorization", bearer(token))
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(
-                                                json(
-                                                        Map.of(
-                                                                "name",
-                                                                "Sensor de estoque teste",
-                                                                "description",
-                                                                "Sensor usado no fluxo de estoque",
-                                                                "sku",
-                                                                sku,
-                                                                "category",
-                                                                "Teste",
-                                                                "subcategory",
-                                                                "Integração",
-                                                                "brand",
-                                                                "AutoCare",
-                                                                "costPrice",
-                                                                40.00,
-                                                                "unitPrice",
-                                                                80.00,
-                                                                "stockQuantity",
-                                                                10,
-                                                                "minimumStock",
-                                                                2))))
-                        .andExpect(status().isCreated())
-                        .andExpect(jsonPath("$.stockQuantity").value(10))
-                        .andExpect(jsonPath("$.reservedQuantity").value(0))
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
+        String response = mockMvc.perform(post("/api/v1/parts")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of(
+                                "name",
+                                "Sensor de estoque teste",
+                                "description",
+                                "Sensor usado no fluxo de estoque",
+                                "sku",
+                                sku,
+                                "category",
+                                "Teste",
+                                "subcategory",
+                                "Integração",
+                                "brand",
+                                "AutoCare",
+                                "costPrice",
+                                40.00,
+                                "unitPrice",
+                                80.00,
+                                "stockQuantity",
+                                10,
+                                "minimumStock",
+                                2))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.stockQuantity").value(10))
+                .andExpect(jsonPath("$.reservedQuantity").value(0))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(response);
         return UUID.fromString(jsonNode.get("id").asText());
     }
 
     private void reservePart(String token, UUID partId) throws Exception {
-        mockMvc
-                .perform(
-                        patch("/api/v1/parts/{partId}/reserve", partId)
-                                .header("Authorization", bearer(token))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(Map.of("quantity", 4))))
+        mockMvc.perform(patch("/api/v1/parts/{partId}/reserve", partId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("quantity", 4))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockQuantity").value(10))
                 .andExpect(jsonPath("$.reservedQuantity").value(4))
@@ -111,12 +96,10 @@ class PartStockFlowIntegrationTest {
     }
 
     private void commitReservation(String token, UUID partId) throws Exception {
-        mockMvc
-                .perform(
-                        patch("/api/v1/parts/{partId}/commit-reservation", partId)
-                                .header("Authorization", bearer(token))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(Map.of("quantity", 3, "reason", "Orçamento aprovado em teste"))))
+        mockMvc.perform(patch("/api/v1/parts/{partId}/commit-reservation", partId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("quantity", 3, "reason", "Orçamento aprovado em teste"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockQuantity").value(7))
                 .andExpect(jsonPath("$.reservedQuantity").value(1))
@@ -124,12 +107,10 @@ class PartStockFlowIntegrationTest {
     }
 
     private void releaseReservation(String token, UUID partId) throws Exception {
-        mockMvc
-                .perform(
-                        patch("/api/v1/parts/{partId}/release-reservation", partId)
-                                .header("Authorization", bearer(token))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json(Map.of("quantity", 1))))
+        mockMvc.perform(patch("/api/v1/parts/{partId}/release-reservation", partId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("quantity", 1))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockQuantity").value(7))
                 .andExpect(jsonPath("$.reservedQuantity").value(0))
@@ -137,14 +118,10 @@ class PartStockFlowIntegrationTest {
     }
 
     private void registerSale(String token, UUID partId) throws Exception {
-        mockMvc
-                .perform(
-                        patch("/api/v1/parts/{partId}/stock-movement", partId)
-                                .header("Authorization", bearer(token))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(
-                                        json(
-                                                Map.of("type", "SALE", "quantity", 2, "reason", "Venda isolada em teste"))))
+        mockMvc.perform(patch("/api/v1/parts/{partId}/stock-movement", partId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("type", "SALE", "quantity", 2, "reason", "Venda isolada em teste"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.stockQuantity").value(5))
                 .andExpect(jsonPath("$.reservedQuantity").value(0))

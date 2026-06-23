@@ -1,9 +1,8 @@
 package br.com.autocarehub.domain.valueobject;
 
-import org.jspecify.annotations.Nullable;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
+import org.jspecify.annotations.Nullable;
 
 public record Address(
         String street,

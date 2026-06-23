@@ -7,25 +7,18 @@ import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
-
 import org.junit.jupiter.api.Test;
 
 class CustomerTest {
 
     private static Customer customer() {
-        return new Customer(
-                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", null);
+        return new Customer("Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", null);
     }
 
     @Test
     void shouldValidateValidCpf() {
-        Customer customer =
-                new Customer(
-                        "Maria Silva",
-                        Document.from("529.982.247-25"),
-                        "(11) 99999-9999",
-                        "Maria@Example.com",
-                        null);
+        Customer customer = new Customer(
+                "Maria Silva", Document.from("529.982.247-25"), "(11) 99999-9999", "Maria@Example.com", null);
 
         assertThat(customer.document().type()).isEqualTo(DocumentType.CPF);
         assertThat(customer.document().value()).isEqualTo("52998224725");
@@ -35,14 +28,8 @@ class CustomerTest {
 
     @Test
     void shouldRejectInvalidCpf() {
-        assertThatThrownBy(
-                () ->
-                        new Customer(
-                                "Maria Silva",
-                                Document.from("11111111111"),
-                                "11999999999",
-                                "maria@example.com",
-                                null))
+        assertThatThrownBy(() -> new Customer(
+                        "Maria Silva", Document.from("11111111111"), "11999999999", "maria@example.com", null))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Invalid document");
     }

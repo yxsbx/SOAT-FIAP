@@ -3,14 +3,12 @@ package br.com.autocarehub.domain.model;
 import static br.com.autocarehub.domain.service.DomainValidation.optionalText;
 import static br.com.autocarehub.domain.service.DomainValidation.requireText;
 
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
-
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
 
 public class Part {
 
@@ -104,17 +102,7 @@ public class Part {
             Money unitPrice,
             int stockQuantity,
             int minimumStock) {
-        this(
-                name,
-                name,
-                sku,
-                category,
-                subcategory,
-                brand,
-                costPrice,
-                unitPrice,
-                stockQuantity,
-                minimumStock);
+        this(name, name, sku, category, subcategory, brand, costPrice, unitPrice, stockQuantity, minimumStock);
     }
 
     public Part(
@@ -158,18 +146,7 @@ public class Part {
             int stockQuantity,
             int minimumStock,
             boolean active) {
-        this(
-                id,
-                name,
-                name,
-                sku,
-                category,
-                subcategory,
-                brand,
-                unitPrice,
-                stockQuantity,
-                minimumStock,
-                active);
+        this(id, name, name, sku, category, subcategory, brand, unitPrice, stockQuantity, minimumStock, active);
     }
 
     public Part(
@@ -198,8 +175,7 @@ public class Part {
         this.costPrice = requireNonNegativeMoney(costPrice);
         this.unitPrice = requirePositiveMoney(unitPrice);
         this.stockQuantity = requireNonNegative(stockQuantity, "Stock cannot be negative");
-        this.reservedQuantity =
-                requireNonNegative(reservedQuantity, "Reserved stock cannot be negative");
+        this.reservedQuantity = requireNonNegative(reservedQuantity, "Reserved stock cannot be negative");
         if (reservedQuantity > stockQuantity) {
             throw new DomainException("Reserved stock cannot be greater than stock");
         }
@@ -261,16 +237,7 @@ public class Part {
             String brand,
             Money unitPrice,
             int minimumStock) {
-        update(
-                name,
-                description,
-                sku,
-                category,
-                subcategory,
-                brand,
-                this.costPrice,
-                unitPrice,
-                minimumStock);
+        update(name, description, sku, category, subcategory, brand, this.costPrice, unitPrice, minimumStock);
     }
 
     public void update(

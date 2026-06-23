@@ -13,17 +13,10 @@ public class CreateWorkshopServiceUseCase {
     }
 
     public WorkshopService execute(Command command) {
-        WorkshopService workshopService =
-                new WorkshopService(
-                        command.name(),
-                        command.description(),
-                        command.basePrice(),
-                        command.estimatedTimeInMinutes());
+        WorkshopService workshopService = new WorkshopService(
+                command.name(), command.description(), command.basePrice(), command.estimatedTimeInMinutes());
         return workshopServiceRepository.save(workshopService);
     }
 
-    public record Command(
-            String name, String description, Money basePrice, int estimatedTimeInMinutes) {
-
-    }
+    public record Command(String name, String description, Money basePrice, int estimatedTimeInMinutes) {}
 }

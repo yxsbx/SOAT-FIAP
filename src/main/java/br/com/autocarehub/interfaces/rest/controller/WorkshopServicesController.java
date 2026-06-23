@@ -1,12 +1,5 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
@@ -19,6 +12,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateWorkshopServiceR
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceResponse;
 import br.com.autocarehub.interfaces.rest.mapper.WorkshopServiceRestMapper;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class WorkshopServicesController implements WorkshopServicesApi {
@@ -46,10 +44,8 @@ public class WorkshopServicesController implements WorkshopServicesApi {
     public ResponseEntity<WorkshopServiceResponse> createWorkshopService(
             CreateWorkshopServiceRequest createWorkshopServiceRequest) {
         WorkshopService service =
-                createWorkshopServiceUseCase.execute(
-                        WorkshopServiceRestMapper.toCommand(createWorkshopServiceRequest));
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(WorkshopServiceRestMapper.toResponse(service));
+                createWorkshopServiceUseCase.execute(WorkshopServiceRestMapper.toCommand(createWorkshopServiceRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(WorkshopServiceRestMapper.toResponse(service));
     }
 
     @Override
@@ -60,26 +56,21 @@ public class WorkshopServicesController implements WorkshopServicesApi {
 
     @Override
     public ResponseEntity<WorkshopServiceResponse> getWorkshopServiceById(UUID serviceId) {
-        return ResponseEntity.ok(
-                WorkshopServiceRestMapper.toResponse(findWorkshopServiceUseCase.execute(serviceId)));
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(findWorkshopServiceUseCase.execute(serviceId)));
     }
 
     @Override
     public ResponseEntity<WorkshopServiceListResponse> listWorkshopServices(
             Integer page, Integer size, @Nullable Boolean active) {
-        return ResponseEntity.ok(
-                WorkshopServiceRestMapper.toListResponse(
-                        listWorkshopServicesUseCase.execute(WorkshopServiceRestMapper.toQuery(active)),
-                        page,
-                        size));
+        return ResponseEntity.ok(WorkshopServiceRestMapper.toListResponse(
+                listWorkshopServicesUseCase.execute(WorkshopServiceRestMapper.toQuery(active)), page, size));
     }
 
     @Override
     public ResponseEntity<WorkshopServiceResponse> updateWorkshopService(
             UUID serviceId, UpdateWorkshopServiceRequest updateWorkshopServiceRequest) {
-        WorkshopService service =
-                updateWorkshopServiceUseCase.execute(
-                        WorkshopServiceRestMapper.toCommand(serviceId, updateWorkshopServiceRequest));
+        WorkshopService service = updateWorkshopServiceUseCase.execute(
+                WorkshopServiceRestMapper.toCommand(serviceId, updateWorkshopServiceRequest));
         return ResponseEntity.ok(WorkshopServiceRestMapper.toResponse(service));
     }
 }

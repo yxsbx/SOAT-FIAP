@@ -1,15 +1,13 @@
 package br.com.autocarehub.infrastructure.security;
 
-import java.util.Objects;
-import java.util.UUID;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.valueobject.Document;
+import java.util.Objects;
+import java.util.UUID;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Service("authorizationService")
 public class AuthorizationService {
@@ -17,17 +15,14 @@ public class AuthorizationService {
     private final CustomerRepository customerRepository;
     private final ServiceOrderRepository serviceOrderRepository;
 
-    public AuthorizationService(
-            CustomerRepository customerRepository, ServiceOrderRepository serviceOrderRepository) {
+    public AuthorizationService(CustomerRepository customerRepository, ServiceOrderRepository serviceOrderRepository) {
         this.customerRepository = customerRepository;
         this.serviceOrderRepository = serviceOrderRepository;
     }
 
     public boolean canAccessCustomer(UUID customerId) {
         AuthenticatedUser user = currentUser();
-        return user != null
-                && user.customerId() != null
-                && Objects.equals(user.customerId(), customerId);
+        return user != null && user.customerId() != null && Objects.equals(user.customerId(), customerId);
     }
 
     public boolean canAccessServiceOrder(UUID serviceOrderId) {
@@ -68,8 +63,7 @@ public class AuthorizationService {
 
     private AuthenticatedUser currentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null
-                || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
             return null;
         }
         return user;

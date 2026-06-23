@@ -6,16 +6,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,7 +32,10 @@ class SecurityAuthorizationIntegrationTest {
 
     @Test
     void shouldRequireAuthenticationForAdministrativeApis() throws Exception {
-        int status = mockMvc.perform(get("/api/v1/customers")).andReturn().getResponse().getStatus();
+        int status = mockMvc.perform(get("/api/v1/customers"))
+                .andReturn()
+                .getResponse()
+                .getStatus();
 
         assertThat(status).isIn(401, 403);
     }
@@ -43,8 +44,7 @@ class SecurityAuthorizationIntegrationTest {
     void shouldAllowAdministrativeApiAccessWithValidAdminJwt() throws Exception {
         String token = login("admin@autocarehub.com");
 
-        mockMvc
-                .perform(get("/api/v1/customers").header("Authorization", bearer(token)))
+        mockMvc.perform(get("/api/v1/customers").header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isArray());
     }
@@ -53,8 +53,7 @@ class SecurityAuthorizationIntegrationTest {
     void shouldBlockCustomerFromAdministrativeApis() throws Exception {
         String token = login("cliente@autocarehub.com");
 
-        mockMvc
-                .perform(get("/api/v1/customers").header("Authorization", bearer(token)))
+        mockMvc.perform(get("/api/v1/customers").header("Authorization", bearer(token)))
                 .andExpect(status().isForbidden());
     }
 
@@ -62,17 +61,13 @@ class SecurityAuthorizationIntegrationTest {
     void shouldAllowCustomerToTrackOnlyOwnServiceOrders() throws Exception {
         String token = login("cliente@autocarehub.com");
 
-        mockMvc
-                .perform(
-                        get("/api/v1/customers/{customerId}/service-orders", CUSTOMER_ID)
-                                .header("Authorization", bearer(token)))
+        mockMvc.perform(get("/api/v1/customers/{customerId}/service-orders", CUSTOMER_ID)
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items").isArray());
 
-        mockMvc
-                .perform(
-                        get("/api/v1/customers/{customerId}/service-orders", OTHER_CUSTOMER_ID)
-                                .header("Authorization", bearer(token)))
+        mockMvc.perform(get("/api/v1/customers/{customerId}/service-orders", OTHER_CUSTOMER_ID)
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isForbidden());
     }
 
@@ -80,31 +75,24 @@ class SecurityAuthorizationIntegrationTest {
     void shouldAllowCustomerToApproveOnlyOwnBudget() throws Exception {
         String token = login("cliente@autocarehub.com");
 
-        mockMvc
-                .perform(
-                        post("/api/v1/service-orders/{serviceOrderId}/budget/approve", CUSTOMER_ORDER_ID)
-                                .header("Authorization", bearer(token)))
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/approve", CUSTOMER_ORDER_ID)
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.approvedAt").isNotEmpty());
 
-        mockMvc
-                .perform(
-                        post("/api/v1/service-orders/{serviceOrderId}/budget/approve", OTHER_CUSTOMER_ORDER_ID)
-                                .header("Authorization", bearer(token)))
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/approve", OTHER_CUSTOMER_ORDER_ID)
+                        .header("Authorization", bearer(token)))
                 .andExpect(status().isForbidden());
     }
 
     private String login(String username) throws Exception {
-        String response =
-                mockMvc
-                        .perform(
-                                post("/api/v1/auth/login")
-                                        .contentType(MediaType.APPLICATION_JSON)
-                                        .content(json(Map.of("username", username, "password", "autocare123"))))
-                        .andExpect(status().isOk())
-                        .andReturn()
-                        .getResponse()
-                        .getContentAsString();
+        String response = mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("username", username, "password", "autocare123"))))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
         return objectMapper.readTree(response).get("accessToken").asText();
     }
 

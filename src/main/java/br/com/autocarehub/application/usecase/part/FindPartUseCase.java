@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.UUID;
 
 public class FindPartUseCase {
 
@@ -15,8 +14,6 @@ public class FindPartUseCase {
     }
 
     public Part execute(UUID partId) {
-        return partRepository
-                .findById(partId)
-                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        return partRepository.findById(partId).orElseThrow(() -> new ResourceNotFoundException("Part not found"));
     }
 }

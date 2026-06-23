@@ -1,11 +1,10 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.UUID;
 
 public class UpdateVehicleUseCase {
 
@@ -16,16 +15,10 @@ public class UpdateVehicleUseCase {
     }
 
     public Vehicle execute(Command command) {
-        Vehicle vehicle =
-                vehicleRepository
-                        .findById(command.vehicleId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
-        vehicle.update(
-                new Plate(command.plate()),
-                command.brand(),
-                command.model(),
-                command.year(),
-                command.mileage());
+        Vehicle vehicle = vehicleRepository
+                .findById(command.vehicleId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vehicle not found"));
+        vehicle.update(new Plate(command.plate()), command.brand(), command.model(), command.year(), command.mileage());
         if (command.active()) {
             vehicle.activate();
         } else {
@@ -35,13 +28,5 @@ public class UpdateVehicleUseCase {
     }
 
     public record Command(
-            UUID vehicleId,
-            String plate,
-            String brand,
-            String model,
-            int year,
-            int mileage,
-            boolean active) {
-
-    }
+            UUID vehicleId, String plate, String brand, String model, int year, int mileage, boolean active) {}
 }

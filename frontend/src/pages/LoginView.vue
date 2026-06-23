@@ -1,8 +1,8 @@
 <script setup>
-import {ref} from 'vue';
-import {useRouter} from 'vue-router';
-import {ArrowLeft, LogIn, Wrench} from 'lucide-vue-next';
-import {useAuthStore} from '@/stores/auth';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { ArrowLeft, LogIn, Wrench } from 'lucide-vue-next';
+import { useAuthStore } from '@/stores/auth';
 
 const router = useRouter();
 const auth = useAuthStore();
@@ -69,11 +69,11 @@ async function submit() {
   loading.value = true;
   error.value = '';
   const targetRouteName =
-      demoProfiles.find((profile) => profile.id === selectedProfile.value)?.routeName || 'dashboard';
+    demoProfiles.find((profile) => profile.id === selectedProfile.value)?.routeName || 'dashboard';
 
   try {
     await auth.login(username.value, password.value);
-    router.push({name: targetRouteName});
+    router.push({ name: targetRouteName });
   } catch (err) {
     error.value = err.message || 'Não foi possível autenticar.';
   } finally {
@@ -87,13 +87,13 @@ async function submit() {
     <header class="login-navbar">
       <div class="login-brand">
         <div class="brand-mark">
-          <Wrench :size="20"/>
+          <Wrench :size="20" />
         </div>
         <strong>AutoCare Hub</strong>
       </div>
 
       <RouterLink class="login-back-link" to="/">
-        <ArrowLeft :size="17"/>
+        <ArrowLeft :size="17" />
         Voltar para a home
       </RouterLink>
     </header>
@@ -103,19 +103,21 @@ async function submit() {
         <section class="login-copy">
           <h1>Acesse sua área</h1>
           <p>Use login manual ou escolha um perfil acadêmico de demonstração.</p>
-          <p class="demo-password-hint">Senha demo: <strong>{{ demoPassword }}</strong></p>
+          <p class="demo-password-hint">
+            Senha demo: <strong>{{ demoPassword }}</strong>
+          </p>
 
           <form class="login-form" @submit.prevent="submit">
             <label>
               Usuário
-              <input v-model="username" autocomplete="username" required type="email"/>
+              <input v-model="username" autocomplete="username" required type="email" />
             </label>
             <label>
               Senha
-              <input v-model="password" autocomplete="current-password" required type="password"/>
+              <input v-model="password" autocomplete="current-password" required type="password" />
             </label>
             <button :disabled="loading" class="primary-button" type="submit">
-              <LogIn :size="18"/>
+              <LogIn :size="18" />
               <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
             </button>
             <p v-if="error" class="form-error">{{ error }}</p>
@@ -126,12 +128,12 @@ async function submit() {
           <span>Entrar como</span>
           <div class="profile-picker">
             <button
-                v-for="profile in demoProfiles"
-                :key="profile.id"
-                :class="{ active: selectedProfile === profile.id }"
-                :disabled="loading"
-                type="button"
-                @click="selectProfile(profile)"
+              v-for="profile in demoProfiles"
+              :key="profile.id"
+              :class="{ active: selectedProfile === profile.id }"
+              :disabled="loading"
+              type="button"
+              @click="selectProfile(profile)"
             >
               <strong>{{ profile.label }}</strong>
               <small>{{ profile.subtitle }}</small>

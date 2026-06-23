@@ -1,15 +1,13 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
+import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderJpaEntity;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.jspecify.annotations.NonNull;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderJpaEntity;
 
 public interface ServiceOrderJpaRepository extends JpaRepository<ServiceOrderJpaEntity, UUID> {
 

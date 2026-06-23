@@ -3,14 +3,6 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
@@ -19,11 +11,16 @@ import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class ApproveServiceOrderBudgetUseCaseTest {
 
-    private final InMemoryServiceOrderRepository serviceOrderRepository =
-            new InMemoryServiceOrderRepository();
+    private final InMemoryServiceOrderRepository serviceOrderRepository = new InMemoryServiceOrderRepository();
     private final InMemoryPartRepository partRepository = new InMemoryPartRepository();
 
     private static Part part() {
@@ -43,25 +40,23 @@ class ApproveServiceOrderBudgetUseCaseTest {
     @Test
     void shouldReservePartWhenBudgetIsGeneratedAndReduceStockWhenBudgetIsApproved() {
         Part part = partRepository.save(part());
-        ServiceOrder serviceOrder =
-                new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
         serviceOrder.addService(
-                new WorkshopService(
-                        "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
-                1);
+                new WorkshopService("Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60), 1);
         serviceOrder.addPart(part, 2);
         serviceOrderRepository.save(serviceOrder);
 
-        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(serviceOrder.id());
-        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(10);
-        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(2);
+        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(serviceOrder.id());
+        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity())
+                .isEqualTo(10);
+        assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity())
+                .isEqualTo(2);
 
-        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(serviceOrder.id());
+        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(serviceOrder.id());
 
         Part updated = partRepository.findById(part.id()).orElseThrow();
-        ServiceOrder approvedOrder = serviceOrderRepository.findById(serviceOrder.id()).orElseThrow();
+        ServiceOrder approvedOrder =
+                serviceOrderRepository.findById(serviceOrder.id()).orElseThrow();
         assertThat(approvedOrder.status()).isEqualTo(ServiceOrderStatus.AGUARDANDO_APROVACAO);
         assertThat(approvedOrder.approvedAt()).isNotNull();
         assertThat(updated.stockQuantity()).isEqualTo(8);
@@ -72,16 +67,12 @@ class ApproveServiceOrderBudgetUseCaseTest {
     @Test
     void shouldNotReduceStockAgainWhenBudgetWasAlreadyApproved() {
         Part part = partRepository.save(part());
-        ServiceOrder serviceOrder =
-                new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
         serviceOrder.addService(
-                new WorkshopService(
-                        "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
-                1);
+                new WorkshopService("Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60), 1);
         serviceOrder.addPart(part, 2);
         serviceOrderRepository.save(serviceOrder);
-        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(serviceOrder.id());
+        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(serviceOrder.id());
         ApproveServiceOrderBudgetUseCase useCase =
                 new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository);
 
@@ -95,18 +86,13 @@ class ApproveServiceOrderBudgetUseCaseTest {
 
     @Test
     void shouldRejectBudgetApprovalWhenBudgetWasNotGenerated() {
-        ServiceOrder serviceOrder =
-                new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
         serviceOrder.addService(
-                new WorkshopService(
-                        "Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60),
-                1);
+                new WorkshopService("Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60), 1);
         serviceOrderRepository.save(serviceOrder);
 
-        assertThatThrownBy(
-                () ->
-                        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                                .execute(serviceOrder.id()))
+        assertThatThrownBy(() -> new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
+                        .execute(serviceOrder.id()))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Budget can only be approved while waiting approval");
     }

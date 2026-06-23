@@ -1,11 +1,10 @@
 package br.com.autocarehub.domain.model;
 
-import java.util.Objects;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WorkshopService {
 
@@ -16,18 +15,12 @@ public class WorkshopService {
     private int estimatedTimeInMinutes;
     private boolean active;
 
-    public WorkshopService(
-            String name, String description, Money basePrice, int estimatedTimeInMinutes) {
+    public WorkshopService(String name, String description, Money basePrice, int estimatedTimeInMinutes) {
         this(UUID.randomUUID(), name, description, basePrice, estimatedTimeInMinutes, true);
     }
 
     public WorkshopService(
-            UUID id,
-            String name,
-            String description,
-            Money basePrice,
-            int estimatedTimeInMinutes,
-            boolean active) {
+            UUID id, String name, String description, Money basePrice, int estimatedTimeInMinutes, boolean active) {
         this.id = Objects.requireNonNull(id, "id is required");
         this.name = DomainValidation.requireText(name, "Name is required", 100);
         this.description = DomainValidation.requireText(description, "Description is required", 500);

@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import java.time.Duration;
-import java.util.List;
-
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.model.ServiceOrder;
+import java.time.Duration;
+import java.util.List;
 
 public class GetAverageServiceOrderExecutionTimeUseCase {
 
@@ -15,18 +14,17 @@ public class GetAverageServiceOrderExecutionTimeUseCase {
     }
 
     public Output execute() {
-        List<Long> durations =
-                serviceOrderRepository.findCompletedWithExecutionTime().stream()
-                        .map(this::durationInMinutes)
-                        .toList();
+        List<Long> durations = serviceOrderRepository.findCompletedWithExecutionTime().stream()
+                .map(this::durationInMinutes)
+                .toList();
         double average = durations.stream().mapToLong(Long::longValue).average().orElse(0);
         return new Output(durations.size(), average);
     }
 
     private long durationInMinutes(ServiceOrder serviceOrder) {
-        return Duration.between(serviceOrder.startedAt(), serviceOrder.finishedAt()).toMinutes();
+        return Duration.between(serviceOrder.startedAt(), serviceOrder.finishedAt())
+                .toMinutes();
     }
 
-    public record Output(long completedOrders, double averageExecutionTimeInMinutes) {
-    }
+    public record Output(long completedOrders, double averageExecutionTimeInMinutes) {}
 }

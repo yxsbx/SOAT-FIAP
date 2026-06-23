@@ -2,15 +2,13 @@ package br.com.autocarehub.application.usecase.user;
 
 import static java.util.Objects.requireNonNull;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.model.User;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class CreateUserUseCase {
 
@@ -23,27 +21,23 @@ public class CreateUserUseCase {
     }
 
     public User execute(Command command) {
-        userRepository
-                .findByUsername(command.username())
-                .ifPresent(
-                        user -> {
-                            throw new ApplicationException("Username already exists");
-                        });
-        User user =
-                new User(
-                        UUID.randomUUID(),
-                        command.username(),
-                        requireNonNull(passwordEncoder.encode(command.password())),
-                        UserRole.valueOf(command.role()),
-                        command.customerId(),
-                        command.fullName(),
-                        command.profileType(),
-                        command.companyName(),
-                        command.companyType(),
-                        command.employeeSubRole(),
-                        command.permissions(),
-                        command.active(),
-                        LocalDateTime.now());
+        userRepository.findByUsername(command.username()).ifPresent(user -> {
+            throw new ApplicationException("Username already exists");
+        });
+        User user = new User(
+                UUID.randomUUID(),
+                command.username(),
+                requireNonNull(passwordEncoder.encode(command.password())),
+                UserRole.valueOf(command.role()),
+                command.customerId(),
+                command.fullName(),
+                command.profileType(),
+                command.companyName(),
+                command.companyType(),
+                command.employeeSubRole(),
+                command.permissions(),
+                command.active(),
+                LocalDateTime.now());
         return userRepository.save(user);
     }
 
@@ -58,7 +52,5 @@ public class CreateUserUseCase {
             String companyType,
             String employeeSubRole,
             java.util.List<String> permissions,
-            boolean active) {
-
-    }
+            boolean active) {}
 }

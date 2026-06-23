@@ -1,9 +1,5 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -20,6 +16,9 @@ import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 public class CreateServiceOrderUseCase {
 
@@ -53,8 +52,7 @@ public class CreateServiceOrderUseCase {
             throw new ApplicationException("Service order must have at least one requested service");
         }
 
-        ServiceOrder serviceOrder =
-                new ServiceOrder(customer.id(), vehicle.id(), command.diagnosticNotes());
+        ServiceOrder serviceOrder = new ServiceOrder(customer.id(), vehicle.id(), command.diagnosticNotes());
         addRequestedServices(serviceOrder, command.services());
         addRequestedParts(serviceOrder, command.parts());
         if (command.generateBudget()) {
@@ -66,24 +64,15 @@ public class CreateServiceOrderUseCase {
 
     private Customer findOrCreateCustomer(Command command) {
         Document document = Document.from(command.customerDocument());
-        return customerRepository
-                .findByDocument(document)
-                .orElseGet(
-                        () -> {
-                            CustomerInput customer = command.customer();
-                            if (customer == null) {
-                                throw new ResourceNotFoundException(
-                                        "Customer not found and customer data was not provided");
-                            }
-                            Customer newCustomer =
-                                    new Customer(
-                                            customer.name(),
-                                            document,
-                                            customer.phone(),
-                                            customer.email(),
-                                            customer.address());
-                            return customerRepository.save(newCustomer);
-                        });
+        return customerRepository.findByDocument(document).orElseGet(() -> {
+            CustomerInput customer = command.customer();
+            if (customer == null) {
+                throw new ResourceNotFoundException("Customer not found and customer data was not provided");
+            }
+            Customer newCustomer =
+                    new Customer(customer.name(), document, customer.phone(), customer.email(), customer.address());
+            return customerRepository.save(newCustomer);
+        });
     }
 
     private Vehicle findOrCreateVehicle(Command command, UUID customerId) {
@@ -102,55 +91,42 @@ public class CreateServiceOrderUseCase {
         return vehicleRepository.findByCustomerId(customerId).stream()
                 .filter(existingVehicle -> existingVehicle.plate().equals(plate))
                 .findFirst()
-                .orElseGet(
-                        () ->
-                                vehicleRepository.save(
-                                        new Vehicle(
-                                                customerId,
-                                                plate,
-                                                vehicle.brand(),
-                                                vehicle.model(),
-                                                vehicle.year(),
-                                                vehicle.mileage())));
+                .orElseGet(() -> vehicleRepository.save(new Vehicle(
+                        customerId, plate, vehicle.brand(), vehicle.model(), vehicle.year(), vehicle.mileage())));
     }
 
     private void addRequestedServices(ServiceOrder serviceOrder, List<ServiceInput> services) {
-        services.forEach(
-                serviceInput -> {
-                    WorkshopService service =
-                            workshopServiceRepository
-                                    .findById(serviceInput.serviceId())
-                                    .orElseThrow(() -> new ResourceNotFoundException("Workshop service not found"));
-                    if (!service.active()) {
-                        throw new DomainException("Workshop service is inactive");
-                    }
-                    serviceOrder.addService(service, serviceInput.quantity());
-                });
+        services.forEach(serviceInput -> {
+            WorkshopService service = workshopServiceRepository
+                    .findById(serviceInput.serviceId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Workshop service not found"));
+            if (!service.active()) {
+                throw new DomainException("Workshop service is inactive");
+            }
+            serviceOrder.addService(service, serviceInput.quantity());
+        });
     }
 
     private void addRequestedParts(ServiceOrder serviceOrder, List<PartInput> parts) {
         if (parts == null) {
             return;
         }
-        parts.forEach(
-                partInput -> {
-                    Part part =
-                            partRepository
-                                    .findById(partInput.partId())
-                                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-                    if (!part.active()) {
-                        throw new DomainException("Part is inactive");
-                    }
-                    serviceOrder.addPart(part, partInput.quantity());
-                });
+        parts.forEach(partInput -> {
+            Part part = partRepository
+                    .findById(partInput.partId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+            if (!part.active()) {
+                throw new DomainException("Part is inactive");
+            }
+            serviceOrder.addPart(part, partInput.quantity());
+        });
     }
 
     private void reserveBudgetParts(ServiceOrder serviceOrder) {
         for (ServiceOrder.ServiceOrderPart orderPart : serviceOrder.parts()) {
-            Part part =
-                    partRepository
-                            .findById(orderPart.partId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+            Part part = partRepository
+                    .findById(orderPart.partId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
             part.reserveStock(orderPart.quantity());
             partRepository.save(part);
         }
@@ -172,19 +148,11 @@ public class CreateServiceOrderUseCase {
         }
     }
 
-    public record CustomerInput(String name, String phone, String email, Address address) {
+    public record CustomerInput(String name, String phone, String email, Address address) {}
 
-    }
+    public record VehicleInput(String plate, String brand, String model, int year, int mileage) {}
 
-    public record VehicleInput(String plate, String brand, String model, int year, int mileage) {
+    public record ServiceInput(UUID serviceId, int quantity) {}
 
-    }
-
-    public record ServiceInput(UUID serviceId, int quantity) {
-
-    }
-
-    public record PartInput(UUID partId, int quantity) {
-
-    }
+    public record PartInput(UUID partId, int quantity) {}
 }

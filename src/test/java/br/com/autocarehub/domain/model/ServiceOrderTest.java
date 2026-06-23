@@ -7,11 +7,9 @@ import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
 import br.com.autocarehub.domain.valueobject.Money;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 
 class ServiceOrderTest {
@@ -20,21 +18,17 @@ class ServiceOrderTest {
         ServiceOrder serviceOrder = serviceOrder();
         serviceOrder.addService(
                 new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60), 2);
-        serviceOrder.addPart(
-                new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2), 4);
+        serviceOrder.addPart(new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2), 4);
         return serviceOrder;
     }
 
     private static ServiceOrder serviceOrder() {
-        return new ServiceOrder(
-                java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Initial diagnostic notes");
+        return new ServiceOrder(java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Initial diagnostic notes");
     }
 
     private static void assertCannotAddService(ServiceOrder serviceOrder) {
-        assertThatThrownBy(
-                () ->
-                        serviceOrder.addService(
-                                new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
+        assertThatThrownBy(() -> serviceOrder.addService(
+                        new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
                 .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
                 .hasMessage("Service order items cannot be changed in current status");
     }
@@ -98,8 +92,7 @@ class ServiceOrderTest {
     @Test
     void shouldRejectAddingPartWhenStockIsUnavailable() {
         ServiceOrder serviceOrder = serviceOrder();
-        Part part =
-                new Part("Oil filter", "OIL-LOW", "Filters", null, "Bosch", Money.of("50.00"), 1, 1);
+        Part part = new Part("Oil filter", "OIL-LOW", "Filters", null, "Bosch", Money.of("50.00"), 1, 1);
 
         assertThatThrownBy(() -> serviceOrder.addPart(part, 2))
                 .isInstanceOf(DomainException.class)
@@ -108,22 +101,21 @@ class ServiceOrderTest {
 
     @Test
     void shouldRejectApprovalWhenBudgetTimestampIsMissing() {
-        ServiceOrder serviceOrder =
-                new ServiceOrder(
-                        UUID.randomUUID(),
-                        UUID.randomUUID(),
-                        UUID.randomUUID(),
-                        ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                        "Initial diagnostic notes",
-                        List.of(),
-                        List.of(),
-                        Money.zero(),
-                        LocalDateTime.now(),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null);
+        ServiceOrder serviceOrder = new ServiceOrder(
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                UUID.randomUUID(),
+                ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                "Initial diagnostic notes",
+                List.of(),
+                List.of(),
+                Money.zero(),
+                LocalDateTime.now(),
+                null,
+                null,
+                null,
+                null,
+                null);
 
         assertThatThrownBy(serviceOrder::approveBudget)
                 .isInstanceOf(DomainException.class)
@@ -135,10 +127,8 @@ class ServiceOrderTest {
         ServiceOrder serviceOrder = serviceOrderWithItems();
         serviceOrder.generateBudget();
 
-        assertThatThrownBy(
-                () ->
-                        serviceOrder.addService(
-                                new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
+        assertThatThrownBy(() -> serviceOrder.addService(
+                        new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
                 .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
                 .hasMessage("Service order items cannot be changed in current status");
     }
@@ -211,16 +201,11 @@ class ServiceOrderTest {
 
     @Test
     void shouldRejectBlankNamesInServiceOrderItems() {
-        assertThatThrownBy(
-                () ->
-                        new ServiceOrder.ServiceOrderService(
-                                UUID.randomUUID(), "   ", 1, Money.of("10.00")))
+        assertThatThrownBy(() -> new ServiceOrder.ServiceOrderService(UUID.randomUUID(), "   ", 1, Money.of("10.00")))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Service name is required");
         assertThatThrownBy(
-                () ->
-                        new ServiceOrder.ServiceOrderPart(
-                                UUID.randomUUID(), "Part", "   ", 1, Money.of("10.00")))
+                        () -> new ServiceOrder.ServiceOrderPart(UUID.randomUUID(), "Part", "   ", 1, Money.of("10.00")))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("SKU is required");
     }

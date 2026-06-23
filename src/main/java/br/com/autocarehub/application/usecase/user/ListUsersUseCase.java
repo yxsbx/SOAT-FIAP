@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.user;
 
-import java.util.Comparator;
-import java.util.List;
-
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
+import java.util.Comparator;
+import java.util.List;
 
 public class ListUsersUseCase {
 
@@ -17,14 +16,12 @@ public class ListUsersUseCase {
     public List<User> execute(Query query) {
         return userRepository.findAll().stream()
                 .filter(user -> query == null || query.active() == null || user.active() == query.active())
-                .filter(
-                        user ->
-                                query == null || query.role() == null || user.role().name().equals(query.role()))
-                .filter(
-                        user ->
-                                query == null
-                                        || query.profileType() == null
-                                        || user.profileType().equals(query.profileType()))
+                .filter(user -> query == null
+                        || query.role() == null
+                        || user.role().name().equals(query.role()))
+                .filter(user -> query == null
+                        || query.profileType() == null
+                        || user.profileType().equals(query.profileType()))
                 .filter(user -> matchesSearch(user, query == null ? null : query.search()))
                 .sorted(Comparator.comparing(User::fullName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
@@ -41,7 +38,5 @@ public class ListUsersUseCase {
                 || user.employeeSubRole().toLowerCase().contains(value);
     }
 
-    public record Query(Boolean active, String role, String profileType, String search) {
-
-    }
+    public record Query(Boolean active, String role, String profileType, String search) {}
 }

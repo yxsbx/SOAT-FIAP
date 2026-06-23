@@ -2,12 +2,15 @@ openapi: 3.0.3
 info:
   title: AutoCare Hub API
   version: 1.0.0
-  description: API para gerenciamento de clientes, veículos, serviços, peças, ordens de serviço, orçamentos, aprovacoes e acompanhamento de status de uma oficina mecânica.
+  description: >
+    API para gerenciamento de clientes, veículos, serviços, peças, ordens de
+    serviço, orçamentos, aprovacoes e acompanhamento de status de uma oficina
+    mecânica.
 servers:
   - url: http://localhost:8080
     description: Ambiente local
 security:
-  - bearerAuth: [ ]
+  - bearerAuth: []
 tags:
   - name: Auth
     description: Autenticação e emissao de token JWT
@@ -32,24 +35,24 @@ paths:
         - Auth
       summary: Autentica um usuario
       operationId: login
-      security: [ ]
+      security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoginRequest"
+              $ref: '#/components/schemas/LoginRequest'
       responses:
-        "200":
+        '200':
           description: Login realizado com sucesso
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LoginResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/customers:
     post:
       tags:
@@ -61,40 +64,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateCustomerRequest"
+              $ref: '#/components/schemas/CreateCustomerRequest'
       responses:
-        "201":
+        '201':
           description: Cliente criado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags:
         - Customers
       summary: Lista clientes
       operationId: listCustomers
       parameters:
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SizeParam"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - name: active
           in: query
           required: false
           schema:
             type: boolean
       responses:
-        "200":
+        '200':
           description: Clientes encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/CustomerListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/customers/{customerId}:
     get:
       tags:
@@ -102,58 +105,58 @@ paths:
       summary: Busca um cliente por id
       operationId: getCustomerById
       parameters:
-        - $ref: "#/components/parameters/CustomerIdPathParam"
+        - $ref: '#/components/parameters/CustomerIdPathParam'
       responses:
-        "200":
+        '200':
           description: Cliente encontrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/CustomerResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Customers
       summary: Atualiza um cliente
       operationId: updateCustomer
       parameters:
-        - $ref: "#/components/parameters/CustomerIdPathParam"
+        - $ref: '#/components/parameters/CustomerIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateCustomerRequest"
+              $ref: '#/components/schemas/UpdateCustomerRequest'
       responses:
-        "200":
+        '200':
           description: Cliente atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CustomerResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/CustomerResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Customers
       summary: Remove logicamente um cliente
       operationId: deleteCustomer
       parameters:
-        - $ref: "#/components/parameters/CustomerIdPathParam"
+        - $ref: '#/components/parameters/CustomerIdPathParam'
       responses:
-        "204":
+        '204':
           description: Cliente removido
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/customers/{customerId}/vehicles:
     get:
       tags:
@@ -161,18 +164,18 @@ paths:
       summary: Lista veículos de um cliente
       operationId: listVehiclesByCustomer
       parameters:
-        - $ref: "#/components/parameters/CustomerIdPathParam"
+        - $ref: '#/components/parameters/CustomerIdPathParam'
       responses:
-        "200":
+        '200':
           description: Veículos encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VehicleListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/VehicleListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/customers/{customerId}/service-orders:
     get:
       tags:
@@ -180,18 +183,18 @@ paths:
       summary: Lista ordens de serviço de um cliente
       operationId: listServiceOrdersByCustomer
       parameters:
-        - $ref: "#/components/parameters/CustomerIdPathParam"
+        - $ref: '#/components/parameters/CustomerIdPathParam'
       responses:
-        "200":
+        '200':
           description: Ordens de serviço encontradas
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/vehicles:
     post:
       tags:
@@ -203,42 +206,42 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateVehicleRequest"
+              $ref: '#/components/schemas/CreateVehicleRequest'
       responses:
-        "201":
+        '201':
           description: Veículo criado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VehicleResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/VehicleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Vehicles
       summary: Lista veículos
       operationId: listVehicles
       parameters:
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SizeParam"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - name: active
           in: query
           required: false
           schema:
             type: boolean
       responses:
-        "200":
+        '200':
           description: Veículos encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VehicleListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/VehicleListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/vehicles/{vehicleId}:
     get:
       tags:
@@ -246,58 +249,58 @@ paths:
       summary: Busca um veículo por id
       operationId: getVehicleById
       parameters:
-        - $ref: "#/components/parameters/VehicleIdPathParam"
+        - $ref: '#/components/parameters/VehicleIdPathParam'
       responses:
-        "200":
+        '200':
           description: Veículo encontrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VehicleResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/VehicleResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Vehicles
       summary: Atualiza um veículo
       operationId: updateVehicle
       parameters:
-        - $ref: "#/components/parameters/VehicleIdPathParam"
+        - $ref: '#/components/parameters/VehicleIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateVehicleRequest"
+              $ref: '#/components/schemas/UpdateVehicleRequest'
       responses:
-        "200":
+        '200':
           description: Veículo atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VehicleResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/VehicleResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Vehicles
       summary: Remove logicamente um veículo
       operationId: deleteVehicle
       parameters:
-        - $ref: "#/components/parameters/VehicleIdPathParam"
+        - $ref: '#/components/parameters/VehicleIdPathParam'
       responses:
-        "204":
+        '204':
           description: Veículo removido
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/workshop-services:
     post:
       tags:
@@ -309,40 +312,40 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateWorkshopServiceRequest"
+              $ref: '#/components/schemas/CreateWorkshopServiceRequest'
       responses:
-        "201":
+        '201':
           description: Servico criado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkshopServiceResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/WorkshopServiceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags:
         - Workshop Services
       summary: Lista serviços da oficina
       operationId: listWorkshopServices
       parameters:
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SizeParam"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - name: active
           in: query
           required: false
           schema:
             type: boolean
       responses:
-        "200":
+        '200':
           description: Serviços encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkshopServiceListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/WorkshopServiceListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/workshop-services/{serviceId}:
     get:
       tags:
@@ -350,58 +353,58 @@ paths:
       summary: Busca um serviço da oficina por id
       operationId: getWorkshopServiceById
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPathParam"
+        - $ref: '#/components/parameters/ServiceIdPathParam'
       responses:
-        "200":
+        '200':
           description: Servico encontrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkshopServiceResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/WorkshopServiceResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Workshop Services
       summary: Atualiza um serviço da oficina
       operationId: updateWorkshopService
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPathParam"
+        - $ref: '#/components/parameters/ServiceIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateWorkshopServiceRequest"
+              $ref: '#/components/schemas/UpdateWorkshopServiceRequest'
       responses:
-        "200":
+        '200':
           description: Servico atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/WorkshopServiceResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/WorkshopServiceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Workshop Services
       summary: Remove logicamente um serviço da oficina
       operationId: deleteWorkshopService
       parameters:
-        - $ref: "#/components/parameters/ServiceIdPathParam"
+        - $ref: '#/components/parameters/ServiceIdPathParam'
       responses:
-        "204":
+        '204':
           description: Servico removido
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts:
     post:
       tags:
@@ -413,26 +416,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreatePartRequest"
+              $ref: '#/components/schemas/CreatePartRequest'
       responses:
-        "201":
+        '201':
           description: Peça criada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
     get:
       tags:
         - Parts
       summary: Lista peças e insumos
       operationId: listParts
       parameters:
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SizeParam"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - name: active
           in: query
           required: false
@@ -444,14 +447,14 @@ paths:
           schema:
             type: boolean
       responses:
-        "200":
+        '200':
           description: Peças encontradas
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/PartListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/parts/{partId}:
     get:
       tags:
@@ -459,58 +462,58 @@ paths:
       summary: Busca uma peça por id
       operationId: getPartById
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       responses:
-        "200":
+        '200':
           description: Peça encontrada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       tags:
         - Parts
       summary: Atualiza uma peça ou insumo
       operationId: updatePart
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdatePartRequest"
+              $ref: '#/components/schemas/UpdatePartRequest'
       responses:
-        "200":
+        '200':
           description: Peça atualizada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       tags:
         - Parts
       summary: Remove logicamente uma peça ou insumo
       operationId: deletePart
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       responses:
-        "204":
+        '204':
           description: Peça removida
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/stock:
     patch:
       tags:
@@ -518,26 +521,26 @@ paths:
       summary: Atualiza o estoque de uma peça ou insumo
       operationId: updatePartStock
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdatePartStockRequest"
+              $ref: '#/components/schemas/UpdatePartStockRequest'
       responses:
-        "200":
+        '200':
           description: Estoque atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/stock-movement:
     patch:
       tags:
@@ -545,26 +548,26 @@ paths:
       summary: Registra entrada, saida ou venda isolada de uma peça
       operationId: registerStockMovement
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/StockMovementRequest"
+              $ref: '#/components/schemas/StockMovementRequest'
       responses:
-        "200":
+        '200':
           description: Movimento registrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/reservation:
     patch:
       tags:
@@ -572,26 +575,26 @@ paths:
       summary: Configura o prazo de reserva de estoque para orçamentos
       operationId: configurePartReservation
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ConfigurePartReservationRequest"
+              $ref: '#/components/schemas/ConfigurePartReservationRequest'
       responses:
-        "200":
+        '200':
           description: Prazo de reserva configurado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/reserve:
     patch:
       tags:
@@ -599,26 +602,26 @@ paths:
       summary: Bloqueia quantidade de uma peça para um orçamento
       operationId: reservePart
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PartQuantityRequest"
+              $ref: '#/components/schemas/PartQuantityRequest'
       responses:
-        "200":
+        '200':
           description: Estoque reservado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/release-reservation:
     patch:
       tags:
@@ -626,26 +629,26 @@ paths:
       summary: Libera quantidade previamente reservada
       operationId: releaseReservation
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PartQuantityRequest"
+              $ref: '#/components/schemas/PartQuantityRequest'
       responses:
-        "200":
+        '200':
           description: Reserva liberada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/parts/{partId}/commit-reservation:
     patch:
       tags:
@@ -653,26 +656,26 @@ paths:
       summary: Converte reserva em baixa definitiva de estoque
       operationId: commitReservation
       parameters:
-        - $ref: "#/components/parameters/PartIdPathParam"
+        - $ref: '#/components/parameters/PartIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CommitPartReservationRequest"
+              $ref: '#/components/schemas/CommitPartReservationRequest'
       responses:
-        "200":
+        '200':
           description: Reserva baixada do estoque
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PartResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/PartResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders:
     post:
       tags:
@@ -684,33 +687,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateServiceOrderRequest"
+              $ref: '#/components/schemas/CreateServiceOrderRequest'
       responses:
-        "201":
+        '201':
           description: Ordem de serviço criada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Service Orders
       summary: Lista ordens de serviço
       operationId: listServiceOrders
       parameters:
-        - $ref: "#/components/parameters/PageParam"
-        - $ref: "#/components/parameters/SizeParam"
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
         - name: status
           in: query
           required: false
           schema:
-            $ref: "#/components/schemas/ServiceOrderStatus"
+            $ref: '#/components/schemas/ServiceOrderStatus'
         - name: customerId
           in: query
           required: false
@@ -736,14 +739,14 @@ paths:
             type: string
             format: date-time
       responses:
-        "200":
+        '200':
           description: Ordens de serviço encontradas
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/ServiceOrderListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/service-orders/metrics/average-execution-time:
     get:
       tags:
@@ -751,14 +754,14 @@ paths:
       summary: Consulta o tempo medio de execução das ordens de serviço finalizadas
       operationId: getAverageServiceOrderExecutionTime
       responses:
-        "200":
+        '200':
           description: Tempo medio calculado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AverageExecutionTimeResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
+                $ref: '#/components/schemas/AverageExecutionTimeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/service-orders/tracking:
     get:
       tags:
@@ -788,18 +791,18 @@ paths:
             type: string
             minLength: 7
             maxLength: 8
-            pattern: "^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$"
+            pattern: '^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$'
       responses:
-        "200":
+        '200':
           description: Progresso da ordem encontrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderTrackingListResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderTrackingListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}:
     get:
       tags:
@@ -807,18 +810,18 @@ paths:
       summary: Busca uma ordem de serviço por id
       operationId: getServiceOrderById
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       responses:
-        "200":
+        '200':
           description: Ordem de serviço encontrada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/services:
     post:
       tags:
@@ -826,26 +829,26 @@ paths:
       summary: Adiciona um serviço a uma ordem de serviço
       operationId: addServiceToServiceOrder
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AddServiceOrderServiceRequest"
+              $ref: '#/components/schemas/AddServiceOrderServiceRequest'
       responses:
-        "200":
+        '200':
           description: Servico adicionado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/parts:
     post:
       tags:
@@ -853,26 +856,26 @@ paths:
       summary: Adiciona uma peça a uma ordem de serviço
       operationId: addPartToServiceOrder
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AddServiceOrderPartRequest"
+              $ref: '#/components/schemas/AddServiceOrderPartRequest'
       responses:
-        "200":
+        '200':
           description: Peça adicionada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/budget/generate:
     post:
       tags:
@@ -880,20 +883,20 @@ paths:
       summary: Gera o orçamento de uma ordem de serviço
       operationId: generateServiceOrderBudget
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       responses:
-        "200":
+        '200':
           description: Orçamento gerado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/budget/approve:
     post:
       tags:
@@ -901,20 +904,20 @@ paths:
       summary: Aprova o orçamento de uma ordem de serviço
       operationId: approveServiceOrderBudget
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       responses:
-        "200":
+        '200':
           description: Orçamento aprovado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/status:
     patch:
       tags:
@@ -922,26 +925,26 @@ paths:
       summary: Atualiza o status de uma ordem de serviço
       operationId: updateServiceOrderStatus
       parameters:
-        - $ref: "#/components/parameters/ServiceOrderIdPathParam"
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateServiceOrderStatusRequest"
+              $ref: '#/components/schemas/UpdateServiceOrderStatusRequest'
       responses:
-        "200":
+        '200':
           description: Status atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ServiceOrderResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "404":
-          $ref: "#/components/responses/NotFound"
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/users/me:
     get:
       tags:
@@ -950,14 +953,14 @@ paths:
       description: Retorna perfil, empresa, permissoes e status da conta vinculada ao Bearer Token JWT.
       operationId: getCurrentUser
       responses:
-        "200":
+        '200':
           description: Usuario autenticado encontrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
+                $ref: '#/components/schemas/UserResponse'
               example:
-                id: "00000000-0000-0000-0000-000000000001"
+                id: '00000000-0000-0000-0000-000000000001'
                 username: admin@autocarehub.com
                 role: ADMIN
                 profileType: MASTER_ADMIN
@@ -965,12 +968,12 @@ paths:
                 permissions:
                   - VIEW_STATS
                 active: true
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     put:
       tags:
         - Users
@@ -982,24 +985,24 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateCurrentUserRequest"
+              $ref: '#/components/schemas/UpdateCurrentUserRequest'
             example:
               fullName: Maria AutoCare Hub
       responses:
-        "200":
+        '200':
           description: Usuario atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users/me/password:
     patch:
       tags:
@@ -1012,21 +1015,21 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ChangePasswordRequest"
+              $ref: '#/components/schemas/ChangePasswordRequest'
             example:
-              currentPassword: "autocare123"
+              currentPassword: 'autocare123'
               newPassword: novaSenha123
       responses:
-        "204":
+        '204':
           description: Senha alterada
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users/me/preferences/home:
     get:
       tags:
@@ -1035,23 +1038,23 @@ paths:
       description: Retorna os widgets visiveis e a preferencia de exibir alertas na home.
       operationId: getHomePreference
       responses:
-        "200":
+        '200':
           description: Preferencia encontrada
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HomePreferenceResponse"
+                $ref: '#/components/schemas/HomePreferenceResponse'
               example:
                 widgets:
                   - orders-progress
                   - services-catalog
                 showAlertsOnHome: false
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     put:
       tags:
         - Users
@@ -1063,7 +1066,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/HomePreferenceRequest"
+              $ref: '#/components/schemas/HomePreferenceRequest'
             example:
               widgets:
                 - orders-progress
@@ -1071,20 +1074,20 @@ paths:
                 - vehicles-in-service
               showAlertsOnHome: true
       responses:
-        "200":
+        '200':
           description: Preferencia salva
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HomePreferenceResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/HomePreferenceResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users:
     get:
       tags:
@@ -1119,18 +1122,18 @@ paths:
             type: string
             maxLength: 120
       responses:
-        "200":
+        '200':
           description: Usuarios encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     post:
       tags:
         - Users
@@ -1144,10 +1147,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateUserRequest"
+              $ref: '#/components/schemas/CreateUserRequest'
             example:
               username: mecanico@example.com
-              password: "autocare123"
+              password: 'autocare123'
               role: EMPLOYEE
               fullName: Carlos Oficina
               profileType: WORKSHOP_EMPLOYEE
@@ -1159,22 +1162,22 @@ paths:
                 - EDIT_ORDER
               active: true
       responses:
-        "201":
+        '201':
           description: Usuario criado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users/partners:
     get:
       tags:
@@ -1183,18 +1186,18 @@ paths:
       description: Lista oficinas e lojas de peças cadastradas como parceiros ativos para uso na area do cliente final.
       operationId: listPartners
       responses:
-        "200":
+        '200':
           description: Parceiros encontrados
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserListResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users/{userId}:
     put:
       tags:
@@ -1214,26 +1217,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/UpdateUserRequest"
+              $ref: '#/components/schemas/UpdateUserRequest'
       responses:
-        "200":
+        '200':
           description: Usuario atualizado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "409":
-          $ref: "#/components/responses/Conflict"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/users/{userId}/password:
     patch:
       tags:
@@ -1254,20 +1257,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResetPasswordRequest"
+              $ref: '#/components/schemas/ResetPasswordRequest'
       responses:
-        "204":
+        '204':
           description: Senha redefinida
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /api/v1/demo-leads:
     post:
       tags:
@@ -1276,33 +1279,33 @@ paths:
       description: >
         Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstracao.
       operationId: registerDemoLead
-      security: [ ]
+      security: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/DemoLeadRequest"
+              $ref: '#/components/schemas/DemoLeadRequest'
             example:
               contactName: Ana Oficina
               companyName: Oficina Central AutoCare
               demoProfile: workshop
               email: ana@example.com
-              phone: "11999999999"
-              cnpj: "11.222.333/0001-81"
+              phone: '11999999999'
+              cnpj: '11.222.333/0001-81'
               city: Sao Paulo
               message: Quero conhecer a plataforma.
       responses:
-        "201":
+        '201':
           description: Interesse registrado
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/DemoLeadResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                $ref: '#/components/schemas/DemoLeadResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - Demo Leads
@@ -1312,20 +1315,20 @@ paths:
         Requer Bearer Token JWT de administrador.
       operationId: listDemoLeads
       responses:
-        "200":
+        '200':
           description: Interessados encontrados
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/DemoLeadResponse"
-        "401":
-          $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
+                  $ref: '#/components/schemas/DemoLeadResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   securitySchemes:
     bearerAuth:
@@ -1391,9 +1394,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 400
             error: Bad Request
             message: Invalid request body
@@ -1405,66 +1408,66 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 401
             error: Unauthorized
             message: Missing or invalid credentials
             path: /api/v1/customers
-            details: [ ]
+            details: []
     Forbidden:
       description: Usuario autenticado sem permissao para acessar o recurso
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 403
             error: Forbidden
             message: Access denied
             path: /api/v1/customers
-            details: [ ]
+            details: []
     NotFound:
       description: Recurso nao encontrado
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 404
             error: Not Found
             message: Resource not found
             path: /api/v1/customers/00000000-0000-0000-0000-000000000000
-            details: [ ]
+            details: []
     Conflict:
       description: Conflito com estado atual do recurso, como duplicidade de documento, placa, usuario ou SKU
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 409
             error: Conflict
             message: Resource already exists
             path: /api/v1/customers
-            details: [ ]
+            details: []
     InternalServerError:
       description: Erro interno inesperado
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/ErrorResponse"
+            $ref: '#/components/schemas/ErrorResponse'
           example:
-            timestamp: "2026-06-20T17:00:00-03:00"
+            timestamp: '2026-06-20T17:00:00-03:00'
             status: 500
             error: Internal Server Error
             message: Unexpected error
             path: /api/v1/service-orders
-            details: [ ]
+            details: []
   schemas:
     LoginRequest:
       type: object
@@ -1482,7 +1485,7 @@ components:
           minLength: 8
           maxLength: 72
           format: password
-          example: "autocare123"
+          example: 'autocare123'
     LoginResponse:
       type: object
       required:
@@ -1520,7 +1523,7 @@ components:
           type: string
           minLength: 1
           maxLength: 20
-          example: "1000"
+          example: '1000'
         complement:
           type: string
           maxLength: 80
@@ -1574,10 +1577,10 @@ components:
           format: email
           maxLength: 120
         address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
     UpdateCustomerRequest:
       allOf:
-        - $ref: "#/components/schemas/CreateCustomerRequest"
+        - $ref: '#/components/schemas/CreateCustomerRequest'
         - type: object
           required:
             - active
@@ -1609,7 +1612,7 @@ components:
           type: string
           format: email
         address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
         active:
           type: boolean
         createdAt:
@@ -1627,7 +1630,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/CustomerResponse"
+            $ref: '#/components/schemas/CustomerResponse'
         page:
           type: integer
           minimum: 0
@@ -1658,7 +1661,7 @@ components:
           type: string
           minLength: 7
           maxLength: 8
-          pattern: "^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$"
+          pattern: '^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$'
           example: ABC1D23
         brand:
           type: string
@@ -1677,7 +1680,7 @@ components:
           minimum: 0
     UpdateVehicleRequest:
       allOf:
-        - $ref: "#/components/schemas/CreateVehicleRequest"
+        - $ref: '#/components/schemas/CreateVehicleRequest'
         - type: object
           required:
             - active
@@ -1722,7 +1725,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/VehicleResponse"
+            $ref: '#/components/schemas/VehicleResponse'
     CreateWorkshopServiceRequest:
       type: object
       required:
@@ -1748,7 +1751,7 @@ components:
           minimum: 1
     UpdateWorkshopServiceRequest:
       allOf:
-        - $ref: "#/components/schemas/CreateWorkshopServiceRequest"
+        - $ref: '#/components/schemas/CreateWorkshopServiceRequest'
         - type: object
           required:
             - active
@@ -1787,7 +1790,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/WorkshopServiceResponse"
+            $ref: '#/components/schemas/WorkshopServiceResponse'
     CreatePartRequest:
       type: object
       required:
@@ -1839,7 +1842,7 @@ components:
           minimum: 0
     UpdatePartRequest:
       allOf:
-        - $ref: "#/components/schemas/CreatePartRequest"
+        - $ref: '#/components/schemas/CreatePartRequest'
         - type: object
           required:
             - active
@@ -1898,7 +1901,7 @@ components:
           minimum: 1
     CommitPartReservationRequest:
       allOf:
-        - $ref: "#/components/schemas/PartQuantityRequest"
+        - $ref: '#/components/schemas/PartQuantityRequest'
         - type: object
           properties:
             reason:
@@ -1967,7 +1970,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/PartResponse"
+            $ref: '#/components/schemas/PartResponse'
     CreateServiceOrderRequest:
       type: object
       required:
@@ -1980,10 +1983,10 @@ components:
           minLength: 11
           maxLength: 18
           pattern: "^\\d{11}$|^\\d{14}$|^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$"
-          example: "12345678909"
+          example: '12345678909'
           description: CPF ou CNPJ do cliente com ou sem formatacao. Se o cliente nao existir, informe tambem customer.
         customer:
-          $ref: "#/components/schemas/CreateServiceOrderCustomerRequest"
+          $ref: '#/components/schemas/CreateServiceOrderCustomerRequest'
         vehicleId:
           type: string
           format: uuid
@@ -1991,7 +1994,7 @@ components:
             Identificador de veículo ja cadastrado.
             Se ausente, informe vehicle para cadastro ou vinculo por placa.
         vehicle:
-          $ref: "#/components/schemas/CreateServiceOrderVehicleRequest"
+          $ref: '#/components/schemas/CreateServiceOrderVehicleRequest'
         diagnosticNotes:
           type: string
           minLength: 5
@@ -2000,12 +2003,12 @@ components:
           type: array
           minItems: 1
           items:
-            $ref: "#/components/schemas/CreateServiceOrderServiceRequest"
+            $ref: '#/components/schemas/CreateServiceOrderServiceRequest'
           description: Serviços solicitados para compor automaticamente o orçamento.
         parts:
           type: array
           items:
-            $ref: "#/components/schemas/CreateServiceOrderPartRequest"
+            $ref: '#/components/schemas/CreateServiceOrderPartRequest'
           description: Peças ou insumos necessarios para compor automaticamente o orçamento.
         generateBudget:
           type: boolean
@@ -2032,7 +2035,7 @@ components:
           format: email
           maxLength: 120
         address:
-          $ref: "#/components/schemas/Address"
+          $ref: '#/components/schemas/Address'
     CreateServiceOrderVehicleRequest:
       type: object
       required:
@@ -2045,7 +2048,7 @@ components:
           type: string
           minLength: 7
           maxLength: 8
-          pattern: "^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$"
+          pattern: '^[A-Za-z]{3}-?[0-9]{4}$|^[A-Za-z]{3}-?[0-9][A-Za-z][0-9]{2}$'
           example: ABC1D23
         brand:
           type: string
@@ -2122,7 +2125,7 @@ components:
         - status
       properties:
         status:
-          $ref: "#/components/schemas/ServiceOrderStatus"
+          $ref: '#/components/schemas/ServiceOrderStatus'
     ServiceOrderServiceItem:
       type: object
       required:
@@ -2201,17 +2204,17 @@ components:
           type: string
           format: uuid
         status:
-          $ref: "#/components/schemas/ServiceOrderStatus"
+          $ref: '#/components/schemas/ServiceOrderStatus'
         diagnosticNotes:
           type: string
         services:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderServiceItem"
+            $ref: '#/components/schemas/ServiceOrderServiceItem'
         parts:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderPartItem"
+            $ref: '#/components/schemas/ServiceOrderPartItem'
         servicesTotal:
           type: number
           format: double
@@ -2253,7 +2256,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderResponse"
+            $ref: '#/components/schemas/ServiceOrderResponse'
     ServiceOrderTrackingListResponse:
       type: object
       required:
@@ -2262,7 +2265,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderTrackingResponse"
+            $ref: '#/components/schemas/ServiceOrderTrackingResponse'
     ServiceOrderTrackingResponse:
       type: object
       required:
@@ -2284,25 +2287,25 @@ components:
           type: string
           format: uuid
         vehicle:
-          $ref: "#/components/schemas/VehicleResponse"
+          $ref: '#/components/schemas/VehicleResponse'
         status:
-          $ref: "#/components/schemas/ServiceOrderTrackingStatus"
+          $ref: '#/components/schemas/ServiceOrderTrackingStatus'
         diagnosticNotes:
           type: string
         services:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderServiceItem"
+            $ref: '#/components/schemas/ServiceOrderServiceItem'
         parts:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderPartItem"
+            $ref: '#/components/schemas/ServiceOrderPartItem'
         budget:
-          $ref: "#/components/schemas/ServiceOrderBudgetTrackingResponse"
+          $ref: '#/components/schemas/ServiceOrderBudgetTrackingResponse'
         statusHistory:
           type: array
           items:
-            $ref: "#/components/schemas/ServiceOrderStatusHistoryItem"
+            $ref: '#/components/schemas/ServiceOrderStatusHistoryItem'
         createdAt:
           type: string
           format: date-time
@@ -2345,7 +2348,7 @@ components:
         - description
       properties:
         status:
-          $ref: "#/components/schemas/ServiceOrderTrackingStatus"
+          $ref: '#/components/schemas/ServiceOrderTrackingStatus'
         occurredAt:
           type: string
           format: date-time
@@ -2422,7 +2425,7 @@ components:
         items:
           type: array
           items:
-            $ref: "#/components/schemas/UserResponse"
+            $ref: '#/components/schemas/UserResponse'
     CreateUserRequest:
       type: object
       required:
@@ -2567,7 +2570,7 @@ components:
           type: boolean
     HomePreferenceResponse:
       allOf:
-        - $ref: "#/components/schemas/HomePreferenceRequest"
+        - $ref: '#/components/schemas/HomePreferenceRequest'
     DemoLeadRequest:
       type: object
       required:
@@ -2603,7 +2606,7 @@ components:
           type: string
           minLength: 6
           maxLength: 40
-          pattern: "^[A-Za-z0-9./-]+$"
+          pattern: '^[A-Za-z0-9./-]+$'
         city:
           type: string
           maxLength: 120
@@ -2612,7 +2615,7 @@ components:
           maxLength: 500
     DemoLeadResponse:
       allOf:
-        - $ref: "#/components/schemas/DemoLeadRequest"
+        - $ref: '#/components/schemas/DemoLeadRequest'
         - type: object
           required:
             - id

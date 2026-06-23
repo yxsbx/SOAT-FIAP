@@ -1,8 +1,7 @@
 package br.com.autocarehub.domain.valueobject;
 
-import java.util.Locale;
-
 import br.com.autocarehub.domain.exception.DomainException;
+import java.util.Locale;
 
 public record Plate(String value) {
 

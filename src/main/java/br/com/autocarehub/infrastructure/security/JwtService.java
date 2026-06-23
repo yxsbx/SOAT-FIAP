@@ -1,19 +1,16 @@
 package br.com.autocarehub.infrastructure.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Objects;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
@@ -25,8 +22,7 @@ public class JwtService {
             @Value("${security.jwt.secret}") String secret,
             @Value("${security.jwt.expiration-minutes:60}") long expirationMinutes) {
         if (secret == null || secret.isBlank()) {
-            throw new IllegalStateException(
-                    "JWT secret must be provided through security.jwt.secret or JWT_SECRET");
+            throw new IllegalStateException("JWT secret must be provided through security.jwt.secret or JWT_SECRET");
         }
         if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
             throw new IllegalStateException("JWT secret must have at least 32 bytes");
@@ -41,16 +37,19 @@ public class JwtService {
     public IssuedToken generateToken(AuthenticatedUser user) {
         Instant issuedAt = Instant.now();
         Instant expiresAt = issuedAt.plusSeconds(expirationSeconds);
-        String token =
-                Jwts.builder()
-                        .subject(user.getUsername())
-                        .claim("userId", user.id().toString())
-                        .claim("role", user.role())
-                        .claim("customerId", user.customerId() == null ? null : Objects.requireNonNull(user.customerId()).toString())
-                        .issuedAt(Date.from(issuedAt))
-                        .expiration(Date.from(expiresAt))
-                        .signWith(secretKey)
-                        .compact();
+        String token = Jwts.builder()
+                .subject(user.getUsername())
+                .claim("userId", user.id().toString())
+                .claim("role", user.role())
+                .claim(
+                        "customerId",
+                        user.customerId() == null
+                                ? null
+                                : Objects.requireNonNull(user.customerId()).toString())
+                .issuedAt(Date.from(issuedAt))
+                .expiration(Date.from(expiresAt))
+                .signWith(secretKey)
+                .compact();
         return new IssuedToken(token, "Bearer", expirationSeconds);
     }
 
@@ -64,10 +63,12 @@ public class JwtService {
     }
 
     public Claims extractClaims(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    public record IssuedToken(String accessToken, String tokenType, long expiresIn) {
-
-    }
+    public record IssuedToken(String accessToken, String tokenType, long expiresIn) {}
 }

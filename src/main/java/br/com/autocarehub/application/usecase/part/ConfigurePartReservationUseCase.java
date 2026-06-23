@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.UUID;
 
 public class ConfigurePartReservationUseCase {
 
@@ -15,15 +14,12 @@ public class ConfigurePartReservationUseCase {
     }
 
     public Part execute(Command command) {
-        Part part =
-                partRepository
-                        .findById(command.partId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
+        Part part = partRepository
+                .findById(command.partId())
+                .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
         part.configureReservationDays(command.reservationDays());
         return partRepository.save(part);
     }
 
-    public record Command(UUID partId, int reservationDays) {
-
-    }
+    public record Command(UUID partId, int reservationDays) {}
 }

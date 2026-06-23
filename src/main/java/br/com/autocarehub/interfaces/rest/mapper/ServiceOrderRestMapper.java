@@ -1,13 +1,5 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
@@ -34,11 +26,16 @@ import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingLi
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingStatus;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateServiceOrderStatusRequest;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 
 public final class ServiceOrderRestMapper {
 
-    private ServiceOrderRestMapper() {
-    }
+    private ServiceOrderRestMapper() {}
 
     public static CreateServiceOrderUseCase.Command toCommand(CreateServiceOrderRequest request) {
         String customerDocument = request.getCustomerDocument();
@@ -48,10 +45,14 @@ public final class ServiceOrderRestMapper {
                 request.getVehicleId(),
                 toVehicleInput(request.getVehicle()),
                 request.getDiagnosticNotes(),
-                request.getServices().stream().map(ServiceOrderRestMapper::toServiceInput).toList(),
+                request.getServices().stream()
+                        .map(ServiceOrderRestMapper::toServiceInput)
+                        .toList(),
                 request.getParts() == null
                         ? List.of()
-                        : request.getParts().stream().map(ServiceOrderRestMapper::toPartInput).toList(),
+                        : request.getParts().stream()
+                                .map(ServiceOrderRestMapper::toPartInput)
+                                .toList(),
                 request.getGenerateBudget() == null || Boolean.TRUE.equals(request.getGenerateBudget()));
     }
 
@@ -63,8 +64,7 @@ public final class ServiceOrderRestMapper {
 
     public static AddPartToServiceOrderUseCase.Command toCommand(
             UUID serviceOrderId, AddServiceOrderPartRequest request) {
-        return new AddPartToServiceOrderUseCase.Command(
-                serviceOrderId, request.getPartId(), request.getQuantity());
+        return new AddPartToServiceOrderUseCase.Command(serviceOrderId, request.getPartId(), request.getQuantity());
     }
 
     public static UpdateServiceOrderStatusUseCase.Command toCommand(
@@ -84,8 +84,7 @@ public final class ServiceOrderRestMapper {
         return new ListServiceOrdersUseCase.Query(
                 status == null
                         ? null
-                        : br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(
-                        status.getValue()),
+                        : br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(status.getValue()),
                 customerId,
                 vehicleId,
                 createdFrom == null ? null : createdFrom.toLocalDateTime(),
@@ -94,18 +93,22 @@ public final class ServiceOrderRestMapper {
 
     public static ServiceOrderResponse toResponse(ServiceOrder serviceOrder) {
         return new ServiceOrderResponse(
-                serviceOrder.id(),
-                serviceOrder.customerId(),
-                serviceOrder.vehicleId(),
-                br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus.fromValue(
-                        serviceOrder.status().externalCode()),
-                serviceOrder.diagnosticNotes(),
-                serviceOrder.services().stream().map(ServiceOrderRestMapper::toServiceItem).toList(),
-                serviceOrder.parts().stream().map(ServiceOrderRestMapper::toPartItem).toList(),
-                serviceOrder.servicesTotal().value().doubleValue(),
-                serviceOrder.partsTotal().value().doubleValue(),
-                serviceOrder.totalAmount().value().doubleValue(),
-                RestMapperSupport.toOffsetDateTime(serviceOrder.createdAt()))
+                        serviceOrder.id(),
+                        serviceOrder.customerId(),
+                        serviceOrder.vehicleId(),
+                        br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus.fromValue(
+                                serviceOrder.status().externalCode()),
+                        serviceOrder.diagnosticNotes(),
+                        serviceOrder.services().stream()
+                                .map(ServiceOrderRestMapper::toServiceItem)
+                                .toList(),
+                        serviceOrder.parts().stream()
+                                .map(ServiceOrderRestMapper::toPartItem)
+                                .toList(),
+                        serviceOrder.servicesTotal().value().doubleValue(),
+                        serviceOrder.partsTotal().value().doubleValue(),
+                        serviceOrder.totalAmount().value().doubleValue(),
+                        RestMapperSupport.toOffsetDateTime(serviceOrder.createdAt()))
                 .budgetGeneratedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.budgetGeneratedAt()))
                 .approvedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.approvedAt()))
                 .startedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.startedAt()))
@@ -115,10 +118,9 @@ public final class ServiceOrderRestMapper {
 
     public static ServiceOrderListResponse toListResponse(
             List<ServiceOrder> serviceOrders, Integer page, Integer size) {
-        return new ServiceOrderListResponse(
-                RestMapperSupport.page(serviceOrders, page, size).stream()
-                        .map(ServiceOrderRestMapper::toResponse)
-                        .toList());
+        return new ServiceOrderListResponse(RestMapperSupport.page(serviceOrders, page, size).stream()
+                .map(ServiceOrderRestMapper::toResponse)
+                .toList());
     }
 
     public static ServiceOrderTrackingListResponse toTrackingListResponse(
@@ -127,10 +129,8 @@ public final class ServiceOrderRestMapper {
                 outputs.stream().map(ServiceOrderRestMapper::toTrackingResponse).toList());
     }
 
-    public static AverageExecutionTimeResponse toResponse(
-            GetAverageServiceOrderExecutionTimeUseCase.Output output) {
-        return new AverageExecutionTimeResponse(
-                output.completedOrders(), output.averageExecutionTimeInMinutes());
+    public static AverageExecutionTimeResponse toResponse(GetAverageServiceOrderExecutionTimeUseCase.Output output) {
+        return new AverageExecutionTimeResponse(output.completedOrders(), output.averageExecutionTimeInMinutes());
     }
 
     private static ServiceOrderServiceItem toServiceItem(ServiceOrder.ServiceOrderService service) {
@@ -152,8 +152,7 @@ public final class ServiceOrderRestMapper {
                 part.totalPrice().value().doubleValue());
     }
 
-    private static ServiceOrderTrackingResponse toTrackingResponse(
-            TrackServiceOrderUseCase.Output output) {
+    private static ServiceOrderTrackingResponse toTrackingResponse(TrackServiceOrderUseCase.Output output) {
         ServiceOrder serviceOrder = output.serviceOrder();
         return new ServiceOrderTrackingResponse(
                 serviceOrder.id(),
@@ -161,81 +160,70 @@ public final class ServiceOrderRestMapper {
                 VehicleRestMapper.toResponse(output.vehicle()),
                 ServiceOrderTrackingStatus.fromValue(serviceOrder.status().name()),
                 serviceOrder.diagnosticNotes(),
-                serviceOrder.services().stream().map(ServiceOrderRestMapper::toServiceItem).toList(),
-                serviceOrder.parts().stream().map(ServiceOrderRestMapper::toPartItem).toList(),
+                serviceOrder.services().stream()
+                        .map(ServiceOrderRestMapper::toServiceItem)
+                        .toList(),
+                serviceOrder.parts().stream()
+                        .map(ServiceOrderRestMapper::toPartItem)
+                        .toList(),
                 toBudgetTrackingResponse(serviceOrder),
                 statusHistory(serviceOrder),
                 RestMapperSupport.toOffsetDateTime(serviceOrder.createdAt()));
     }
 
-    private static ServiceOrderBudgetTrackingResponse toBudgetTrackingResponse(
-            ServiceOrder serviceOrder) {
+    private static ServiceOrderBudgetTrackingResponse toBudgetTrackingResponse(ServiceOrder serviceOrder) {
         boolean generated = serviceOrder.budgetGeneratedAt() != null;
         boolean approved = serviceOrder.approvedAt() != null;
         return new ServiceOrderBudgetTrackingResponse(
-                generated,
-                approved,
-                serviceOrder.servicesTotal().value().doubleValue(),
-                serviceOrder.partsTotal().value().doubleValue(),
-                serviceOrder.totalAmount().value().doubleValue())
+                        generated,
+                        approved,
+                        serviceOrder.servicesTotal().value().doubleValue(),
+                        serviceOrder.partsTotal().value().doubleValue(),
+                        serviceOrder.totalAmount().value().doubleValue())
                 .generatedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.budgetGeneratedAt()))
                 .approvedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.approvedAt()));
     }
 
     private static List<ServiceOrderStatusHistoryItem> statusHistory(ServiceOrder serviceOrder) {
         ArrayList<ServiceOrderStatusHistoryItem> history = new ArrayList<>();
-        history.add(
-                statusHistoryItem(
-                        br.com.autocarehub.domain.enums.ServiceOrderStatus.RECEBIDA,
-                        serviceOrder.createdAt(),
-                        "Ordem de serviço criada"));
-        if (serviceOrder.status()
-                == br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO,
-                            serviceOrder.createdAt(),
-                            "Diagnóstico iniciado"));
+        history.add(statusHistoryItem(
+                br.com.autocarehub.domain.enums.ServiceOrderStatus.RECEBIDA,
+                serviceOrder.createdAt(),
+                "Ordem de serviço criada"));
+        if (serviceOrder.status() == br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO) {
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO,
+                    serviceOrder.createdAt(),
+                    "Diagnóstico iniciado"));
         }
         @Nullable LocalDateTime budgetGeneratedAt = serviceOrder.budgetGeneratedAt();
         if (budgetGeneratedAt != null) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                            budgetGeneratedAt,
-                            "Orçamento gerado e disponibilizado para aprovação"));
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                    budgetGeneratedAt,
+                    "Orçamento gerado e disponibilizado para aprovação"));
         }
         @Nullable LocalDateTime approvedAt = serviceOrder.approvedAt();
         if (approvedAt != null) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                            approvedAt,
-                            "Orçamento aprovado pelo cliente"));
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                    approvedAt,
+                    "Orçamento aprovado pelo cliente"));
         }
         @Nullable LocalDateTime startedAt = serviceOrder.startedAt();
         if (startedAt != null) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_EXECUCAO,
-                            startedAt,
-                            "Execução iniciada"));
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_EXECUCAO, startedAt, "Execução iniciada"));
         }
         @Nullable LocalDateTime finishedAt = serviceOrder.finishedAt();
         if (finishedAt != null) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.FINALIZADA,
-                            finishedAt,
-                            "Serviço finalizado"));
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.FINALIZADA, finishedAt, "Serviço finalizado"));
         }
         @Nullable LocalDateTime deliveredAt = serviceOrder.deliveredAt();
         if (deliveredAt != null) {
-            history.add(
-                    statusHistoryItem(
-                            br.com.autocarehub.domain.enums.ServiceOrderStatus.ENTREGUE,
-                            deliveredAt,
-                            "Veículo entregue"));
+            history.add(statusHistoryItem(
+                    br.com.autocarehub.domain.enums.ServiceOrderStatus.ENTREGUE, deliveredAt, "Veículo entregue"));
         }
         return history;
     }
@@ -250,8 +238,7 @@ public final class ServiceOrderRestMapper {
                 description);
     }
 
-    private static CreateServiceOrderUseCase.CustomerInput toCustomerInput(
-            CreateServiceOrderCustomerRequest customer) {
+    private static CreateServiceOrderUseCase.CustomerInput toCustomerInput(CreateServiceOrderCustomerRequest customer) {
         if (customer == null) {
             return null;
         }
@@ -262,8 +249,7 @@ public final class ServiceOrderRestMapper {
                 CustomerRestMapper.toDomainAddress(customer.getAddress()));
     }
 
-    private static CreateServiceOrderUseCase.VehicleInput toVehicleInput(
-            CreateServiceOrderVehicleRequest vehicle) {
+    private static CreateServiceOrderUseCase.VehicleInput toVehicleInput(CreateServiceOrderVehicleRequest vehicle) {
         if (vehicle == null) {
             return null;
         }
@@ -275,14 +261,11 @@ public final class ServiceOrderRestMapper {
                 vehicle.getMileage() == null ? 0 : vehicle.getMileage());
     }
 
-    private static CreateServiceOrderUseCase.ServiceInput toServiceInput(
-            CreateServiceOrderServiceRequest service) {
-        return new CreateServiceOrderUseCase.ServiceInput(
-                service.getServiceId(), service.getQuantity());
+    private static CreateServiceOrderUseCase.ServiceInput toServiceInput(CreateServiceOrderServiceRequest service) {
+        return new CreateServiceOrderUseCase.ServiceInput(service.getServiceId(), service.getQuantity());
     }
 
-    private static CreateServiceOrderUseCase.PartInput toPartInput(
-            CreateServiceOrderPartRequest part) {
+    private static CreateServiceOrderUseCase.PartInput toPartInput(CreateServiceOrderPartRequest part) {
         return new CreateServiceOrderUseCase.PartInput(part.getPartId(), part.getQuantity());
     }
 }

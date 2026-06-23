@@ -1,9 +1,8 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
-import java.util.List;
-
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.domain.model.Vehicle;
+import java.util.List;
 
 public class ListVehiclesUseCase {
 
@@ -23,6 +22,5 @@ public class ListVehiclesUseCase {
                 .toList();
     }
 
-    public record Query(Boolean active) {
-    }
+    public record Query(Boolean active) {}
 }

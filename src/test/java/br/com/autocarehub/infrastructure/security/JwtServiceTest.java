@@ -3,14 +3,12 @@ package br.com.autocarehub.infrastructure.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.model.User;
 
 class JwtServiceTest {
 
@@ -43,22 +41,20 @@ class JwtServiceTest {
     @Test
     void shouldGenerateSignedTokenWithExpiration() {
         JwtService jwtService = new JwtService(SECRET, 60);
-        AuthenticatedUser user =
-                new AuthenticatedUser(
-                        new User(
-                                UUID.randomUUID(),
-                                "admin@autocarehub.com",
-                                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                                UserRole.ADMIN,
-                                null,
-                                "Admin",
-                                "WORKSHOP_ADMIN",
-                                "Oficina",
-                                "WORKSHOP",
-                                "",
-                                List.of(),
-                                true,
-                                LocalDateTime.now()));
+        AuthenticatedUser user = new AuthenticatedUser(new User(
+                UUID.randomUUID(),
+                "admin@autocarehub.com",
+                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                UserRole.ADMIN,
+                null,
+                "Admin",
+                "WORKSHOP_ADMIN",
+                "Oficina",
+                "WORKSHOP",
+                "",
+                List.of(),
+                true,
+                LocalDateTime.now()));
 
         JwtService.IssuedToken token = jwtService.generateToken(user);
 
@@ -72,26 +68,22 @@ class JwtServiceTest {
     void shouldGenerateTokenWithCustomerClaimAndRejectDifferentUser() {
         JwtService jwtService = new JwtService(SECRET, 1);
         UUID customerId = UUID.randomUUID();
-        AuthenticatedUser customer =
-                new AuthenticatedUser(
-                        new User(
-                                UUID.randomUUID(),
-                                "cliente@autocarehub.com",
-                                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                                UserRole.CUSTOMER,
-                                customerId,
-                                true,
-                                LocalDateTime.now()));
-        AuthenticatedUser other =
-                new AuthenticatedUser(
-                        new User(
-                                UUID.randomUUID(),
-                                "outro@autocarehub.com",
-                                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                                UserRole.CUSTOMER,
-                                customerId,
-                                true,
-                                LocalDateTime.now()));
+        AuthenticatedUser customer = new AuthenticatedUser(new User(
+                UUID.randomUUID(),
+                "cliente@autocarehub.com",
+                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                UserRole.CUSTOMER,
+                customerId,
+                true,
+                LocalDateTime.now()));
+        AuthenticatedUser other = new AuthenticatedUser(new User(
+                UUID.randomUUID(),
+                "outro@autocarehub.com",
+                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                UserRole.CUSTOMER,
+                customerId,
+                true,
+                LocalDateTime.now()));
 
         JwtService.IssuedToken token = jwtService.generateToken(customer);
 

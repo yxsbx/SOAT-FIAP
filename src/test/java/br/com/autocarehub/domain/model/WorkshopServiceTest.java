@@ -3,10 +3,9 @@ package br.com.autocarehub.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.valueobject.Money;
+import org.junit.jupiter.api.Test;
 
 class WorkshopServiceTest {
 
@@ -16,18 +15,14 @@ class WorkshopServiceTest {
 
     @Test
     void shouldNotAcceptPriceLessThanOrEqualToZero() {
-        assertThatThrownBy(
-                () -> new WorkshopService("Oil change", "Oil and filter replacement", Money.zero(), 60))
+        assertThatThrownBy(() -> new WorkshopService("Oil change", "Oil and filter replacement", Money.zero(), 60))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Base price must be greater than zero");
     }
 
     @Test
     void shouldNotAcceptEstimatedTimeLessThanOrEqualToZero() {
-        assertThatThrownBy(
-                () ->
-                        new WorkshopService(
-                                "Oil change", "Oil and filter replacement", Money.of("100.00"), 0))
+        assertThatThrownBy(() -> new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 0))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Estimated time must be greater than zero");
     }
@@ -57,8 +52,7 @@ class WorkshopServiceTest {
 
     @Test
     void shouldRejectBlankNameAndDescription() {
-        assertThatThrownBy(
-                () -> new WorkshopService(" ", "Oil and filter replacement", Money.of("100.00"), 60))
+        assertThatThrownBy(() -> new WorkshopService(" ", "Oil and filter replacement", Money.of("100.00"), 60))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Name is required");
         assertThatThrownBy(() -> new WorkshopService("Oil change", " ", Money.of("100.00"), 60))

@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.customer;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.domain.model.Customer;
+import java.util.UUID;
 
 public class DeleteCustomerUseCase {
 
@@ -15,10 +14,9 @@ public class DeleteCustomerUseCase {
     }
 
     public void execute(UUID customerId) {
-        Customer customer =
-                customerRepository
-                        .findById(customerId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+        Customer customer = customerRepository
+                .findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         customer.deactivate();
         customerRepository.save(customer);
     }

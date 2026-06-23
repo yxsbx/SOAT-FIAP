@@ -1,9 +1,5 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -14,6 +10,9 @@ import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 
 public class TrackServiceOrderUseCase {
 
@@ -32,10 +31,9 @@ public class TrackServiceOrderUseCase {
 
     public List<Output> execute(Query query) {
         if (query.serviceOrderId() != null) {
-            ServiceOrder serviceOrder =
-                    serviceOrderRepository
-                            .findById(query.serviceOrderId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+            ServiceOrder serviceOrder = serviceOrderRepository
+                    .findById(query.serviceOrderId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
             Customer customer = findCustomer(serviceOrder.customerId());
             Vehicle vehicle = findVehicle(serviceOrder.vehicleId());
             ensureFiltersMatch(query, customer, vehicle);
@@ -48,49 +46,37 @@ public class TrackServiceOrderUseCase {
         }
 
         if (!isBlank(query.customerDocument())) {
-            Customer customer =
-                    customerRepository
-                            .findByDocument(Document.from(query.customerDocument()))
-                            .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
-            List<Vehicle> vehicles =
-                    vehicleRepository.findByCustomerId(customer.id()).stream()
-                            .filter(
-                                    vehicle ->
-                                            isBlank(query.plate()) || vehicle.plate().equals(new Plate(query.plate())))
-                            .toList();
+            Customer customer = customerRepository
+                    .findByDocument(Document.from(query.customerDocument()))
+                    .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
+            List<Vehicle> vehicles = vehicleRepository.findByCustomerId(customer.id()).stream()
+                    .filter(vehicle -> isBlank(query.plate()) || vehicle.plate().equals(new Plate(query.plate())))
+                    .toList();
             if (vehicles.isEmpty()) {
                 throw new ResourceNotFoundException("Vehicle not found");
             }
             return serviceOrderRepository.findByCustomerId(customer.id()).stream()
-                    .filter(
-                            serviceOrder ->
-                                    vehicles.stream()
-                                            .anyMatch(vehicle -> vehicle.id().equals(serviceOrder.vehicleId())))
+                    .filter(serviceOrder ->
+                            vehicles.stream().anyMatch(vehicle -> vehicle.id().equals(serviceOrder.vehicleId())))
                     .sorted(Comparator.comparing(ServiceOrder::createdAt).reversed())
-                    .map(
-                            serviceOrder ->
-                                    new Output(serviceOrder, customer, findVehicle(serviceOrder.vehicleId())))
+                    .map(serviceOrder -> new Output(serviceOrder, customer, findVehicle(serviceOrder.vehicleId())))
                     .toList();
         }
 
         Plate plate = new Plate(query.plate());
-        List<Vehicle> vehicles =
-                vehicleRepository.findAll().stream()
-                        .filter(vehicle -> vehicle.plate().equals(plate))
-                        .toList();
+        List<Vehicle> vehicles = vehicleRepository.findAll().stream()
+                .filter(vehicle -> vehicle.plate().equals(plate))
+                .toList();
         if (vehicles.isEmpty()) {
             throw new ResourceNotFoundException("Vehicle not found");
         }
         return vehicles.stream()
-                .flatMap(
-                        vehicle ->
-                                serviceOrderRepository.findByCustomerId(vehicle.customerId()).stream()
-                                        .filter(serviceOrder -> serviceOrder.vehicleId().equals(vehicle.id()))
-                                        .map(
-                                                serviceOrder ->
-                                                        new Output(serviceOrder, findCustomer(vehicle.customerId()), vehicle)))
-                .sorted(
-                        Comparator.comparing((Output output) -> output.serviceOrder().createdAt()).reversed())
+                .flatMap(vehicle -> serviceOrderRepository.findByCustomerId(vehicle.customerId()).stream()
+                        .filter(serviceOrder -> serviceOrder.vehicleId().equals(vehicle.id()))
+                        .map(serviceOrder -> new Output(serviceOrder, findCustomer(vehicle.customerId()), vehicle)))
+                .sorted(Comparator.comparing(
+                                (Output output) -> output.serviceOrder().createdAt())
+                        .reversed())
                 .toList();
     }
 
@@ -120,11 +106,7 @@ public class TrackServiceOrderUseCase {
         return value == null || value.isBlank();
     }
 
-    public record Query(UUID serviceOrderId, String customerDocument, String plate) {
+    public record Query(UUID serviceOrderId, String customerDocument, String plate) {}
 
-    }
-
-    public record Output(ServiceOrder serviceOrder, Customer customer, Vehicle vehicle) {
-
-    }
+    public record Output(ServiceOrder serviceOrder, Customer customer, Vehicle vehicle) {}
 }

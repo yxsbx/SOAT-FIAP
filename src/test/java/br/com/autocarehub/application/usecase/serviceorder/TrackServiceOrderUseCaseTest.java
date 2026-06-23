@@ -3,14 +3,6 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -22,17 +14,21 @@ import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class TrackServiceOrderUseCaseTest {
 
     private final InMemoryCustomerRepository customerRepository = new InMemoryCustomerRepository();
     private final InMemoryVehicleRepository vehicleRepository = new InMemoryVehicleRepository();
-    private final InMemoryServiceOrderRepository serviceOrderRepository =
-            new InMemoryServiceOrderRepository();
+    private final InMemoryServiceOrderRepository serviceOrderRepository = new InMemoryServiceOrderRepository();
 
     private static Address address() {
-        return new Address(
-                "Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
+        return new Address("Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
     }
 
     @Test
@@ -40,11 +36,12 @@ class TrackServiceOrderUseCaseTest {
         Seed seed = seed();
         TrackServiceOrderUseCase useCase = useCase();
 
-        List<TrackServiceOrderUseCase.Output> outputs =
-                useCase.execute(new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null));
+        List<TrackServiceOrderUseCase.Output> outputs = useCase.execute(
+                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null));
 
         assertThat(outputs).hasSize(1);
-        assertThat(outputs.getFirst().serviceOrder().id()).isEqualTo(seed.serviceOrder().id());
+        assertThat(outputs.getFirst().serviceOrder().id())
+                .isEqualTo(seed.serviceOrder().id());
         assertThat(outputs.getFirst().customer().document().value()).isEqualTo("52998224725");
         assertThat(outputs.getFirst().vehicle().plate().value()).isEqualTo("ABC1D23");
     }
@@ -54,10 +51,8 @@ class TrackServiceOrderUseCaseTest {
         Seed seed = seed();
         TrackServiceOrderUseCase useCase = useCase();
 
-        List<TrackServiceOrderUseCase.Output> outputs =
-                useCase.execute(
-                        new TrackServiceOrderUseCase.Query(
-                                null, seed.customer().document().value(), "ABC1D23"));
+        List<TrackServiceOrderUseCase.Output> outputs = useCase.execute(new TrackServiceOrderUseCase.Query(
+                null, seed.customer().document().value(), "ABC1D23"));
 
         assertThat(outputs)
                 .extracting(output -> output.serviceOrder().id())
@@ -69,9 +64,8 @@ class TrackServiceOrderUseCaseTest {
         Seed seed = seed();
         TrackServiceOrderUseCase useCase = useCase();
 
-        List<TrackServiceOrderUseCase.Output> outputs =
-                useCase.execute(
-                        new TrackServiceOrderUseCase.Query(null, seed.customer().document().value(), null));
+        List<TrackServiceOrderUseCase.Output> outputs = useCase.execute(new TrackServiceOrderUseCase.Query(
+                null, seed.customer().document().value(), null));
 
         assertThat(outputs)
                 .extracting(output -> output.serviceOrder().id())
@@ -105,17 +99,12 @@ class TrackServiceOrderUseCaseTest {
         Seed seed = seed();
         TrackServiceOrderUseCase useCase = useCase();
 
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(
-                                new TrackServiceOrderUseCase.Query(
-                                        seed.serviceOrder().id(), "11222333000181", null)))
+        assertThatThrownBy(() -> useCase.execute(
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), "11222333000181", null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found for customer document");
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(
-                                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, "DEF2G34")))
+        assertThatThrownBy(() -> useCase.execute(
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, "DEF2G34")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found for vehicle plate");
     }
@@ -126,18 +115,13 @@ class TrackServiceOrderUseCaseTest {
         TrackServiceOrderUseCase useCase = useCase();
 
         vehicleRepository.vehicles.clear();
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(
-                                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null)))
+        assertThatThrownBy(() -> useCase.execute(
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
 
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(
-                                new TrackServiceOrderUseCase.Query(
-                                        null, seed.customer().document().value(), null)))
+        assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(
+                        null, seed.customer().document().value(), null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
     }
@@ -147,46 +131,32 @@ class TrackServiceOrderUseCaseTest {
         seed();
         TrackServiceOrderUseCase useCase = useCase();
 
-        assertThatThrownBy(
-                () -> useCase.execute(new TrackServiceOrderUseCase.Query(null, "11222333000181", null)))
+        assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(null, "11222333000181", null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
-        assertThatThrownBy(
-                () -> useCase.execute(new TrackServiceOrderUseCase.Query(null, null, "DEF2G34")))
+        assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(null, null, "DEF2G34")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(new TrackServiceOrderUseCase.Query(null, "52998224725", "DEF2G34")))
+        assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(null, "52998224725", "DEF2G34")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
     }
 
     private TrackServiceOrderUseCase useCase() {
-        return new TrackServiceOrderUseCase(
-                serviceOrderRepository, customerRepository, vehicleRepository);
+        return new TrackServiceOrderUseCase(serviceOrderRepository, customerRepository, vehicleRepository);
     }
 
     private Seed seed() {
-        Customer customer =
-                customerRepository.save(
-                        new Customer(
-                                "Maria Silva",
-                                Document.from("52998224725"),
-                                "11999999999",
-                                "maria@example.com",
-                                address()));
+        Customer customer = customerRepository.save(new Customer(
+                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address()));
         Vehicle vehicle =
-                vehicleRepository.save(
-                        new Vehicle(customer.id(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 35000));
-        ServiceOrder serviceOrder =
-                serviceOrderRepository.save(
-                        new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata barulho no motor"));
+                vehicleRepository.save(new Vehicle(customer.id(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 35000));
+        ServiceOrder serviceOrder = serviceOrderRepository.save(
+                new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata barulho no motor"));
         return new Seed(customer, vehicle, serviceOrder);
     }
 
-    private record Seed(Customer customer, Vehicle vehicle, ServiceOrder serviceOrder) {
-    }
+    private record Seed(Customer customer, Vehicle vehicle, ServiceOrder serviceOrder) {}
 
     private static class InMemoryCustomerRepository implements CustomerRepository {
 

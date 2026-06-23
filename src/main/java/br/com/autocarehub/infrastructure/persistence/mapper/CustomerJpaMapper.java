@@ -8,9 +8,7 @@ import br.com.autocarehub.infrastructure.persistence.entity.CustomerJpaEntity;
 
 public final class CustomerJpaMapper {
 
-    private CustomerJpaMapper() {
-
-    }
+    private CustomerJpaMapper() {}
 
     public static CustomerJpaEntity toEntity(Customer customer) {
         CustomerJpaEntity entity = new CustomerJpaEntity();
@@ -50,15 +48,14 @@ public final class CustomerJpaMapper {
     private static Address getAddress(CustomerJpaEntity entity) {
         Address address = null;
         if (entity.getAddressStreet() != null) {
-            address =
-                    new Address(
-                            entity.getAddressStreet(),
-                            entity.getAddressNumber(),
-                            entity.getAddressComplement(),
-                            entity.getAddressNeighborhood(),
-                            entity.getAddressCity(),
-                            entity.getAddressState(),
-                            entity.getAddressZipCode());
+            address = new Address(
+                    entity.getAddressStreet(),
+                    entity.getAddressNumber(),
+                    entity.getAddressComplement(),
+                    entity.getAddressNeighborhood(),
+                    entity.getAddressCity(),
+                    entity.getAddressState(),
+                    entity.getAddressZipCode());
         }
         return address;
     }

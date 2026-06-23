@@ -2,18 +2,6 @@ package br.com.autocarehub.infrastructure.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.enums.UserRole;
@@ -22,16 +10,24 @@ import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 class AuthorizationServiceTest {
 
     private final InMemoryCustomerRepository customerRepository = new InMemoryCustomerRepository();
-    private final InMemoryServiceOrderRepository serviceOrderRepository =
-            new InMemoryServiceOrderRepository();
+    private final InMemoryServiceOrderRepository serviceOrderRepository = new InMemoryServiceOrderRepository();
 
     private static Address address() {
-        return new Address(
-                "Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
+        return new Address("Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
     }
 
     @AfterEach
@@ -41,20 +37,16 @@ class AuthorizationServiceTest {
 
     @Test
     void shouldAllowCustomerToTrackOnlyOwnDocument() {
-        Customer customer =
-                customerRepository.save(
-                        new Customer(
-                                "Maria Silva",
-                                Document.from("52998224725"),
-                                "11999999999",
-                                "maria@example.com",
-                                address()));
+        Customer customer = customerRepository.save(new Customer(
+                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address()));
         authenticateCustomer(customer.id());
         AuthorizationService authorizationService =
                 new AuthorizationService(customerRepository, serviceOrderRepository);
 
-        assertThat(authorizationService.canTrackServiceOrders(null, "529.982.247-25")).isTrue();
-        assertThat(authorizationService.canTrackServiceOrders(null, "153.509.460-56")).isFalse();
+        assertThat(authorizationService.canTrackServiceOrders(null, "529.982.247-25"))
+                .isTrue();
+        assertThat(authorizationService.canTrackServiceOrders(null, "153.509.460-56"))
+                .isFalse();
     }
 
     @Test
@@ -73,35 +65,38 @@ class AuthorizationServiceTest {
     @Test
     void shouldAllowCustomerToAccessOwnCustomerAndServiceOrder() {
         UUID customerId = UUID.randomUUID();
-        ServiceOrder serviceOrder =
-                serviceOrderRepository.save(
-                        new ServiceOrder(customerId, UUID.randomUUID(), "Cliente relata ruído ao frear"));
+        ServiceOrder serviceOrder = serviceOrderRepository.save(
+                new ServiceOrder(customerId, UUID.randomUUID(), "Cliente relata ruído ao frear"));
         authenticateCustomer(customerId);
         AuthorizationService authorizationService =
                 new AuthorizationService(customerRepository, serviceOrderRepository);
 
         assertThat(authorizationService.canAccessCustomer(customerId)).isTrue();
-        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isTrue();
-        assertThat(authorizationService.canTrackServiceOrders(serviceOrder.id(), null)).isTrue();
+        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id()))
+                .isTrue();
+        assertThat(authorizationService.canTrackServiceOrders(serviceOrder.id(), null))
+                .isTrue();
     }
 
     @Test
     void shouldRejectServiceOrderAccessWithoutCustomerOrWhenOrderDoesNotBelongToCustomer() {
-        ServiceOrder serviceOrder =
-                serviceOrderRepository.save(
-                        new ServiceOrder(
-                                UUID.randomUUID(), UUID.randomUUID(), "Cliente relata falha elétrica"));
+        ServiceOrder serviceOrder = serviceOrderRepository.save(
+                new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata falha elétrica"));
         AuthorizationService authorizationService =
                 new AuthorizationService(customerRepository, serviceOrderRepository);
 
-        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
+        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id()))
+                .isFalse();
 
         authenticate(UserRole.ADMIN, null);
-        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
+        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id()))
+                .isFalse();
 
         authenticateCustomer(UUID.randomUUID());
-        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
-        assertThat(authorizationService.canAccessServiceOrder(UUID.randomUUID())).isFalse();
+        assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id()))
+                .isFalse();
+        assertThat(authorizationService.canAccessServiceOrder(UUID.randomUUID()))
+                .isFalse();
     }
 
     @Test
@@ -110,10 +105,12 @@ class AuthorizationServiceTest {
                 new AuthorizationService(customerRepository, serviceOrderRepository);
 
         authenticate(UserRole.ADMIN, null);
-        assertThat(authorizationService.canTrackServiceOrders(UUID.randomUUID(), null)).isTrue();
+        assertThat(authorizationService.canTrackServiceOrders(UUID.randomUUID(), null))
+                .isTrue();
 
         authenticate(UserRole.EMPLOYEE, null);
-        assertThat(authorizationService.canTrackServiceOrders(null, "bad-document")).isTrue();
+        assertThat(authorizationService.canTrackServiceOrders(null, "bad-document"))
+                .isTrue();
     }
 
     @Test
@@ -121,24 +118,20 @@ class AuthorizationServiceTest {
         AuthorizationService authorizationService =
                 new AuthorizationService(customerRepository, serviceOrderRepository);
 
-        assertThat(authorizationService.canTrackServiceOrders(null, "52998224725")).isFalse();
+        assertThat(authorizationService.canTrackServiceOrders(null, "52998224725"))
+                .isFalse();
 
         authenticate(UserRole.CUSTOMER, null);
-        assertThat(authorizationService.canTrackServiceOrders(null, "52998224725")).isFalse();
+        assertThat(authorizationService.canTrackServiceOrders(null, "52998224725"))
+                .isFalse();
         assertThat(authorizationService.canTrackServiceOrders(null, null)).isFalse();
         assertThat(authorizationService.canTrackServiceOrders(null, "   ")).isFalse();
     }
 
     @Test
     void shouldRejectTrackingWhenCustomerDocumentIsInvalid() {
-        Customer customer =
-                customerRepository.save(
-                        new Customer(
-                                "Maria Silva",
-                                Document.from("52998224725"),
-                                "11999999999",
-                                "maria@example.com",
-                                address()));
+        Customer customer = customerRepository.save(new Customer(
+                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address()));
         authenticateCustomer(customer.id());
         AuthorizationService authorizationService =
                 new AuthorizationService(customerRepository, serviceOrderRepository);
@@ -151,19 +144,16 @@ class AuthorizationServiceTest {
     }
 
     private void authenticate(UserRole role, UUID customerId) {
-        AuthenticatedUser user =
-                new AuthenticatedUser(
-                        new User(
-                                UUID.randomUUID(),
-                                role.name().toLowerCase() + "@autocarehub.com",
-                                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                                role,
-                                customerId,
-                                true,
-                                LocalDateTime.now()));
+        AuthenticatedUser user = new AuthenticatedUser(new User(
+                UUID.randomUUID(),
+                role.name().toLowerCase() + "@autocarehub.com",
+                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                role,
+                customerId,
+                true,
+                LocalDateTime.now()));
         SecurityContextHolder.getContext()
-                .setAuthentication(
-                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
+                .setAuthentication(new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
     }
 
     private static class InMemoryCustomerRepository implements CustomerRepository {

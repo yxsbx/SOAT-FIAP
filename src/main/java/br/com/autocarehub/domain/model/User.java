@@ -1,14 +1,12 @@
 package br.com.autocarehub.domain.model;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.exception.DomainException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
-
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.exception.DomainException;
 
 public record User(
         UUID id,

@@ -1,8 +1,7 @@
 package br.com.autocarehub.application.usecase.user;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.port.out.UserPreferenceRepository;
+import java.util.UUID;
 
 public class GetUserPreferenceUseCase {
 

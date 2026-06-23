@@ -1,9 +1,5 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
-
 import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
@@ -13,15 +9,15 @@ import br.com.autocarehub.interfaces.rest.generated.model.CreateWorkshopServiceR
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateWorkshopServiceRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceResponse;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
 
 public final class WorkshopServiceRestMapper {
 
-    private WorkshopServiceRestMapper() {
+    private WorkshopServiceRestMapper() {}
 
-    }
-
-    public static CreateWorkshopServiceUseCase.Command toCommand(
-            CreateWorkshopServiceRequest request) {
+    public static CreateWorkshopServiceUseCase.Command toCommand(CreateWorkshopServiceRequest request) {
         return new CreateWorkshopServiceUseCase.Command(
                 request.getName(),
                 request.getDescription(),
@@ -29,8 +25,7 @@ public final class WorkshopServiceRestMapper {
                 request.getEstimatedTimeInMinutes());
     }
 
-    public static UpdateWorkshopServiceUseCase.Command toCommand(
-            UUID serviceId, UpdateWorkshopServiceRequest request) {
+    public static UpdateWorkshopServiceUseCase.Command toCommand(UUID serviceId, UpdateWorkshopServiceRequest request) {
         return new UpdateWorkshopServiceUseCase.Command(
                 serviceId,
                 request.getName(),
@@ -56,9 +51,8 @@ public final class WorkshopServiceRestMapper {
 
     public static WorkshopServiceListResponse toListResponse(
             List<WorkshopService> services, Integer page, Integer size) {
-        return new WorkshopServiceListResponse(
-                RestMapperSupport.page(services, page, size).stream()
-                        .map(WorkshopServiceRestMapper::toResponse)
-                        .toList());
+        return new WorkshopServiceListResponse(RestMapperSupport.page(services, page, size).stream()
+                .map(WorkshopServiceRestMapper::toResponse)
+                .toList());
     }
 }

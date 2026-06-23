@@ -1,13 +1,12 @@
 package br.com.autocarehub.application.usecase.demo;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.model.DemoLead;
 import br.com.autocarehub.domain.valueobject.Document;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class RegisterDemoLeadUseCase {
 
@@ -26,18 +25,17 @@ public class RegisterDemoLeadUseCase {
         if (cnpj.type() != DocumentType.CNPJ) {
             throw new DomainException("Demo lead document must be CNPJ");
         }
-        DemoLead demoLead =
-                new DemoLead(
-                        UUID.randomUUID(),
-                        command.contactName().trim(),
-                        command.companyName().trim(),
-                        command.demoProfile().trim(),
-                        command.email().trim().toLowerCase(),
-                        command.phone().trim(),
-                        cnpj.value(),
-                        normalize(command.city()),
-                        normalize(command.message()),
-                        LocalDateTime.now());
+        DemoLead demoLead = new DemoLead(
+                UUID.randomUUID(),
+                command.contactName().trim(),
+                command.companyName().trim(),
+                command.demoProfile().trim(),
+                command.email().trim().toLowerCase(),
+                command.phone().trim(),
+                cnpj.value(),
+                normalize(command.city()),
+                normalize(command.message()),
+                LocalDateTime.now());
 
         return repository.save(demoLead);
     }
@@ -50,6 +48,5 @@ public class RegisterDemoLeadUseCase {
             String phone,
             String cnpj,
             String city,
-            String message) {
-    }
+            String message) {}
 }

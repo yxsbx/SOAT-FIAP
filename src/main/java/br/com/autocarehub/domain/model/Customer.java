@@ -1,14 +1,12 @@
 package br.com.autocarehub.domain.model;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 
 public class Customer {
 
@@ -21,8 +19,7 @@ public class Customer {
     private @Nullable Address address;
     private boolean active;
 
-    public Customer(
-            String name, Document document, String phone, String email, @Nullable Address address) {
+    public Customer(String name, Document document, String phone, String email, @Nullable Address address) {
         this(UUID.randomUUID(), name, document, phone, email, address, true, LocalDateTime.now());
     }
 

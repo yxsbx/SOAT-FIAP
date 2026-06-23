@@ -1,12 +1,10 @@
 package br.com.autocarehub.domain.service;
 
+import br.com.autocarehub.domain.exception.DomainException;
 import java.time.Year;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
 import org.jspecify.annotations.Nullable;
-
-import br.com.autocarehub.domain.exception.DomainException;
 
 public final class DomainValidation {
 
@@ -15,9 +13,7 @@ public final class DomainValidation {
     private static final Pattern PHONE_PATTERN = Pattern.compile("^\\d{10,11}$");
     private static final Pattern STATE_PATTERN = Pattern.compile("^[A-Z]{2}$");
 
-    private DomainValidation() {
-
-    }
+    private DomainValidation() {}
 
     public static String requireText(String value, String message, int maxLength) {
         if (value.isBlank()) {

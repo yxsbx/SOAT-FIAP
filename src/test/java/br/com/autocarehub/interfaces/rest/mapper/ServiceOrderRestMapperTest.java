@@ -2,13 +2,6 @@ package br.com.autocarehub.interfaces.rest.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.model.Part;
@@ -28,6 +21,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListRespon
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatusHistoryItem;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingResponse;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class ServiceOrderRestMapperTest {
 
@@ -40,8 +38,7 @@ class ServiceOrderRestMapperTest {
     }
 
     private static Customer customer() {
-        return new Customer(
-                "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
+        return new Customer("Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
     }
 
     private static Vehicle vehicle(Customer customer) {
@@ -49,18 +46,16 @@ class ServiceOrderRestMapperTest {
     }
 
     private static Address address() {
-        return new Address(
-                "Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
+        return new Address("Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
     }
 
     @Test
     void shouldMapCreateCommandWithDefaultsAndNullOptionalCollections() {
         UUID serviceId = UUID.randomUUID();
-        CreateServiceOrderRequest request =
-                new CreateServiceOrderRequest(
-                        "52998224725",
-                        "Cliente relata barulho ao frear",
-                        List.of(new CreateServiceOrderServiceRequest(serviceId, 2)));
+        CreateServiceOrderRequest request = new CreateServiceOrderRequest(
+                "52998224725",
+                "Cliente relata barulho ao frear",
+                List.of(new CreateServiceOrderServiceRequest(serviceId, 2)));
         request.setParts(null);
         request.setGenerateBudget(null);
 
@@ -81,22 +76,19 @@ class ServiceOrderRestMapperTest {
         UUID serviceId = UUID.randomUUID();
         UUID partId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
-        var apiAddress =
-                new br.com.autocarehub.interfaces.rest.generated.model.Address(
+        var apiAddress = new br.com.autocarehub.interfaces.rest.generated.model.Address(
                         "Avenida Paulista", "1000", "Bela Vista", "São Paulo", "SP", "01310-100")
-                        .complement("10 andar");
-        CreateServiceOrderRequest request =
-                new CreateServiceOrderRequest(
+                .complement("10 andar");
+        CreateServiceOrderRequest request = new CreateServiceOrderRequest(
                         "52998224725",
                         "Cliente relata vibração ao acelerar",
                         List.of(new CreateServiceOrderServiceRequest(serviceId, 1)))
-                        .customer(
-                                new CreateServiceOrderCustomerRequest(
-                                        "Maria Silva", "11999999999", "maria@example.com", apiAddress))
-                        .vehicleId(vehicleId)
-                        .vehicle(new CreateServiceOrderVehicleRequest("ABC1D23", "Honda", "Civic", 2020))
-                        .parts(List.of(new CreateServiceOrderPartRequest(partId, 3)))
-                        .generateBudget(false);
+                .customer(new CreateServiceOrderCustomerRequest(
+                        "Maria Silva", "11999999999", "maria@example.com", apiAddress))
+                .vehicleId(vehicleId)
+                .vehicle(new CreateServiceOrderVehicleRequest("ABC1D23", "Honda", "Civic", 2020))
+                .parts(List.of(new CreateServiceOrderPartRequest(partId, 3)))
+                .generateBudget(false);
 
         var command = ServiceOrderRestMapper.toCommand(request);
 
@@ -114,17 +106,11 @@ class ServiceOrderRestMapperTest {
         OffsetDateTime createdFrom = OffsetDateTime.now(ZoneOffset.UTC).minusDays(2);
         OffsetDateTime createdTo = OffsetDateTime.now(ZoneOffset.UTC);
 
-        var query =
-                ServiceOrderRestMapper.toQuery(
-                        ServiceOrderStatus.WAITING_APPROVAL,
-                        UUID.randomUUID(),
-                        UUID.randomUUID(),
-                        createdFrom,
-                        createdTo);
+        var query = ServiceOrderRestMapper.toQuery(
+                ServiceOrderStatus.WAITING_APPROVAL, UUID.randomUUID(), UUID.randomUUID(), createdFrom, createdTo);
         var nullQuery = ServiceOrderRestMapper.toQuery(null, null, null, null, null);
 
-        assertThat(query.status())
-                .isEqualTo(br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO);
+        assertThat(query.status()).isEqualTo(br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO);
         assertThat(query.createdFrom()).isEqualTo(createdFrom.toLocalDateTime());
         assertThat(query.createdTo()).isEqualTo(createdTo.toLocalDateTime());
         assertThat(nullQuery.status()).isNull();
@@ -139,10 +125,8 @@ class ServiceOrderRestMapperTest {
         ServiceOrder first = new ServiceOrder(customer.id(), vehicle.id(), "Primeira OS");
         ServiceOrder second = new ServiceOrder(customer.id(), vehicle.id(), "Segunda OS");
 
-        ServiceOrderListResponse response =
-                ServiceOrderRestMapper.toListResponse(List.of(first, second), 1, 1);
-        ServiceOrderListResponse emptyPage =
-                ServiceOrderRestMapper.toListResponse(List.of(first), 2, 1);
+        ServiceOrderListResponse response = ServiceOrderRestMapper.toListResponse(List.of(first, second), 1, 1);
+        ServiceOrderListResponse emptyPage = ServiceOrderRestMapper.toListResponse(List.of(first), 2, 1);
         ServiceOrderListResponse zeroSize = ServiceOrderRestMapper.toListResponse(List.of(first), 0, 0);
 
         assertThat(response.getItems()).hasSize(1);
@@ -155,8 +139,7 @@ class ServiceOrderRestMapperTest {
     void shouldExposePendingBudgetAndOnlyExistingStatusEventsOnTrackingResponse() {
         Customer customer = customer();
         Vehicle vehicle = vehicle(customer);
-        ServiceOrder serviceOrder =
-                new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata barulho no motor");
+        ServiceOrder serviceOrder = new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata barulho no motor");
 
         ServiceOrderTrackingResponse response = trackingResponse(serviceOrder, customer, vehicle);
 
@@ -166,20 +149,16 @@ class ServiceOrderRestMapperTest {
         assertThat(response.getBudget().getApprovedAt()).isNull();
         assertThat(response.getStatusHistory()).hasSize(1);
         assertThat(response.getStatusHistory().getFirst().getOccurredAt()).isNotNull();
-        assertThat(response.getStatusHistory().getFirst().getDescription())
-                .isEqualTo("Ordem de serviço criada");
+        assertThat(response.getStatusHistory().getFirst().getDescription()).isEqualTo("Ordem de serviço criada");
     }
 
     @Test
     void shouldExposeBudgetApprovalAndExecutionEventsWhenTheyHappened() {
         Customer customer = customer();
         Vehicle vehicle = vehicle(customer);
-        ServiceOrder serviceOrder =
-                new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata vazamento de óleo");
+        ServiceOrder serviceOrder = new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata vazamento de óleo");
         serviceOrder.addService(
-                new WorkshopService(
-                        "Troca de óleo", "Substituição de óleo e filtro", Money.of("120.00"), 60),
-                1);
+                new WorkshopService("Troca de óleo", "Substituição de óleo e filtro", Money.of("120.00"), 60), 1);
         serviceOrder.addPart(
                 new Part(
                         "Filtro de óleo",
@@ -214,16 +193,15 @@ class ServiceOrderRestMapperTest {
                         "Execução iniciada",
                         "Serviço finalizado",
                         "Veículo entregue");
-        assertThat(response.getStatusHistory())
-                .allSatisfy(historyItem -> assertThat(historyItem.getOccurredAt()).isNotNull());
+        assertThat(response.getStatusHistory()).allSatisfy(historyItem -> assertThat(historyItem.getOccurredAt())
+                .isNotNull());
     }
 
     @Test
     void shouldExposeDiagnosisEventWhenDiagnosisIsCurrentStatus() {
         Customer customer = customer();
         Vehicle vehicle = vehicle(customer);
-        ServiceOrder serviceOrder =
-                new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata falha na partida");
+        ServiceOrder serviceOrder = new ServiceOrder(customer.id(), vehicle.id(), "Cliente relata falha na partida");
         serviceOrder.startDiagnosis();
 
         ServiceOrderTrackingResponse response = trackingResponse(serviceOrder, customer, vehicle);

@@ -6,10 +6,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.FilterChain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -17,36 +20,28 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.model.User;
-
-import io.jsonwebtoken.JwtException;
-import jakarta.servlet.FilterChain;
-
 class JwtAuthenticationFilterTest {
 
     private final JwtService jwtService = mock(JwtService.class);
     private final UserDetailsService userDetailsService = mock(UserDetailsService.class);
     private final FilterChain filterChain = mock(FilterChain.class);
-    private final JwtAuthenticationFilter filter =
-            new JwtAuthenticationFilter(jwtService, userDetailsService);
+    private final JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtService, userDetailsService);
 
     private static AuthenticatedUser authenticatedUser() {
-        return new AuthenticatedUser(
-                new User(
-                        UUID.randomUUID(),
-                        "admin@autocarehub.com",
-                        "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                        UserRole.ADMIN,
-                        null,
-                        "Admin",
-                        "admin",
-                        "AutoCare",
-                        "Oficina",
-                        "Gestor",
-                        List.of("users:read"),
-                        true,
-                        LocalDateTime.now()));
+        return new AuthenticatedUser(new User(
+                UUID.randomUUID(),
+                "admin@autocarehub.com",
+                "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                UserRole.ADMIN,
+                null,
+                "Admin",
+                "admin",
+                "AutoCare",
+                "Oficina",
+                "Gestor",
+                List.of("users:read"),
+                true,
+                LocalDateTime.now()));
     }
 
     @AfterEach
@@ -55,8 +50,7 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void shouldContinueWithoutAuthenticationWhenAuthorizationHeaderIsMissingOrInvalid()
-            throws Exception {
+    void shouldContinueWithoutAuthenticationWhenAuthorizationHeaderIsMissingOrInvalid() throws Exception {
         MockHttpServletRequest noHeader = new MockHttpServletRequest();
         MockHttpServletResponse noHeaderResponse = new MockHttpServletResponse();
         MockHttpServletRequest invalidPrefix = new MockHttpServletRequest();
@@ -91,8 +85,7 @@ class JwtAuthenticationFilterTest {
     }
 
     @Test
-    void shouldContinueWithoutAuthenticationWhenBearerTokenIsNotValidForLoadedUser()
-            throws Exception {
+    void shouldContinueWithoutAuthenticationWhenBearerTokenIsNotValidForLoadedUser() throws Exception {
         AuthenticatedUser user = authenticatedUser();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();

@@ -2,29 +2,23 @@ package br.com.autocarehub.domain.policy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-
 import org.jspecify.annotations.Nullable;
 
 public final class PlatformFeePolicy {
 
-    private PlatformFeePolicy() {
-
-    }
+    private PlatformFeePolicy() {}
 
     public static Result calculate(BigDecimal monthlyGrossRevenue) {
         Tier tier = resolveTier(monthlyGrossRevenue);
-        BigDecimal feeAmount =
-                monthlyGrossRevenue.multiply(tier.rate()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal feeAmount = monthlyGrossRevenue.multiply(tier.rate()).setScale(2, RoundingMode.HALF_UP);
         BigDecimal net = monthlyGrossRevenue.subtract(feeAmount).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal nextTierGap =
-                tier.nextStartsAt() == null
-                        ? BigDecimal.ZERO
-                        : tier.nextStartsAt()
+        BigDecimal nextTierGap = tier.nextStartsAt() == null
+                ? BigDecimal.ZERO
+                : tier.nextStartsAt()
                         .subtract(monthlyGrossRevenue)
                         .max(BigDecimal.ZERO)
                         .setScale(2, RoundingMode.HALF_UP);
-        return new Result(
-                monthlyGrossRevenue, tier.rate(), feeAmount, net, nextTierGap, tier.nextRate());
+        return new Result(monthlyGrossRevenue, tier.rate(), feeAmount, net, nextTierGap, tier.nextRate());
     }
 
     private static Tier resolveTier(BigDecimal gross) {
@@ -40,10 +34,7 @@ public final class PlatformFeePolicy {
         return new Tier(new BigDecimal("0.05"), null, null);
     }
 
-    private record Tier(
-            BigDecimal rate, @Nullable BigDecimal nextStartsAt, @Nullable BigDecimal nextRate) {
-
-    }
+    private record Tier(BigDecimal rate, @Nullable BigDecimal nextStartsAt, @Nullable BigDecimal nextRate) {}
 
     public record Result(
             BigDecimal gross,
@@ -51,7 +42,5 @@ public final class PlatformFeePolicy {
             BigDecimal feeAmount,
             BigDecimal netAmount,
             BigDecimal nextTierGap,
-            @Nullable BigDecimal nextTierRate) {
-
-    }
+            @Nullable BigDecimal nextTierRate) {}
 }

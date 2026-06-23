@@ -3,6 +3,11 @@ package br.com.autocarehub.application.usecase.part;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.StockMovementRepository;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.model.Part;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -10,20 +15,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-
-import br.com.autocarehub.application.port.out.PartRepository;
-import br.com.autocarehub.application.port.out.StockMovementRepository;
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.model.Part;
-import br.com.autocarehub.domain.valueobject.Money;
 
 class RegisterPartStockMovementUseCaseTest {
 
     private final InMemoryPartRepository partRepository = new InMemoryPartRepository();
-    private final InMemoryStockMovementRepository stockMovementRepository =
-            new InMemoryStockMovementRepository();
+    private final InMemoryStockMovementRepository stockMovementRepository = new InMemoryStockMovementRepository();
 
     private static Part part() {
         return new Part(
@@ -44,19 +41,18 @@ class RegisterPartStockMovementUseCaseTest {
         Part part = partRepository.save(part());
         RegisterPartStockMovementUseCase useCase = useCase();
 
-        Part updated =
-                useCase.execute(
-                        new RegisterPartStockMovementUseCase.Command(
-                                part.id(),
-                                RegisterPartStockMovementUseCase.MovementType.ENTRY,
-                                5,
-                                Money.of("30.00"),
-                                Money.of("50.00"),
-                                "Entrada de fornecedor"));
+        Part updated = useCase.execute(new RegisterPartStockMovementUseCase.Command(
+                part.id(),
+                RegisterPartStockMovementUseCase.MovementType.ENTRY,
+                5,
+                Money.of("30.00"),
+                Money.of("50.00"),
+                "Entrada de fornecedor"));
 
         assertThat(updated.stockQuantity()).isEqualTo(15);
         assertThat(stockMovementRepository.movements()).hasSize(1);
-        assertThat(stockMovementRepository.movements().getFirst().movementType()).isEqualTo("ENTRY");
+        assertThat(stockMovementRepository.movements().getFirst().movementType())
+                .isEqualTo("ENTRY");
     }
 
     @Test
@@ -64,19 +60,13 @@ class RegisterPartStockMovementUseCaseTest {
         Part part = partRepository.save(part());
         RegisterPartStockMovementUseCase useCase = useCase();
 
-        Part updated =
-                useCase.execute(
-                        new RegisterPartStockMovementUseCase.Command(
-                                part.id(),
-                                RegisterPartStockMovementUseCase.MovementType.EXIT,
-                                4,
-                                null,
-                                null,
-                                "Uso interno"));
+        Part updated = useCase.execute(new RegisterPartStockMovementUseCase.Command(
+                part.id(), RegisterPartStockMovementUseCase.MovementType.EXIT, 4, null, null, "Uso interno"));
 
         assertThat(updated.stockQuantity()).isEqualTo(6);
         assertThat(stockMovementRepository.movements()).hasSize(1);
-        assertThat(stockMovementRepository.movements().getFirst().movementType()).isEqualTo("EXIT");
+        assertThat(stockMovementRepository.movements().getFirst().movementType())
+                .isEqualTo("EXIT");
     }
 
     @Test
@@ -84,16 +74,13 @@ class RegisterPartStockMovementUseCaseTest {
         Part part = partRepository.save(part());
         RegisterPartStockMovementUseCase useCase = useCase();
 
-        assertThatThrownBy(
-                () ->
-                        useCase.execute(
-                                new RegisterPartStockMovementUseCase.Command(
-                                        part.id(),
-                                        RegisterPartStockMovementUseCase.MovementType.EXIT,
-                                        11,
-                                        null,
-                                        null,
-                                        "Saida invalida")))
+        assertThatThrownBy(() -> useCase.execute(new RegisterPartStockMovementUseCase.Command(
+                        part.id(),
+                        RegisterPartStockMovementUseCase.MovementType.EXIT,
+                        11,
+                        null,
+                        null,
+                        "Saida invalida")))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Insufficient stock");
     }
@@ -144,11 +131,5 @@ class RegisterPartStockMovementUseCaseTest {
     }
 
     private record Movement(
-            UUID partId,
-            String movementType,
-            int quantity,
-            BigDecimal unitCost,
-            BigDecimal unitPrice,
-            String reason) {
-    }
+            UUID partId, String movementType, int quantity, BigDecimal unitCost, BigDecimal unitPrice, String reason) {}
 }

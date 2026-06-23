@@ -1,11 +1,10 @@
 package br.com.autocarehub.domain.model;
 
-import java.util.Objects;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.Objects;
+import java.util.UUID;
 
 public class Vehicle {
 
@@ -23,14 +22,7 @@ public class Vehicle {
     }
 
     public Vehicle(
-            UUID id,
-            UUID customerId,
-            Plate plate,
-            String brand,
-            String model,
-            int year,
-            int mileage,
-            boolean active) {
+            UUID id, UUID customerId, Plate plate, String brand, String model, int year, int mileage, boolean active) {
         this.id = Objects.requireNonNull(id, "id is required");
         this.customerId = Objects.requireNonNull(customerId, "customerId is required");
         this.plate = Objects.requireNonNull(plate, "plate is required");
