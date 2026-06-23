@@ -29,10 +29,10 @@ class PartStockFlowIntegrationTest {
     String token = login();
     UUID partId = createPart(token);
 
-    reservePart(token, partId, 4);
-    commitReservation(token, partId, 3);
-    releaseReservation(token, partId, 1);
-    registerSale(token, partId, 2);
+    reservePart(token, partId);
+    commitReservation(token, partId);
+    releaseReservation(token, partId);
+    registerSale(token, partId);
   }
 
   private String login() throws Exception {
@@ -93,47 +93,46 @@ class PartStockFlowIntegrationTest {
     return UUID.fromString(jsonNode.get("id").asText());
   }
 
-  private void reservePart(String token, UUID partId, int quantity) throws Exception {
+  private void reservePart(String token, UUID partId) throws Exception {
     mockMvc
         .perform(
             patch("/api/v1/parts/{partId}/reserve", partId)
                 .header("Authorization", bearer(token))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json(Map.of("quantity", quantity))))
+                .content(json(Map.of("quantity", 4))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.stockQuantity").value(10))
         .andExpect(jsonPath("$.reservedQuantity").value(4))
         .andExpect(jsonPath("$.availableQuantity").value(6));
   }
 
-  private void commitReservation(String token, UUID partId, int quantity) throws Exception {
+  private void commitReservation(String token, UUID partId) throws Exception {
     mockMvc
         .perform(
             patch("/api/v1/parts/{partId}/commit-reservation", partId)
                 .header("Authorization", bearer(token))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    json(Map.of("quantity", quantity, "reason", "Orçamento aprovado em teste"))))
+                .content(json(Map.of("quantity", 3, "reason", "Orçamento aprovado em teste"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.stockQuantity").value(7))
         .andExpect(jsonPath("$.reservedQuantity").value(1))
         .andExpect(jsonPath("$.availableQuantity").value(6));
   }
 
-  private void releaseReservation(String token, UUID partId, int quantity) throws Exception {
+  private void releaseReservation(String token, UUID partId) throws Exception {
     mockMvc
         .perform(
             patch("/api/v1/parts/{partId}/release-reservation", partId)
                 .header("Authorization", bearer(token))
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json(Map.of("quantity", quantity))))
+                .content(json(Map.of("quantity", 1))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.stockQuantity").value(7))
         .andExpect(jsonPath("$.reservedQuantity").value(0))
         .andExpect(jsonPath("$.availableQuantity").value(7));
   }
 
-  private void registerSale(String token, UUID partId, int quantity) throws Exception {
+  private void registerSale(String token, UUID partId) throws Exception {
     mockMvc
         .perform(
             patch("/api/v1/parts/{partId}/stock-movement", partId)
@@ -141,13 +140,7 @@ class PartStockFlowIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     json(
-                        Map.of(
-                            "type",
-                            "SALE",
-                            "quantity",
-                            quantity,
-                            "reason",
-                            "Venda isolada em teste"))))
+                        Map.of("type", "SALE", "quantity", 2, "reason", "Venda isolada em teste"))))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.stockQuantity").value(5))
         .andExpect(jsonPath("$.reservedQuantity").value(0))

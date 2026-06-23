@@ -42,9 +42,9 @@ class TrackServiceOrderUseCaseTest {
         useCase.execute(new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null));
 
     assertThat(outputs).hasSize(1);
-    assertThat(outputs.get(0).serviceOrder().id()).isEqualTo(seed.serviceOrder().id());
-    assertThat(outputs.get(0).customer().document().value()).isEqualTo("52998224725");
-    assertThat(outputs.get(0).vehicle().plate().value()).isEqualTo("ABC1D23");
+    assertThat(outputs.getFirst().serviceOrder().id()).isEqualTo(seed.serviceOrder().id());
+    assertThat(outputs.getFirst().customer().document().value()).isEqualTo("52998224725");
+    assertThat(outputs.getFirst().vehicle().plate().value()).isEqualTo("ABC1D23");
   }
 
   @Test
@@ -136,6 +136,26 @@ class TrackServiceOrderUseCaseTest {
                 useCase.execute(
                     new TrackServiceOrderUseCase.Query(
                         null, seed.customer().document().value(), null)))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Vehicle not found");
+  }
+
+  @Test
+  void shouldRejectTrackingWhenCustomerOrPlateDoNotExist() {
+    seed();
+    TrackServiceOrderUseCase useCase = useCase();
+
+    assertThatThrownBy(
+            () -> useCase.execute(new TrackServiceOrderUseCase.Query(null, "11222333000181", null)))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Customer not found");
+    assertThatThrownBy(
+            () -> useCase.execute(new TrackServiceOrderUseCase.Query(null, null, "DEF2G34")))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Vehicle not found");
+    assertThatThrownBy(
+            () ->
+                useCase.execute(new TrackServiceOrderUseCase.Query(null, "52998224725", "DEF2G34")))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("Vehicle not found");
   }

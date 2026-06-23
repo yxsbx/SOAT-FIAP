@@ -80,9 +80,9 @@ class ApplicationUseCaseAdditionalCoverageTest {
     return new Address("Rua A", "10", null, "Centro", "São Paulo", "SP", "01001000");
   }
 
-  private static Customer customer(String name) {
+  private static Customer customer() {
     return new Customer(
-        name, Document.from("52998224725"), "11999999999", "maria@example.com", address());
+        "Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
   }
 
   private static Part part(String sku) {
@@ -119,7 +119,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
   @Test
   void shouldCoverCustomerFindListUpdateAndDeleteUseCases() {
     InMemoryCustomerRepository repository = new InMemoryCustomerRepository();
-    Customer active = repository.save(customer("Maria Silva"));
+    Customer active = repository.save(customer());
     Customer inactive =
         repository.save(
             new Customer(
@@ -162,7 +162,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
   @Test
   void shouldCoverVehicleUseCases() {
     InMemoryCustomerRepository customerRepository = new InMemoryCustomerRepository();
-    Customer customer = customerRepository.save(customer("Maria Silva"));
+    Customer customer = customerRepository.save(customer());
     InMemoryVehicleRepository vehicleRepository = new InMemoryVehicleRepository();
     Vehicle vehicle =
         new CreateVehicleUseCase(vehicleRepository, customerRepository)
@@ -189,6 +189,12 @@ class ApplicationUseCaseAdditionalCoverageTest {
             new ListVehiclesUseCase(vehicleRepository)
                 .execute(new ListVehiclesUseCase.Query(false)))
         .containsExactly(updated);
+    assertThat(
+            new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(null)))
+        .containsExactly(updated);
+    assertThat(
+            new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(true)))
+        .isEmpty();
 
     new DeleteVehicleUseCase(vehicleRepository).execute(vehicle.id());
 
@@ -232,6 +238,14 @@ class ApplicationUseCaseAdditionalCoverageTest {
             new ListWorkshopServicesUseCase(repository)
                 .execute(new ListWorkshopServicesUseCase.Query(false)))
         .containsExactly(updated);
+    assertThat(
+            new ListWorkshopServicesUseCase(repository)
+                .execute(new ListWorkshopServicesUseCase.Query(null)))
+        .containsExactly(updated);
+    assertThat(
+            new ListWorkshopServicesUseCase(repository)
+                .execute(new ListWorkshopServicesUseCase.Query(true)))
+        .isEmpty();
 
     new DeleteWorkshopServiceUseCase(repository).execute(service.id());
 
@@ -338,6 +352,20 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .execute(new ListUsersUseCase.Query(true, "ADMIN", "admin", "admin")))
         .extracting(User::id)
         .containsExactly(admin.id());
+    assertThat(
+            new ListUsersUseCase(userRepository)
+                .execute(new ListUsersUseCase.Query(false, "EMPLOYEE", "employee", "consultor")))
+        .extracting(User::id)
+        .containsExactly(employee.id());
+    assertThat(
+            new ListUsersUseCase(userRepository)
+                .execute(new ListUsersUseCase.Query(null, null, null, "user")))
+        .extracting(User::id)
+        .contains(admin.id(), employee.id());
+    assertThat(
+            new ListUsersUseCase(userRepository)
+                .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
+        .isEmpty();
 
     User created =
         new CreateUserUseCase(userRepository, passwordEncoder)
@@ -374,6 +402,25 @@ class ApplicationUseCaseAdditionalCoverageTest {
     assertThat(updated.username()).isEqualTo("consultor2");
     assertThat(updated.role()).isEqualTo(UserRole.ADMIN);
     assertThat(updated.active()).isFalse();
+
+    User keptIdentity =
+        new UpdateUserUseCase(userRepository)
+            .execute(
+                new UpdateUserUseCase.Command(
+                    updated.id(),
+                    "   ",
+                    "",
+                    null,
+                    "Consultor Tres",
+                    "admin",
+                    "AutoCare",
+                    "Oficina",
+                    "Gestor",
+                    List.of("users:read"),
+                    true));
+    assertThat(keptIdentity.username()).isEqualTo("consultor2");
+    assertThat(keptIdentity.role()).isEqualTo(UserRole.ADMIN);
+    assertThat(keptIdentity.active()).isTrue();
 
     new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
         .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "plain", "new-secret", true));

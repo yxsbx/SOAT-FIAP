@@ -256,35 +256,35 @@ Controles de segurança implementados:
 
 ## 17. Testes e cobertura
 
-O projeto possui testes unitários e de integração para regras de domínio, use cases, segurança, autorização e fluxos REST principais.
-
-Comandos:
+O projeto possui testes unitários e de integração para regras de domínio, use cases, segurança,
+autorização e fluxos REST principais. A validação completa é executada com:
 
 ```powershell
-mvn test
 mvn verify
 ```
 
-Relatório JaCoCo:
+Resultado consolidado em 20/06/2026:
+
+| Métrica | Coberto | Não coberto | Cobertura |
+| --- | ---: | ---: | ---: |
+| Instruções | 9.752 | 397 | 96,09% |
+| Branches | 457 | 49 | 90,32% |
+| Linhas | 2.440 | 75 | 97,02% |
+| Métodos | 634 | 36 | 94,63% |
+
+Resultado documentado: 145 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige
+no mínimo 90% de instruções, linhas e branches.
+
+No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`,
+validações, exceções e transições de status. A entrega passou a exigir 90% também nessa métrica,
+evitando que apenas linhas executadas escondam caminhos alternativos não testados.
+
+Relatórios gerados localmente:
 
 ```text
 target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
 ```
-
-Cobertura global documentada no relatório de segurança. A medição inclui domínio, aplicação,
-controllers REST, segurança, mappers e adapters de persistência. São excluídos apenas o bootstrap da
-aplicação, código gerado automaticamente pelo OpenAPI e records estruturais sem lógica própria:
-
-| Métrica | Coberto | Não coberto | Cobertura |
-| --- | ---: | ---: | ---: |
-| Instruções | 9.533 | 616 | 93,93% |
-| Branches | 385 | 121 | 76,09% |
-| Linhas | 2.385 | 130 | 94,83% |
-| Métodos | 626 | 44 | 93,43% |
-
-Resultado documentado: 109 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige
-no mínimo 90% de instruções e linhas e 70% de branches.
 
 ## 18. Docker e execução local
 
@@ -353,32 +353,11 @@ npm run dev
 
 ## 19. Relatório de vulnerabilidades
 
-Relatório oficial:
+O relatório oficial de vulnerabilidades está versionado em:
 
 <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>
 
-Relatório consolidado de validação executado em 20/06/2026:
-
-<https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/FINAL_VALIDATION_REPORT.md>
-
-Guia de execução de scans:
-
-```text
-docs/SECURITY_SCAN_GUIDE.md
-```
-
-Evidências documentadas:
-
-```text
-target/dependency-check/dependency-check-report.html
-target/dependency-check/dependency-check-report.json
-security-reports/frontend-dependencies/npm-audit-report.json
-security-reports/docker/docker-scout-frontend-cves.txt
-target/site/jacoco/index.html
-target/site/jacoco/jacoco.csv
-```
-
-Resumo dos scans documentados:
+Resumo dos scans finais documentados:
 
 - OWASP Dependency-Check backend: scan final com 0 vulnerabilidades reportadas.
 - `npm audit` frontend: scan final com 0 vulnerabilidades reportadas.
@@ -389,47 +368,33 @@ Resumo dos scans documentados:
 
 ## 20. Vulnerabilidades encontradas
 
-As vulnerabilidades encontradas nos scans iniciais foram registradas no relatório de segurança e corrigidas antes do resultado final.
+Os scans iniciais encontraram vulnerabilidades em dependências backend, dependências frontend e
+imagens Docker. Todas as vulnerabilidades críticas e altas foram corrigidas antes da entrega.
 
-| ID | Ferramenta | Severidade | Pacote/área afetada | Status |
-| --- | --- | --- | --- | --- |
-| VULN-001 | OWASP Dependency-Check | Alta/Média | `log4j-api-2.24.3.jar` | Corrigido |
-| VULN-002 | OWASP Dependency-Check | Alta | `postgresql-42.7.10.jar` | Corrigido |
-| VULN-003 | OWASP Dependency-Check | Crítica/Alta/Média | `spring-boot-3.5.13.jar` e starters | Corrigido |
-| VULN-004 | OWASP Dependency-Check | Alta/Média/Baixa | `spring-core-6.2.17.jar` e `spring-web-6.2.17.jar` | Corrigido |
-| VULN-005 | OWASP Dependency-Check | Alta/Média/Baixa | `spring-security-core-6.5.9.jar` e `spring-security-web-6.5.9.jar` | Corrigido |
-| VULN-006 | OWASP Dependency-Check | Crítica/Alta/Média/Baixa | `tomcat-embed-core-10.1.53.jar` | Corrigido |
-| VULN-007 | OWASP Dependency-Check | Média | `commons-compress-1.24.0.jar` | Corrigido |
-| VULN-008 | OWASP Dependency-Check | Média | `commons-lang3-3.17.0.jar` | Corrigido |
-| VULN-009 | OWASP Dependency-Check | Média/Desconhecida | `swagger-ui-5.32.2.jar` | Corrigido |
-| VULN-010 | npm audit | Alta | `vite`, `esbuild`, `@vitejs/plugin-vue` | Corrigido |
-| VULN-011 | npm audit | Média | `js-yaml-4.1.1` transitivo do ESLint | Corrigido |
-| VULN-012 | Docker Scout | Crítica/Alta/Média | `/usr/bin/pebble` da imagem runtime anterior | Corrigido |
-| VULN-013 | Docker Scout | Crítica/Alta/Média | Imagem frontend Nginx 1.27/Alpine antiga | Corrigido |
-| RISK-001 | Docker Scout | Média | BusyBox da imagem frontend atual | Aceito temporariamente |
+Resumo por origem:
 
-Não há vulnerabilidades críticas ou altas pendentes nos scans finais. Permanece 1 CVE média no
-BusyBox da imagem frontend, sem versão corrigida disponível na base analisada em 20/06/2026.
+| Origem | Exemplos de pacotes/áreas afetadas | Status final |
+| --- | --- | --- |
+| Backend Maven | Spring Boot, Spring Framework, Spring Security, Tomcat, PostgreSQL JDBC, Log4j API, Commons Compress, Commons Lang e Swagger UI | Corrigido |
+| Frontend npm | `vite`, `esbuild`, `@vitejs/plugin-vue` e `js-yaml` transitivo | Corrigido |
+| Imagem backend | Runtime anterior com pacote `/usr/bin/pebble` e CVEs de base | Corrigido |
+| Imagem frontend | Base Nginx/Alpine anterior com CVEs críticas, altas e médias | Corrigido |
+| Imagem frontend atual | BusyBox com 1 CVE média sem versão corrigida disponível | Aceito temporariamente |
+
+A tabela completa com IDs `VULN-001` a `VULN-013`, evidências e impacto está no relatório oficial de
+vulnerabilidades: `docs/SECURITY_REPORT.md`.
 
 ## 21. Correções aplicadas
 
 Correções aplicadas:
 
-- Atualização do BOM Spring Boot para 4.1.0.
-- Atualização transitiva do Spring Framework para 7.0.8.
-- Atualização transitiva do Spring Security para 7.1.0.
-- Atualização transitiva do Tomcat para 11.
-- Atualização do Log4j API para 2.25.4.
-- Atualização do PostgreSQL JDBC para 42.7.11.
-- Override para Commons Compress 1.28.0.
-- Atualização transitiva do Commons Lang para 3.20.0.
-- Atualização direta do Swagger UI para 5.32.6.
-- Atualização do frontend para `vite` 8.0.16 e `@vitejs/plugin-vue` 6.0.7.
-- Atualização transitiva do `js-yaml` via `npm audit fix`.
+- Atualização de dependências Maven vulneráveis.
+- Atualização de dependências frontend vulneráveis.
 - Regeneração do `package-lock.json`.
-- Migração da imagem runtime para `gcr.io/distroless/java21-debian12:nonroot`.
-- Migração do frontend para imagem Nginx unprivileged `mainline-alpine-slim`, fixada por digest.
-- Reexecução dos scans finais: backend e dependências sem vulnerabilidades; frontend sem críticas ou altas.
+- Atualização direta do Swagger UI.
+- Migração da imagem backend para runtime distroless Java 21 non-root.
+- Migração da imagem frontend para Nginx unprivileged `mainline-alpine-slim`, fixada por digest.
+- Reexecução dos scans finais.
 
 A CVE média do BusyBox foi aceita temporariamente porque o scanner não informa versão corrigida. O
 container permanece non-root, read-only e sem novos privilégios.
@@ -445,14 +410,14 @@ Limitações do MVP:
 - Swagger fica público no ambiente local acadêmico.
 - Não há event store para eventos de domínio.
 - Um teste dinâmico dedicado de segurança permanece como melhoria futura.
-- A cobertura de branches e fluxos negativos pode ser ampliada.
+- Cenários extremos e fluxos de regressão podem ser ampliados.
 - A imagem frontend mantém 1 CVE média de base sem correção disponível.
 
 ## 23. Melhorias futuras
 
 Melhorias planejadas ou recomendadas:
 
-- Ampliar cobertura de branches e cenários negativos.
+- Ampliar cenários extremos, regressões funcionais e testes de contrato.
 - Criar auditoria de ações sensíveis.
 - Melhorar histórico detalhado de status da OS.
 - Integrar notificações reais por e-mail, SMS ou WhatsApp.

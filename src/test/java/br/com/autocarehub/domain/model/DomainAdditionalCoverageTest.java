@@ -3,11 +3,14 @@ package br.com.autocarehub.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.enums.StockMovementType;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Money;
+import br.com.autocarehub.domain.valueobject.Plate;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -32,6 +35,30 @@ class DomainAdditionalCoverageTest {
     assertThatThrownBy(() -> money.multiply(-1))
         .isInstanceOf(DomainException.class)
         .hasMessage("Quantity cannot be negative");
+  }
+
+  @Test
+  void shouldCoverDocumentAndPlateValidationBranches() {
+    assertThat(Document.from("529.982.247-25").value()).isEqualTo("52998224725");
+    assertThat(Document.from("11.222.333/0001-81").value()).isEqualTo("11222333000181");
+    assertThat(new Plate("abc-1234").value()).isEqualTo("ABC1234");
+    assertThat(new Plate("abc1d23").value()).isEqualTo("ABC1D23");
+
+    assertThatThrownBy(() -> Document.from(null))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Document must be CPF or CNPJ");
+    assertThatThrownBy(() -> Document.from("   "))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Document must be CPF or CNPJ");
+    assertThatThrownBy(() -> Document.from("11111111111"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid document");
+    assertThatThrownBy(() -> Document.from("11222333000180"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid document");
+    assertThatThrownBy(() -> new Plate("ABC"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid plate");
   }
 
   @Test
@@ -65,6 +92,19 @@ class DomainAdditionalCoverageTest {
                     LocalDateTime.now()))
         .isInstanceOf(DomainException.class)
         .hasMessage("Quantity must be greater than zero");
+  }
+
+  @Test
+  void shouldCoverServiceOrderStatusExternalCodeMapping() {
+    assertThat(ServiceOrderStatus.fromExternalCode("RECEBIDA"))
+        .isEqualTo(ServiceOrderStatus.RECEBIDA);
+    assertThat(ServiceOrderStatus.fromExternalCode("IN_PROGRESS"))
+        .isEqualTo(ServiceOrderStatus.EM_EXECUCAO);
+    assertThat(ServiceOrderStatus.ENTREGUE.externalCode()).isEqualTo("DELIVERED");
+
+    assertThatThrownBy(() -> ServiceOrderStatus.fromExternalCode("UNKNOWN"))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Invalid service order status");
   }
 
   @Test
@@ -102,9 +142,63 @@ class DomainAdditionalCoverageTest {
   }
 
   @Test
+  void shouldCoverBudgetItemAndPartConstructorValidationBranches() {
+    BudgetItem item = new BudgetItem(UUID.randomUUID(), " Filtro ", 2, Money.of("10.00"));
+
+    assertThat(item.description()).isEqualTo("Filtro");
+    assertThat(item.totalPrice().value()).isEqualByComparingTo("20.00");
+
+    assertThatThrownBy(() -> new BudgetItem(UUID.randomUUID(), "   ", 1, Money.of("10.00")))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Budget item description is required");
+    assertThatThrownBy(() -> new BudgetItem(UUID.randomUUID(), "Filtro", 0, Money.of("10.00")))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Quantity must be greater than zero");
+    assertThatThrownBy(
+            () ->
+                new Part(
+                    "Filtro",
+                    "Filtro de oleo",
+                    "SKU-NEG",
+                    "Filtros",
+                    null,
+                    "Bosch",
+                    Money.of("1.00"),
+                    Money.zero(),
+                    1,
+                    1))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Unit price must be greater than zero");
+    assertThatThrownBy(
+            () ->
+                new Part(
+                    UUID.randomUUID(),
+                    "Filtro",
+                    "Filtro de oleo",
+                    "SKU-RES",
+                    "Filtros",
+                    null,
+                    "Bosch",
+                    Money.of("1.00"),
+                    Money.of("10.00"),
+                    1,
+                    2,
+                    1,
+                    3,
+                    null,
+                    true))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Reserved stock cannot be greater than stock");
+  }
+
+  @Test
   void shouldCoverDomainValidationAndAddressBranches() {
     assertThat(DomainValidation.optionalText(null)).isNull();
+    assertThat(DomainValidation.optionalText("   ")).isNull();
     assertThat(DomainValidation.optionalText("  valor  ")).isEqualTo("valor");
+    assertThatThrownBy(() -> DomainValidation.optionalText("x".repeat(81)))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Text exceeds maximum length");
     assertThat(DomainValidation.requireText(" texto ", "required", 10)).isEqualTo("texto");
     assertThatThrownBy(() -> DomainValidation.requireText(" ", "required", 10))
         .isInstanceOf(DomainException.class)

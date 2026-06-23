@@ -56,6 +56,78 @@ class AuthorizationServiceTest {
   }
 
   @Test
+  void shouldRejectCustomerAccessWhenAuthenticationIsMissingOrDifferentCustomer() {
+    UUID customerId = UUID.randomUUID();
+    AuthorizationService authorizationService =
+        new AuthorizationService(customerRepository, serviceOrderRepository);
+
+    assertThat(authorizationService.canAccessCustomer(customerId)).isFalse();
+
+    authenticateCustomer(UUID.randomUUID());
+
+    assertThat(authorizationService.canAccessCustomer(customerId)).isFalse();
+  }
+
+  @Test
+  void shouldAllowCustomerToAccessOwnCustomerAndServiceOrder() {
+    UUID customerId = UUID.randomUUID();
+    ServiceOrder serviceOrder =
+        serviceOrderRepository.save(
+            new ServiceOrder(customerId, UUID.randomUUID(), "Cliente relata ruído ao frear"));
+    authenticateCustomer(customerId);
+    AuthorizationService authorizationService =
+        new AuthorizationService(customerRepository, serviceOrderRepository);
+
+    assertThat(authorizationService.canAccessCustomer(customerId)).isTrue();
+    assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isTrue();
+    assertThat(authorizationService.canTrackServiceOrders(serviceOrder.id(), null)).isTrue();
+  }
+
+  @Test
+  void shouldRejectServiceOrderAccessWithoutCustomerOrWhenOrderDoesNotBelongToCustomer() {
+    ServiceOrder serviceOrder =
+        serviceOrderRepository.save(
+            new ServiceOrder(
+                UUID.randomUUID(), UUID.randomUUID(), "Cliente relata falha elétrica"));
+    AuthorizationService authorizationService =
+        new AuthorizationService(customerRepository, serviceOrderRepository);
+
+    assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
+
+    authenticate(UserRole.ADMIN, null);
+    assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
+
+    authenticateCustomer(UUID.randomUUID());
+    assertThat(authorizationService.canAccessServiceOrder(serviceOrder.id())).isFalse();
+    assertThat(authorizationService.canAccessServiceOrder(UUID.randomUUID())).isFalse();
+  }
+
+  @Test
+  void shouldAllowAdminAndEmployeeToTrackAnyServiceOrder() {
+    AuthorizationService authorizationService =
+        new AuthorizationService(customerRepository, serviceOrderRepository);
+
+    authenticate(UserRole.ADMIN, null);
+    assertThat(authorizationService.canTrackServiceOrders(UUID.randomUUID(), null)).isTrue();
+
+    authenticate(UserRole.EMPLOYEE, null);
+    assertThat(authorizationService.canTrackServiceOrders(null, "bad-document")).isTrue();
+  }
+
+  @Test
+  void shouldRejectTrackingWhenAuthenticationOrCustomerContextIsMissing() {
+    AuthorizationService authorizationService =
+        new AuthorizationService(customerRepository, serviceOrderRepository);
+
+    assertThat(authorizationService.canTrackServiceOrders(null, "52998224725")).isFalse();
+
+    authenticate(UserRole.CUSTOMER, null);
+    assertThat(authorizationService.canTrackServiceOrders(null, "52998224725")).isFalse();
+    assertThat(authorizationService.canTrackServiceOrders(null, null)).isFalse();
+    assertThat(authorizationService.canTrackServiceOrders(null, "   ")).isFalse();
+  }
+
+  @Test
   void shouldRejectTrackingWhenCustomerDocumentIsInvalid() {
     Customer customer =
         customerRepository.save(
@@ -73,13 +145,17 @@ class AuthorizationServiceTest {
   }
 
   private void authenticateCustomer(UUID customerId) {
+    authenticate(UserRole.CUSTOMER, customerId);
+  }
+
+  private void authenticate(UserRole role, UUID customerId) {
     AuthenticatedUser user =
         new AuthenticatedUser(
             new User(
                 UUID.randomUUID(),
-                "cliente@autocarehub.com",
+                role.name().toLowerCase() + "@autocarehub.com",
                 "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-                UserRole.CUSTOMER,
+                role,
                 customerId,
                 true,
                 LocalDateTime.now()));
@@ -118,14 +194,17 @@ class AuthorizationServiceTest {
 
   private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
 
+    private final Map<UUID, ServiceOrder> serviceOrders = new LinkedHashMap<>();
+
     @Override
     public ServiceOrder save(ServiceOrder serviceOrder) {
+      serviceOrders.put(serviceOrder.id(), serviceOrder);
       return serviceOrder;
     }
 
     @Override
     public Optional<ServiceOrder> findById(UUID id) {
-      return Optional.empty();
+      return Optional.ofNullable(serviceOrders.get(id));
     }
 
     @Override

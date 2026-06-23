@@ -11,9 +11,9 @@
 | Área | Resultado |
 | --- | --- |
 | Backend | Aprovado |
-| Testes Maven | 109 testes, 0 falhas, 0 erros, 0 ignorados |
-| Cobertura JaCoCo global | 93,93% de instruções, 94,83% de linhas e 76,09% de branches |
-| Gate de cobertura | Mínimo de 90% para instruções/linhas e 70% para branches atendido |
+| Testes Maven | 145 testes, 0 falhas, 0 erros, 0 ignorados |
+| Cobertura JaCoCo global | 96,09% de instruções, 97,02% de linhas e 90,32% de branches |
+| Gate de cobertura | Mínimo de 90% para instruções, linhas e branches atendido |
 | Frontend build | Aprovado |
 | Frontend lint | 0 erros e 0 warnings |
 | Spotless Java | Aprovado |
@@ -74,10 +74,10 @@ O JaCoCo mede domínio, aplicação, REST, segurança, mappers e persistência. 
 
 | Métrica | Coberto | Não coberto | Cobertura |
 | --- | ---: | ---: | ---: |
-| Instruções | 9.533 | 616 | 93,93% |
-| Branches | 385 | 121 | 76,09% |
-| Linhas | 2.385 | 130 | 94,83% |
-| Métodos | 626 | 44 | 93,43% |
+| Instruções | 9.752 | 397 | 96,09% |
+| Branches | 457 | 49 | 90,32% |
+| Linhas | 2.440 | 75 | 97,02% |
+| Métodos | 634 | 36 | 94,63% |
 
 ## Segurança das imagens
 
@@ -110,4 +110,4 @@ security-reports/static-analysis/semgrep.json
 
 ## Pendências de entrega
 
-- Gravar o vídeo seguindo `docs/VIDEO_SCRIPT.md`.
+- Gravar o vídeo seguindo `video/VIDEO_SCRIPT.md`.

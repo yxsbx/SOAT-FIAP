@@ -307,7 +307,7 @@ npm audit --json
 Guia:
 
 ```text
-docs/SECURITY_SCAN_GUIDE.md
+validation/SECURITY_SCAN_GUIDE.md
 ```
 
 ### 20. Atualizar relatório de vulnerabilidades
@@ -451,5 +451,5 @@ Use esta versão como checklist rápido logo antes de clicar em gravar.
 - [ ] PDF final aberto e links conferidos.
 - [x] Usuário `soatarchitecture` com acesso Read ao repositório privado.
 - [x] Alterações finais disponíveis na branch `main`.
-- [ ] Roteiro do vídeo aberto em `docs/VIDEO_SCRIPT.md`.
+- [ ] Roteiro do vídeo aberto em `video/VIDEO_SCRIPT.md`.
 - [ ] Abas já preparadas: Swagger, README, DDD, Event Storming, relatório de segurança e sistema.

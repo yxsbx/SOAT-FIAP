@@ -4,7 +4,7 @@
 
 Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e interfaces REST.
 
-O objetivo desta documentação é servir como base para o PDF final, para o vídeo de apresentação e para a avaliação técnica do MVP.
+O objetivo desta documentação é registrar as decisões de domínio usadas no MVP e servir como evidência técnica da aplicação de DDD.
 
 ## 2. Contexto do problema
 

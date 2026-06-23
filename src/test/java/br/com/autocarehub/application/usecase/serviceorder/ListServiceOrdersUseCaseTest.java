@@ -69,6 +69,48 @@ class ListServiceOrdersUseCaseTest {
     assertThat(result).extracting(ServiceOrder::id).containsExactly(expected.id());
   }
 
+  @Test
+  void shouldReturnAllOrdersWhenNoFiltersAreProvided() {
+    ServiceOrder first =
+        serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.RECEBIDA, daysAgo(1));
+    ServiceOrder second =
+        serviceOrder(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            ServiceOrderStatus.AGUARDANDO_APROVACAO,
+            daysAgo(2));
+    repository.save(first);
+    repository.save(second);
+    ListServiceOrdersUseCase useCase = new ListServiceOrdersUseCase(repository);
+
+    List<ServiceOrder> result =
+        useCase.execute(new ListServiceOrdersUseCase.Query(null, null, null, null, null));
+
+    assertThat(useCase.execute())
+        .extracting(ServiceOrder::id)
+        .containsExactly(first.id(), second.id());
+    assertThat(result).extracting(ServiceOrder::id).containsExactly(first.id(), second.id());
+  }
+
+  @Test
+  void shouldIncludeOrdersOnDateBoundariesAndExcludeAfterUpperBound() {
+    UUID customerId = UUID.randomUUID();
+    UUID vehicleId = UUID.randomUUID();
+    LocalDateTime boundary = daysAgo(1);
+    ServiceOrder expected =
+        serviceOrder(customerId, vehicleId, ServiceOrderStatus.RECEBIDA, boundary);
+    ServiceOrder afterUpperBound =
+        serviceOrder(customerId, vehicleId, ServiceOrderStatus.RECEBIDA, boundary.plusMinutes(1));
+    repository.save(expected);
+    repository.save(afterUpperBound);
+    ListServiceOrdersUseCase useCase = new ListServiceOrdersUseCase(repository);
+
+    List<ServiceOrder> result =
+        useCase.execute(new ListServiceOrdersUseCase.Query(null, null, null, boundary, boundary));
+
+    assertThat(result).extracting(ServiceOrder::id).containsExactly(expected.id());
+  }
+
   private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
 
     private final Map<UUID, ServiceOrder> serviceOrders = new LinkedHashMap<>();

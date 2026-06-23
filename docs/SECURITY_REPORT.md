@@ -101,16 +101,16 @@ Permanece 1 CVE média aceita temporariamente na imagem frontend.
 O relatório JaCoCo mede domínio, aplicação, controllers REST, segurança, mappers e adapters de
 persistência. São excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pelo
 OpenAPI e records estruturais de comando, consulta e saída sem lógica própria. O gate executado por
-`mvn verify` exige no mínimo 90% de instruções e linhas e 70% de branches.
+`mvn verify` exige no mínimo 90% de instruções, linhas e branches.
 
 | Metrica | Coberto | Nao coberto | Cobertura |
 | --- | ---: | ---: | ---: |
-| Instrucoes | 9.533 | 616 | 93,93% |
-| Branches | 385 | 121 | 76,09% |
-| Linhas | 2.385 | 130 | 94,83% |
-| Metodos | 626 | 44 | 93,43% |
+| Instrucoes | 9.752 | 397 | 96,09% |
+| Branches | 457 | 49 | 90,32% |
+| Linhas | 2.440 | 75 | 97,02% |
+| Metodos | 634 | 36 | 94,63% |
 
-Resultado validado com 109 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 145 testes automatizados e `mvn verify` concluindo com sucesso.
 
 ## 10. Tabela de vulnerabilidades encontradas
 
@@ -284,7 +284,7 @@ Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, G
 6. Reexecutar Semgrep e avaliar integração futura com SonarQube.
 7. Configurar CI para bloquear vulnerabilidades criticas e altas sem aceite formal.
 8. Restringir Swagger em ambientes produtivos.
-9. Manter a cobertura global acima dos gates de 90% para instruções/linhas e 70% para branches.
+9. Manter a cobertura global acima dos gates de 90% para instruções, linhas e branches.
 
 ## Checklist de seguranca
 

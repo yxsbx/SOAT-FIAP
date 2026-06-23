@@ -10,6 +10,7 @@ import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
+import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
@@ -83,6 +84,44 @@ class CreateServiceOrderUseCaseTest {
     assertThat(serviceOrder.budgetGeneratedAt()).isNotNull();
     assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(1);
     assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity()).isEqualTo(10);
+  }
+
+  @Test
+  void shouldReuseExistingCustomerVehicleAndSkipBudgetWhenRequested() {
+    Customer customer =
+        customerRepository.save(
+            new Customer(
+                "Maria Silva",
+                Document.from("52998224725"),
+                "11999999999",
+                "maria@example.com",
+                address()));
+    Vehicle vehicle =
+        vehicleRepository.save(
+            new Vehicle(customer.id(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 35000));
+    WorkshopService service =
+        workshopServiceRepository.save(
+            new WorkshopService(
+                "Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
+    CreateServiceOrderUseCase useCase = useCase();
+
+    ServiceOrder serviceOrder =
+        useCase.execute(
+            new CreateServiceOrderUseCase.Command(
+                customer.document().value(),
+                null,
+                null,
+                new CreateServiceOrderUseCase.VehicleInput(
+                    vehicle.plate().value(), "Honda", "Civic", 2020, 36000),
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                null,
+                false));
+
+    assertThat(serviceOrder.customerId()).isEqualTo(customer.id());
+    assertThat(serviceOrder.vehicleId()).isEqualTo(vehicle.id());
+    assertThat(serviceOrder.status()).isEqualTo(ServiceOrderStatus.RECEBIDA);
+    assertThat(serviceOrder.budgetGeneratedAt()).isNull();
   }
 
   @Test
@@ -200,6 +239,134 @@ class CreateServiceOrderUseCaseTest {
                         true)))
         .isInstanceOf(ApplicationException.class)
         .hasMessage("Vehicle does not belong to customer");
+  }
+
+  @Test
+  void shouldRejectInactiveServiceAndInactivePart() {
+    Customer customer =
+        customerRepository.save(
+            new Customer(
+                "Maria Silva",
+                Document.from("52998224725"),
+                "11999999999",
+                "maria@example.com",
+                address()));
+    Vehicle vehicle =
+        vehicleRepository.save(
+            new Vehicle(customer.id(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 35000));
+    WorkshopService inactiveService =
+        workshopServiceRepository.save(
+            new WorkshopService(
+                "Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
+    inactiveService.deactivate();
+    Part inactivePart =
+        partRepository.save(
+            new Part(
+                "Filtro de oleo",
+                "FILTRO-001",
+                "Filtros",
+                "Oleo",
+                "Bosch",
+                Money.of("40.00"),
+                10,
+                2));
+    inactivePart.deactivate();
+    WorkshopService activeService =
+        workshopServiceRepository.save(
+            new WorkshopService("Alinhamento", "Alinhamento completo", Money.of("90.00"), 45));
+    CreateServiceOrderUseCase useCase = useCase();
+
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new CreateServiceOrderUseCase.Command(
+                        customer.document().value(),
+                        null,
+                        vehicle.id(),
+                        null,
+                        "Cliente relata barulho no motor",
+                        List.of(
+                            new CreateServiceOrderUseCase.ServiceInput(inactiveService.id(), 1)),
+                        List.of(),
+                        false)))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Workshop service is inactive");
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new CreateServiceOrderUseCase.Command(
+                        customer.document().value(),
+                        null,
+                        vehicle.id(),
+                        null,
+                        "Cliente relata barulho no motor",
+                        List.of(new CreateServiceOrderUseCase.ServiceInput(activeService.id(), 1)),
+                        List.of(new CreateServiceOrderUseCase.PartInput(inactivePart.id(), 1)),
+                        false)))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Part is inactive");
+  }
+
+  @Test
+  void shouldRejectMissingVehicleServiceAndPartReferences() {
+    Customer customer =
+        customerRepository.save(
+            new Customer(
+                "Maria Silva",
+                Document.from("52998224725"),
+                "11999999999",
+                "maria@example.com",
+                address()));
+    Vehicle vehicle =
+        vehicleRepository.save(
+            new Vehicle(customer.id(), new Plate("ABC1D23"), "Honda", "Civic", 2020, 35000));
+    WorkshopService service =
+        workshopServiceRepository.save(
+            new WorkshopService("Alinhamento", "Alinhamento completo", Money.of("90.00"), 45));
+    CreateServiceOrderUseCase useCase = useCase();
+
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new CreateServiceOrderUseCase.Command(
+                        customer.document().value(),
+                        null,
+                        UUID.randomUUID(),
+                        null,
+                        "Cliente relata barulho no motor",
+                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                        List.of(),
+                        false)))
+        .isInstanceOf(ApplicationException.class)
+        .hasMessage("Vehicle not found");
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new CreateServiceOrderUseCase.Command(
+                        customer.document().value(),
+                        null,
+                        vehicle.id(),
+                        null,
+                        "Cliente relata barulho no motor",
+                        List.of(new CreateServiceOrderUseCase.ServiceInput(UUID.randomUUID(), 1)),
+                        List.of(),
+                        false)))
+        .isInstanceOf(ApplicationException.class)
+        .hasMessage("Workshop service not found");
+    assertThatThrownBy(
+            () ->
+                useCase.execute(
+                    new CreateServiceOrderUseCase.Command(
+                        customer.document().value(),
+                        null,
+                        vehicle.id(),
+                        null,
+                        "Cliente relata barulho no motor",
+                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                        List.of(new CreateServiceOrderUseCase.PartInput(UUID.randomUUID(), 1)),
+                        false)))
+        .isInstanceOf(ApplicationException.class)
+        .hasMessage("Part not found");
   }
 
   private CreateServiceOrderUseCase useCase() {

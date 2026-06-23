@@ -7,6 +7,9 @@ import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class ServiceOrderTest {
@@ -82,6 +85,41 @@ class ServiceOrderTest {
   }
 
   @Test
+  void shouldRejectAddingPartWhenStockIsUnavailable() {
+    ServiceOrder serviceOrder = serviceOrder();
+    Part part =
+        new Part("Oil filter", "OIL-LOW", "Filters", null, "Bosch", Money.of("50.00"), 1, 1);
+
+    assertThatThrownBy(() -> serviceOrder.addPart(part, 2))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Part stock is not available");
+  }
+
+  @Test
+  void shouldRejectApprovalWhenBudgetTimestampIsMissing() {
+    ServiceOrder serviceOrder =
+        new ServiceOrder(
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            UUID.randomUUID(),
+            ServiceOrderStatus.AGUARDANDO_APROVACAO,
+            "Initial diagnostic notes",
+            List.of(),
+            List.of(),
+            Money.zero(),
+            LocalDateTime.now(),
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    assertThatThrownBy(serviceOrder::approveBudget)
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Budget must be generated before approval");
+  }
+
+  @Test
   void shouldNotChangeItemsAfterBudgetWasGenerated() {
     ServiceOrder serviceOrder = serviceOrderWithItems();
     serviceOrder.generateBudget();
@@ -92,6 +130,30 @@ class ServiceOrderTest {
                     new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
         .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
         .hasMessage("Service order items cannot be changed in current status");
+  }
+
+  @Test
+  void shouldNotChangeItemsWhenExecutionOrDeliveryFlowAlreadyStarted() {
+    ServiceOrder inProgress = serviceOrderWithItems();
+    inProgress.generateBudget();
+    inProgress.approveBudget();
+    inProgress.startExecution();
+    assertCannotAddService(inProgress);
+
+    ServiceOrder finished = serviceOrderWithItems();
+    finished.generateBudget();
+    finished.approveBudget();
+    finished.startExecution();
+    finished.finish();
+    assertCannotAddService(finished);
+
+    ServiceOrder delivered = serviceOrderWithItems();
+    delivered.generateBudget();
+    delivered.approveBudget();
+    delivered.startExecution();
+    delivered.finish();
+    delivered.deliver();
+    assertCannotAddService(delivered);
   }
 
   @Test
@@ -134,5 +196,30 @@ class ServiceOrderTest {
     assertThat(serviceOrder.startedAt()).isNotNull();
     assertThat(serviceOrder.finishedAt()).isNotNull();
     assertThat(serviceOrder.deliveredAt()).isNotNull();
+  }
+
+  @Test
+  void shouldRejectBlankNamesInServiceOrderItems() {
+    assertThatThrownBy(
+            () ->
+                new ServiceOrder.ServiceOrderService(
+                    UUID.randomUUID(), "   ", 1, Money.of("10.00")))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("Service name is required");
+    assertThatThrownBy(
+            () ->
+                new ServiceOrder.ServiceOrderPart(
+                    UUID.randomUUID(), "Part", "   ", 1, Money.of("10.00")))
+        .isInstanceOf(DomainException.class)
+        .hasMessage("SKU is required");
+  }
+
+  private static void assertCannotAddService(ServiceOrder serviceOrder) {
+    assertThatThrownBy(
+            () ->
+                serviceOrder.addService(
+                    new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
+        .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
+        .hasMessage("Service order items cannot be changed in current status");
   }
 }

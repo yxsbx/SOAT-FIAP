@@ -54,7 +54,7 @@ class RegisterPartStockMovementUseCaseTest {
 
     assertThat(updated.stockQuantity()).isEqualTo(15);
     assertThat(stockMovementRepository.movements()).hasSize(1);
-    assertThat(stockMovementRepository.movements().get(0).movementType()).isEqualTo("ENTRY");
+    assertThat(stockMovementRepository.movements().getFirst().movementType()).isEqualTo("ENTRY");
   }
 
   @Test
@@ -74,7 +74,7 @@ class RegisterPartStockMovementUseCaseTest {
 
     assertThat(updated.stockQuantity()).isEqualTo(6);
     assertThat(stockMovementRepository.movements()).hasSize(1);
-    assertThat(stockMovementRepository.movements().get(0).movementType()).isEqualTo("EXIT");
+    assertThat(stockMovementRepository.movements().getFirst().movementType()).isEqualTo("EXIT");
   }
 
   @Test

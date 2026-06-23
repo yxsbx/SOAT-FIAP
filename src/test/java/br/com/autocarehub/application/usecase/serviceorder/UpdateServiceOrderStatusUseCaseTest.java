@@ -67,6 +67,22 @@ class UpdateServiceOrderStatusUseCaseTest {
   }
 
   @Test
+  void shouldMoveReceivedOrderToDiagnosis() {
+    ServiceOrder serviceOrder =
+        new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+    serviceOrderRepository.save(serviceOrder);
+    UpdateServiceOrderStatusUseCase useCase =
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
+
+    ServiceOrder updated =
+        useCase.execute(
+            new UpdateServiceOrderStatusUseCase.Command(
+                serviceOrder.id(), ServiceOrderStatus.EM_DIAGNOSTICO));
+
+    assertThat(updated.status()).isEqualTo(ServiceOrderStatus.EM_DIAGNOSTICO);
+  }
+
+  @Test
   void shouldRejectInvalidTransitionBackToReceived() {
     ServiceOrder serviceOrder = serviceOrderWithGeneratedAndApprovedBudget();
     serviceOrderRepository.save(serviceOrder);
@@ -132,6 +148,21 @@ class UpdateServiceOrderStatusUseCaseTest {
     assertThat(updated.status()).isEqualTo(ServiceOrderStatus.AGUARDANDO_APROVACAO);
     assertThat(updated.budgetGeneratedAt()).isNotNull();
     assertThat(partRepository.findById(part.id()).orElseThrow().reservedQuantity()).isEqualTo(2);
+  }
+
+  @Test
+  void shouldNotRegenerateBudgetWhenBudgetAlreadyExists() {
+    ServiceOrder serviceOrder = serviceOrderWithGeneratedBudget();
+    serviceOrderRepository.save(serviceOrder);
+    UpdateServiceOrderStatusUseCase useCase =
+        new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
+
+    ServiceOrder updated =
+        useCase.execute(
+            new UpdateServiceOrderStatusUseCase.Command(
+                serviceOrder.id(), ServiceOrderStatus.AGUARDANDO_APROVACAO));
+
+    assertThat(updated.budgetGeneratedAt()).isEqualTo(serviceOrder.budgetGeneratedAt());
   }
 
   private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {

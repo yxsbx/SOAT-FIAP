@@ -472,9 +472,9 @@ docker compose down
 - O projeto possui testes unitários e de integração.
 - Os testes cobrem domínio, use cases, segurança, autorização e fluxos REST.
 - O relatório JaCoCo está configurado no Maven.
-- A documentação registra 109 testes automatizados e `mvn verify` com sucesso.
-- A cobertura global é 93,93% de instruções, 94,83% de linhas e 76,09% de branches.
-- Os gates automatizados exigem 90% de instruções/linhas e 70% de branches.
+- A documentação registra 145 testes automatizados e `mvn verify` com sucesso.
+- A cobertura global é 96,09% de instruções, 97,02% de linhas e 90,32% de branches.
+- Os gates automatizados exigem 90% de instruções, linhas e branches.
 - REST e infraestrutura entram na medição; apenas código gerado e records sem lógica são excluídos.
 
 **O que mostrar na tela**
@@ -529,7 +529,7 @@ mvn verify
 
 ```text
 docs/SECURITY_REPORT.md
-docs/SECURITY_SCAN_GUIDE.md
+validation/SECURITY_SCAN_GUIDE.md
 target/dependency-check/dependency-check-report.html
 security-reports/frontend-dependencies/npm-audit-report.json
 security-reports/docker/docker-scout-cves.txt

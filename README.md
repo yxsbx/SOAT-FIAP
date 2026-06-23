@@ -1,125 +1,102 @@
 # AutoCare Hub
 
-AutoCare Hub e um MVP academico desenvolvido para o Tech Challenge FIAP. A entrega principal e um backend monolitico em Java/Spring Boot para gestao de uma oficina mecanica, com API REST, arquitetura em camadas, conceitos de DDD, autenticacao JWT, documentacao OpenAPI/Swagger, migrations com Flyway, Docker, testes automatizados e relatorio de vulnerabilidades.
+AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger, Docker, testes e relatório de vulnerabilidades.
 
-O repositorio tambem possui um frontend Vue/Vite em `frontend/` para demonstracao da experiencia web, mas o foco do roteiro oficial e o backend.
+O repositório também inclui um frontend Vue/Vite em `frontend/` para apoiar a demonstração visual. A branch final de entrega é `main`.
 
-## Contexto do Desafio
+## Sumário da Entrega
 
-O Tech Challenge solicita um MVP backend para uma oficina mecanica, capaz de organizar o ciclo de atendimento de clientes e veículos:
+`docs/` concentra a documentação pública exigida para avaliação. Materiais de apoio para gravação e validação operacional ficam fora dessa pasta para não serem confundidos com o PDF final.
+
+Documentos oficiais:
+
+| Item exigido | Onde abrir | O que comprova |
+| --- | --- | --- |
+| Documento final de entrega | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) | Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades, limitações e conclusão. |
+| PDF final gerado | [output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf](output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf) | Versão em PDF do documento final para envio. |
+| DDD | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados, políticas e fluxos. |
+| Event Storming | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md) | Comandos, eventos, políticas, exceções e fluxos de OS e estoque. |
+| Swagger/OpenAPI | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html` | Contrato REST versionado e interface local para testar a API. |
+| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md) | Scans executados, vulnerabilidades encontradas, correções e riscos aceitos. |
+
+Apoio interno:
+
+| Material | Onde abrir |
+| --- | --- |
+| Roteiro do vídeo | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md) |
+| Checklist pré-gravação | [video/PRE_RECORDING_CHECKLIST.md](video/PRE_RECORDING_CHECKLIST.md) |
+| Guia de scans | [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md) |
+| Validação final | [validation/FINAL_VALIDATION_REPORT.md](validation/FINAL_VALIDATION_REPORT.md) |
+| Rubrica de aderência | [validation/FACULTY_RUBRIC_VALIDATION.md](validation/FACULTY_RUBRIC_VALIDATION.md) |
+| Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
+
+## Dados da Entrega
+
+| Campo | Valor |
+| --- | --- |
+| Projeto | AutoCare Hub |
+| Responsável | Yasmin Barcelos Pires |
+| RM | RM370897 |
+| Discord | `yxsbx` |
+| Repositório | <https://github.com/yxsbx/SOAT-FIAP> |
+| Branch final | `main` |
+| Acesso de avaliação | Usuário `soatarchitecture` com acesso Read concedido |
+| Data consolidada nos documentos | 20/06/2026 |
+
+## Escopo do MVP
+
+O Tech Challenge solicita um MVP backend para uma oficina mecânica. O AutoCare Hub entrega:
 
 - cadastro de clientes;
 - cadastro de veículos;
-- cadastro de servicos;
-- cadastro de pecas e insumos;
+- cadastro de serviços;
+- cadastro de peças e insumos;
 - controle de estoque;
-- criacao de Ordem de Servico;
-- geracao e aprovacao de orcamento;
-- acompanhamento da Ordem de Servico pelo cliente via API;
-- seguranca nas APIs administrativas;
-- documentacao, testes, Docker e relatorio de vulnerabilidades.
+- criação de Ordem de Serviço;
+- geração e aprovação de orçamento;
+- mudança de status da Ordem de Serviço;
+- acompanhamento da OS pelo cliente via API;
+- autenticação e autorização com JWT;
+- Swagger/OpenAPI;
+- Docker e execução local reproduzível;
+- testes automatizados, cobertura e relatório de vulnerabilidades.
 
-## Problema Resolvido
-
-Oficinas mecanicas costumam lidar com informacoes espalhadas sobre clientes, veículos, servicos, pecas, orcamentos e andamento das Ordens de Servico. Isso dificulta rastreabilidade, controle de estoque, comunicacao com o cliente e gestao do atendimento.
-
-O AutoCare Hub centraliza esses dados em uma API REST, permitindo que a oficina registre o atendimento desde a identificacao do cliente ate a entrega do veículo.
-
-## Objetivo do MVP
-
-Entregar um backend monolitico funcional, testavel e documentado para:
-
-- administrar clientes, veículos, servicos, pecas e insumos;
-- criar Ordens de Servico completas;
-- gerar orcamentos automaticamente a partir de servicos e pecas;
-- permitir aprovacao do orcamento;
-- controlar status da OS;
-- consultar o andamento da OS pelo cliente;
-- proteger APIs administrativas com JWT;
-- validar dados sensiveis como CPF/CNPJ e placa.
-
-## Funcionalidades Implementadas
-
-- Autenticacao com JWT.
-- CRUD administrativo de clientes.
-- CRUD administrativo de veículos.
-- CRUD administrativo de servicos da oficina.
-- CRUD administrativo de pecas e insumos.
-- Controle de estoque com entrada, saida, reserva, liberacao e baixa.
-- Criacao de Ordem de Servico com cliente identificado por CPF/CNPJ.
-- Cadastro ou vinculacao de veículo na criacao da OS.
-- Inclusao de servicos solicitados.
-- Inclusao de pecas e insumos.
-- Geracao automatica de orcamento.
-- Aprovacao de orcamento.
-- Controle de status da OS.
-- Consulta de OS pelo cliente via API.
-- Tempo medio de execucao de Ordens de Servico finalizadas.
-- Cadastro e consulta de interessados em parceria.
-- Gestao basica de usuarios, permissoes e preferencias.
-- Swagger/OpenAPI.
-- Dockerfile e `docker-compose.yml`.
-- Testes unitarios e de integracao.
-- Documentacao DDD e Event Storming.
-- Relatorio de vulnerabilidades.
-
-## Tecnologias Utilizadas
+## Visão Técnica Resumida
 
 Backend:
 
-- Java 21
-- Spring Boot 4.1.0
-- Spring Web MVC
-- Spring Security
-- Spring Data JPA
-- Hibernate
-- PostgreSQL 16
-- Flyway
-- Maven
-- JWT com JJWT
-- Springdoc Swagger UI
-- OpenAPI Generator
-- JaCoCo
-- OWASP Dependency-Check
-- JUnit 5
-- Mockito
-- H2 em testes
-- Testcontainers
+- Java 21;
+- Spring Boot 4.1.0;
+- Spring Web MVC;
+- Spring Security;
+- Spring Data JPA;
+- PostgreSQL 16;
+- Flyway;
+- Maven;
+- JJWT;
+- Springdoc Swagger UI;
+- JaCoCo;
+- OWASP Dependency-Check;
+- JUnit 5, Mockito, H2 e Testcontainers.
 
 Frontend demonstrativo:
 
-- Vue 3
-- Vite 8
-- Pinia
-- Vue Router
-- Lucide Vue
-- ESLint
+- Vue 3;
+- Vite 8;
+- Pinia;
+- Vue Router;
+- Lucide Vue;
+- ESLint.
 
 Infraestrutura:
 
-- Docker
-- Docker Compose
+- Docker;
+- Docker Compose;
+- Nginx para servir o frontend em container.
 
-## Justificativa do Banco de Dados
+## Arquitetura em uma Página
 
-O banco escolhido para o ambiente principal e PostgreSQL.
-
-A escolha e adequada ao dominio porque o MVP trabalha com dados relacionais e consistentes:
-
-- um cliente pode ter varios veículos;
-- uma OS pertence a um cliente e a um veículo;
-- uma OS possui servicos e pecas;
-- pecas possuem quantidade em estoque;
-- movimentacoes de estoque precisam manter integridade;
-- usuarios podem estar associados a perfis, empresas e permissoes.
-
-PostgreSQL oferece transacoes, integridade referencial, indices, suporte amplo no ecossistema Spring e boa aderencia a cenarios reais de sistemas administrativos.
-
-Nos testes automatizados, o projeto usa H2 e/ou Testcontainers conforme o tipo de teste, mantendo execucao local reproduzivel.
-
-## Arquitetura do Projeto
-
-O backend e um monolito em camadas. A separacao principal e:
+O backend é um monolito em camadas:
 
 ```text
 src/main/java/br/com/autocarehub
@@ -143,296 +120,67 @@ src/main/java/br/com/autocarehub
         `-- mapper
 ```
 
-Responsabilidades:
+Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) e [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
 
-- `domain`: regras de negocio, entidades, value objects, enums, excecoes e politicas.
-- `application`: use cases que coordenam os fluxos da aplicacao.
-- `infrastructure`: persistencia JPA, configuracoes, seguranca e adaptadores.
-- `interfaces`: controllers REST, tratamento de excecoes REST e mapeamento de DTOs.
+## Execução com Docker
 
-Controllers nao acessam repositories diretamente. Eles chamam use cases, que aplicam regras e interagem com portas/adaptadores.
+Pré-requisitos:
 
-## Estrutura de Pastas
+- Docker;
+- Docker Compose.
 
-```text
-.
-|-- docs
-|   |-- DDD_DOCUMENTATION.md
-|   |-- EVENT_STORMING.md
-|   |-- SECURITY_REPORT.md
-|   |-- SECURITY_SCAN_GUIDE.md
-|   |-- DELIVERY_DOCUMENT.md
-|   `-- openapi/openapi.yaml
-|-- frontend
-|   |-- package.json
-|   |-- package-lock.json
-|   `-- src
-|-- security-reports
-|   `-- frontend-dependencies/npm-audit-report.json
-|-- src
-|   |-- main
-|   |   |-- java/br/com/autocarehub
-|   |   `-- resources
-|   |       |-- application.yml
-|   |       `-- db/migration/V1__create_autocarehub_baseline.sql
-|   `-- test
-|-- Dockerfile
-|-- docker-compose.yml
-|-- pom.xml
-|-- .env.example
-`-- README.md
-```
-
-## Aplicacao de DDD
-
-O projeto aplica DDD de forma pragmatica dentro de um monolito em camadas.
-
-Principais elementos:
-
-- Entidades de dominio: `Customer`, `Vehicle`, `ServiceOrder`, `WorkshopService`, `Part`, `Budget`, `BudgetItem`, `StockMovement`, `User`.
-- Value Objects: `Document`, `Plate`, `Money`, `Address`.
-- Enums de dominio: `ServiceOrderStatus`, `StockMovementType`, `DocumentType`, `UserRole`.
-- Excecoes de dominio: `DomainException`, `InvalidServiceOrderStatusTransitionException`.
-- Politicas de dominio: `PlatformFeePolicy`.
-- Use cases de aplicacao: criacao de OS, geracao de orcamento, aprovacao de orcamento, controle de estoque, CRUDs administrativos e autenticacao.
-
-A Ordem de Servico e o agregado central do fluxo de atendimento. Ela conecta cliente, veículo, servicos, pecas, orcamento, status e historico de andamento.
-
-Documentacao complementar:
-
-```text
-docs/DDD_DOCUMENTATION.md
-docs/EVENT_STORMING.md
-```
-
-## Linguagem Ubiqua Resumida
-
-| Termo | Significado |
-| --- | --- |
-| Cliente | Pessoa fisica ou juridica atendida pela oficina, identificada por CPF ou CNPJ. |
-| Veiculo | Bem do cliente atendido pela oficina, identificado por placa, marca, modelo e ano. |
-| Ordem de Servico | Registro principal do atendimento da oficina. |
-| Servico | Atividade executada pela oficina, com descricao e preco. |
-| Peca/Insumo | Item fisico usado no atendimento e controlado em estoque. |
-| Estoque | Quantidade disponivel, reservada e minima de pecas/insumos. |
-| Orcamento | Composicao financeira da OS, calculada por servicos e pecas. |
-| Aprovacao | Confirmacao do cliente para executar o orcamento. |
-| Status da OS | Etapa atual da Ordem de Servico. |
-
-Status da OS:
-
-```text
-RECEBIDA
-EM_DIAGNOSTICO
-AGUARDANDO_APROVACAO
-EM_EXECUCAO
-FINALIZADA
-ENTREGUE
-```
-
-## Fluxos Principais
-
-### Criacao da OS
-
-1. A API recebe CPF/CNPJ do cliente.
-2. Se o cliente existir, ele e vinculado a OS.
-3. Se o cliente nao existir, ele pode ser cadastrado.
-4. O veículo e identificado por placa.
-5. Se o veículo nao existir, ele pode ser cadastrado e vinculado ao cliente.
-6. Servicos solicitados sao incluidos.
-7. Pecas e insumos podem ser incluidos.
-8. A OS e criada com status inicial adequado.
-
-Endpoint principal:
-
-```text
-POST /api/v1/service-orders
-```
-
-### Geracao de Orcamento
-
-1. A OS possui servicos e, opcionalmente, pecas.
-2. O sistema calcula total de servicos.
-3. O sistema calcula total de pecas.
-4. O sistema calcula total geral.
-5. A OS passa para `AGUARDANDO_APROVACAO` quando aplicavel.
-
-Endpoint:
-
-```text
-POST /api/v1/service-orders/{serviceOrderId}/budget/generate
-```
-
-### Aprovacao do Orcamento
-
-1. O cliente ou usuario autorizado aprova o orcamento.
-2. A OS e liberada para execucao.
-3. Reservas de pecas podem ser convertidas em baixa de estoque quando aplicavel.
-4. O status passa para uma etapa coerente com a execucao.
-
-Endpoint:
-
-```text
-POST /api/v1/service-orders/{serviceOrderId}/budget/approve
-```
-
-### Acompanhamento da OS
-
-O cliente pode acompanhar o andamento da Ordem de Servico via API, consultando dados basicos da OS, veículo, status, servicos, pecas, orcamento e historico disponivel.
-
-Endpoint:
-
-```text
-GET /api/v1/service-orders/tracking
-```
-
-### Gestao de Estoque
-
-1. Pecas e insumos sao cadastrados com preco, quantidade e estoque minimo.
-2. Entradas aumentam a quantidade disponivel.
-3. Saidas reduzem a quantidade disponivel.
-4. Reservas bloqueiam quantidade para orcamento.
-5. Liberacao devolve quantidade reservada.
-6. Baixa definitiva reduz estoque quando a peca e usada ou vendida.
-7. O dominio impede estoque negativo.
-
-Endpoints principais:
-
-```text
-GET /api/v1/parts
-POST /api/v1/parts
-PATCH /api/v1/parts/{partId}/stock
-PATCH /api/v1/parts/{partId}/stock-movement
-PATCH /api/v1/parts/{partId}/reserve
-PATCH /api/v1/parts/{partId}/release-reservation
-PATCH /api/v1/parts/{partId}/commit-reservation
-```
-
-## Seguranca
-
-### JWT
-
-- Login por `POST /api/v1/auth/login`.
-- Token JWT assinado com segredo vindo de variavel de ambiente.
-- Expiracao configuravel por `JWT_EXPIRATION_MINUTES`.
-- APIs administrativas exigem token Bearer.
-
-### Validacoes
-
-- CPF real.
-- CNPJ real.
-- Placa brasileira antiga e Mercosul.
-- E-mail.
-- Tamanhos maximos em campos textuais.
-- Precos e quantidades nao negativos.
-- Rejeicao de campos desconhecidos via Jackson.
-
-### Tratamento de Erros
-
-- Handler REST global.
-- Erros padronizados.
-- Excecoes de dominio e aplicacao convertidas para respostas HTTP adequadas.
-- Sem retorno intencional de stacktrace ao usuario.
-
-### Protecao de Endpoints
-
-- Spring Security centraliza autorizacao por rota.
-- Endpoints administrativos exigem roles/perfis adequados.
-- CORS configuravel e sem wildcard.
-- Swagger pode ser desabilitado por variavel de ambiente.
-
-## Como Executar Localmente
-
-Pre-requisitos para desenvolvimento sem containers:
-
-- Java 21
-- Maven 3.9+
-- Node.js `^20.19.0 || >=22.12.0`
-- npm
-- Docker e Docker Compose para o PostgreSQL
-
-Crie o arquivo `.env` a partir do exemplo:
+Crie o `.env` a partir do exemplo:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Edite o `.env` e informe pelo menos:
+Preencha pelo menos:
 
 ```text
 POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
 JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
 ```
 
-Suba somente o banco:
-
-```powershell
-docker compose up -d postgres
-```
-
-Execute a API:
-
-```powershell
-mvn spring-boot:run
-```
-
-URL padrao:
-
-```text
-http://localhost:8080
-```
-
-## Como Executar Tudo com Docker
-
-Pre-requisitos:
-
-- Docker
-- Docker Compose
-
-Crie e edite o `.env`:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Suba PostgreSQL, API e frontend com um único comando:
+Suba banco, backend e frontend com um único comando:
 
 ```powershell
 docker compose up -d --build
 ```
 
-Parar:
+URLs:
+
+```text
+Frontend: http://localhost:5173
+API: http://localhost:8080
+Swagger: http://localhost:8080/swagger-ui.html
+PostgreSQL: localhost:5432
+```
+
+O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por exemplo `http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
+
+Parar os serviços:
 
 ```powershell
 docker compose down
 ```
 
-Remover volume do banco local:
+Remover o volume local do banco:
 
 ```powershell
 docker compose down -v
 ```
 
-Servicos:
+## Execução em Desenvolvimento
 
-```text
-Frontend: http://localhost:5173
-API: http://localhost:8080
-PostgreSQL: localhost:5432
-Swagger: http://localhost:8080/swagger-ui.html
+Backend:
+
+```powershell
+docker compose up -d postgres
+mvn spring-boot:run
 ```
 
-O frontend usa proxy reverso para a API. Assim, também pode ser aberto pelo IP local da máquina, por
-exemplo `http://192.168.x.x:5173`, sem depender de CORS entre o navegador e o backend.
-
-## Frontend em Desenvolvimento
-
-Pre-requisitos:
-
-- Node.js compativel com Vite 8: `^20.19.0 || >=22.12.0`
-- npm
-
-Executar:
+Frontend:
 
 ```powershell
 cd frontend
@@ -440,73 +188,37 @@ npm ci
 npm run dev
 ```
 
-URL padrao:
+## Usuários de Demonstração
+
+Os usuários seed são carregados por `src/main/resources/db/migration/V1__create_autocarehub_baseline.sql`.
+
+A senha universal de todos os usuários seed abaixo é exclusiva do ambiente local:
 
 ```text
-http://localhost:5173
+autocare123
 ```
 
-Build:
+| Usuário | Perfil | Senha |
+| --- | --- | --- |
+| `admin@autocarehub.com` | Admin técnico inicial | `autocare123` |
+| `master@autocarehub.com` | Admin Master da plataforma | `autocare123` |
+| `oficina.admin@autocarehub.com` | Admin de oficina | `autocare123` |
+| `loja.admin@autocarehub.com` | Admin de loja de peças | `autocare123` |
+| `oficina.funcionario@autocarehub.com` | Funcionário de oficina | `autocare123` |
+| `loja.funcionario@autocarehub.com` | Funcionário de loja de peças | `autocare123` |
+| `cliente@autocarehub.com` | Cliente final demo | `autocare123` |
+
+Exemplo de login:
 
 ```powershell
-cd frontend
-npm run build
+curl -X POST http://localhost:8080/api/v1/auth/login `
+  -H "Content-Type: application/json" `
+  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
 ```
 
-## Como Rodar Testes
+## Swagger e Endpoints
 
-Backend:
-
-```powershell
-mvn test
-```
-
-Validacao completa Maven:
-
-```powershell
-mvn verify
-```
-
-Frontend:
-
-```powershell
-cd frontend
-npm run build
-```
-
-## Como Verificar Cobertura
-
-Gerar relatorio JaCoCo:
-
-```powershell
-mvn test
-```
-
-Abrir:
-
-```text
-target/site/jacoco/index.html
-```
-
-Cobertura global validada em 20/06/2026 pelo JaCoCo:
-
-| Metrica | Coberto | Nao coberto | Cobertura |
-| --- | ---: | ---: | ---: |
-| Instrucoes | 9.533 | 616 | 93,93% |
-| Branches | 385 | 121 | 76,09% |
-| Linhas | 2.385 | 130 | 94,83% |
-| Metodos | 626 | 44 | 93,43% |
-
-Resultado: 109 testes automatizados, 0 falhas, 0 erros e `mvn verify` concluído com sucesso.
-
-O relatório inclui domínio, aplicação, controllers REST, segurança, mappers e adapters de persistência.
-São excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pelo OpenAPI e records
-estruturais de comando, consulta e saída sem lógica própria. O gate do Maven exige no mínimo 90% de
-instruções e linhas e 70% de branches para o conjunto medido.
-
-## Como Acessar Swagger
-
-Com a API em execucao:
+Swagger local:
 
 ```text
 http://localhost:8080/swagger-ui.html
@@ -518,199 +230,29 @@ Contrato OpenAPI versionado:
 docs/openapi/openapi.yaml
 ```
 
-Fluxo de autenticacao no Swagger:
+Autenticação no Swagger:
 
 1. Execute `POST /api/v1/auth/login`.
 2. Copie o token retornado.
 3. Clique em `Authorize`.
-4. Informe:
+4. Informe `Bearer <token>`.
 
-```text
-Bearer <token>
-```
+Principais grupos de endpoints:
 
-No MVP academico, Swagger fica habilitado para facilitar avaliacao. Para desabilitar:
+| Grupo | Rotas principais |
+| --- | --- |
+| Autenticação | `POST /api/v1/auth/login` |
+| Clientes | `/api/v1/customers` |
+| Veículos | `/api/v1/vehicles` |
+| Serviços | `/api/v1/workshop-services` |
+| Peças e estoque | `/api/v1/parts` |
+| Ordens de Serviço | `/api/v1/service-orders` |
+| Orçamento | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
+| Tracking do cliente | `/api/v1/service-orders/tracking` |
+| Usuários | `/api/v1/users` e `/api/v1/users/me` |
+| Leads de demonstração | `/api/v1/demo-leads` |
 
-```text
-SPRINGDOC_API_DOCS_ENABLED=false
-SPRINGDOC_SWAGGER_UI_ENABLED=false
-```
-
-## Usuarios de Demonstracao
-
-Os usuarios demo sao carregados por `src/main/resources/db/migration/V1__create_autocarehub_baseline.sql`.
-
-A senha universal de **todos os usuários seed abaixo** é exclusiva do ambiente local e não deve ser
-reutilizada em produção:
-
-```text
-autocare123
-```
-
-| Usuario | Perfil | Senha |
-| --- | --- | --- |
-| `admin@autocarehub.com` | Admin tecnico inicial | `autocare123` |
-| `master@autocarehub.com` | Admin Master da plataforma | `autocare123` |
-| `oficina.admin@autocarehub.com` | Admin de oficina | `autocare123` |
-| `loja.admin@autocarehub.com` | Admin de loja de pecas | `autocare123` |
-| `oficina.funcionario@autocarehub.com` | Funcionario de oficina | `autocare123` |
-| `loja.funcionario@autocarehub.com` | Funcionario de loja de pecas | `autocare123` |
-| `cliente@autocarehub.com` | Cliente final demo | `autocare123` |
-
-Exemplo de login:
-
-```powershell
-curl -X POST http://localhost:8080/api/v1/auth/login `
-  -H "Content-Type: application/json" `
-  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
-```
-
-## Endpoints Principais
-
-Autenticacao:
-
-```text
-POST /api/v1/auth/login
-```
-
-Clientes:
-
-```text
-GET    /api/v1/customers
-POST   /api/v1/customers
-GET    /api/v1/customers/{customerId}
-PUT    /api/v1/customers/{customerId}
-DELETE /api/v1/customers/{customerId}
-GET    /api/v1/customers/{customerId}/vehicles
-GET    /api/v1/customers/{customerId}/service-orders
-```
-
-Veiculos:
-
-```text
-GET    /api/v1/vehicles
-POST   /api/v1/vehicles
-GET    /api/v1/vehicles/{vehicleId}
-PUT    /api/v1/vehicles/{vehicleId}
-DELETE /api/v1/vehicles/{vehicleId}
-```
-
-Servicos:
-
-```text
-GET    /api/v1/workshop-services
-POST   /api/v1/workshop-services
-GET    /api/v1/workshop-services/{serviceId}
-PUT    /api/v1/workshop-services/{serviceId}
-DELETE /api/v1/workshop-services/{serviceId}
-```
-
-Pecas e estoque:
-
-```text
-GET    /api/v1/parts
-POST   /api/v1/parts
-GET    /api/v1/parts/{partId}
-PUT    /api/v1/parts/{partId}
-DELETE /api/v1/parts/{partId}
-PATCH  /api/v1/parts/{partId}/stock
-PATCH  /api/v1/parts/{partId}/stock-movement
-PATCH  /api/v1/parts/{partId}/reservation
-PATCH  /api/v1/parts/{partId}/reserve
-PATCH  /api/v1/parts/{partId}/release-reservation
-PATCH  /api/v1/parts/{partId}/commit-reservation
-```
-
-Ordens de Servico:
-
-```text
-GET   /api/v1/service-orders
-POST  /api/v1/service-orders
-GET   /api/v1/service-orders/{serviceOrderId}
-POST  /api/v1/service-orders/{serviceOrderId}/services
-POST  /api/v1/service-orders/{serviceOrderId}/parts
-POST  /api/v1/service-orders/{serviceOrderId}/budget/generate
-POST  /api/v1/service-orders/{serviceOrderId}/budget/approve
-PATCH /api/v1/service-orders/{serviceOrderId}/status
-GET   /api/v1/service-orders/tracking
-GET   /api/v1/service-orders/metrics/average-execution-time
-```
-
-Usuarios:
-
-```text
-GET   /api/v1/users/me
-PUT   /api/v1/users/me
-PATCH /api/v1/users/me/password
-GET   /api/v1/users/me/preferences/home
-PUT   /api/v1/users/me/preferences/home
-GET   /api/v1/users
-POST  /api/v1/users
-GET   /api/v1/users/partners
-PUT   /api/v1/users/{userId}
-PATCH /api/v1/users/{userId}/password
-```
-
-Interessados em parceria:
-
-```text
-POST /api/v1/demo-leads
-GET  /api/v1/demo-leads
-```
-
-## Como Executar o Scan de Vulnerabilidades
-
-Backend:
-
-```powershell
-mvn dependency-check:check
-```
-
-Relatorios gerados:
-
-```text
-target/dependency-check/
-```
-
-Frontend:
-
-```powershell
-cd frontend
-npm audit --json
-```
-
-Guia completo:
-
-```text
-docs/SECURITY_SCAN_GUIDE.md
-```
-
-## Relatorio de Vulnerabilidades
-
-Relatorio oficial atualizado:
-
-```text
-docs/SECURITY_REPORT.md
-```
-
-Evidencias atuais:
-
-```text
-target/dependency-check/dependency-check-report.html
-target/dependency-check/dependency-check-report.json
-security-reports/frontend-dependencies/npm-audit-report.json
-```
-
-Resultado atual documentado:
-
-- Dependency-Check backend: 0 vulnerabilidades.
-- npm audit frontend: 0 vulnerabilidades.
-- Docker Scout backend: 0 vulnerabilidades na imagem final distroless.
-- Docker Scout frontend: 0 críticas, 0 altas e 1 média sem correção disponível na imagem base.
-- Gitleaks: 0 leaks em 36 commits.
-- Semgrep: 0 achados e 0 erros em 200 arquivos com 187 regras.
-
-## Validação Automatizada da Entrega
+## Validação Rápida
 
 Com o ambiente Docker ativo:
 
@@ -718,42 +260,100 @@ Com o ambiente Docker ativo:
 powershell -ExecutionPolicy Bypass -File scripts/validate-delivery.ps1
 ```
 
-O script valida frontend, OpenAPI, login JWT e leitura dos dados seed. O workflow
-`.github/workflows/quality.yml` executa Spotless, testes, cobertura, lint sem warnings, build,
-`npm audit`, validação do Compose e build das imagens em pushes e pull requests para `main`.
+Esse script valida frontend, OpenAPI, login JWT e leitura dos dados seed.
 
-## Decisoes Tecnicas
+Validação completa backend:
 
-- Monolito em camadas para reduzir complexidade operacional no MVP.
-- DDD aplicado no dominio e na camada de aplicacao sem criar microsservicos.
-- PostgreSQL como banco principal por consistencia relacional.
-- Flyway para versionamento de schema.
-- OpenAPI versionado para contrato REST e Swagger.
-- JWT stateless para proteger APIs administrativas.
-- Docker Compose para ambiente local reproduzivel.
-- Senhas com BCrypt.
-- Segredos por variaveis de ambiente.
-- Migrations consolidadas para facilitar recriacao limpa do banco academico.
-- Frontend demonstrativo incluído no mesmo Docker Compose da API e do banco.
+```powershell
+mvn verify
+```
 
-## Limitacoes Conhecidas
+Validação frontend:
 
-- Nao ha pagamento online.
-- Nao ha envio real de e-mail, SMS ou WhatsApp.
-- Historico de status da OS e simplificado para o MVP.
-- Controle de multiplas oficinas/lojas existe de forma simplificada no mesmo monolito.
-- Swagger fica publico no ambiente local academico.
-- Um teste dinamico dedicado de segurança permanece como melhoria futura.
-- A imagem frontend mantém 1 CVE média de BusyBox sem versão corrigida disponível na base analisada.
+```powershell
+cd frontend
+npm run lint
+npm run build
+npm audit --audit-level=low
+```
+
+Scans de segurança:
+
+```powershell
+mvn dependency-check:check -DautoUpdate=false
+```
+
+Demais comandos e opções: [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md).
+
+## Evidências de Qualidade
+
+Resultado consolidado em 20/06/2026:
+
+| Área | Resultado |
+| --- | --- |
+| Testes Maven | 145 testes, 0 falhas, 0 erros, 0 ignorados |
+| Cobertura JaCoCo | 96,09% instruções, 97,02% linhas e 90,32% branches |
+| Gate de cobertura | 90% instruções, 90% linhas e 90% branches |
+| Frontend lint | 0 erros e 0 warnings |
+| Frontend build | Aprovado |
+| npm audit | 0 vulnerabilidades |
+| OWASP Dependency-Check | 126 dependências, 0 vulneráveis |
+| Docker Scout backend | 0 vulnerabilidades |
+| Docker Scout frontend | 0 críticas, 0 altas e 1 média sem correção disponível |
+| Gitleaks | 0 leaks em 36 commits |
+| Semgrep | 0 achados em 200 arquivos com 187 regras |
+
+No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`,
+validações, exceções e transições de status. Por isso o gate também exige 90% nessa métrica.
+
+Relatórios e evidências:
+
+```text
+validation/FINAL_VALIDATION_REPORT.md
+docs/SECURITY_REPORT.md
+target/site/jacoco/index.html
+target/site/jacoco/jacoco.csv
+target/dependency-check/dependency-check-report.html
+target/dependency-check/dependency-check-report.json
+security-reports/frontend-dependencies/npm-audit-report.json
+security-reports/docker/docker-scout-cves.txt
+security-reports/docker/docker-scout-frontend-cves.txt
+security-reports/secrets/gitleaks.json
+security-reports/static-analysis/semgrep.json
+```
+
+## CI
+
+O workflow [.github/workflows/quality.yml](.github/workflows/quality.yml) executa em pushes e pull requests para `main`:
+
+- Spotless;
+- testes e cobertura Maven;
+- lint sem warnings;
+- build frontend;
+- `npm audit`;
+- validação do Docker Compose;
+- build das imagens Docker.
+
+## Limitações Conhecidas
+
+As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md). Resumo:
+
+- não há pagamento online;
+- não há envio real de e-mail, SMS ou WhatsApp;
+- histórico de status da OS é simplificado para o MVP;
+- multiempresa/multitenancy está simplificado;
+- Swagger fica público no ambiente local acadêmico;
+- teste dinâmico dedicado de segurança permanece como melhoria futura;
+- imagem frontend mantém 1 CVE média de BusyBox sem versão corrigida disponível na base analisada.
 
 ## Melhorias Futuras
 
-- Ampliar cobertura de branches e fluxos negativos.
-- Criar auditoria de acoes sensiveis.
-- Melhorar historico detalhado de status da OS.
-- Integrar notificacoes reais para cliente.
-- Restringir Swagger por ambiente/perfil em producao.
-- Evoluir multiempresa/multitenancy.
-- Adicionar pipeline CI com testes, cobertura e scans de seguranca.
-- Reexecutar Docker Scout, Gitleaks e Semgrep em cada ciclo de entrega.
-- Evoluir metricas operacionais da oficina.
+O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
+
+- ampliar cenários extremos e fluxos de regressão;
+- criar auditoria de ações sensíveis;
+- melhorar histórico detalhado de status da OS;
+- integrar notificações reais para cliente;
+- restringir Swagger por ambiente/perfil;
+- evoluir multiempresa/multitenancy;
+- reexecutar scans de segurança em cada ciclo de entrega.
