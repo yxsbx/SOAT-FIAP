@@ -2,7 +2,7 @@ package br.com.autocarehub.application.exception;
 
 public class ResourceNotFoundException extends ApplicationException {
 
-  public ResourceNotFoundException(String message) {
-    super(message);
-  }
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
 }

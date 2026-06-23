@@ -4,7 +4,8 @@ Tempo máximo: 15 minutos
 Projeto: AutoCare Hub  
 Apresentadora: Yasmin Barcelos Pires - RM370897  
 Data: 20/06/2026  
-Formato sugerido: gravação de tela com narração objetiva, alternando entre documentação, código, Swagger e demonstração rápida.
+Formato sugerido: gravação de tela com narração objetiva, alternando entre documentação, código, Swagger e demonstração
+rápida.
 
 ## 0:00 - 0:40 | 1. Apresentação
 
@@ -18,9 +19,9 @@ Formato sugerido: gravação de tela com narração objetiva, alternando entre d
 
 - Abrir `docs/DELIVERY_DOCUMENT.md`.
 - Mostrar as seções:
-  - `1. Nome do grupo/entrega individual`.
-  - `2. Participantes`.
-  - `4. Nome do projeto`.
+    - `1. Nome do grupo/entrega individual`.
+    - `2. Participantes`.
+    - `4. Nome do projeto`.
 
 **Arquivos ou endpoints**
 
@@ -37,7 +38,8 @@ docs/DELIVERY_DOCUMENT.md
 
 **O que falar**
 
-- Oficinas mecânicas costumam lidar com dados espalhados: clientes, veículos, serviços, peças, estoque, orçamentos e status da OS.
+- Oficinas mecânicas costumam lidar com dados espalhados: clientes, veículos, serviços, peças, estoque, orçamentos e
+  status da OS.
 - Essa fragmentação dificulta rastreabilidade, comunicação com o cliente, controle de estoque e gestão do atendimento.
 - O AutoCare Hub centraliza esse fluxo em uma API REST.
 
@@ -95,11 +97,11 @@ README.md
 
 - Mostrar a raiz do projeto no editor.
 - Mostrar rapidamente:
-  - `src/`.
-  - `frontend/`.
-  - `docs/`.
-  - `docker-compose.yml`.
-  - `Dockerfile`.
+    - `src/`.
+    - `frontend/`.
+    - `docs/`.
+    - `docker-compose.yml`.
+    - `Dockerfile`.
 
 **Arquivos ou endpoints**
 
@@ -132,10 +134,10 @@ docker-compose.yml
 
 - Mostrar a árvore de pacotes.
 - Abrir exemplos rápidos:
-  - Entidade/agregado de domínio.
-  - Use case.
-  - Controller.
-  - Adapter/repository.
+    - Entidade/agregado de domínio.
+    - Use case.
+    - Controller.
+    - Adapter/repository.
 
 **Arquivos ou endpoints**
 
@@ -620,8 +622,10 @@ frontend/src/pages/DashboardView.vue
 **O que falar**
 
 - Reforçar que o AutoCare Hub entrega o ciclo principal de atendimento de oficina.
-- Relembrar os pontos técnicos: DDD, Event Storming, API REST, Swagger, JWT, PostgreSQL, Docker, testes e vulnerabilidades.
-- Citar limitações conhecidas: sem pagamento online, sem notificação real, Swagger público no ambiente acadêmico e scans complementares ainda recomendados.
+- Relembrar os pontos técnicos: DDD, Event Storming, API REST, Swagger, JWT, PostgreSQL, Docker, testes e
+  vulnerabilidades.
+- Citar limitações conhecidas: sem pagamento online, sem notificação real, Swagger público no ambiente acadêmico e scans
+  complementares ainda recomendados.
 - Encerrar informando que o projeto está documentado e pronto para avaliação.
 
 **O que mostrar na tela**

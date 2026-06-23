@@ -6,37 +6,39 @@ import br.com.autocarehub.domain.valueobject.Money;
 
 public class CreatePartUseCase {
 
-  private final PartRepository partRepository;
+    private final PartRepository partRepository;
 
-  public CreatePartUseCase(PartRepository partRepository) {
-    this.partRepository = partRepository;
-  }
+    public CreatePartUseCase(PartRepository partRepository) {
+        this.partRepository = partRepository;
+    }
 
-  public Part execute(Command command) {
-    Part part =
-        new Part(
-            command.name(),
-            command.description(),
-            command.sku(),
-            command.category(),
-            command.subcategory(),
-            command.brand(),
-            command.costPrice(),
-            command.unitPrice(),
-            command.stockQuantity(),
-            command.minimumStock());
-    return partRepository.save(part);
-  }
+    public Part execute(Command command) {
+        Part part =
+                new Part(
+                        command.name(),
+                        command.description(),
+                        command.sku(),
+                        command.category(),
+                        command.subcategory(),
+                        command.brand(),
+                        command.costPrice(),
+                        command.unitPrice(),
+                        command.stockQuantity(),
+                        command.minimumStock());
+        return partRepository.save(part);
+    }
 
-  public record Command(
-      String name,
-      String description,
-      String sku,
-      String category,
-      String subcategory,
-      String brand,
-      Money costPrice,
-      Money unitPrice,
-      int stockQuantity,
-      int minimumStock) {}
+    public record Command(
+            String name,
+            String description,
+            String sku,
+            String category,
+            String subcategory,
+            String brand,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock) {
+
+    }
 }

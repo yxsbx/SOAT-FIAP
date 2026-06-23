@@ -2,15 +2,22 @@
 
 ## 1. Introdução
 
-Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e interfaces REST.
+Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do
+Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e
+interfaces REST.
 
-O objetivo desta documentação é registrar as decisões de domínio usadas no MVP e servir como evidência técnica da aplicação de DDD.
+O objetivo desta documentação é registrar as decisões de domínio usadas no MVP e servir como evidência técnica da
+aplicação de DDD.
 
 ## 2. Contexto do problema
 
-Oficinas mecânicas precisam controlar clientes, veículos, ordens de serviço, serviços solicitados, peças, insumos, orçamentos, aprovações e estoque. Quando esses dados ficam dispersos em planilhas, mensagens ou controles manuais, surgem problemas de rastreabilidade, perda de histórico, divergência de estoque e baixa transparência para o cliente.
+Oficinas mecânicas precisam controlar clientes, veículos, ordens de serviço, serviços solicitados, peças, insumos,
+orçamentos, aprovações e estoque. Quando esses dados ficam dispersos em planilhas, mensagens ou controles manuais,
+surgem problemas de rastreabilidade, perda de histórico, divergência de estoque e baixa transparência para o cliente.
 
-O AutoCare Hub organiza o ciclo de atendimento da oficina: identificação do cliente, cadastro ou vinculação do veículo, criação da Ordem de Serviço, composição com serviços e peças, geração de orçamento, aprovação, execução, finalização e entrega do veículo.
+O AutoCare Hub organiza o ciclo de atendimento da oficina: identificação do cliente, cadastro ou vinculação do veículo,
+criação da Ordem de Serviço, composição com serviços e peças, geração de orçamento, aprovação, execução, finalização e
+entrega do veículo.
 
 ## 3. Objetivo do MVP
 
@@ -30,11 +37,13 @@ O MVP entrega uma API REST para uma oficina mecânica, com foco em:
 - documentação OpenAPI/Swagger;
 - testes automatizados dos fluxos críticos.
 
-Funcionalidades de marketplace, pagamentos, notificações, agenda e integrações externas são melhorias futuras e não fazem parte do núcleo obrigatório do MVP.
+Funcionalidades de marketplace, pagamentos, notificações, agenda e integrações externas são melhorias futuras e não
+fazem parte do núcleo obrigatório do MVP.
 
 ## 4. Visão geral do domínio
 
-O domínio central é o atendimento de oficina. A Ordem de Serviço representa o agregado principal do fluxo e conecta cliente, veículo, serviços solicitados, peças/insumos, orçamento, status e datas relevantes.
+O domínio central é o atendimento de oficina. A Ordem de Serviço representa o agregado principal do fluxo e conecta
+cliente, veículo, serviços solicitados, peças/insumos, orçamento, status e datas relevantes.
 
 A arquitetura do projeto separa responsabilidades:
 
@@ -45,24 +54,25 @@ A arquitetura do projeto separa responsabilidades:
 
 ## 5. Linguagem Ubíqua
 
-| Termo de negócio | Nome técnico no código | Definição |
-| --- | --- | --- |
-| Cliente | `Customer` | Pessoa física ou jurídica atendida pela oficina, identificada por CPF ou CNPJ. |
-| Documento | `Document` | CPF ou CNPJ validado, normalizado e usado para evitar duplicidade. |
-| Veículo | `Vehicle` | Veículo pertencente a um cliente, identificado por placa, marca, modelo e ano. |
-| Placa | `Plate` | Identificador do veículo, aceitando formato antigo brasileiro e Mercosul. |
-| Ordem de Serviço | `ServiceOrder` | Registro central do atendimento da oficina. |
-| Status da OS | `ServiceOrderStatus` | Estado controlado da Ordem de Serviço. |
-| Serviço | `WorkshopService` | Atividade executável pela oficina. |
-| Peça/Insumo | `Part` | Item físico usado em serviço ou vendido separadamente. |
-| Estoque | `Part` + `StockMovement` | Quantidade total, reservada e disponível de peças ou insumos. |
-| Movimentação de estoque | `StockMovement` | Registro de entrada, saída, venda, reserva confirmada ou ajuste. |
-| Orçamento | `Budget` | Cálculo financeiro gerado a partir dos serviços e peças da OS. |
-| Item de orçamento | `BudgetItem` | Item calculável do orçamento. |
-| Aprovação | `approveBudget` | Aceite do cliente para execução do orçamento. |
-| Baixa de estoque | métodos de `Part` | Redução definitiva do estoque após aprovação ou saída registrada. |
+| Termo de negócio        | Nome técnico no código   | Definição                                                                      |
+|-------------------------|--------------------------|--------------------------------------------------------------------------------|
+| Cliente                 | `Customer`               | Pessoa física ou jurídica atendida pela oficina, identificada por CPF ou CNPJ. |
+| Documento               | `Document`               | CPF ou CNPJ validado, normalizado e usado para evitar duplicidade.             |
+| Veículo                 | `Vehicle`                | Veículo pertencente a um cliente, identificado por placa, marca, modelo e ano. |
+| Placa                   | `Plate`                  | Identificador do veículo, aceitando formato antigo brasileiro e Mercosul.      |
+| Ordem de Serviço        | `ServiceOrder`           | Registro central do atendimento da oficina.                                    |
+| Status da OS            | `ServiceOrderStatus`     | Estado controlado da Ordem de Serviço.                                         |
+| Serviço                 | `WorkshopService`        | Atividade executável pela oficina.                                             |
+| Peça/Insumo             | `Part`                   | Item físico usado em serviço ou vendido separadamente.                         |
+| Estoque                 | `Part` + `StockMovement` | Quantidade total, reservada e disponível de peças ou insumos.                  |
+| Movimentação de estoque | `StockMovement`          | Registro de entrada, saída, venda, reserva confirmada ou ajuste.               |
+| Orçamento               | `Budget`                 | Cálculo financeiro gerado a partir dos serviços e peças da OS.                 |
+| Item de orçamento       | `BudgetItem`             | Item calculável do orçamento.                                                  |
+| Aprovação               | `approveBudget`          | Aceite do cliente para execução do orçamento.                                  |
+| Baixa de estoque        | métodos de `Part`        | Redução definitiva do estoque após aprovação ou saída registrada.              |
 
-Os nomes técnicos permanecem em inglês para manter compatibilidade com o código e com o contrato REST, mas a linguagem de negócio usada na documentação é em português.
+Os nomes técnicos permanecem em inglês para manter compatibilidade com o código e com o contrato REST, mas a linguagem
+de negócio usada na documentação é em português.
 
 ## 6. Subdomínios
 
@@ -92,7 +102,8 @@ Os nomes técnicos permanecem em inglês para manter compatibilidade com o códi
 
 ### Atendimento de Oficina
 
-Contexto principal do MVP. Contém Ordem de Serviço, diagnóstico, serviços solicitados, peças vinculadas, orçamento, aprovação, status e acompanhamento pelo cliente.
+Contexto principal do MVP. Contém Ordem de Serviço, diagnóstico, serviços solicitados, peças vinculadas, orçamento,
+aprovação, status e acompanhamento pelo cliente.
 
 ### Cadastro de Clientes e Veículos
 
@@ -108,7 +119,8 @@ Responsável por peças, insumos, estoque, reservas, entradas, saídas e baixa.
 
 ### Orçamentos e Aprovação
 
-Responsável pela geração automática do orçamento, disponibilização ao cliente e aprovação. No MVP, esse contexto fica fortemente acoplado ao fluxo da Ordem de Serviço.
+Responsável pela geração automática do orçamento, disponibilização ao cliente e aprovação. No MVP, esse contexto fica
+fortemente acoplado ao fluxo da Ordem de Serviço.
 
 ### Identidade e Acesso
 
@@ -133,7 +145,9 @@ Responsável por autenticação JWT, usuários, perfis e autorização de APIs a
 - `Address`: estrutura endereço do cliente.
 - `BudgetItem`: item calculável do orçamento.
 
-O período de execução ainda não existe como value object próprio. No MVP, o tempo de execução é calculado a partir das datas registradas na Ordem de Serviço. Caso regras de SLA e prazo cresçam, uma melhoria futura é criar um value object `ExecutionPeriod`.
+O período de execução ainda não existe como value object próprio. No MVP, o tempo de execução é calculado a partir das
+datas registradas na Ordem de Serviço. Caso regras de SLA e prazo cresçam, uma melhoria futura é criar um value
+object `ExecutionPeriod`.
 
 ## 10. Agregados
 
@@ -177,7 +191,8 @@ Responsabilidades:
 
 ### Cliente e Veículo
 
-`Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente, e a placa é tratada como identificador único do veículo.
+`Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente, e a placa é tratada como
+identificador único do veículo.
 
 ## 11. Repositórios
 
@@ -193,7 +208,8 @@ As portas de repositório ficam em `br.com.autocarehub.application.port.out`:
 - `UserPreferenceRepository`
 - `DemoLeadRepository`
 
-As implementações JPA ficam em `br.com.autocarehub.infrastructure.persistence.adapter`, separando persistência da regra de negócio.
+As implementações JPA ficam em `br.com.autocarehub.infrastructure.persistence.adapter`, separando persistência da regra
+de negócio.
 
 ## 12. Serviços de domínio
 
@@ -204,7 +220,8 @@ Serviços e regras de domínio identificados no projeto:
 - `Part`: concentra regras de reserva, liberação, baixa e disponibilidade de estoque.
 - `Document`, `Plate` e `Money`: protegem regras de validação e consistência de valores.
 
-O projeto não usa um barramento de eventos de domínio no MVP. Os eventos são documentados como linguagem de modelagem e podem virar implementação explícita em evolução futura.
+O projeto não usa um barramento de eventos de domínio no MVP. Os eventos são documentados como linguagem de modelagem e
+podem virar implementação explícita em evolução futura.
 
 ## 13. Serviços de aplicação
 
@@ -212,11 +229,18 @@ Os serviços de aplicação estão organizados como use cases em `br.com.autocar
 
 Principais fluxos:
 
-- Clientes: `CreateCustomerUseCase`, `UpdateCustomerUseCase`, `FindCustomerUseCase`, `ListCustomersUseCase`, `DeleteCustomerUseCase`.
-- Veículos: `CreateVehicleUseCase`, `UpdateVehicleUseCase`, `FindVehicleUseCase`, `ListVehiclesUseCase`, `ListVehiclesByCustomerUseCase`, `DeleteVehicleUseCase`.
-- Serviços: `CreateWorkshopServiceUseCase`, `UpdateWorkshopServiceUseCase`, `FindWorkshopServiceUseCase`, `ListWorkshopServicesUseCase`, `DeleteWorkshopServiceUseCase`.
-- Peças/estoque: `CreatePartUseCase`, `UpdatePartUseCase`, `FindPartUseCase`, `ListPartsUseCase`, `RegisterPartStockMovementUseCase`, `ReservePartStockUseCase`, `ReleasePartReservationUseCase`, `CommitPartReservationUseCase`, `UpdatePartStockUseCase`.
-- Ordens de Serviço: `CreateServiceOrderUseCase`, `AddServiceToServiceOrderUseCase`, `AddPartToServiceOrderUseCase`, `GenerateServiceOrderBudgetUseCase`, `ApproveServiceOrderBudgetUseCase`, `UpdateServiceOrderStatusUseCase`, `TrackServiceOrderUseCase`, `GetAverageServiceOrderExecutionTimeUseCase`.
+-
+
+Clientes: `CreateCustomerUseCase`, `UpdateCustomerUseCase`, `FindCustomerUseCase`, `ListCustomersUseCase`, `DeleteCustomerUseCase`.
+-
+Veículos: `CreateVehicleUseCase`, `UpdateVehicleUseCase`, `FindVehicleUseCase`, `ListVehiclesUseCase`, `ListVehiclesByCustomerUseCase`, `DeleteVehicleUseCase`.
+-
+Serviços: `CreateWorkshopServiceUseCase`, `UpdateWorkshopServiceUseCase`, `FindWorkshopServiceUseCase`, `ListWorkshopServicesUseCase`, `DeleteWorkshopServiceUseCase`.
+-
+Peças/estoque: `CreatePartUseCase`, `UpdatePartUseCase`, `FindPartUseCase`, `ListPartsUseCase`, `RegisterPartStockMovementUseCase`, `ReservePartStockUseCase`, `ReleasePartReservationUseCase`, `CommitPartReservationUseCase`, `UpdatePartStockUseCase`.
+
+- Ordens de
+  Serviço: `CreateServiceOrderUseCase`, `AddServiceToServiceOrderUseCase`, `AddPartToServiceOrderUseCase`, `GenerateServiceOrderBudgetUseCase`, `ApproveServiceOrderBudgetUseCase`, `UpdateServiceOrderStatusUseCase`, `TrackServiceOrderUseCase`, `GetAverageServiceOrderExecutionTimeUseCase`.
 - Autenticação e usuários: `LoginUseCase`, `CreateUserUseCase`, `UpdateUserUseCase`, `ChangeUserPasswordUseCase`.
 
 ## 14. Eventos de domínio
@@ -305,12 +329,12 @@ Comandos principais do domínio:
 2. Sistema valida se o cliente pode acessar aquela OS.
 3. Sistema retorna dados básicos da OS, veículo, status, serviços, peças e orçamento.
 4. O cliente acompanha a evolução pelos status:
-   - `RECEBIDA`
-   - `EM_DIAGNOSTICO`
-   - `AGUARDANDO_APROVACAO`
-   - `EM_EXECUCAO`
-   - `FINALIZADA`
-   - `ENTREGUE`
+    - `RECEBIDA`
+    - `EM_DIAGNOSTICO`
+    - `AGUARDANDO_APROVACAO`
+    - `EM_EXECUCAO`
+    - `FINALIZADA`
+    - `ENTREGUE`
 
 ## 19. Fluxo de aprovação de orçamento
 
@@ -322,7 +346,8 @@ Comandos principais do domínio:
 6. Sistema confirma a baixa das peças reservadas.
 7. Ordem de Serviço pode avançar para execução.
 
-Recusa ou expiração de orçamento com liberação automática de reserva pode ser tratada como melhoria futura se não estiver ativa no fluxo executado.
+Recusa ou expiração de orçamento com liberação automática de reserva pode ser tratada como melhoria futura se não
+estiver ativa no fluxo executado.
 
 ## 20. Fluxo de gestão de peças e insumos
 

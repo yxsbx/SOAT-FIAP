@@ -1,12 +1,13 @@
 package br.com.autocarehub.infrastructure.persistence.entity;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,17 +20,17 @@ import lombok.Setter;
 @IdClass(UserPreferenceId.class)
 public class UserPreferenceJpaEntity {
 
-  @Id
-  @Column(name = "user_id", nullable = false)
-  private UUID userId;
+    @Id
+    @Column(name = "user_id", nullable = false)
+    private UUID userId;
 
-  @Id
-  @Column(name = "pref_key", nullable = false, length = 80)
-  private String prefKey;
+    @Id
+    @Column(name = "pref_key", nullable = false, length = 80)
+    private String prefKey;
 
-  @Column(name = "value_json", nullable = false)
-  private String valueJson;
+    @Column(name = "value_json", nullable = false)
+    private String valueJson;
 
-  @Column(name = "updated_at", nullable = false)
-  private LocalDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
 }

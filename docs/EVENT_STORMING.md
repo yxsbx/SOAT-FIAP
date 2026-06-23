@@ -5,7 +5,8 @@ Este documento apresenta o Event Storming dos fluxos exigidos no MVP do Tech Cha
 1. Criação e acompanhamento da Ordem de Serviço.
 2. Gestão de peças e insumos.
 
-Os nomes seguem a linguagem ubíqua do projeto. Quando uma etapa ainda não está materializada como evento persistido ou automação explícita no código, ela é marcada como `prevista no domínio` ou `melhoria futura`.
+Os nomes seguem a linguagem ubíqua do projeto. Quando uma etapa ainda não está materializada como evento persistido ou
+automação explícita no código, ela é marcada como `prevista no domínio` ou `melhoria futura`.
 
 ## Fluxo 1 - Criação da Ordem de Serviço
 
@@ -211,7 +212,8 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 - Cliente tenta consultar OS de outro cliente: acesso negado.
 - Orçamento ainda não foi gerado: acompanhamento retorna status atual sem aprovação disponível.
-- Cliente não aprova orçamento: OS permanece aguardando aprovação. Recusa explícita e expiração automática são melhorias futuras quando não estiverem ativas no fluxo executado.
+- Cliente não aprova orçamento: OS permanece aguardando aprovação. Recusa explícita e expiração automática são melhorias
+  futuras quando não estiverem ativas no fluxo executado.
 - Tentativa de transição inválida: sistema bloqueia a alteração.
 
 ### Pontos de decisão

@@ -1090,7 +1090,9 @@ paths:
       tags:
         - Users
       summary: Lista contas de usuario
-      description: Endpoint administrativo para listar usuarios por status, role, perfil ou termo de busca. Requer Bearer Token JWT de administrador.
+      description: >
+        Endpoint administrativo para listar usuarios por status, role, perfil ou termo de busca.
+        Requer Bearer Token JWT de administrador.
       operationId: listUsers
       parameters:
         - name: active
@@ -1133,7 +1135,9 @@ paths:
       tags:
         - Users
       summary: Cria uma conta de usuario
-      description: Endpoint administrativo para criar administradores, funcionarios ou clientes vinculados ao sistema. Requer Bearer Token JWT de administrador.
+      description: >
+        Endpoint administrativo para criar administradores, funcionarios ou clientes vinculados ao sistema.
+        Requer Bearer Token JWT de administrador.
       operationId: createUser
       requestBody:
         required: true
@@ -1235,7 +1239,8 @@ paths:
       tags:
         - Users
       summary: Redefine a senha de uma conta
-      description: Endpoint administrativo para definir nova senha inicial ou resetar senha de funcionario, cliente ou parceiro.
+      description: >
+        Endpoint administrativo para definir nova senha inicial ou resetar senha de funcionario, cliente ou parceiro.
       operationId: resetUserPassword
       parameters:
         - name: userId
@@ -1268,7 +1273,8 @@ paths:
       tags:
         - Demo Leads
       summary: Registra interesse em parceria
-      description: Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstracao.
+      description: >
+        Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstracao.
       operationId: registerDemoLead
       security: [ ]
       requestBody:
@@ -1301,7 +1307,9 @@ paths:
       tags:
         - Demo Leads
       summary: Lista interessados em parceria
-      description: Endpoint administrativo para Admin Master acompanhar interessados, contatos e parceiros potenciais. Requer Bearer Token JWT de administrador.
+      description: >
+        Endpoint administrativo para Admin Master acompanhar interessados, contatos e parceiros potenciais.
+        Requer Bearer Token JWT de administrador.
       operationId: listDemoLeads
       responses:
         "200":
@@ -1979,7 +1987,9 @@ components:
         vehicleId:
           type: string
           format: uuid
-          description: Identificador de veículo ja cadastrado. Se ausente, informe vehicle para cadastro ou vinculo por placa.
+          description: >
+            Identificador de veículo ja cadastrado.
+            Se ausente, informe vehicle para cadastro ou vinculo por placa.
         vehicle:
           $ref: "#/components/schemas/CreateServiceOrderVehicleRequest"
         diagnosticNotes:

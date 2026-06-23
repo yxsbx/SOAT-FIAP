@@ -1,67 +1,73 @@
 package br.com.autocarehub.infrastructure.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
+
 import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+
 @Service
 public class JwtService {
 
-  private final SecretKey secretKey;
-  private final long expirationSeconds;
+    private final SecretKey secretKey;
+    private final long expirationSeconds;
 
-  public JwtService(
-      @Value("${security.jwt.secret}") String secret,
-      @Value("${security.jwt.expiration-minutes:60}") long expirationMinutes) {
-    if (secret == null || secret.isBlank()) {
-      throw new IllegalStateException(
-          "JWT secret must be provided through security.jwt.secret or JWT_SECRET");
+    public JwtService(
+            @Value("${security.jwt.secret}") String secret,
+            @Value("${security.jwt.expiration-minutes:60}") long expirationMinutes) {
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException(
+                    "JWT secret must be provided through security.jwt.secret or JWT_SECRET");
+        }
+        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+            throw new IllegalStateException("JWT secret must have at least 32 bytes");
+        }
+        if (expirationMinutes <= 0) {
+            throw new IllegalStateException("JWT expiration must be greater than zero");
+        }
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expirationSeconds = expirationMinutes * 60;
     }
-    if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
-      throw new IllegalStateException("JWT secret must have at least 32 bytes");
+
+    public IssuedToken generateToken(AuthenticatedUser user) {
+        Instant issuedAt = Instant.now();
+        Instant expiresAt = issuedAt.plusSeconds(expirationSeconds);
+        String token =
+                Jwts.builder()
+                        .subject(user.getUsername())
+                        .claim("userId", user.id().toString())
+                        .claim("role", user.role())
+                        .claim("customerId", user.customerId() == null ? null : Objects.requireNonNull(user.customerId()).toString())
+                        .issuedAt(Date.from(issuedAt))
+                        .expiration(Date.from(expiresAt))
+                        .signWith(secretKey)
+                        .compact();
+        return new IssuedToken(token, "Bearer", expirationSeconds);
     }
-    if (expirationMinutes <= 0) {
-      throw new IllegalStateException("JWT expiration must be greater than zero");
+
+    public String extractUsername(String token) {
+        return extractClaims(token).getSubject();
     }
-    this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    this.expirationSeconds = expirationMinutes * 60;
-  }
 
-  public IssuedToken generateToken(AuthenticatedUser user) {
-    Instant issuedAt = Instant.now();
-    Instant expiresAt = issuedAt.plusSeconds(expirationSeconds);
-    String token =
-        Jwts.builder()
-            .subject(user.getUsername())
-            .claim("userId", user.id().toString())
-            .claim("role", user.role())
-            .claim("customerId", user.customerId() == null ? null : user.customerId().toString())
-            .issuedAt(Date.from(issuedAt))
-            .expiration(Date.from(expiresAt))
-            .signWith(secretKey)
-            .compact();
-    return new IssuedToken(token, "Bearer", expirationSeconds);
-  }
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        return userDetails.getUsername().equals(extractUsername(token))
+                && extractClaims(token).getExpiration().after(new Date());
+    }
 
-  public String extractUsername(String token) {
-    return extractClaims(token).getSubject();
-  }
+    public Claims extractClaims(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+    }
 
-  public boolean isTokenValid(String token, UserDetails userDetails) {
-    return userDetails.getUsername().equals(extractUsername(token))
-        && extractClaims(token).getExpiration().after(new Date());
-  }
+    public record IssuedToken(String accessToken, String tokenType, long expiresIn) {
 
-  public Claims extractClaims(String token) {
-    return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
-  }
-
-  public record IssuedToken(String accessToken, String tokenType, long expiresIn) {}
+    }
 }

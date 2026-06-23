@@ -59,14 +59,14 @@ function confirmClose() {
               <h2>{{ title }}</h2>
             </div>
             <button class="icon-button" type="button" @click="requestClose">
-              <X :size="18" />
+              <X :size="18"/>
             </button>
           </header>
           <div class="app-modal-body">
-            <slot />
+            <slot/>
           </div>
           <footer v-if="$slots.actions" class="app-modal-actions">
-            <slot name="actions" />
+            <slot name="actions"/>
           </footer>
 
           <div v-if="confirmCloseOpen" class="modal-confirm-panel">

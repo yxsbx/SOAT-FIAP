@@ -31,15 +31,15 @@ O Vite aceita hostnames externos e encaminha `/api` para a API local.
 
 A senha universal de todos os usuários abaixo é `autocare123`.
 
-| Usuário | Perfil |
-| --- | --- |
-| `admin@autocarehub.com` | Admin técnico |
-| `master@autocarehub.com` | Admin Master |
-| `oficina.admin@autocarehub.com` | Admin de oficina |
-| `loja.admin@autocarehub.com` | Admin de loja de peças |
-| `oficina.funcionario@autocarehub.com` | Funcionário de oficina |
-| `loja.funcionario@autocarehub.com` | Funcionário de loja de peças |
-| `cliente@autocarehub.com` | Cliente |
+| Usuário                               | Perfil                       |
+|---------------------------------------|------------------------------|
+| `admin@autocarehub.com`               | Admin técnico                |
+| `master@autocarehub.com`              | Admin Master                 |
+| `oficina.admin@autocarehub.com`       | Admin de oficina             |
+| `loja.admin@autocarehub.com`          | Admin de loja de peças       |
+| `oficina.funcionario@autocarehub.com` | Funcionário de oficina       |
+| `loja.funcionario@autocarehub.com`    | Funcionário de loja de peças |
+| `cliente@autocarehub.com`             | Cliente                      |
 
 ## Verificações
 

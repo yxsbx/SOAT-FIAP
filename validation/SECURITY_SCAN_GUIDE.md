@@ -1,6 +1,8 @@
 # Guia de Scans de Vulnerabilidade - AutoCare Hub
 
-Este guia prepara a execução local de scans de segurança do AutoCare Hub. Ele não registra resultados e não afirma que os scans foram executados. Após rodar os comandos, copie os achados relevantes para `SECURITY_REPORT.md` e anexe os arquivos gerados em `security-reports/`.
+Este guia prepara a execução local de scans de segurança do AutoCare Hub. Ele não registra resultados e não afirma que
+os scans foram executados. Após rodar os comandos, copie os achados relevantes para `SECURITY_REPORT.md` e anexe os
+arquivos gerados em `security-reports/`.
 
 ## Estrutura de resultados
 
@@ -15,7 +17,8 @@ security-reports/
   secrets/
 ```
 
-Os arquivos `.gitkeep` mantêm os diretórios no repositório. Os relatórios gerados podem ser versionados somente se a entrega exigir evidências no repositório e se não contiverem secrets, tokens, senhas ou dados pessoais.
+Os arquivos `.gitkeep` mantêm os diretórios no repositório. Os relatórios gerados podem ser versionados somente se a
+entrega exigir evidências no repositório e se não contiverem secrets, tokens, senhas ou dados pessoais.
 
 ## Pré-requisitos
 
@@ -125,7 +128,8 @@ Se Docker Scout estiver disponível:
 docker scout cves autocarehub-api:scan | Out-File -Encoding utf8 security-reports/docker/docker-scout-cves.txt
 ```
 
-O Dockerfile já executa a aplicação com usuário não-root, usa `read_only` no compose para o serviço da API e adiciona `no-new-privileges`.
+O Dockerfile já executa a aplicação com usuário não-root, usa `read_only` no compose para o serviço da API e
+adiciona `no-new-privileges`.
 
 ## 4. Scan estático de código
 
@@ -169,7 +173,8 @@ Via Docker:
 docker run --rm -v ${PWD}:/src -w /src semgrep/semgrep semgrep scan --config auto --json --output security-reports/static-analysis/semgrep.json
 ```
 
-Observação: Semgrep pode apontar falsos positivos. Registre a decisão no relatório final em vez de apagar achados sem análise.
+Observação: Semgrep pode apontar falsos positivos. Registre a decisão no relatório final em vez de apagar achados sem
+análise.
 
 ## 5. Scan de secrets
 
@@ -249,19 +254,20 @@ security-reports/secrets/gitleaks.json
 security-reports/secrets/gitleaks.sarif
 ```
 
-Antes de anexar ou versionar qualquer relatório, confira se ele não contém tokens, senhas, CPF/CNPJ real, caminhos sensíveis ou dados pessoais.
+Antes de anexar ou versionar qualquer relatório, confira se ele não contém tokens, senhas, CPF/CNPJ real, caminhos
+sensíveis ou dados pessoais.
 
 ## 8. Como interpretar severidades
 
 Critério recomendado:
 
-| Severidade | Tratamento recomendado |
-| --- | --- |
-| Critical | Corrigir antes da entrega ou justificar formalmente se for falso positivo. |
-| High | Corrigir antes da entrega sempre que houver atualização segura disponível. |
-| Medium | Avaliar explorabilidade, uso em runtime e impacto no MVP. Corrigir se simples. |
-| Low | Registrar e corrigir se não gerar risco de regressão. |
-| Info | Usar como melhoria futura ou evidência de boas práticas. |
+| Severidade | Tratamento recomendado                                                         |
+|------------|--------------------------------------------------------------------------------|
+| Critical   | Corrigir antes da entrega ou justificar formalmente se for falso positivo.     |
+| High       | Corrigir antes da entrega sempre que houver atualização segura disponível.     |
+| Medium     | Avaliar explorabilidade, uso em runtime e impacto no MVP. Corrigir se simples. |
+| Low        | Registrar e corrigir se não gerar risco de regressão.                          |
+| Info       | Usar como melhoria futura ou evidência de boas práticas.                       |
 
 Para dependências:
 

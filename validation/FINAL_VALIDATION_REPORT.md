@@ -8,27 +8,27 @@
 
 ## Resultado geral
 
-| Área | Resultado |
-| --- | --- |
-| Backend | Aprovado |
-| Testes Maven | 145 testes, 0 falhas, 0 erros, 0 ignorados |
+| Área                    | Resultado                                                   |
+|-------------------------|-------------------------------------------------------------|
+| Backend                 | Aprovado                                                    |
+| Testes Maven            | 145 testes, 0 falhas, 0 erros, 0 ignorados                  |
 | Cobertura JaCoCo global | 96,09% de instruções, 97,02% de linhas e 90,32% de branches |
-| Gate de cobertura | Mínimo de 90% para instruções, linhas e branches atendido |
-| Frontend build | Aprovado |
-| Frontend lint | 0 erros e 0 warnings |
-| Spotless Java | Aprovado |
-| CI | Backend, frontend e build Docker configurados para a `main` |
-| npm audit | 0 vulnerabilidades |
-| OWASP Dependency-Check | 126 dependências, 0 vulneráveis, 0 exceções |
-| Docker Compose | PostgreSQL, API e frontend ativos com um comando |
-| Swagger/OpenAPI | `/v3/api-docs` 200 e Swagger acessível |
-| Docker Scout backend | 0 vulnerabilidades |
-| Docker Scout frontend | 0 críticas, 0 altas e 1 média sem correção disponível |
-| Gitleaks | 0 leaks em 36 commits |
-| Semgrep | 0 achados e 0 erros em 200 arquivos com 187 regras |
-| Login administrativo | Aprovado por `localhost` e pelo IP local |
-| Fluxo principal da OS | Aprovado |
-| Repositório privado | Acesso Read concedido a `soatarchitecture` |
+| Gate de cobertura       | Mínimo de 90% para instruções, linhas e branches atendido   |
+| Frontend build          | Aprovado                                                    |
+| Frontend lint           | 0 erros e 0 warnings                                        |
+| Spotless Java           | Aprovado                                                    |
+| CI                      | Backend, frontend e build Docker configurados para a `main` |
+| npm audit               | 0 vulnerabilidades                                          |
+| OWASP Dependency-Check  | 126 dependências, 0 vulneráveis, 0 exceções                 |
+| Docker Compose          | PostgreSQL, API e frontend ativos com um comando            |
+| Swagger/OpenAPI         | `/v3/api-docs` 200 e Swagger acessível                      |
+| Docker Scout backend    | 0 vulnerabilidades                                          |
+| Docker Scout frontend   | 0 críticas, 0 altas e 1 média sem correção disponível       |
+| Gitleaks                | 0 leaks em 36 commits                                       |
+| Semgrep                 | 0 achados e 0 erros em 200 arquivos com 187 regras          |
+| Login administrativo    | Aprovado por `localhost` e pelo IP local                    |
+| Fluxo principal da OS   | Aprovado                                                    |
+| Repositório privado     | Acesso Read concedido a `soatarchitecture`                  |
 
 ## Comandos validados
 
@@ -72,12 +72,12 @@ O JaCoCo mede domínio, aplicação, REST, segurança, mappers e persistência. 
 - classes geradas automaticamente pelo OpenAPI;
 - records estruturais `$Command`, `$Query` e `$Output` sem lógica própria.
 
-| Métrica | Coberto | Não coberto | Cobertura |
-| --- | ---: | ---: | ---: |
-| Instruções | 9.752 | 397 | 96,09% |
-| Branches | 457 | 49 | 90,32% |
-| Linhas | 2.440 | 75 | 97,02% |
-| Métodos | 634 | 36 | 94,63% |
+| Métrica    | Coberto | Não coberto | Cobertura |
+|------------|--------:|------------:|----------:|
+| Instruções |   9.752 |         397 |    96,09% |
+| Branches   |     457 |          49 |    90,32% |
+| Linhas     |   2.440 |          75 |    97,02% |
+| Métodos    |     634 |          36 |    94,63% |
 
 ## Segurança das imagens
 

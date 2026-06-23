@@ -1,47 +1,52 @@
 # AutoCare Hub
 
-AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger, Docker, testes e relatório de vulnerabilidades.
+AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em
+Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de
+Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger, Docker, testes e relatório de
+vulnerabilidades.
 
-O repositório também inclui um frontend Vue/Vite em `frontend/` para apoiar a demonstração visual. A branch final de entrega é `main`.
+O repositório também inclui um frontend Vue/Vite em `frontend/` para apoiar a demonstração visual. A branch final de
+entrega é `main`.
 
 ## Sumário da Entrega
 
-`docs/` concentra a documentação pública exigida para avaliação. Materiais de apoio para gravação e validação operacional ficam fora dessa pasta para não serem confundidos com o PDF final.
+`docs/` concentra a documentação pública exigida para avaliação. Materiais de apoio para gravação e validação
+operacional ficam fora dessa pasta para não serem confundidos com o PDF final.
 
 Documentos oficiais:
 
-| Item exigido | Onde abrir | O que comprova |
-| --- | --- | --- |
-| Documento final de entrega | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) | Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades, limitações e conclusão. |
-| PDF final gerado | [output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf](output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf) | Versão em PDF do documento final para envio. |
-| DDD | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados, políticas e fluxos. |
-| Event Storming | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md) | Comandos, eventos, políticas, exceções e fluxos de OS e estoque. |
-| Swagger/OpenAPI | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html` | Contrato REST versionado e interface local para testar a API. |
-| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md) | Scans executados, vulnerabilidades encontradas, correções e riscos aceitos. |
+| Item exigido                  | Onde abrir                                                                                                           | O que comprova                                                                                                          |
+|-------------------------------|----------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Documento final de entrega    | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)                                                               | Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades, limitações e conclusão. |
+| PDF final gerado              | [output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf](output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf) | Versão em PDF do documento final para envio.                                                                            |
+| DDD                           | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)                                                               | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados, políticas e fluxos.      |
+| Event Storming                | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)                                                                     | Comandos, eventos, políticas, exceções e fluxos de OS e estoque.                                                        |
+| Swagger/OpenAPI               | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html`                     | Contrato REST versionado e interface local para testar a API.                                                           |
+| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)                                                                   | Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.                                             |
 
 Apoio interno:
 
-| Material | Onde abrir |
-| --- | --- |
-| Roteiro do vídeo | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md) |
-| Checklist pré-gravação | [video/PRE_RECORDING_CHECKLIST.md](video/PRE_RECORDING_CHECKLIST.md) |
-| Guia de scans | [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md) |
-| Validação final | [validation/FINAL_VALIDATION_REPORT.md](validation/FINAL_VALIDATION_REPORT.md) |
-| Rubrica de aderência | [validation/FACULTY_RUBRIC_VALIDATION.md](validation/FACULTY_RUBRIC_VALIDATION.md) |
-| Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
+| Material               | Onde abrir                                                                         |
+|------------------------|------------------------------------------------------------------------------------|
+| Roteiro do vídeo       | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md)                                     |
+| Checklist pré-gravação | [video/PRE_RECORDING_CHECKLIST.md](video/PRE_RECORDING_CHECKLIST.md)               |
+| Guia de scans          | [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md)             |
+| Validação final        | [validation/FINAL_VALIDATION_REPORT.md](validation/FINAL_VALIDATION_REPORT.md)     |
+| Rubrica de aderência   | [validation/FACULTY_RUBRIC_VALIDATION.md](validation/FACULTY_RUBRIC_VALIDATION.md) |
+| Frontend demonstrativo | [frontend/README.md](frontend/README.md)                                           |
 
 ## Dados da Entrega
 
-| Campo | Valor |
-| --- | --- |
-| Projeto | AutoCare Hub |
-| Responsável | Yasmin Barcelos Pires |
-| RM | RM370897 |
-| Discord | `yxsbx` |
-| Repositório | <https://github.com/yxsbx/SOAT-FIAP> |
-| Branch final | `main` |
-| Acesso de avaliação | Usuário `soatarchitecture` com acesso Read concedido |
-| Data consolidada nos documentos | 20/06/2026 |
+| Campo                           | Valor                                                |
+|---------------------------------|------------------------------------------------------|
+| Projeto                         | AutoCare Hub                                         |
+| Responsável                     | Yasmin Barcelos Pires                                |
+| RM                              | RM370897                                             |
+| Discord                         | `yxsbx`                                              |
+| Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                 |
+| Branch final                    | `main`                                               |
+| Acesso de avaliação             | Usuário `soatarchitecture` com acesso Read concedido |
+| Data consolidada nos documentos | 20/06/2026                                           |
 
 ## Escopo do MVP
 
@@ -120,7 +125,8 @@ src/main/java/br/com/autocarehub
         `-- mapper
 ```
 
-Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) e [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
+Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
+e [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
 
 ## Execução com Docker
 
@@ -157,7 +163,8 @@ Swagger: http://localhost:8080/swagger-ui.html
 PostgreSQL: localhost:5432
 ```
 
-O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por exemplo `http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
+O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por
+exemplo `http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
 
 Parar os serviços:
 
@@ -198,15 +205,15 @@ A senha universal de todos os usuários seed abaixo é exclusiva do ambiente loc
 autocare123
 ```
 
-| Usuário | Perfil | Senha |
-| --- | --- | --- |
-| `admin@autocarehub.com` | Admin técnico inicial | `autocare123` |
-| `master@autocarehub.com` | Admin Master da plataforma | `autocare123` |
-| `oficina.admin@autocarehub.com` | Admin de oficina | `autocare123` |
-| `loja.admin@autocarehub.com` | Admin de loja de peças | `autocare123` |
-| `oficina.funcionario@autocarehub.com` | Funcionário de oficina | `autocare123` |
-| `loja.funcionario@autocarehub.com` | Funcionário de loja de peças | `autocare123` |
-| `cliente@autocarehub.com` | Cliente final demo | `autocare123` |
+| Usuário                               | Perfil                       | Senha         |
+|---------------------------------------|------------------------------|---------------|
+| `admin@autocarehub.com`               | Admin técnico inicial        | `autocare123` |
+| `master@autocarehub.com`              | Admin Master da plataforma   | `autocare123` |
+| `oficina.admin@autocarehub.com`       | Admin de oficina             | `autocare123` |
+| `loja.admin@autocarehub.com`          | Admin de loja de peças       | `autocare123` |
+| `oficina.funcionario@autocarehub.com` | Funcionário de oficina       | `autocare123` |
+| `loja.funcionario@autocarehub.com`    | Funcionário de loja de peças | `autocare123` |
+| `cliente@autocarehub.com`             | Cliente final demo           | `autocare123` |
 
 Exemplo de login:
 
@@ -239,18 +246,18 @@ Autenticação no Swagger:
 
 Principais grupos de endpoints:
 
-| Grupo | Rotas principais |
-| --- | --- |
-| Autenticação | `POST /api/v1/auth/login` |
-| Clientes | `/api/v1/customers` |
-| Veículos | `/api/v1/vehicles` |
-| Serviços | `/api/v1/workshop-services` |
-| Peças e estoque | `/api/v1/parts` |
-| Ordens de Serviço | `/api/v1/service-orders` |
-| Orçamento | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
-| Tracking do cliente | `/api/v1/service-orders/tracking` |
-| Usuários | `/api/v1/users` e `/api/v1/users/me` |
-| Leads de demonstração | `/api/v1/demo-leads` |
+| Grupo                 | Rotas principais                                                                             |
+|-----------------------|----------------------------------------------------------------------------------------------|
+| Autenticação          | `POST /api/v1/auth/login`                                                                    |
+| Clientes              | `/api/v1/customers`                                                                          |
+| Veículos              | `/api/v1/vehicles`                                                                           |
+| Serviços              | `/api/v1/workshop-services`                                                                  |
+| Peças e estoque       | `/api/v1/parts`                                                                              |
+| Ordens de Serviço     | `/api/v1/service-orders`                                                                     |
+| Orçamento             | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
+| Tracking do cliente   | `/api/v1/service-orders/tracking`                                                            |
+| Usuários              | `/api/v1/users` e `/api/v1/users/me`                                                         |
+| Leads de demonstração | `/api/v1/demo-leads`                                                                         |
 
 ## Validação Rápida
 
@@ -289,19 +296,19 @@ Demais comandos e opções: [validation/SECURITY_SCAN_GUIDE.md](validation/SECUR
 
 Resultado consolidado em 20/06/2026:
 
-| Área | Resultado |
-| --- | --- |
-| Testes Maven | 145 testes, 0 falhas, 0 erros, 0 ignorados |
-| Cobertura JaCoCo | 96,09% instruções, 97,02% linhas e 90,32% branches |
-| Gate de cobertura | 90% instruções, 90% linhas e 90% branches |
-| Frontend lint | 0 erros e 0 warnings |
-| Frontend build | Aprovado |
-| npm audit | 0 vulnerabilidades |
-| OWASP Dependency-Check | 126 dependências, 0 vulneráveis |
-| Docker Scout backend | 0 vulnerabilidades |
-| Docker Scout frontend | 0 críticas, 0 altas e 1 média sem correção disponível |
-| Gitleaks | 0 leaks em 36 commits |
-| Semgrep | 0 achados em 200 arquivos com 187 regras |
+| Área                   | Resultado                                             |
+|------------------------|-------------------------------------------------------|
+| Testes Maven           | 145 testes, 0 falhas, 0 erros, 0 ignorados            |
+| Cobertura JaCoCo       | 96,09% instruções, 97,02% linhas e 90,32% branches    |
+| Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
+| Frontend lint          | 0 erros e 0 warnings                                  |
+| Frontend build         | Aprovado                                              |
+| npm audit              | 0 vulnerabilidades                                    |
+| OWASP Dependency-Check | 126 dependências, 0 vulneráveis                       |
+| Docker Scout backend   | 0 vulnerabilidades                                    |
+| Docker Scout frontend  | 0 críticas, 0 altas e 1 média sem correção disponível |
+| Gitleaks               | 0 leaks em 36 commits                                 |
+| Semgrep                | 0 achados em 200 arquivos com 187 regras              |
 
 No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`,
 validações, exceções e transições de status. Por isso o gate também exige 90% nessa métrica.
@@ -348,7 +355,8 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 
 ## Melhorias Futuras
 
-O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
+O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
+e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
 
 - ampliar cenários extremos e fluxos de regressão;
 - criar auditoria de ações sensíveis;

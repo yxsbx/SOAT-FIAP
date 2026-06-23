@@ -6,13 +6,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.model.User;
-import io.jsonwebtoken.JwtException;
-import jakarta.servlet.FilterChain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,100 +17,106 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
+
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.FilterChain;
+
 class JwtAuthenticationFilterTest {
 
-  private final JwtService jwtService = mock(JwtService.class);
-  private final UserDetailsService userDetailsService = mock(UserDetailsService.class);
-  private final FilterChain filterChain = mock(FilterChain.class);
-  private final JwtAuthenticationFilter filter =
-      new JwtAuthenticationFilter(jwtService, userDetailsService);
+    private final JwtService jwtService = mock(JwtService.class);
+    private final UserDetailsService userDetailsService = mock(UserDetailsService.class);
+    private final FilterChain filterChain = mock(FilterChain.class);
+    private final JwtAuthenticationFilter filter =
+            new JwtAuthenticationFilter(jwtService, userDetailsService);
 
-  @AfterEach
-  void clearSecurityContext() {
-    SecurityContextHolder.clearContext();
-  }
+    private static AuthenticatedUser authenticatedUser() {
+        return new AuthenticatedUser(
+                new User(
+                        UUID.randomUUID(),
+                        "admin@autocarehub.com",
+                        "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
+                        UserRole.ADMIN,
+                        null,
+                        "Admin",
+                        "admin",
+                        "AutoCare",
+                        "Oficina",
+                        "Gestor",
+                        List.of("users:read"),
+                        true,
+                        LocalDateTime.now()));
+    }
 
-  @Test
-  void shouldContinueWithoutAuthenticationWhenAuthorizationHeaderIsMissingOrInvalid()
-      throws Exception {
-    MockHttpServletRequest noHeader = new MockHttpServletRequest();
-    MockHttpServletResponse noHeaderResponse = new MockHttpServletResponse();
-    MockHttpServletRequest invalidPrefix = new MockHttpServletRequest();
-    MockHttpServletResponse invalidPrefixResponse = new MockHttpServletResponse();
-    invalidPrefix.addHeader("Authorization", "Basic abc");
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 
-    filter.doFilter(noHeader, noHeaderResponse, filterChain);
-    filter.doFilter(invalidPrefix, invalidPrefixResponse, filterChain);
+    @Test
+    void shouldContinueWithoutAuthenticationWhenAuthorizationHeaderIsMissingOrInvalid()
+            throws Exception {
+        MockHttpServletRequest noHeader = new MockHttpServletRequest();
+        MockHttpServletResponse noHeaderResponse = new MockHttpServletResponse();
+        MockHttpServletRequest invalidPrefix = new MockHttpServletRequest();
+        MockHttpServletResponse invalidPrefixResponse = new MockHttpServletResponse();
+        invalidPrefix.addHeader("Authorization", "Basic abc");
 
-    assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-    verifyNoInteractions(jwtService, userDetailsService);
-    verify(filterChain).doFilter(noHeader, noHeaderResponse);
-    verify(filterChain).doFilter(invalidPrefix, invalidPrefixResponse);
-  }
+        filter.doFilter(noHeader, noHeaderResponse, filterChain);
+        filter.doFilter(invalidPrefix, invalidPrefixResponse, filterChain);
 
-  @Test
-  void shouldAuthenticateValidBearerToken() throws Exception {
-    AuthenticatedUser user = authenticatedUser();
-    MockHttpServletRequest request = new MockHttpServletRequest();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.addHeader("Authorization", "Bearer valid-token");
-    when(jwtService.extractUsername("valid-token")).thenReturn(user.getUsername());
-    when(userDetailsService.loadUserByUsername(user.getUsername())).thenReturn(user);
-    when(jwtService.isTokenValid("valid-token", user)).thenReturn(true);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verifyNoInteractions(jwtService, userDetailsService);
+        verify(filterChain).doFilter(noHeader, noHeaderResponse);
+        verify(filterChain).doFilter(invalidPrefix, invalidPrefixResponse);
+    }
 
-    filter.doFilter(request, response, filterChain);
+    @Test
+    void shouldAuthenticateValidBearerToken() throws Exception {
+        AuthenticatedUser user = authenticatedUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.addHeader("Authorization", "Bearer valid-token");
+        when(jwtService.extractUsername("valid-token")).thenReturn(user.getUsername());
+        when(userDetailsService.loadUserByUsername(user.getUsername())).thenReturn(user);
+        when(jwtService.isTokenValid("valid-token", user)).thenReturn(true);
 
-    assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
-    assertThat(SecurityContextHolder.getContext().getAuthentication().getName())
-        .isEqualTo(user.getUsername());
-    verify(filterChain).doFilter(request, response);
-  }
+        filter.doFilter(request, response, filterChain);
 
-  @Test
-  void shouldContinueWithoutAuthenticationWhenBearerTokenIsNotValidForLoadedUser()
-      throws Exception {
-    AuthenticatedUser user = authenticatedUser();
-    MockHttpServletRequest request = new MockHttpServletRequest();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.addHeader("Authorization", "Bearer invalid-for-user");
-    when(jwtService.extractUsername("invalid-for-user")).thenReturn(user.getUsername());
-    when(userDetailsService.loadUserByUsername(user.getUsername())).thenReturn(user);
-    when(jwtService.isTokenValid("invalid-for-user", user)).thenReturn(false);
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNotNull();
+        assertThat(SecurityContextHolder.getContext().getAuthentication().getName())
+                .isEqualTo(user.getUsername());
+        verify(filterChain).doFilter(request, response);
+    }
 
-    filter.doFilter(request, response, filterChain);
+    @Test
+    void shouldContinueWithoutAuthenticationWhenBearerTokenIsNotValidForLoadedUser()
+            throws Exception {
+        AuthenticatedUser user = authenticatedUser();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.addHeader("Authorization", "Bearer invalid-for-user");
+        when(jwtService.extractUsername("invalid-for-user")).thenReturn(user.getUsername());
+        when(userDetailsService.loadUserByUsername(user.getUsername())).thenReturn(user);
+        when(jwtService.isTokenValid("invalid-for-user", user)).thenReturn(false);
 
-    assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-    verify(filterChain).doFilter(request, response);
-  }
+        filter.doFilter(request, response, filterChain);
 
-  @Test
-  void shouldClearSecurityContextWhenTokenIsInvalid() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest();
-    MockHttpServletResponse response = new MockHttpServletResponse();
-    request.addHeader("Authorization", "Bearer invalid-token");
-    when(jwtService.extractUsername("invalid-token")).thenThrow(new JwtException("invalid"));
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(filterChain).doFilter(request, response);
+    }
 
-    filter.doFilter(request, response, filterChain);
+    @Test
+    void shouldClearSecurityContextWhenTokenIsInvalid() throws Exception {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        request.addHeader("Authorization", "Bearer invalid-token");
+        when(jwtService.extractUsername("invalid-token")).thenThrow(new JwtException("invalid"));
 
-    assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
-    verify(filterChain).doFilter(request, response);
-  }
+        filter.doFilter(request, response, filterChain);
 
-  private static AuthenticatedUser authenticatedUser() {
-    return new AuthenticatedUser(
-        new User(
-            UUID.randomUUID(),
-            "admin@autocarehub.com",
-            "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
-            UserRole.ADMIN,
-            null,
-            "Admin",
-            "admin",
-            "AutoCare",
-            "Oficina",
-            "Gestor",
-            List.of("users:read"),
-            true,
-            LocalDateTime.now()));
-  }
+        assertThat(SecurityContextHolder.getContext().getAuthentication()).isNull();
+        verify(filterChain).doFilter(request, response);
+    }
 }

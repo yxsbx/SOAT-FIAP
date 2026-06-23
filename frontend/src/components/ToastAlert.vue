@@ -21,10 +21,10 @@ const icon = computed(() => (props.type === 'error' ? AlertCircle : CheckCircle2
 <template>
   <Transition name="toast-fade">
     <aside v-if="message" :class="['toast-alert', `toast-alert--${type}`]" role="status">
-      <component :is="icon" :size="20" />
+      <component :is="icon" :size="20"/>
       <span>{{ message }}</span>
       <button aria-label="Fechar alerta" type="button" @click="emit('close')">
-        <X :size="16" />
+        <X :size="16"/>
       </button>
     </aside>
   </Transition>

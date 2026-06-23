@@ -3,7 +3,8 @@
 Responsável: Yasmin Barcelos Pires - RM370897  
 Data de referência: 20/06/2026
 
-Use este checklist antes de gravar o vídeo. A ideia é chegar no dia da gravação com ambiente, dados, documentação e acessos já validados.
+Use este checklist antes de gravar o vídeo. A ideia é chegar no dia da gravação com ambiente, dados, documentação e
+acessos já validados.
 
 ## Checklist completo
 
@@ -63,11 +64,11 @@ http://localhost:5173
 - [ ] Confirmar que as migrations Flyway rodaram.
 - [ ] Conferir se os dados de seed da migration baseline estão disponíveis.
 - [ ] Validar pelo Swagger ou banco que existem registros de:
-  - [ ] clientes;
-  - [ ] veículos;
-  - [ ] serviços;
-  - [ ] peças;
-  - [ ] usuários.
+    - [ ] clientes;
+    - [ ] veículos;
+    - [ ] serviços;
+    - [ ] peças;
+    - [ ] usuários.
 
 Arquivo de referência:
 
@@ -165,10 +166,10 @@ POST /api/v1/service-orders
 ```
 
 - [ ] Criar OS usando:
-  - [ ] documento do cliente;
-  - [ ] `vehicleId`;
-  - [ ] serviço criado;
-  - [ ] peça criada, se fizer sentido para a demo.
+    - [ ] documento do cliente;
+    - [ ] `vehicleId`;
+    - [ ] serviço criado;
+    - [ ] peça criada, se fizer sentido para a demo.
 - [ ] Confirmar resposta `201`.
 - [ ] Guardar o `id` da OS.
 
@@ -300,9 +301,9 @@ npm audit --json
 ```
 
 - [ ] Se exigido, rodar scans complementares:
-  - [x] Docker image scan com Docker Scout.
-  - [x] Secrets com Gitleaks.
-  - [x] SAST com Semgrep.
+    - [x] Docker image scan com Docker Scout.
+    - [x] Secrets com Gitleaks.
+    - [x] SAST com Semgrep.
 
 Guia:
 
@@ -333,16 +334,16 @@ README.md
 ```
 
 - [ ] Conferir:
-  - [ ] descrição do projeto;
-  - [ ] funcionalidades;
-  - [ ] tecnologias;
-  - [ ] arquitetura;
-  - [ ] execução local;
-  - [ ] Docker;
-  - [ ] Swagger;
-  - [ ] testes;
-  - [ ] vulnerabilidades;
-  - [ ] limitações.
+    - [ ] descrição do projeto;
+    - [ ] funcionalidades;
+    - [ ] tecnologias;
+    - [ ] arquitetura;
+    - [ ] execução local;
+    - [ ] Docker;
+    - [ ] Swagger;
+    - [ ] testes;
+    - [ ] vulnerabilidades;
+    - [ ] limitações.
 
 ### 22. Conferir documentação DDD
 
@@ -353,15 +354,15 @@ docs/DDD_DOCUMENTATION.md
 ```
 
 - [ ] Conferir:
-  - [ ] contexto do problema;
-  - [ ] linguagem ubíqua;
-  - [ ] subdomínios;
-  - [ ] bounded contexts;
-  - [ ] entidades;
-  - [ ] value objects;
-  - [ ] agregados;
-  - [ ] repositórios;
-  - [ ] use cases.
+    - [ ] contexto do problema;
+    - [ ] linguagem ubíqua;
+    - [ ] subdomínios;
+    - [ ] bounded contexts;
+    - [ ] entidades;
+    - [ ] value objects;
+    - [ ] agregados;
+    - [ ] repositórios;
+    - [ ] use cases.
 
 - [ ] Conferir Event Storming:
 
@@ -378,13 +379,13 @@ docs/DELIVERY_DOCUMENT.md
 ```
 
 - [ ] Preencher campos obrigatórios:
-  - [x] entrega individual;
-  - [x] participante;
-  - [x] RM;
-  - [x] username do Discord: `yxsbx`;
-  - [x] link do repositório privado;
-  - [x] documentação DDD e Event Storming no repositório;
-  - [x] rota local do Swagger.
+    - [x] entrega individual;
+    - [x] participante;
+    - [x] RM;
+    - [x] username do Discord: `yxsbx`;
+    - [x] link do repositório privado;
+    - [x] documentação DDD e Event Storming no repositório;
+    - [x] rota local do Swagger.
 
 - [ ] Conferir se as 24 seções estão completas.
 
@@ -393,10 +394,10 @@ docs/DELIVERY_DOCUMENT.md
 - [x] Converter o Markdown final para PDF.
 - [x] Abrir o PDF gerado.
 - [x] Clicar nos links principais:
-  - [x] repositório privado;
-  - [x] documentação DDD e Event Storming;
-  - [x] contrato OpenAPI;
-  - [x] relatórios de segurança e validação.
+    - [x] repositório privado;
+    - [x] documentação DDD e Event Storming;
+    - [x] contrato OpenAPI;
+    - [x] relatórios de segurança e validação.
 - [x] Conferir que os únicos placeholders restantes são secrets locais do `.env`.
 - [x] Conferir legibilidade de tabelas no PDF.
 
