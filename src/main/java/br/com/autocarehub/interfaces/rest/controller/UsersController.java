@@ -71,7 +71,6 @@ public class UsersController {
     }
 
     private static UserResponse toResponse(User user) {
-        assert user.customerId() != null;
         return new UserResponse(
                 user.id(),
                 user.username(),

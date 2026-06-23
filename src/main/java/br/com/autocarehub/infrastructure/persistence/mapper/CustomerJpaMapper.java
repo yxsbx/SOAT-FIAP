@@ -5,6 +5,7 @@ import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.infrastructure.persistence.entity.CustomerJpaEntity;
+import java.util.Objects;
 
 public final class CustomerJpaMapper {
 
@@ -20,8 +21,7 @@ public final class CustomerJpaMapper {
         entity.setEmail(customer.email());
         entity.setActive(customer.active());
         entity.setCreatedAt(customer.createdAt());
-        Address address = customer.address();
-        assert address != null;
+        Address address = Objects.requireNonNull(customer.address(), "customer address is required");
         entity.setAddressStreet(address.street());
         entity.setAddressNumber(address.number());
         entity.setAddressComplement(address.complement());
