@@ -110,14 +110,23 @@ docker build -t autocarehub-api:scan .
 Se o Trivy estiver instalado:
 
 ```powershell
-trivy image --severity CRITICAL,HIGH,MEDIUM --format table autocarehub-api:scan | Out-File -Encoding utf8 security-reports/docker/trivy-image.txt
-trivy image --severity CRITICAL,HIGH,MEDIUM --format json autocarehub-api:scan | Out-File -Encoding utf8 security-reports/docker/trivy-image.json
+trivy image --severity CRITICAL,HIGH,MEDIUM --format table autocarehub-api:scan |
+  Out-File -Encoding utf8 security-reports/docker/trivy-image.txt
+trivy image --severity CRITICAL,HIGH,MEDIUM --format json autocarehub-api:scan |
+  Out-File -Encoding utf8 security-reports/docker/trivy-image.json
 ```
 
 Usando Docker:
 
 ```powershell
-docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ${PWD}/security-reports/docker:/reports aquasec/trivy:latest image --severity CRITICAL,HIGH,MEDIUM --format json --output /reports/trivy-image.json autocarehub-api:scan
+docker run --rm `
+  -v /var/run/docker.sock:/var/run/docker.sock `
+  -v ${PWD}/security-reports/docker:/reports `
+  aquasec/trivy:latest image `
+  --severity CRITICAL,HIGH,MEDIUM `
+  --format json `
+  --output /reports/trivy-image.json `
+  autocarehub-api:scan
 ```
 
 ### Opção B - Docker Scout
@@ -128,8 +137,8 @@ Se Docker Scout estiver disponível:
 docker scout cves autocarehub-api:scan | Out-File -Encoding utf8 security-reports/docker/docker-scout-cves.txt
 ```
 
-O Dockerfile já executa a aplicação com usuário não-root, usa `read_only` no compose para o serviço da API e
-adiciona `no-new-privileges`.
+O Dockerfile já executa a aplicação com usuário não-root, usa `read_only` no compose para o serviço da API e adiciona
+`no-new-privileges`.
 
 ## 4. Scan estático de código
 
@@ -170,7 +179,13 @@ semgrep scan --config auto | Out-File -Encoding utf8 security-reports/static-ana
 Via Docker:
 
 ```powershell
-docker run --rm -v ${PWD}:/src -w /src semgrep/semgrep semgrep scan --config auto --json --output security-reports/static-analysis/semgrep.json
+docker run --rm `
+  -v ${PWD}:/src `
+  -w /src `
+  semgrep/semgrep semgrep scan `
+  --config auto `
+  --json `
+  --output security-reports/static-analysis/semgrep.json
 ```
 
 Observação: Semgrep pode apontar falsos positivos. Registre a decisão no relatório final em vez de apagar achados sem
@@ -190,7 +205,12 @@ gitleaks detect --source . --report-format sarif --report-path security-reports/
 Via Docker:
 
 ```powershell
-docker run --rm -v ${PWD}:/repo zricethezav/gitleaks:latest detect --source /repo --report-format json --report-path /repo/security-reports/secrets/gitleaks.json
+docker run --rm `
+  -v ${PWD}:/repo `
+  zricethezav/gitleaks:latest detect `
+  --source /repo `
+  --report-format json `
+  --report-path /repo/security-reports/secrets/gitleaks.json
 ```
 
 ### TruffleHog, alternativa
@@ -262,7 +282,7 @@ sensíveis ou dados pessoais.
 Critério recomendado:
 
 | Severidade | Tratamento recomendado                                                         |
-|------------|--------------------------------------------------------------------------------|
+| ---------- | ------------------------------------------------------------------------------ |
 | Critical   | Corrigir antes da entrega ou justificar formalmente se for falso positivo.     |
 | High       | Corrigir antes da entrega sempre que houver atualização segura disponível.     |
 | Medium     | Avaliar explorabilidade, uso em runtime e impacto no MVP. Corrigir se simples. |

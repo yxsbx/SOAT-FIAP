@@ -15,19 +15,36 @@ operacional ficam fora dessa pasta para não serem confundidos com o PDF final.
 
 Documentos oficiais:
 
-| Item exigido                  | Onde abrir                                                                                                           | O que comprova                                                                                                          |
-|-------------------------------|----------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
-| Documento final de entrega    | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)                                                               | Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades, limitações e conclusão. |
-| PDF final gerado              | [output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf](output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf) | Versão em PDF do documento final para envio.                                                                            |
-| DDD                           | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)                                                               | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados, políticas e fluxos.      |
-| Event Storming                | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)                                                                     | Comandos, eventos, políticas, exceções e fluxos de OS e estoque.                                                        |
-| Swagger/OpenAPI               | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html`                     | Contrato REST versionado e interface local para testar a API.                                                           |
-| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)                                                                   | Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.                                             |
+- **Item exigido:**  Documento final de entrega
+  - **Onde abrir:**  [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
+  - **O que comprova:**  Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades,
+    limitações e conclusão.
+
+- **Item exigido:**  PDF final gerado
+  - **Onde abrir:**  `output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf`
+  - **O que comprova:**  Versão em PDF do documento final para envio.
+
+- **Item exigido:**  DDD
+  - **Onde abrir:**  [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
+  - **O que comprova:**  Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados,
+    políticas e fluxos.
+
+- **Item exigido:**  Event Storming
+  - **Onde abrir:**  [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)
+  - **O que comprova:**  Comandos, eventos, políticas, exceções e fluxos de OS e estoque.
+
+- **Item exigido:**  Swagger/OpenAPI
+  - **Onde abrir:**  [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html`
+  - **O que comprova:**  Contrato REST versionado e interface local para testar a API.
+
+- **Item exigido:**  Relatório de vulnerabilidades
+  - **Onde abrir:**  [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
+  - **O que comprova:**  Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.
 
 Apoio interno:
 
 | Material               | Onde abrir                                                                         |
-|------------------------|------------------------------------------------------------------------------------|
+| ---------------------- | ---------------------------------------------------------------------------------- |
 | Roteiro do vídeo       | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md)                                     |
 | Checklist pré-gravação | [video/PRE_RECORDING_CHECKLIST.md](video/PRE_RECORDING_CHECKLIST.md)               |
 | Guia de scans          | [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md)             |
@@ -38,7 +55,7 @@ Apoio interno:
 ## Dados da Entrega
 
 | Campo                           | Valor                                                |
-|---------------------------------|------------------------------------------------------|
+| ------------------------------- | ---------------------------------------------------- |
 | Projeto                         | AutoCare Hub                                         |
 | Responsável                     | Yasmin Barcelos Pires                                |
 | RM                              | RM370897                                             |
@@ -125,8 +142,8 @@ src/main/java/br/com/autocarehub
         `-- mapper
 ```
 
-Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
-e [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
+Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) e
+[docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
 
 ## Execução com Docker
 
@@ -163,8 +180,8 @@ Swagger: http://localhost:8080/swagger-ui.html
 PostgreSQL: localhost:5432
 ```
 
-O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por
-exemplo `http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
+O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por exemplo
+`http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
 
 Parar os serviços:
 
@@ -206,7 +223,7 @@ autocare123
 ```
 
 | Usuário                               | Perfil                       | Senha         |
-|---------------------------------------|------------------------------|---------------|
+| ------------------------------------- | ---------------------------- | ------------- |
 | `admin@autocarehub.com`               | Admin técnico inicial        | `autocare123` |
 | `master@autocarehub.com`              | Admin Master da plataforma   | `autocare123` |
 | `oficina.admin@autocarehub.com`       | Admin de oficina             | `autocare123` |
@@ -247,7 +264,7 @@ Autenticação no Swagger:
 Principais grupos de endpoints:
 
 | Grupo                 | Rotas principais                                                                             |
-|-----------------------|----------------------------------------------------------------------------------------------|
+| --------------------- | -------------------------------------------------------------------------------------------- |
 | Autenticação          | `POST /api/v1/auth/login`                                                                    |
 | Clientes              | `/api/v1/customers`                                                                          |
 | Veículos              | `/api/v1/vehicles`                                                                           |
@@ -297,7 +314,7 @@ Demais comandos e opções: [validation/SECURITY_SCAN_GUIDE.md](validation/SECUR
 Resultado consolidado em 20/06/2026:
 
 | Área                   | Resultado                                             |
-|------------------------|-------------------------------------------------------|
+| ---------------------- | ----------------------------------------------------- |
 | Testes Maven           | 145 testes, 0 falhas, 0 erros, 0 ignorados            |
 | Cobertura JaCoCo       | 96,09% instruções, 97,02% linhas e 90,32% branches    |
 | Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
@@ -310,8 +327,8 @@ Resultado consolidado em 20/06/2026:
 | Gitleaks               | 0 leaks em 36 commits                                 |
 | Semgrep                | 0 achados em 200 arquivos com 187 regras              |
 
-No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`,
-validações, exceções e transições de status. Por isso o gate também exige 90% nessa métrica.
+No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de
+status. Por isso o gate também exige 90% nessa métrica.
 
 Relatórios e evidências:
 
@@ -355,8 +372,8 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 
 ## Melhorias Futuras
 
-O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
-e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
+O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e
+[docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
 
 - ampliar cenários extremos e fluxos de regressão;
 - criar auditoria de ações sensíveis;

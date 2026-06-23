@@ -3,13 +3,12 @@
 **Projeto:** AutoCare Hub  
 **Responsável:** Yasmin Barcelos Pires - RM370897  
 **Data:** 20/06/2026  
-**Branch final de entrega:** `main`
-**Commit técnico validado:** `dbed819`
+**Branch final de entrega:** `main` **Commit técnico validado:** `dbed819`
 
 ## Resultado geral
 
 | Área                    | Resultado                                                   |
-|-------------------------|-------------------------------------------------------------|
+| ----------------------- | ----------------------------------------------------------- |
 | Backend                 | Aprovado                                                    |
 | Testes Maven            | 145 testes, 0 falhas, 0 erros, 0 ignorados                  |
 | Cobertura JaCoCo global | 96,09% de instruções, 97,02% de linhas e 90,32% de branches |
@@ -73,7 +72,7 @@ O JaCoCo mede domínio, aplicação, REST, segurança, mappers e persistência. 
 - records estruturais `$Command`, `$Query` e `$Output` sem lógica própria.
 
 | Métrica    | Coberto | Não coberto | Cobertura |
-|------------|--------:|------------:|----------:|
+| ---------- | ------: | ----------: | --------: |
 | Instruções |   9.752 |         397 |    96,09% |
 | Branches   |     457 |          49 |    90,32% |
 | Linhas     |   2.440 |          75 |    97,02% |

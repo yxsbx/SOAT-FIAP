@@ -42,7 +42,7 @@ automação explícita no código, ela é marcada como `prevista no domínio` ou
 - `OrcamentoGerado`
 - `OrcamentoEnviado`
 
-No MVP, esses eventos são usados como linguagem de modelagem. O sistema não possui event store dedicado.
+No MVP, esses eventos são usados como linguagem de modelagem. O sistema não possui um event store dedicado.
 
 ### Agregados
 
@@ -55,24 +55,24 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Políticas
 
-- Se o cliente não existir, deve ser cadastrado antes da criação da OS.
-- Se o veículo não existir, deve ser cadastrado e vinculado ao cliente.
+- Se o cliente não existir, ele deve ser cadastrado antes da criação da OS.
+- Se o veículo não existir, ele deve ser cadastrado e vinculado ao cliente.
 - Se o veículo existir, ele deve pertencer ao cliente informado.
 - A OS deve ter ao menos um serviço solicitado.
 - Peças e insumos são opcionais na OS.
-- Ao gerar orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
-- Peças vinculadas a orçamento podem ser reservadas antes da aprovação.
+- Ao gerar o orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
+- Peças vinculadas ao orçamento podem ser reservadas antes da aprovação.
 
 ### Regras de negócio
 
-- CPF/CNPJ deve ser válido.
-- Placa deve estar em formato válido.
-- Cliente não pode ser duplicado por diferença de máscara no documento.
-- Veículo não pode existir sem cliente.
-- OS não pode existir sem cliente e veículo.
-- OS não pode ser criada sem serviço solicitado.
-- Orçamento calcula total de serviços, total de peças e total geral.
-- Itens da OS não devem ser alterados após geração do orçamento.
+- O CPF/CNPJ deve ser válido.
+- A placa deve estar em formato válido.
+- O cliente não pode ser duplicado por diferença de máscara no documento.
+- O veículo não pode existir sem cliente.
+- A OS não pode existir sem cliente e veículo.
+- A OS não pode ser criada sem serviço solicitado.
+- O orçamento calcula o total de serviços, o total de peças e o total geral.
+- Os itens da OS não devem ser alterados após a geração do orçamento.
 
 ### Exceções
 
@@ -90,36 +90,36 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Fluxo principal
 
-1. Funcionário identifica o cliente por CPF/CNPJ.
-2. Sistema valida e normaliza o documento.
-3. Sistema encontra o cliente ou permite cadastro.
-4. Funcionário seleciona ou cadastra o veículo.
-5. Sistema valida a placa e o vínculo com o cliente.
-6. Funcionário cria a Ordem de Serviço.
-7. Funcionário inclui serviços solicitados.
-8. Funcionário inclui peças ou insumos, se necessário.
-9. Sistema gera o orçamento.
-10. Sistema disponibiliza o orçamento para aprovação do cliente.
-11. OS fica em `AGUARDANDO_APROVACAO`.
+1. O funcionário identifica o cliente por CPF/CNPJ.
+2. O sistema valida e normaliza o documento.
+3. O sistema encontra o cliente ou permite o cadastro.
+4. O funcionário seleciona ou cadastra o veículo.
+5. O sistema valida a placa e o vínculo com o cliente.
+6. O funcionário cria a Ordem de Serviço.
+7. O funcionário inclui os serviços solicitados.
+8. O funcionário inclui peças ou insumos, se necessário.
+9. O sistema gera o orçamento.
+10. O sistema disponibiliza o orçamento para aprovação do cliente.
+11. A OS fica em `AGUARDANDO_APROVACAO`.
 
 ### Fluxos alternativos
 
-- Cliente não encontrado: cadastrar cliente e continuar.
-- Veículo não encontrado: cadastrar veículo e vincular ao cliente.
-- Veículo pertence a outro cliente: bloquear criação da OS.
-- Serviço inativo: bloquear inclusão do serviço.
-- Peça sem estoque disponível: bloquear reserva ou baixa.
-- Orçamento não gerado: OS permanece em etapa anterior do atendimento.
+- Cliente não encontrado: cadastrar o cliente e continuar.
+- Veículo não encontrado: cadastrar o veículo e vinculá-lo ao cliente.
+- Veículo pertencente a outro cliente: bloquear a criação da OS.
+- Serviço inativo: bloquear a inclusão do serviço.
+- Peça sem estoque disponível: bloquear a reserva ou a baixa.
+- Orçamento não gerado: a OS permanece na etapa anterior do atendimento.
 
 ### Pontos de decisão
 
-- Cliente já existe?
-- Veículo já existe?
-- Veículo pertence ao cliente?
+- O cliente já existe?
+- O veículo já existe?
+- O veículo pertence ao cliente?
 - Há ao menos um serviço solicitado?
 - Há peças/insumos vinculados?
-- Há estoque disponível para reservar peça?
-- Orçamento deve ser gerado agora?
+- Há estoque disponível para reservar a peça?
+- O orçamento deve ser gerado agora?
 
 ### Dados necessários
 
@@ -128,8 +128,8 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - Placa, marca, modelo e ano do veículo.
 - Diagnóstico ou problema percebido.
 - Serviços solicitados.
-- Peças/insumos e quantidades.
-- Preço dos serviços e peças.
+- Peças/insumos e respectivas quantidades.
+- Preço dos serviços e das peças.
 
 ## Fluxo 2 - Acompanhamento da Ordem de Serviço
 
@@ -145,7 +145,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `ConsultarAcompanhamentoOS`
 - `IniciarDiagnostico`
 - `AprovarOrcamento`
-- `IniciarExecução`
+- `IniciarExecucao`
 - `FinalizarOrdemServico`
 - `EntregarVeiculo`
 
@@ -154,7 +154,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `AcompanhamentoOSConsultado`
 - `DiagnosticoIniciado`
 - `OrcamentoAprovado`
-- `OrdemServicoEmExecução`
+- `OrdemServicoEmExecucao`
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 
@@ -164,26 +164,26 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `Vehicle` - Veículo.
 - `Customer` - Cliente.
 - `Budget` - Orçamento.
-- `Part` - Peça/Insumo, quando houver baixa de estoque após aprovação.
+- `Part` - Peça/Insumo, quando houver baixa de estoque após a aprovação.
 
 ### Políticas
 
-- Cliente só pode consultar OS vinculada ao seu cadastro.
+- O cliente só pode consultar uma OS vinculada ao seu cadastro.
 - APIs administrativas exigem autenticação JWT.
-- Transições de status devem respeitar a máquina de estados da OS.
-- Aprovação de orçamento libera a OS para execução.
-- Finalização exige OS em execução.
-- Entrega exige OS finalizada.
+- As transições de status devem respeitar a máquina de estados da OS.
+- A aprovação do orçamento libera a OS para execução.
+- A finalização exige que a OS esteja em execução.
+- A entrega exige que a OS esteja finalizada.
 
 ### Regras de negócio
 
 - `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
 - `RECEBIDA` ou `EM_DIAGNOSTICO` podem ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
-- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` após aprovação.
+- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` após a aprovação.
 - `EM_EXECUCAO` pode ir para `FINALIZADA`.
 - `FINALIZADA` pode ir para `ENTREGUE`.
-- OS entregue encerra o fluxo principal de atendimento.
-- Status não pode retroceder para `RECEBIDA`.
+- A OS entregue encerra o fluxo principal de atendimento.
+- O status não pode retroceder para `RECEBIDA`.
 
 ### Exceções
 
@@ -191,44 +191,44 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `AcessoNaoAutorizado`
 - `OrcamentoNaoGerado`
 - `OrcamentoJaAprovado`
-- `TransiçãoStatusInvalida`
+- `TransicaoStatusInvalida`
 - `ClienteNaoVinculadoAOrdem`
 
 ### Fluxo principal
 
-1. Cliente consulta a OS via API.
-2. Sistema valida se o cliente tem acesso à OS.
-3. Sistema retorna dados básicos da OS, veículo, status, serviços, peças e orçamento.
-4. Oficina inicia diagnóstico quando aplicável.
-5. Sistema atualiza status para `EM_DIAGNOSTICO`.
-6. Orçamento é gerado e disponibilizado.
-7. Cliente aprova o orçamento.
-8. Sistema libera a OS para execução.
-9. Oficina inicia execução.
-10. Oficina finaliza a OS.
-11. Oficina registra entrega do veículo.
+1. O cliente consulta a OS via API.
+2. O sistema valida se o cliente tem acesso à OS.
+3. O sistema retorna os dados básicos da OS, veículo, status, serviços, peças e orçamento.
+4. A oficina inicia o diagnóstico, quando aplicável.
+5. O sistema atualiza o status para `EM_DIAGNOSTICO`.
+6. O orçamento é gerado e disponibilizado.
+7. O cliente aprova o orçamento.
+8. O sistema libera a OS para execução.
+9. A oficina inicia a execução.
+10. A oficina finaliza a OS.
+11. A oficina registra a entrega do veículo.
 
 ### Fluxos alternativos
 
-- Cliente tenta consultar OS de outro cliente: acesso negado.
-- Orçamento ainda não foi gerado: acompanhamento retorna status atual sem aprovação disponível.
-- Cliente não aprova orçamento: OS permanece aguardando aprovação. Recusa explícita e expiração automática são melhorias
-  futuras quando não estiverem ativas no fluxo executado.
-- Tentativa de transição inválida: sistema bloqueia a alteração.
+- Cliente tenta consultar uma OS de outro cliente: acesso negado.
+- Orçamento ainda não foi gerado: o acompanhamento retorna o status atual, sem aprovação disponível.
+- Cliente não aprova o orçamento: a OS permanece aguardando aprovação. A recusa explícita e a expiração automática são
+  melhorias futuras, caso ainda não estejam ativas no fluxo executado.
+- Tentativa de transição inválida: o sistema bloqueia a alteração.
 
 ### Pontos de decisão
 
-- Cliente está autenticado ou validado?
-- OS pertence ao cliente?
-- Orçamento já foi gerado?
-- Orçamento foi aprovado?
-- Status atual permite próxima transição?
-- Veículo já pode ser entregue?
+- O cliente está autenticado ou validado?
+- A OS pertence ao cliente?
+- O orçamento já foi gerado?
+- O orçamento foi aprovado?
+- O status atual permite a próxima transição?
+- O veículo já pode ser entregue?
 
 ### Dados necessários
 
 - Identificador da OS.
-- Identificador do cliente ou CPF/CNPJ, conforme endpoint.
+- Identificador do cliente ou CPF/CNPJ, conforme o endpoint.
 - Placa do veículo, quando usada na consulta.
 - Status atual.
 - Datas de criação, diagnóstico, orçamento, aprovação, execução, finalização e entrega.
@@ -278,26 +278,26 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Políticas
 
-- Quantidade não pode ser negativa.
-- Preço não pode ser negativo.
-- Estoque mínimo não pode ser negativo.
-- Estoque disponível considera estoque total menos reservado.
-- Peça vinculada a orçamento deve ser reservada, não baixada imediatamente.
-- Peça é baixada quando o orçamento é aprovado ou quando uma saída/venda é registrada.
-- Baixa maior que estoque disponível deve ser bloqueada.
-- Estoque baixo é identificado quando disponibilidade é menor ou igual ao estoque mínimo.
+- A quantidade não pode ser negativa.
+- O preço não pode ser negativo.
+- O estoque mínimo não pode ser negativo.
+- O estoque disponível considera o estoque total menos o estoque reservado.
+- A peça vinculada ao orçamento deve ser reservada, não baixada imediatamente.
+- A peça é baixada quando o orçamento é aprovado ou quando uma saída/venda é registrada.
+- A baixa maior que o estoque disponível deve ser bloqueada.
+- O estoque baixo é identificado quando a disponibilidade é menor ou igual ao estoque mínimo.
 
 ### Regras de negócio
 
-- Nome da peça é obrigatório.
-- Preço de venda não pode ser negativo.
-- Quantidade de movimentação deve ser maior que zero.
-- Entrada aumenta estoque total.
-- Saída reduz estoque disponível.
-- Reserva reduz disponibilidade, mas não reduz estoque total.
-- Confirmação de reserva reduz estoque total e quantidade reservada.
-- Liberação de reserva reduz apenas a quantidade reservada.
-- Estoque não pode ficar negativo.
+- O nome da peça é obrigatório.
+- O preço de venda não pode ser negativo.
+- A quantidade da movimentação deve ser maior que zero.
+- A entrada aumenta o estoque total.
+- A saída reduz o estoque disponível.
+- A reserva reduz a disponibilidade, mas não reduz o estoque total.
+- A confirmação da reserva reduz o estoque total e a quantidade reservada.
+- A liberação da reserva reduz apenas a quantidade reservada.
+- O estoque não pode ficar negativo.
 
 ### Exceções
 
@@ -307,44 +307,44 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `PrecoInvalido`
 - `EstoqueInsuficiente`
 - `ReservaInexistente`
-- `MovimentaçãoEstoqueInvalida`
+- `MovimentacaoEstoqueInvalida`
 
 ### Fluxo principal
 
-1. Admin cadastra peça ou insumo.
-2. Sistema valida dados obrigatórios.
-3. Funcionário registra entrada de estoque.
-4. Sistema registra movimentação e atualiza estoque.
-5. Peça é vinculada a orçamento.
-6. Sistema verifica disponibilidade.
-7. Sistema reserva a quantidade necessária.
-8. Cliente aprova orçamento.
-9. Sistema confirma reserva e baixa estoque.
-10. Sistema registra movimentação de baixa.
+1. O admin cadastra a peça ou o insumo.
+2. O sistema valida os dados obrigatórios.
+3. O funcionário registra a entrada de estoque.
+4. O sistema registra a movimentação e atualiza o estoque.
+5. A peça é vinculada a um orçamento.
+6. O sistema verifica a disponibilidade.
+7. O sistema reserva a quantidade necessária.
+8. O cliente aprova o orçamento.
+9. O sistema confirma a reserva e baixa o estoque.
+10. O sistema registra a movimentação de baixa.
 
 ### Fluxos alternativos
 
-- Estoque insuficiente: sistema bloqueia reserva ou baixa.
-- Saída administrativa: sistema reduz estoque disponível e registra movimentação.
-- Venda isolada: sistema baixa estoque sem depender de OS.
-- Orçamento não aprovado: reserva pode ser liberada.
-- Expiração automática de orçamento: melhoria futura se não estiver ativa no fluxo executado.
+- Estoque insuficiente: o sistema bloqueia a reserva ou a baixa.
+- Saída administrativa: o sistema reduz o estoque disponível e registra a movimentação.
+- Venda isolada: o sistema baixa o estoque sem depender de OS.
+- Orçamento não aprovado: a reserva pode ser liberada.
+- Expiração automática de orçamento: melhoria futura, caso ainda não esteja ativa no fluxo executado.
 - Integração com fornecedores: melhoria futura.
 
 ### Pontos de decisão
 
-- Peça já existe?
-- Peça está ativa?
-- Quantidade informada é válida?
+- A peça já existe?
+- A peça está ativa?
+- A quantidade informada é válida?
 - Há estoque disponível?
 - A movimentação é entrada, saída, venda, reserva ou baixa?
-- A peça está vinculada a orçamento?
+- A peça está vinculada ao orçamento?
 - O orçamento foi aprovado?
-- Estoque ficou abaixo do mínimo?
+- O estoque ficou abaixo do mínimo?
 
 ### Dados necessários
 
-- Nome da peça ou insumo.
+- Nome da peça ou do insumo.
 - Categoria, marca, SKU e descrição, quando disponíveis.
 - Preço de venda e custo.
 - Quantidade em estoque.
@@ -352,7 +352,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - Estoque mínimo.
 - Tipo de movimentação.
 - Quantidade movimentada.
-- Referência da OS ou orçamento, quando aplicável.
+- Referência da OS ou do orçamento, quando aplicável.
 
 ## Diagramas Mermaid
 
@@ -396,8 +396,8 @@ flowchart TD
     C3 --> D2{Orçamento gerado?}
     D2 -- "Não" --> X2["Exceção: OrcamentoNaoGerado"]
     D2 -- "Sim" --> E3["Evento: OrcamentoAprovado"]
-    E3 --> C4["Comando: IniciarExecução"]
-    C4 --> E4["Evento: OrdemServicoEmExecução"]
+    E3 --> C4["Comando: IniciarExecucao"]
+    C4 --> E4["Evento: OrdemServicoEmExecucao"]
     E4 --> C5["Comando: FinalizarOrdemServico"]
     C5 --> E5["Evento: OrdemServicoFinalizada"]
     E5 --> C6["Comando: EntregarVeiculo"]
