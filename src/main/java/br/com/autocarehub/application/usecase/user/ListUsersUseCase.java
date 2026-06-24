@@ -22,13 +22,13 @@ public class ListUsersUseCase {
                         || user.role().name().equals(query.role()))
                 .filter(user -> query == null
                         || query.profileType() == null
-                        || user.profileType().equals(query.profileType()))
+                        || query.profileType().equals(user.profileType()))
                 .filter(user -> matchesSearch(user, query == null ? null : query.search()))
                 .sorted(Comparator.comparing(User::fullName, String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 
-    private boolean matchesSearch(User user, String search) {
+    private static boolean matchesSearch(User user, String search) {
         if (search == null || search.isBlank()) {
             return true;
         }
