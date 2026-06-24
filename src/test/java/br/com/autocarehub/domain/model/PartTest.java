@@ -56,8 +56,8 @@ class PartTest {
 
     @Test
     void shouldNotAllowNegativeStock() {
-        assertThatThrownBy(() ->
-                        part("Oil filter", "Oil filter", "OIL-001", null, Money.zero(), Money.of("50.00"), -1, 2))
+        assertThatThrownBy(
+                        () -> part("Oil filter", "Oil filter", "OIL-001", null, Money.zero(), Money.of("50.00"), -1, 2))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Stock cannot be negative");
     }

@@ -39,8 +39,8 @@ public class Part {
         this.description = DomainValidation.requireText(
                 catalogData.description(), "Description is required", DESCRIPTION_MAX_LENGTH);
         this.sku = DomainValidation.requireText(catalogData.sku(), "SKU is required", SKU_MAX_LENGTH);
-        this.category = DomainValidation.requireText(
-                catalogData.category(), "Category is required", CATEGORY_MAX_LENGTH);
+        this.category =
+                DomainValidation.requireText(catalogData.category(), "Category is required", CATEGORY_MAX_LENGTH);
         this.subcategory = DomainValidation.optionalText(catalogData.subcategory());
         this.brand = DomainValidation.requireText(catalogData.brand(), "Brand is required", BRAND_MAX_LENGTH);
         this.costPrice = requireNonNegativeMoney(pricing.costPrice());
@@ -205,7 +205,8 @@ public class Part {
     }
 
     /**
-     * Keeps requested items unavailable to other service orders until the reservation expires or is explicitly released.
+     * Keeps requested items unavailable to other service orders until the reservation expires or is explicitly
+     * released.
      */
     public void reserveStock(int quantity) {
         if (quantity <= 0) {
@@ -356,12 +357,7 @@ public class Part {
     }
 
     public record CatalogData(
-            String name,
-            String description,
-            String sku,
-            String category,
-            @Nullable String subcategory,
-            String brand) {}
+            String name, String description, String sku, String category, @Nullable String subcategory, String brand) {}
 
     public record Pricing(Money costPrice, Money unitPrice) {
 

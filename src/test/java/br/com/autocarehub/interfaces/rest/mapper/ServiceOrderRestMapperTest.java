@@ -162,12 +162,7 @@ class ServiceOrderRestMapperTest {
         serviceOrder.addPart(
                 Part.create(
                         new Part.CatalogData(
-                                "Filtro de óleo",
-                                "Filtro de óleo do motor",
-                                "OIL-MAP-001",
-                                "Filtros",
-                                "Óleo",
-                                "Bosch"),
+                                "Filtro de óleo", "Filtro de óleo do motor", "OIL-MAP-001", "Filtros", "Óleo", "Bosch"),
                         new Part.Pricing(Money.of("30.00"), Money.of("60.00")),
                         10,
                         2),

@@ -99,12 +99,7 @@ class UpdateServiceOrderStatusUseCaseTest {
     void shouldGenerateBudgetAndReservePartsWhenStatusChangesToWaitingApproval() {
         Part part = partRepository.save(Part.create(
                 new Part.CatalogData(
-                        "Filtro de oleo",
-                        "Filtro de oleo do motor",
-                        "OIL-STATUS-001",
-                        "Filtros",
-                        "Oleo",
-                        "Bosch"),
+                        "Filtro de oleo", "Filtro de oleo do motor", "OIL-STATUS-001", "Filtros", "Oleo", "Bosch"),
                 new Part.Pricing(Money.of("25.00"), Money.of("50.00")),
                 10,
                 2));

@@ -41,8 +41,7 @@ class CreateServiceOrderUseCaseTest {
 
     private static Part part() {
         return Part.create(
-                new Part.CatalogData(
-                        "Filtro de oleo", "Filtro de oleo", "FILTRO-001", "Filtros", "Oleo", "Bosch"),
+                new Part.CatalogData("Filtro de oleo", "Filtro de oleo", "FILTRO-001", "Filtros", "Oleo", "Bosch"),
                 Part.Pricing.withoutCost(Money.of("40.00")),
                 10,
                 2);
