@@ -2,6 +2,8 @@ package br.com.autocarehub.domain.model;
 
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.exception.DomainException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +23,11 @@ public record User(
         String employeeSubRole,
         List<String> permissions,
         boolean active,
-        LocalDateTime createdAt) {
+        LocalDateTime createdAt)
+        implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     public User {
         Objects.requireNonNull(id, "id is required");

@@ -8,6 +8,9 @@ import java.util.UUID;
 
 public class WorkshopService {
 
+    private static final int NAME_MAX_LENGTH = 100;
+    private static final int DESCRIPTION_MAX_LENGTH = 500;
+
     private final UUID id;
     private String name;
     private String description;
@@ -22,8 +25,8 @@ public class WorkshopService {
     public WorkshopService(
             UUID id, String name, String description, Money basePrice, int estimatedTimeInMinutes, boolean active) {
         this.id = Objects.requireNonNull(id, "id is required");
-        this.name = DomainValidation.requireText(name, "Name is required", 100);
-        this.description = DomainValidation.requireText(description, "Description is required", 500);
+        this.name = DomainValidation.requireText(name, "Name is required", NAME_MAX_LENGTH);
+        this.description = DomainValidation.requireText(description, "Description is required", DESCRIPTION_MAX_LENGTH);
         this.basePrice = requirePositiveMoney(basePrice);
         this.estimatedTimeInMinutes = requireEstimatedTime(estimatedTimeInMinutes);
         this.active = active;
@@ -44,19 +47,19 @@ public class WorkshopService {
         return value;
     }
 
-    public void update(String name, String description, Money basePrice, int estimatedTimeInMinutes) {
-        this.name = DomainValidation.requireText(name, "Name is required", 100);
-        this.description = DomainValidation.requireText(description, "Description is required", 500);
-        this.basePrice = requirePositiveMoney(basePrice);
-        this.estimatedTimeInMinutes = requireEstimatedTime(estimatedTimeInMinutes);
+    public void update(String newName, String newDescription, Money newBasePrice, int newEstimatedTimeInMinutes) {
+        name = DomainValidation.requireText(newName, "Name is required", NAME_MAX_LENGTH);
+        description = DomainValidation.requireText(newDescription, "Description is required", DESCRIPTION_MAX_LENGTH);
+        basePrice = requirePositiveMoney(newBasePrice);
+        estimatedTimeInMinutes = requireEstimatedTime(newEstimatedTimeInMinutes);
     }
 
     public void activate() {
-        this.active = true;
+        active = true;
     }
 
     public void deactivate() {
-        this.active = false;
+        active = false;
     }
 
     public UUID id() {

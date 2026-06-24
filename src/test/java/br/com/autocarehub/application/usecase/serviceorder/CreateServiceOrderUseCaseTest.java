@@ -39,12 +39,20 @@ class CreateServiceOrderUseCaseTest {
         return new Address("Avenida Paulista", "1000", null, "Bela Vista", "São Paulo", "SP", "01310-100");
     }
 
+    private static Part part() {
+        return Part.create(
+                new Part.CatalogData(
+                        "Filtro de oleo", "Filtro de oleo", "FILTRO-001", "Filtros", "Oleo", "Bosch"),
+                Part.Pricing.withoutCost(Money.of("40.00")),
+                10,
+                2);
+    }
+
     @Test
     void shouldCreateCustomerVehicleServiceOrderAndBudgetInSingleFlow() {
         WorkshopService service = workshopServiceRepository.save(
                 new WorkshopService("Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
-        Part part = partRepository.save(
-                new Part("Filtro de oleo", "FILTRO-001", "Filtros", "Oleo", "Bosch", Money.of("40.00"), 10, 2));
+        Part part = partRepository.save(part());
         CreateServiceOrderUseCase useCase = useCase();
 
         ServiceOrder serviceOrder = useCase.execute(new CreateServiceOrderUseCase.Command(
@@ -191,8 +199,7 @@ class CreateServiceOrderUseCaseTest {
         WorkshopService inactiveService = workshopServiceRepository.save(
                 new WorkshopService("Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
         inactiveService.deactivate();
-        Part inactivePart = partRepository.save(
-                new Part("Filtro de oleo", "FILTRO-001", "Filtros", "Oleo", "Bosch", Money.of("40.00"), 10, 2));
+        Part inactivePart = partRepository.save(part());
         inactivePart.deactivate();
         WorkshopService activeService = workshopServiceRepository.save(
                 new WorkshopService("Alinhamento", "Alinhamento completo", Money.of("90.00"), 45));

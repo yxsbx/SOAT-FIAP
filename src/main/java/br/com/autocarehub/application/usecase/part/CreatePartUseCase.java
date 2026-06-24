@@ -13,15 +13,15 @@ public class CreatePartUseCase {
     }
 
     public Part execute(Command command) {
-        Part part = new Part(
-                command.name(),
-                command.description(),
-                command.sku(),
-                command.category(),
-                command.subcategory(),
-                command.brand(),
-                command.costPrice(),
-                command.unitPrice(),
+        Part part = Part.create(
+                new Part.CatalogData(
+                        command.name(),
+                        command.description(),
+                        command.sku(),
+                        command.category(),
+                        command.subcategory(),
+                        command.brand()),
+                new Part.Pricing(command.costPrice(), command.unitPrice()),
                 command.stockQuantity(),
                 command.minimumStock());
         return partRepository.save(part);

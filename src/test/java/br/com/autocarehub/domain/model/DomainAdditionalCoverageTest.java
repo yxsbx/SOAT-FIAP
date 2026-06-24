@@ -104,15 +104,10 @@ class DomainAdditionalCoverageTest {
 
     @Test
     void shouldCoverAdditionalPartBranches() {
-        Part part = new Part(
-                "Filtro de oleo",
-                "Filtro de oleo do motor",
-                "OIL-EXTRA",
-                "Filtros",
-                "Oleo",
-                "Bosch",
-                Money.of("25.00"),
-                Money.of("50.00"),
+        Part part = Part.create(
+                new Part.CatalogData(
+                        "Filtro de oleo", "Filtro de oleo do motor", "OIL-EXTRA", "Filtros", "Oleo", "Bosch"),
+                new Part.Pricing(Money.of("25.00"), Money.of("50.00")),
                 4,
                 4);
 
@@ -148,35 +143,19 @@ class DomainAdditionalCoverageTest {
         assertThatThrownBy(() -> new BudgetItem(UUID.randomUUID(), "Filtro", 0, Money.of("10.00")))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Quantity must be greater than zero");
-        assertThatThrownBy(() -> new Part(
-                        "Filtro",
-                        "Filtro de oleo",
-                        "SKU-NEG",
-                        "Filtros",
-                        null,
-                        "Bosch",
-                        Money.of("1.00"),
-                        Money.zero(),
+        assertThatThrownBy(() -> Part.create(
+                        new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-NEG", "Filtros", null, "Bosch"),
+                        new Part.Pricing(Money.of("1.00"), Money.zero()),
                         1,
                         1))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Unit price must be greater than zero");
-        assertThatThrownBy(() -> new Part(
+        assertThatThrownBy(() -> Part.restore(
                         UUID.randomUUID(),
-                        "Filtro",
-                        "Filtro de oleo",
-                        "SKU-RES",
-                        "Filtros",
-                        null,
-                        "Bosch",
-                        Money.of("1.00"),
-                        Money.of("10.00"),
-                        1,
-                        2,
-                        1,
-                        3,
-                        null,
-                        true))
+                        new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-RES", "Filtros", null, "Bosch"),
+                        new Part.Pricing(Money.of("1.00"), Money.of("10.00")),
+                        new Part.StockState(1, 2, 1, 3, null),
+                        Part.ActivationStatus.ACTIVE))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Reserved stock cannot be greater than stock");
     }

@@ -7,19 +7,14 @@ import java.util.Objects;
 
 public class Budget {
 
-    private final List<BudgetItem> items;
     private final Money totalAmount;
 
     public Budget(List<BudgetItem> items) {
-        this.items = List.copyOf(Objects.requireNonNull(items, "items are required"));
-        if (this.items.isEmpty()) {
+        List<BudgetItem> budgetItems = List.copyOf(Objects.requireNonNull(items, "items are required"));
+        if (budgetItems.isEmpty()) {
             throw new DomainException("Budget requires at least one item");
         }
-        this.totalAmount = this.items.stream().map(BudgetItem::totalPrice).reduce(Money.zero(), Money::add);
-    }
-
-    public List<BudgetItem> items() {
-        return items;
+        totalAmount = budgetItems.stream().map(BudgetItem::totalPrice).reduce(Money.zero(), Money::add);
     }
 
     public Money totalAmount() {

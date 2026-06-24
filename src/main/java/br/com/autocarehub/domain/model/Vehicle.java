@@ -8,6 +8,9 @@ import java.util.UUID;
 
 public class Vehicle {
 
+    private static final int BRAND_MAX_LENGTH = 60;
+    private static final int MODEL_MAX_LENGTH = 80;
+
     private final UUID id;
     private final UUID customerId;
     private Plate plate;
@@ -26,8 +29,8 @@ public class Vehicle {
         this.id = Objects.requireNonNull(id, "id is required");
         this.customerId = Objects.requireNonNull(customerId, "customerId is required");
         this.plate = Objects.requireNonNull(plate, "plate is required");
-        this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
-        this.model = DomainValidation.requireText(model, "Model is required", 80);
+        this.brand = DomainValidation.requireText(brand, "Brand is required", BRAND_MAX_LENGTH);
+        this.model = DomainValidation.requireText(model, "Model is required", MODEL_MAX_LENGTH);
         this.year = DomainValidation.requireVehicleYear(year);
         this.mileage = requireMileage(mileage);
         this.active = active;
@@ -40,27 +43,27 @@ public class Vehicle {
         return value;
     }
 
-    public void update(Plate plate, String brand, String model, int year, int mileage) {
-        this.plate = Objects.requireNonNull(plate, "plate is required");
-        this.brand = DomainValidation.requireText(brand, "Brand is required", 60);
-        this.model = DomainValidation.requireText(model, "Model is required", 80);
-        this.year = DomainValidation.requireVehicleYear(year);
-        this.mileage = requireMileage(mileage);
+    public void update(Plate newPlate, String newBrand, String newModel, int newYear, int newMileage) {
+        plate = Objects.requireNonNull(newPlate, "plate is required");
+        brand = DomainValidation.requireText(newBrand, "Brand is required", BRAND_MAX_LENGTH);
+        model = DomainValidation.requireText(newModel, "Model is required", MODEL_MAX_LENGTH);
+        year = DomainValidation.requireVehicleYear(newYear);
+        mileage = requireMileage(newMileage);
     }
 
-    public void updateMileage(int mileage) {
-        if (mileage < this.mileage) {
+    public void updateMileage(int newMileage) {
+        if (newMileage < mileage) {
             throw new DomainException("Mileage cannot decrease");
         }
-        this.mileage = requireMileage(mileage);
+        mileage = requireMileage(newMileage);
     }
 
     public void activate() {
-        this.active = true;
+        active = true;
     }
 
     public void deactivate() {
-        this.active = false;
+        active = false;
     }
 
     public UUID id() {

@@ -12,12 +12,52 @@ import org.junit.jupiter.api.Test;
 class PartTest {
 
     private static Part part() {
-        return new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2);
+        return part("Oil filter", "Oil filter", "OIL-001", null, Money.zero(), Money.of("50.00"), 10, 2);
+    }
+
+    private static Part part(
+            String name,
+            String description,
+            String sku,
+            String subcategory,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int minimumStock) {
+        return Part.create(
+                catalog(name, description, sku, subcategory, "Bosch"),
+                new Part.Pricing(costPrice, unitPrice),
+                stockQuantity,
+                minimumStock);
+    }
+
+    private static Part.CatalogData catalog(
+            String name, String description, String sku, String subcategory, String brand) {
+        return new Part.CatalogData(name, description, sku, "Filters", subcategory, brand);
+    }
+
+    private static Part restore(
+            UUID id,
+            Part.CatalogData catalogData,
+            Money costPrice,
+            Money unitPrice,
+            int stockQuantity,
+            int reservedQuantity,
+            int minimumStock,
+            LocalDateTime reservationExpiresAt,
+            Part.ActivationStatus status) {
+        return Part.restore(
+                id,
+                catalogData,
+                new Part.Pricing(costPrice, unitPrice),
+                new Part.StockState(stockQuantity, reservedQuantity, minimumStock, 3, reservationExpiresAt),
+                status);
     }
 
     @Test
     void shouldNotAllowNegativeStock() {
-        assertThatThrownBy(() -> new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), -1, 2))
+        assertThatThrownBy(() ->
+                        part("Oil filter", "Oil filter", "OIL-001", null, Money.zero(), Money.of("50.00"), -1, 2))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Stock cannot be negative");
     }
@@ -134,21 +174,18 @@ class PartTest {
     @Test
     void shouldCoverPartConstructorAndUpdateOverloads() {
         UUID id = UUID.randomUUID();
-        Part first = new Part(
-                "Oil filter", "OIL-002", "Filters", null, "Bosch", Money.of("25.00"), Money.of("50.00"), 10, 2);
-        Part second = new Part(id, "Cabin filter", "CAB-001", "Filters", null, "Mann", Money.of("60.00"), 6, 2, true);
-        Part third = new Part(
-                UUID.randomUUID(),
-                "Air filter",
-                "Air filter description",
-                "AIR-001",
-                "Filters",
-                null,
-                "Mann",
-                Money.of("70.00"),
+        Part first = part("Oil filter", "Oil filter", "OIL-002", null, Money.of("25.00"), Money.of("50.00"), 10, 2);
+        Part second = Part.restore(
+                id,
+                catalog("Cabin filter", "Cabin filter", "CAB-001", null, "Mann"),
+                Part.Pricing.withoutCost(Money.of("60.00")),
+                Part.StockState.initial(6, 2),
+                Part.ActivationStatus.ACTIVE);
+        Part third = Part.create(
+                catalog("Air filter", "Air filter description", "AIR-001", null, "Mann"),
+                Part.Pricing.withoutCost(Money.of("70.00")),
                 8,
-                2,
-                true);
+                2);
 
         first.update("Oil filter premium", "OIL-003", "Filters", null, "Bosch", Money.of("65.00"), 3);
         second.update(
@@ -162,22 +199,16 @@ class PartTest {
 
     @Test
     void shouldRejectAdditionalInvalidPartStates() {
-        assertThatThrownBy(() -> new Part(
+        assertThatThrownBy(() -> restore(
                         UUID.randomUUID(),
-                        "Oil filter",
-                        "Oil filter",
-                        "OIL-004",
-                        "Filters",
-                        null,
-                        "Bosch",
+                        catalog("Oil filter", "Oil filter", "OIL-004", null, "Bosch"),
                         Money.of("25.00"),
                         Money.of("50.00"),
                         2,
                         3,
                         1,
-                        3,
                         null,
-                        true))
+                        Part.ActivationStatus.ACTIVE))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Reserved stock cannot be greater than stock");
 
@@ -198,22 +229,16 @@ class PartTest {
 
     @Test
     void shouldReleaseExpiredReservation() {
-        Part part = new Part(
+        Part part = restore(
                 UUID.randomUUID(),
-                "Oil filter",
-                "Oil filter",
-                "OIL-005",
-                "Filters",
-                null,
-                "Bosch",
+                catalog("Oil filter", "Oil filter", "OIL-005", null, "Bosch"),
                 Money.of("25.00"),
                 Money.of("50.00"),
                 10,
                 4,
                 2,
-                3,
                 LocalDateTime.now().minusDays(1),
-                true);
+                Part.ActivationStatus.ACTIVE);
 
         part.releaseExpiredReservation();
 

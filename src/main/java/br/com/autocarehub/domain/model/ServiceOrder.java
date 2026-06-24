@@ -90,10 +90,6 @@ public class ServiceOrder {
         this.status = ServiceOrderStatus.EM_DIAGNOSTICO;
     }
 
-    public void updateDiagnosticNotes(String diagnosticNotes) {
-        this.diagnosticNotes = requireText(diagnosticNotes, "Diagnostic notes are required");
-    }
-
     public void addService(WorkshopService service, int quantity) {
         Objects.requireNonNull(service, "service is required");
         ensureCanChangeBudgetItems();

@@ -29,21 +29,22 @@ public final class PartJpaMapper {
     }
 
     public static Part toDomain(PartJpaEntity entity) {
-        return new Part(
+        return Part.restore(
                 entity.getId(),
-                entity.getName(),
-                entity.getDescription(),
-                entity.getSku(),
-                entity.getCategory(),
-                entity.getSubcategory(),
-                entity.getBrand(),
-                new Money(entity.getCostPrice()),
-                new Money(entity.getUnitPrice()),
-                entity.getStockQuantity(),
-                entity.getReservedQuantity(),
-                entity.getMinimumStock(),
-                entity.getReservationDays(),
-                entity.getReservationExpiresAt(),
-                entity.isActive());
+                new Part.CatalogData(
+                        entity.getName(),
+                        entity.getDescription(),
+                        entity.getSku(),
+                        entity.getCategory(),
+                        entity.getSubcategory(),
+                        entity.getBrand()),
+                new Part.Pricing(new Money(entity.getCostPrice()), new Money(entity.getUnitPrice())),
+                new Part.StockState(
+                        entity.getStockQuantity(),
+                        entity.getReservedQuantity(),
+                        entity.getMinimumStock(),
+                        entity.getReservationDays(),
+                        entity.getReservationExpiresAt()),
+                Part.ActivationStatus.fromActive(entity.isActive()));
     }
 }

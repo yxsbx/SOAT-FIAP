@@ -36,6 +36,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    private static final long HSTS_MAX_AGE_SECONDS = 31_536_000L;
+    private static final long CORS_MAX_AGE_SECONDS = 3_600L;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ObjectMapper objectMapper;
     private final String allowedOrigins;
@@ -62,7 +65,7 @@ public class SecurityConfig {
                         .permissionsPolicyHeader(permissions ->
                                 permissions.policy("geolocation=(), microphone=(), camera=(), payment=(), usb=()"))
                         .httpStrictTransportSecurity(
-                                hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)))
+                                hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(HSTS_MAX_AGE_SECONDS)))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exceptions -> exceptions
                         .authenticationEntryPoint((request, response, exception) -> writeError(
@@ -180,7 +183,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(false);
-        configuration.setMaxAge(3600L);
+        configuration.setMaxAge(CORS_MAX_AGE_SECONDS);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

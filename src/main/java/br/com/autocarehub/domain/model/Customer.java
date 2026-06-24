@@ -10,6 +10,8 @@ import org.jspecify.annotations.Nullable;
 
 public class Customer {
 
+    private static final int NAME_MAX_LENGTH = 120;
+
     private final UUID id;
     private final Document document;
     private final LocalDateTime createdAt;
@@ -33,7 +35,7 @@ public class Customer {
             boolean active,
             LocalDateTime createdAt) {
         this.id = Objects.requireNonNull(id, "id is required");
-        this.name = DomainValidation.requireText(name, "Name is required", 120);
+        this.name = DomainValidation.requireText(name, "Name is required", NAME_MAX_LENGTH);
         this.document = Objects.requireNonNull(document, "document is required");
         this.phone = DomainValidation.requirePhone(phone);
         this.email = DomainValidation.requireEmail(email);
@@ -43,7 +45,7 @@ public class Customer {
     }
 
     public void rename(String name) {
-        this.name = DomainValidation.requireText(name, "Name is required", 120);
+        this.name = DomainValidation.requireText(name, "Name is required", NAME_MAX_LENGTH);
     }
 
     public void updateContact(String phone, String email) {
@@ -56,11 +58,11 @@ public class Customer {
     }
 
     public void activate() {
-        this.active = true;
+        active = true;
     }
 
     public void deactivate() {
-        this.active = false;
+        active = false;
     }
 
     public UUID id() {

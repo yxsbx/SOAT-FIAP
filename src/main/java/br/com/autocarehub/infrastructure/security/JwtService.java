@@ -6,7 +6,7 @@ import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
-import java.util.Objects;
+import java.util.UUID;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
+
+    private static final int MIN_SECRET_BYTES = 32;
+    private static final int SECONDS_PER_MINUTE = 60;
 
     private final SecretKey secretKey;
     private final long expirationSeconds;
@@ -24,28 +27,25 @@ public class JwtService {
         if (secret == null || secret.isBlank()) {
             throw new IllegalStateException("JWT secret must be provided through security.jwt.secret or JWT_SECRET");
         }
-        if (secret.getBytes(StandardCharsets.UTF_8).length < 32) {
+        if (secret.getBytes(StandardCharsets.UTF_8).length < MIN_SECRET_BYTES) {
             throw new IllegalStateException("JWT secret must have at least 32 bytes");
         }
         if (expirationMinutes <= 0) {
             throw new IllegalStateException("JWT expiration must be greater than zero");
         }
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.expirationSeconds = expirationMinutes * 60;
+        this.expirationSeconds = expirationMinutes * SECONDS_PER_MINUTE;
     }
 
     public IssuedToken generateToken(AuthenticatedUser user) {
         Instant issuedAt = Instant.now();
         Instant expiresAt = issuedAt.plusSeconds(expirationSeconds);
+        UUID customerId = user.customerId();
         String token = Jwts.builder()
                 .subject(user.getUsername())
                 .claim("userId", user.id().toString())
                 .claim("role", user.role())
-                .claim(
-                        "customerId",
-                        user.customerId() == null
-                                ? null
-                                : Objects.requireNonNull(user.customerId()).toString())
+                .claim("customerId", customerId == null ? null : customerId.toString())
                 .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(expiresAt))
                 .signWith(secretKey)

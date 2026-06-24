@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -165,8 +166,8 @@ public class UsersController {
     public ResponseEntity<UserListResponse> listPartners() {
         List<UserResponse> items =
                 listUsersUseCase.execute(new ListUsersUseCase.Query(true, "ADMIN", null, null)).stream()
-                        .filter(user -> user.profileType().equals("WORKSHOP_ADMIN")
-                                || user.profileType().equals("PARTS_STORE_ADMIN"))
+                        .filter(user -> "WORKSHOP_ADMIN".equals(user.profileType())
+                                || "PARTS_STORE_ADMIN".equals(user.profileType()))
                         .map(UsersController::toResponse)
                         .toList();
         return ResponseEntity.ok(new UserListResponse(items));
@@ -243,7 +244,7 @@ public class UsersController {
             UUID id,
             String username,
             String role,
-            UUID customerId,
+            @Nullable UUID customerId,
             String fullName,
             String profileType,
             String companyName,
@@ -258,7 +259,7 @@ public class UsersController {
             @Email @NotBlank String username,
             @Size(min = 8, max = 72) String password,
             @NotBlank @Size(max = 30) String role,
-            UUID customerId,
+            @Nullable UUID customerId,
             @NotBlank @Size(max = 120) String fullName,
             @NotBlank @Size(max = 40) String profileType,
             @Size(max = 120) String companyName,
@@ -270,7 +271,7 @@ public class UsersController {
     public record UpdateUserRequest(
             @Email @NotBlank String username,
             @NotBlank @Size(max = 30) String role,
-            UUID customerId,
+            @Nullable UUID customerId,
             @NotBlank @Size(max = 120) String fullName,
             @NotBlank @Size(max = 40) String profileType,
             @Size(max = 120) String companyName,

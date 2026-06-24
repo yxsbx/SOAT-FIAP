@@ -18,12 +18,20 @@ class ServiceOrderTest {
         ServiceOrder serviceOrder = serviceOrder();
         serviceOrder.addService(
                 new WorkshopService("Oil change", "Oil and filter replacement", Money.of("100.00"), 60), 2);
-        serviceOrder.addPart(new Part("Oil filter", "OIL-001", "Filters", null, "Bosch", Money.of("50.00"), 10, 2), 4);
+        serviceOrder.addPart(part("Oil filter", "OIL-001", 10, 2), 4);
         return serviceOrder;
     }
 
     private static ServiceOrder serviceOrder() {
         return new ServiceOrder(java.util.UUID.randomUUID(), java.util.UUID.randomUUID(), "Initial diagnostic notes");
+    }
+
+    private static Part part(String name, String sku, int stockQuantity, int minimumStock) {
+        return Part.create(
+                new Part.CatalogData(name, name, sku, "Filters", null, "Bosch"),
+                Part.Pricing.withoutCost(Money.of("50.00")),
+                stockQuantity,
+                minimumStock);
     }
 
     private static void assertCannotAddService(ServiceOrder serviceOrder) {
@@ -92,7 +100,7 @@ class ServiceOrderTest {
     @Test
     void shouldRejectAddingPartWhenStockIsUnavailable() {
         ServiceOrder serviceOrder = serviceOrder();
-        Part part = new Part("Oil filter", "OIL-LOW", "Filters", null, "Bosch", Money.of("50.00"), 1, 1);
+        Part part = part("Oil filter", "OIL-LOW", 1, 1);
 
         assertThatThrownBy(() -> serviceOrder.addPart(part, 2))
                 .isInstanceOf(DomainException.class)

@@ -33,15 +33,15 @@ class GenerateServiceOrderBudgetUseCaseTest {
     }
 
     private static Part part(int stockQuantity) {
-        return new Part(
-                "Filtro de oleo",
-                "Filtro de oleo do motor",
-                "OIL-" + UUID.randomUUID(),
-                "Filtros",
-                "Oleo",
-                "Bosch",
-                Money.of("25.00"),
-                Money.of("50.00"),
+        return Part.create(
+                new Part.CatalogData(
+                        "Filtro de oleo",
+                        "Filtro de oleo do motor",
+                        "OIL-" + UUID.randomUUID(),
+                        "Filtros",
+                        "Oleo",
+                        "Bosch"),
+                new Part.Pricing(Money.of("25.00"), Money.of("50.00")),
                 stockQuantity,
                 2);
     }

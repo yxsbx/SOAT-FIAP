@@ -7,6 +7,7 @@ import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrde
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
@@ -71,8 +72,7 @@ public final class ServiceOrderRestMapper {
             UUID serviceOrderId, UpdateServiceOrderStatusRequest request) {
         return new UpdateServiceOrderStatusUseCase.Command(
                 serviceOrderId,
-                br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(
-                        request.getStatus().getValue()));
+                ServiceOrderStatus.fromExternalCode(request.getStatus().getValue()));
     }
 
     public static ListServiceOrdersUseCase.Query toQuery(
@@ -82,9 +82,7 @@ public final class ServiceOrderRestMapper {
             OffsetDateTime createdFrom,
             OffsetDateTime createdTo) {
         return new ListServiceOrdersUseCase.Query(
-                status == null
-                        ? null
-                        : br.com.autocarehub.domain.enums.ServiceOrderStatus.fromExternalCode(status.getValue()),
+                status == null ? null : ServiceOrderStatus.fromExternalCode(status.getValue()),
                 customerId,
                 vehicleId,
                 createdFrom == null ? null : createdFrom.toLocalDateTime(),
@@ -185,53 +183,42 @@ public final class ServiceOrderRestMapper {
     }
 
     private static List<ServiceOrderStatusHistoryItem> statusHistory(ServiceOrder serviceOrder) {
-        ArrayList<ServiceOrderStatusHistoryItem> history = new ArrayList<>();
-        history.add(statusHistoryItem(
-                br.com.autocarehub.domain.enums.ServiceOrderStatus.RECEBIDA,
-                serviceOrder.createdAt(),
-                "Ordem de serviço criada"));
-        if (serviceOrder.status() == br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO) {
+        List<ServiceOrderStatusHistoryItem> history = new ArrayList<>();
+        history.add(
+                statusHistoryItem(ServiceOrderStatus.RECEBIDA, serviceOrder.createdAt(), "Ordem de serviço criada"));
+        if (serviceOrder.status() == ServiceOrderStatus.EM_DIAGNOSTICO) {
             history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_DIAGNOSTICO,
-                    serviceOrder.createdAt(),
-                    "Diagnóstico iniciado"));
+                    ServiceOrderStatus.EM_DIAGNOSTICO, serviceOrder.createdAt(), "Diagnóstico iniciado"));
         }
-        @Nullable LocalDateTime budgetGeneratedAt = serviceOrder.budgetGeneratedAt();
+        LocalDateTime budgetGeneratedAt = serviceOrder.budgetGeneratedAt();
         if (budgetGeneratedAt != null) {
             history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
+                    ServiceOrderStatus.AGUARDANDO_APROVACAO,
                     budgetGeneratedAt,
                     "Orçamento gerado e disponibilizado para aprovação"));
         }
-        @Nullable LocalDateTime approvedAt = serviceOrder.approvedAt();
+        LocalDateTime approvedAt = serviceOrder.approvedAt();
         if (approvedAt != null) {
             history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.AGUARDANDO_APROVACAO,
-                    approvedAt,
-                    "Orçamento aprovado pelo cliente"));
+                    ServiceOrderStatus.AGUARDANDO_APROVACAO, approvedAt, "Orçamento aprovado pelo cliente"));
         }
-        @Nullable LocalDateTime startedAt = serviceOrder.startedAt();
+        LocalDateTime startedAt = serviceOrder.startedAt();
         if (startedAt != null) {
-            history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.EM_EXECUCAO, startedAt, "Execução iniciada"));
+            history.add(statusHistoryItem(ServiceOrderStatus.EM_EXECUCAO, startedAt, "Execução iniciada"));
         }
-        @Nullable LocalDateTime finishedAt = serviceOrder.finishedAt();
+        LocalDateTime finishedAt = serviceOrder.finishedAt();
         if (finishedAt != null) {
-            history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.FINALIZADA, finishedAt, "Serviço finalizado"));
+            history.add(statusHistoryItem(ServiceOrderStatus.FINALIZADA, finishedAt, "Serviço finalizado"));
         }
-        @Nullable LocalDateTime deliveredAt = serviceOrder.deliveredAt();
+        LocalDateTime deliveredAt = serviceOrder.deliveredAt();
         if (deliveredAt != null) {
-            history.add(statusHistoryItem(
-                    br.com.autocarehub.domain.enums.ServiceOrderStatus.ENTREGUE, deliveredAt, "Veículo entregue"));
+            history.add(statusHistoryItem(ServiceOrderStatus.ENTREGUE, deliveredAt, "Veículo entregue"));
         }
         return history;
     }
 
     private static ServiceOrderStatusHistoryItem statusHistoryItem(
-            br.com.autocarehub.domain.enums.ServiceOrderStatus status,
-            @Nullable LocalDateTime occurredAt,
-            String description) {
+            ServiceOrderStatus status, @Nullable LocalDateTime occurredAt, String description) {
         return new ServiceOrderStatusHistoryItem(
                 ServiceOrderTrackingStatus.fromValue(status.name()),
                 RestMapperSupport.toOffsetDateTime(occurredAt),
@@ -242,6 +229,7 @@ public final class ServiceOrderRestMapper {
         if (customer == null) {
             return null;
         }
+
         return new CreateServiceOrderUseCase.CustomerInput(
                 customer.getName(),
                 customer.getPhone(),

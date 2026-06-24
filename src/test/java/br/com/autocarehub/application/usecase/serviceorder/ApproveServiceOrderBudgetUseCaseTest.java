@@ -24,15 +24,9 @@ class ApproveServiceOrderBudgetUseCaseTest {
     private final InMemoryPartRepository partRepository = new InMemoryPartRepository();
 
     private static Part part() {
-        return new Part(
-                "Filtro de oleo",
-                "Filtro de oleo do motor",
-                "OIL-001",
-                "Filtros",
-                "Oleo",
-                "Bosch",
-                Money.of("25.00"),
-                Money.of("50.00"),
+        return Part.create(
+                new Part.CatalogData("Filtro de oleo", "Filtro de oleo do motor", "OIL-001", "Filtros", "Oleo", "Bosch"),
+                new Part.Pricing(Money.of("25.00"), Money.of("50.00")),
                 10,
                 2);
     }

@@ -65,14 +65,14 @@ public class ServiceOrderJpaEntity {
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
 
-    public void replaceServices(List<ServiceOrderServiceJpaEntity> services) {
+    public void replaceServices(List<ServiceOrderServiceJpaEntity> newServices) {
         this.services.clear();
-        services.forEach(this::addService);
+        newServices.forEach(this::addService);
     }
 
-    public void replaceParts(List<ServiceOrderPartJpaEntity> parts) {
+    public void replaceParts(List<ServiceOrderPartJpaEntity> newParts) {
         this.parts.clear();
-        parts.forEach(this::addPart);
+        newParts.forEach(this::addPart);
     }
 
     public void addService(ServiceOrderServiceJpaEntity service) {

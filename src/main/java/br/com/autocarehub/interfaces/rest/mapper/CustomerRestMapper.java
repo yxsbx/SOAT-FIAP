@@ -13,6 +13,11 @@ import java.util.UUID;
 
 public final class CustomerRestMapper {
 
+    private static final int CNPJ_LENGTH = 14;
+    private static final int CNPJ_VISIBLE_END_DIGITS = 4;
+    private static final int DEFAULT_VISIBLE_END_DIGITS = 2;
+    private static final int MIN_MASKABLE_DOCUMENT_LENGTH = 5;
+
     private CustomerRestMapper() {}
 
     public static CreateCustomerUseCase.Command toCommand(CreateCustomerRequest request) {
@@ -76,10 +81,10 @@ public final class CustomerRestMapper {
     }
 
     private static String maskDocument(String document) {
-        if (document == null || document.length() < 5) {
+        if (document == null || document.length() < MIN_MASKABLE_DOCUMENT_LENGTH) {
             return "****";
         }
-        int visibleEndDigits = document.length() == 14 ? 4 : 2;
+        int visibleEndDigits = document.length() == CNPJ_LENGTH ? CNPJ_VISIBLE_END_DIGITS : DEFAULT_VISIBLE_END_DIGITS;
         int maskedLength = document.length() - visibleEndDigits;
         return "*".repeat(maskedLength) + document.substring(maskedLength);
     }
