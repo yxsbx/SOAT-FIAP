@@ -21,7 +21,7 @@ public class ServiceOrder {
     private final List<ServiceOrderPart> parts;
     private final LocalDateTime createdAt;
     private ServiceOrderStatus status;
-    private String diagnosticNotes;
+    private final String diagnosticNotes;
     private Money totalAmount;
     private @Nullable LocalDateTime budgetGeneratedAt;
     private @Nullable LocalDateTime approvedAt;
