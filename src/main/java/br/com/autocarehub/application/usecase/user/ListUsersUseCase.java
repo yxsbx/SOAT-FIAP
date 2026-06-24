@@ -4,6 +4,7 @@ import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 public class ListUsersUseCase {
 
@@ -31,11 +32,11 @@ public class ListUsersUseCase {
         if (search == null || search.isBlank()) {
             return true;
         }
-        String value = search.toLowerCase();
-        return user.fullName().toLowerCase().contains(value)
-                || user.username().toLowerCase().contains(value)
-                || user.profileType().toLowerCase().contains(value)
-                || user.employeeSubRole().toLowerCase().contains(value);
+        String value = search.toLowerCase(Locale.ROOT);
+        return user.fullName().toLowerCase(Locale.ROOT).contains(value)
+                || user.username().toLowerCase(Locale.ROOT).contains(value)
+                || user.profileType().toLowerCase(Locale.ROOT).contains(value)
+                || user.employeeSubRole().toLowerCase(Locale.ROOT).contains(value);
     }
 
     public record Query(Boolean active, String role, String profileType, String search) {}

@@ -153,7 +153,10 @@ public class ServiceOrdersController implements ServiceOrdersApi {
 
     @Override
     @PreAuthorize(
-            "hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canTrackServiceOrders(#serviceOrderId, #customerDocument)")
+            """
+            hasAnyRole('ADMIN','EMPLOYEE') or
+            @authorizationService.canTrackServiceOrders(#serviceOrderId, #customerDocument)
+            """)
     public ResponseEntity<ServiceOrderTrackingListResponse> trackServiceOrders(
             @Nullable UUID serviceOrderId, @Nullable String customerDocument, @Nullable String plate) {
         return ResponseEntity.ok(ServiceOrderRestMapper.toTrackingListResponse(trackServiceOrderUseCase.execute(

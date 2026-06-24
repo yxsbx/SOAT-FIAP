@@ -4,6 +4,7 @@ import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 public class GetAverageServiceOrderExecutionTimeUseCase {
 
@@ -22,7 +23,7 @@ public class GetAverageServiceOrderExecutionTimeUseCase {
     }
 
     private long durationInMinutes(ServiceOrder serviceOrder) {
-        return Duration.between(serviceOrder.startedAt(), serviceOrder.finishedAt())
+        return Duration.between(Objects.requireNonNull(serviceOrder.startedAt()), serviceOrder.finishedAt())
                 .toMinutes();
     }
 

@@ -40,7 +40,20 @@ public class UsersController {
 
     private static final String HOME_KEY = "home";
     private static final String DEFAULT_HOME_PREFERENCE =
-            "{\"widgets\":[\"orders-progress\",\"services-catalog\",\"active-customers\",\"vehicles-in-service\",\"pending-budgets\",\"waiting-contact\",\"ready-pickup\"],\"showAlertsOnHome\":false}";
+            """
+            {
+              "widgets": [
+                "orders-progress",
+                "services-catalog",
+                "active-customers",
+                "vehicles-in-service",
+                "pending-budgets",
+                "waiting-contact",
+                "ready-pickup"
+              ],
+              "showAlertsOnHome": false
+            }
+            """;
 
     private final GetUserUseCase getUserUseCase;
     private final ListUsersUseCase listUsersUseCase;

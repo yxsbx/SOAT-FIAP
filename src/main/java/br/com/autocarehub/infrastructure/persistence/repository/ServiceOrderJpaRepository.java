@@ -26,6 +26,11 @@ public interface ServiceOrderJpaRepository extends JpaRepository<ServiceOrderJpa
 
     @EntityGraph(attributePaths = {"services", "parts"})
     @Query(
-            "select serviceOrder from ServiceOrderJpaEntity serviceOrder where serviceOrder.startedAt is not null and serviceOrder.finishedAt is not null")
+            """
+            select serviceOrder
+            from ServiceOrderJpaEntity serviceOrder
+            where serviceOrder.startedAt is not null
+              and serviceOrder.finishedAt is not null
+            """)
     List<ServiceOrderJpaEntity> findCompletedWithExecutionTime();
 }

@@ -6,6 +6,7 @@ import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.model.DemoLead;
 import br.com.autocarehub.domain.valueobject.Document;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 
 public class RegisterDemoLeadUseCase {
@@ -30,7 +31,7 @@ public class RegisterDemoLeadUseCase {
                 command.contactName().trim(),
                 command.companyName().trim(),
                 command.demoProfile().trim(),
-                command.email().trim().toLowerCase(),
+                command.email().trim().toLowerCase(Locale.ROOT),
                 command.phone().trim(),
                 cnpj.value(),
                 normalize(command.city()),

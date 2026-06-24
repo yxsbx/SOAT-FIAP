@@ -5,6 +5,7 @@ import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.valueobject.Document;
 import java.util.Objects;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class AuthorizationService {
         }
     }
 
-    private AuthenticatedUser currentUser() {
+    private @Nullable AuthenticatedUser currentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof AuthenticatedUser user)) {
             return null;
