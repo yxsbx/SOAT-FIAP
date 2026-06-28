@@ -1,6 +1,7 @@
 package br.com.autocarehub.interfaces.rest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,7 +34,10 @@ class SensitiveDataValidationIntegrationTest {
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(customerJson("Cliente CPF Invalido", "11111111111")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").value("/api/v1/customers"));
     }
 
     @Test
@@ -44,7 +48,10 @@ class SensitiveDataValidationIntegrationTest {
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(customerJson("Empresa CNPJ Invalido", "11.222.333/0001-82")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").value("/api/v1/customers"));
     }
 
     @Test
@@ -67,7 +74,10 @@ class SensitiveDataValidationIntegrationTest {
                                 2020,
                                 "mileage",
                                 30000))))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").value("/api/v1/vehicles"));
     }
 
     @Test
@@ -92,7 +102,10 @@ class SensitiveDataValidationIntegrationTest {
                                 30000,
                                 "unexpectedField",
                                 "must fail"))))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Malformed or unreadable request body"))
+                .andExpect(jsonPath("$.path").value("/api/v1/vehicles"));
     }
 
     private String login() throws Exception {

@@ -23,6 +23,7 @@ class SecurityAuthorizationIntegrationTest {
     private static final String OTHER_CUSTOMER_ID = "10000000-0000-0000-0000-000000000002";
     private static final String CUSTOMER_ORDER_ID = "50000000-0000-0000-0000-000000000002";
     private static final String OTHER_CUSTOMER_ORDER_ID = "50000000-0000-0000-0000-000000000003";
+    private static final String CUSTOMER_DOCUMENT = "12345678909";
 
     @Autowired
     private MockMvc mockMvc;
@@ -38,6 +39,15 @@ class SecurityAuthorizationIntegrationTest {
                 .getStatus();
 
         assertThat(status).isIn(401, 403);
+    }
+
+    @Test
+    void shouldExposeOpenApiAndSwaggerUiWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
+
+        mockMvc.perform(get("/swagger-ui.html")).andExpect(status().isOk());
+
+        mockMvc.perform(get("/webjars/swagger-ui/5.32.6/swagger-ui.css")).andExpect(status().isOk());
     }
 
     @Test
@@ -67,6 +77,24 @@ class SecurityAuthorizationIntegrationTest {
                 .andExpect(jsonPath("$.items").isArray());
 
         mockMvc.perform(get("/api/v1/customers/{customerId}/service-orders", OTHER_CUSTOMER_ID)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void shouldAllowCustomerToUseTrackingApiOnlyForOwnDocument() throws Exception {
+        String token = login("cliente@autocarehub.com");
+
+        mockMvc.perform(get("/api/v1/service-orders/tracking")
+                        .param("serviceOrderId", CUSTOMER_ORDER_ID)
+                        .param("customerDocument", CUSTOMER_DOCUMENT)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].id").value(CUSTOMER_ORDER_ID));
+
+        mockMvc.perform(get("/api/v1/service-orders/tracking")
+                        .param("serviceOrderId", OTHER_CUSTOMER_ORDER_ID)
+                        .param("customerDocument", CUSTOMER_DOCUMENT)
                         .header("Authorization", bearer(token)))
                 .andExpect(status().isForbidden());
     }

@@ -1,8 +1,8 @@
 # Guia de Scans de Vulnerabilidade - AutoCare Hub
 
 Este guia prepara a execução local de scans de segurança do AutoCare Hub. Ele não registra resultados e não afirma que
-os scans foram executados. Após rodar os comandos, copie os achados relevantes para `SECURITY_REPORT.md` e anexe os
-arquivos gerados em `security-reports/`.
+os scans foram executados. Após rodar os comandos, copie os achados relevantes para `docs/SECURITY_REPORT.md` e anexe
+os arquivos gerados em `security-reports/`.
 
 ## Estrutura de resultados
 
@@ -17,8 +17,9 @@ security-reports/
   secrets/
 ```
 
-Os arquivos `.gitkeep` mantêm os diretórios no repositório. Os relatórios gerados podem ser versionados somente se a
-entrega exigir evidências no repositório e se não contiverem secrets, tokens, senhas ou dados pessoais.
+Os relatórios gerados são evidências locais e ficam fora do versionamento por padrão via `.gitignore`. Versione arquivos
+brutos somente se a entrega exigir explicitamente e depois de conferir que não contêm secrets, tokens, senhas, CPF/CNPJ
+real, caminhos sensíveis ou dados pessoais.
 
 ## Pré-requisitos
 
@@ -315,7 +316,7 @@ Ordem recomendada:
 
 ## 10. Como anexar evidências no relatório final
 
-No `SECURITY_REPORT.md`, para cada ferramenta executada, registre:
+No `docs/SECURITY_REPORT.md`, para cada ferramenta executada, registre:
 
 - ferramenta;
 - versão, quando possível;

@@ -230,6 +230,15 @@ Documento versionado:
 docs/EVENT_STORMING.md
 ```
 
+Os status internos do domínio usam nomes em português, como `AGUARDANDO_APROVACAO` e `EM_EXECUCAO`. Nas respostas e
+requests da API, esses valores aparecem pelos códigos externos documentados no OpenAPI, como `WAITING_APPROVAL` e
+`IN_PROGRESS`.
+
+As mudanças automáticas de status ocorrem nas regras de domínio do fluxo principal: a OS nasce como recebida, a geração
+do orçamento altera para aguardando aprovação e a aprovação registra o aceite do cliente. O início da execução, a
+finalização e a entrega são transições controladas por endpoint administrativo, para evitar avançar a OS sem ação
+explícita da oficina.
+
 ## 15. Linguagem Ubíqua
 
 | Termo                   | Significado                                                                    |
@@ -278,17 +287,17 @@ REST principais. A validação completa é executada com:
 mvn verify
 ```
 
-Resultado consolidado em 20/06/2026:
+Resultado de qualidade revalidado em 28/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 | ---------- | ------: | ----------: | --------: |
-| Instruções |   9.752 |         397 |    96,09% |
-| Branches   |     457 |          49 |    90,32% |
-| Linhas     |   2.440 |          75 |    97,02% |
-| Métodos    |     634 |          36 |    94,63% |
+| Instruções |   9.853 |         372 |    96,36% |
+| Branches   |     455 |          49 |    90,28% |
+| Linhas     |   2.361 |          66 |    97,28% |
+| Métodos    |     644 |          32 |    95,27% |
 
-Resultado documentado: 145 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige no mínimo 90% de
-instruções, linhas e branches.
+Resultado documentado: 146 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige no mínimo 90% de
+instruções, linhas e branches, acima da cobertura mínima de 80% exigida para a entrega.
 
 No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de
 status. A entrega passou a exigir 90% também nessa métrica, evitando que apenas linhas executadas escondam caminhos
@@ -313,6 +322,10 @@ Pré-requisitos:
 Criar `.env` a partir do exemplo:
 
 ```powershell
+# Linux/macOS/Git Bash
+cp .env.example .env
+
+# PowerShell
 Copy-Item .env.example .env
 ```
 
@@ -323,11 +336,20 @@ POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
 JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
 ```
 
-Executar PostgreSQL, API e frontend com um único comando:
+Para demonstrar o projeto rodando do zero:
 
 ```powershell
+docker compose down
+docker compose down --remove-orphans
+docker compose down -v
 docker compose up -d --build
+docker compose ps
+docker compose logs -f app
 ```
+
+Esse fluxo para containers antigos, remove o volume local do PostgreSQL, recria banco/API/frontend e permite mostrar as
+migrations Flyway criando a base nos logs. O serviço da API no `docker-compose.yml` se chama `app`; por isso o comando
+real de logs é `docker compose logs -f app`.
 
 Parar ambiente:
 
@@ -340,6 +362,9 @@ Remover volume local do banco:
 ```powershell
 docker compose down -v
 ```
+
+Opcional, com cuidado: `docker volume prune` remove volumes Docker não usados por outros projetos também. Use apenas
+quando for intencional limpar volumes órfãos do Docker.
 
 Executar somente o PostgreSQL pelo Compose e a API pelo Maven:
 
@@ -371,6 +396,12 @@ npm run dev
 O relatório oficial de vulnerabilidades está versionado em:
 
 <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>
+
+O roteiro de execução dos scans fica em:
+
+```text
+docs/SECURITY_SCAN_GUIDE.md
+```
 
 Resumo dos scans finais documentados:
 

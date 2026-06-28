@@ -56,8 +56,12 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .headers(headers -> headers.contentSecurityPolicy(
-                                csp -> csp.policyDirectives("default-src 'self'; frame-ancestors 'self'"))
+                .headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'; "
+                                + "script-src 'self'; "
+                                + "style-src 'self' 'unsafe-inline'; "
+                                + "img-src 'self' data:; "
+                                + "connect-src 'self'; "
+                                + "frame-ancestors 'self'"))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
                         .referrerPolicy(referrer -> referrer.policy(
                                 org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter
@@ -78,6 +82,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
+                                "/swagger-ui-init.js",
+                                "/webjars/**",
                                 "/openapi.yaml")
                         .permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/demo-leads")

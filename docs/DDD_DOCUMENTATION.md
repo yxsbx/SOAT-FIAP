@@ -2,8 +2,7 @@
 
 ## 1. Introdução
 
-Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub, considerando o escopo acadêmico do
-Tech Challenge. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e
+Este documento descreve a aplicação de Domain-Driven Design no projeto AutoCare Hub. O sistema é um backend monolítico em camadas, com separação entre domínio, aplicação, infraestrutura e
 interfaces REST.
 
 O objetivo desta documentação é registrar as decisões de domínio utilizadas no MVP e servir como evidência técnica da
@@ -76,7 +75,9 @@ A arquitetura do projeto separa responsabilidades:
 
 - **Termo de negócio:**  Status da OS
   - **Nome técnico no código:**  `ServiceOrderStatus`
-  - **Definição:**  Estado controlado da Ordem de Serviço.
+  - **Definição:**  Estado controlado da Ordem de Serviço. No domínio os nomes são `RECEBIDA`,
+    `EM_DIAGNOSTICO`, `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` e `ENTREGUE`; na API eles são expostos pelos
+    códigos externos `RECEIVED`, `IN_DIAGNOSIS`, `WAITING_APPROVAL`, `IN_PROGRESS`, `FINISHED` e `DELIVERED`.
 
 - **Termo de negócio:**  Serviço
   - **Nome técnico no código:**  `WorkshopService`
@@ -384,7 +385,9 @@ Comandos principais do domínio:
 4. O orçamento fica disponível para aprovação.
 5. O cliente aprova o orçamento.
 6. O sistema confirma a baixa das peças reservadas.
-7. A Ordem de Serviço pode avançar para execução.
+7. A Ordem de Serviço permanece aguardando aprovação no código externo `WAITING_APPROVAL` até que a oficina execute a
+   transição explícita para execução.
+8. A oficina inicia a execução em uma ação separada, mudando o status para `IN_PROGRESS`.
 
 A recusa ou expiração de orçamento com liberação automática de reserva pode ser tratada como melhoria futura, caso ainda
 não esteja ativa no fluxo executado.
@@ -480,7 +483,7 @@ stateDiagram-v2
     RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnóstico
     RECEBIDA --> AGUARDANDO_APROVACAO: gerar orçamento
     EM_DIAGNOSTICO --> AGUARDANDO_APROVACAO: gerar orçamento
-    AGUARDANDO_APROVACAO --> EM_EXECUCAO: aprovar orçamento
+    AGUARDANDO_APROVACAO --> EM_EXECUCAO: iniciar execução após aprovação
     EM_EXECUCAO --> FINALIZADA: finalizar serviço
     FINALIZADA --> ENTREGUE: entregar veículo
     ENTREGUE --> [*]

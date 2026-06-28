@@ -60,8 +60,8 @@ Item fora do escopo desta versão:
 
 | Campo                                 | Valor                            |
 | ------------------------------------- | -------------------------------- |
-| Data de consolidação                  | 20/06/2026                       |
-| Horário do relatório Dependency-Check | 17:07:53 UTC                     |
+| Data de consolidação                  | 28/06/2026                       |
+| Horário do relatório Dependency-Check | 17:16:12 UTC                     |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
 | Commit técnico validado               | `dbed819`                        |
@@ -115,7 +115,7 @@ Item fora do escopo desta versão:
 | Maven               | Maven local do projeto                                                                   |
 | Banco usado no scan | Não aplicável ao Dependency-Check                                                        |
 | Perfil Spring       | Não aplicável ao Dependency-Check                                                        |
-| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-20T17:07:53.263950500Z`. |
+| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-28T17:16:12.846950300Z`. |
 
 ## 7. Resumo executivo
 
@@ -162,14 +162,16 @@ excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pe
 comando, consulta e saída sem lógica própria. O gate executado por `mvn verify` exige no mínimo 90% de instruções,
 linhas e branches.
 
+Resultado de qualidade revalidado em 28/06/2026:
+
 | Métrica    | Coberto | Não coberto | Cobertura |
 | ---------- | ------: | ----------: | --------: |
-| Instruções |   9.752 |         397 |    96,09% |
-| Branches   |     457 |          49 |    90,32% |
-| Linhas     |   2.440 |          75 |    97,02% |
-| Métodos    |     634 |          36 |    94,63% |
+| Instruções |   9.853 |         372 |    96,36% |
+| Branches   |     455 |          49 |    90,28% |
+| Linhas     |   2.361 |          66 |    97,28% |
+| Métodos    |     644 |          32 |    95,27% |
 
-Resultado validado com 145 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 146 testes automatizados e `mvn verify` concluindo com sucesso.
 
 ## 10. Tabela de vulnerabilidades encontradas
 
@@ -546,6 +548,9 @@ Não há pendências críticas ou altas. Um DAST dedicado permanece como melhori
   - **Evidência/observação:**  Semgrep executou 187 regras em 200 arquivos com 0 achados.
 
 ## 16. Evidências
+
+Os caminhos abaixo indicam evidências geradas localmente durante a validação. Os arquivos brutos ficam fora do
+versionamento; este documento consolida os resultados relevantes para a entrega.
 
 - **Evidência:**  Relatório Dependency-Check HTML
   - **Caminho:**  `target/dependency-check/dependency-check-report.html`

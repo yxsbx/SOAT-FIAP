@@ -10,8 +10,8 @@ entrega é `main`.
 
 ## Sumário da Entrega
 
-`docs/` concentra a documentação pública exigida para avaliação. Materiais de apoio para gravação e validação
-operacional ficam fora dessa pasta para não serem confundidos com o PDF final.
+`docs/` concentra a documentação pública exigida para avaliação. O roteiro do vídeo fica em `video/` porque é material
+de apresentação, não documento final para PDF.
 
 Documentos oficiais:
 
@@ -41,16 +41,13 @@ Documentos oficiais:
   - **Onde abrir:**  [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
   - **O que comprova:**  Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.
 
-Apoio interno:
+Documentos de apoio:
 
-| Material               | Onde abrir                                                                         |
-| ---------------------- | ---------------------------------------------------------------------------------- |
-| Roteiro do vídeo       | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md)                                     |
-| Checklist pré-gravação | [video/PRE_RECORDING_CHECKLIST.md](video/PRE_RECORDING_CHECKLIST.md)               |
-| Guia de scans          | [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md)             |
-| Validação final        | [validation/FINAL_VALIDATION_REPORT.md](validation/FINAL_VALIDATION_REPORT.md)     |
-| Rubrica de aderência   | [validation/FACULTY_RUBRIC_VALIDATION.md](validation/FACULTY_RUBRIC_VALIDATION.md) |
-| Frontend demonstrativo | [frontend/README.md](frontend/README.md)                                           |
+| Material               | Onde abrir                                                     |
+| ---------------------- | -------------------------------------------------------------- |
+| Guia de scans          | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)     |
+| Roteiro do vídeo       | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md)                 |
+| Frontend demonstrativo | [frontend/README.md](frontend/README.md)                       |
 
 ## Dados da Entrega
 
@@ -63,7 +60,7 @@ Apoio interno:
 | Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                 |
 | Branch final                    | `main`                                               |
 | Acesso de avaliação             | Usuário `soatarchitecture` com acesso Read concedido |
-| Data consolidada nos documentos | 20/06/2026                                           |
+| Data consolidada nos documentos | 28/06/2026                                           |
 
 ## Escopo do MVP
 
@@ -155,6 +152,10 @@ Pré-requisitos:
 Crie o `.env` a partir do exemplo:
 
 ```powershell
+# Linux/macOS/Git Bash
+cp .env.example .env
+
+# PowerShell
 Copy-Item .env.example .env
 ```
 
@@ -165,11 +166,24 @@ POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
 JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
 ```
 
-Suba banco, backend e frontend com um único comando:
+Para demonstrar o projeto rodando do zero, pare containers antigos, remova volumes locais do banco e suba tudo novamente:
 
 ```powershell
+docker compose down
+docker compose down --remove-orphans
+docker compose down -v
 docker compose up -d --build
+docker compose ps
 ```
+
+Acompanhe a inicialização da API e as migrations Flyway criando a base:
+
+```powershell
+docker compose logs -f app
+```
+
+O serviço da API no `docker-compose.yml` se chama `app`. Portanto, o comando correto é `docker compose logs -f app`;
+`docker compose logs -f backend` não funciona neste projeto.
 
 URLs:
 
@@ -183,17 +197,20 @@ PostgreSQL: localhost:5432
 O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por exemplo
 `http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
 
-Parar os serviços:
+Parar os serviços sem apagar dados:
 
 ```powershell
 docker compose down
 ```
 
-Remover o volume local do banco:
+Remover o volume local do banco para recriar a base do zero:
 
 ```powershell
 docker compose down -v
 ```
+
+Opcional, com cuidado: `docker volume prune` remove volumes Docker não usados por outros projetos também. Use apenas se
+você souber que não precisa desses volumes.
 
 ## Execução em Desenvolvimento
 
@@ -273,6 +290,7 @@ Principais grupos de endpoints:
 | Ordens de Serviço     | `/api/v1/service-orders`                                                                     |
 | Orçamento             | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
 | Tracking do cliente   | `/api/v1/service-orders/tracking`                                                            |
+| Métricas da OS        | `/api/v1/service-orders/metrics/average-execution-time`                                       |
 | Usuários              | `/api/v1/users` e `/api/v1/users/me`                                                         |
 | Leads de demonstração | `/api/v1/demo-leads`                                                                         |
 
@@ -307,16 +325,16 @@ Scans de segurança:
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-Demais comandos e opções: [validation/SECURITY_SCAN_GUIDE.md](validation/SECURITY_SCAN_GUIDE.md).
+Demais comandos e opções: [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md).
 
 ## Evidências de Qualidade
 
-Resultado consolidado em 20/06/2026:
+Resultado de qualidade revalidado em 28/06/2026:
 
 | Área                   | Resultado                                             |
 | ---------------------- | ----------------------------------------------------- |
-| Testes Maven           | 145 testes, 0 falhas, 0 erros, 0 ignorados            |
-| Cobertura JaCoCo       | 96,09% instruções, 97,02% linhas e 90,32% branches    |
+| Testes Maven           | 146 testes, 0 falhas, 0 erros, 0 ignorados            |
+| Cobertura JaCoCo       | 96,36% instruções, 97,28% linhas e 90,28% branches    |
 | Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
 | Frontend lint          | 0 erros e 0 warnings                                  |
 | Frontend build         | Aprovado                                              |
@@ -327,14 +345,15 @@ Resultado consolidado em 20/06/2026:
 | Gitleaks               | 0 leaks em 36 commits                                 |
 | Semgrep                | 0 achados em 200 arquivos com 187 regras              |
 
-No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de
-status. Por isso o gate também exige 90% nessa métrica.
+O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos
+condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso o gate interno também
+exige 90% nessa métrica.
 
-Relatórios e evidências:
+Relatórios e evidências gerados localmente:
 
 ```text
-validation/FINAL_VALIDATION_REPORT.md
 docs/SECURITY_REPORT.md
+docs/SECURITY_SCAN_GUIDE.md
 target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
 target/dependency-check/dependency-check-report.html
@@ -345,6 +364,9 @@ security-reports/docker/docker-scout-frontend-cves.txt
 security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
 ```
+
+Os arquivos em `target/` e `security-reports/` são saídas locais de ferramentas e ficam fora do versionamento. O resumo
+oficial dos resultados está em [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md).
 
 ## CI
 

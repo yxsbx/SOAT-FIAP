@@ -8,6 +8,9 @@ Este documento apresenta o Event Storming dos fluxos exigidos no MVP do Tech Cha
 Os nomes seguem a linguagem ubíqua do projeto. Quando uma etapa ainda não está materializada como evento persistido ou
 automação explícita no código, ela é marcada como `prevista no domínio` ou `melhoria futura`.
 
+Observação sobre status: os nomes internos do domínio aparecem em português, como `AGUARDANDO_APROVACAO` e
+`EM_EXECUCAO`; a API expõe os códigos externos equivalentes, como `WAITING_APPROVAL` e `IN_PROGRESS`.
+
 ## Fluxo 1 - Criação da Ordem de Serviço
 
 ### Atores
@@ -179,7 +182,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 - `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
 - `RECEBIDA` ou `EM_DIAGNOSTICO` podem ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
-- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` após a aprovação.
+- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` somente em uma transição explícita após a aprovação.
 - `EM_EXECUCAO` pode ir para `FINALIZADA`.
 - `FINALIZADA` pode ir para `ENTREGUE`.
 - A OS entregue encerra o fluxo principal de atendimento.
@@ -203,8 +206,8 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 5. O sistema atualiza o status para `EM_DIAGNOSTICO`.
 6. O orçamento é gerado e disponibilizado.
 7. O cliente aprova o orçamento.
-8. O sistema libera a OS para execução.
-9. A oficina inicia a execução.
+8. O sistema registra a aprovação e libera a OS para a próxima transição.
+9. A oficina inicia a execução em uma ação separada.
 10. A oficina finaliza a OS.
 11. A oficina registra a entrega do veículo.
 
@@ -432,7 +435,7 @@ stateDiagram-v2
     RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnóstico
     RECEBIDA --> AGUARDANDO_APROVACAO: gerar orçamento
     EM_DIAGNOSTICO --> AGUARDANDO_APROVACAO: gerar orçamento
-    AGUARDANDO_APROVACAO --> EM_EXECUCAO: aprovar orçamento
+    AGUARDANDO_APROVACAO --> EM_EXECUCAO: iniciar execução após aprovação
     EM_EXECUCAO --> FINALIZADA: finalizar serviço
     FINALIZADA --> ENTREGUE: entregar veículo
     ENTREGUE --> [*]

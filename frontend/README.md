@@ -2,6 +2,11 @@
 
 Interface web em Vue 3 para a API AutoCare Hub.
 
+O frontend é demonstrativo, mas foi construído para mostrar a solução como produto utilizável: oficinas gerenciam
+clientes, veículos, serviços, peças, estoque e ordens; clientes visualizam acompanhamento e aprovações; administradores
+acompanham gestão e operação. Ele ajuda a banca a enxergar que a API não é uma peça isolada, e sim a base de uma
+experiência real para pessoas e empresas.
+
 ## Executar com o projeto completo
 
 Na raiz do repositório:

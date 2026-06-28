@@ -1,5 +1,28 @@
+# Local files
+video/
+
 # Maven
 target/
+
+# Local reports and scan evidence
+security-reports/
+coverage/
+logs/
+*.lcov
+*.sarif
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
+
+# Local database dumps
+dumps/
+*.dump
+*.sql.gz
+*.sql.bak
+*.backup
 
 # OpenAPI Generator output
 **/generated-sources/
@@ -44,6 +67,8 @@ build/
 bin/
 node_modules/
 dist/
+frontend/node_modules/
+frontend/dist/
 
 # Archives
 *.zip
