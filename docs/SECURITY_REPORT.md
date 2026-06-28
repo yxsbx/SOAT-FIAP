@@ -452,7 +452,7 @@ Vulnerabilities e RetireJS.
   - **Responsável pela aceitação:**  Yasmin Barcelos Pires
   - **Revisar em:**  Próxima atualização da imagem base
 
-## 14. Vulnerabilidades pendentes
+## 14. Risco residual aceito
 
 - **ID:**  RISK-001
   - **Severidade:**  Média
@@ -461,7 +461,7 @@ Vulnerabilities e RetireJS.
   - **Prioridade:**  Média
   - **Prazo:**  Próximo ciclo
 
-Não há vulnerabilidades críticas ou altas abertas. Um DAST dedicado fica como melhoria futura fora do critério obrigatório desta entrega.
+Não há vulnerabilidades críticas ou altas abertas. Um DAST dedicado fica como evolução de processo fora do critério obrigatório desta entrega.
 
 ## 15. Boas práticas de segurança implementadas
 
@@ -642,7 +642,7 @@ para entrega acadêmica. Um teste dinâmico dedicado contra a API permanece como
 - **Item:**  Logs
   - **Status:**  OK no escopo estático
   - **Evidência:**  Semgrep sem achados
-  - **Observação:**  Complementar futuramente com DAST.
+  - **Observação:**  DAST dedicado fora do critério obrigatório desta entrega.
 
 - **Item:**  Validação de entrada
   - **Status:**  OK
@@ -697,4 +697,4 @@ para entrega acadêmica. Um teste dinâmico dedicado contra a API permanece como
 - **Item:**  Backend
   - **Status:**  OK no escopo analisado
   - **Evidência:**  Dependency-Check e Semgrep sem achados
-  - **Observação:**  Complementar futuramente com DAST.
+  - **Observação:**  DAST dedicado fora do critério obrigatório desta entrega.

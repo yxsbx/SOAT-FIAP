@@ -1,8 +1,12 @@
 # Guia de Scans de Vulnerabilidade - AutoCare Hub
 
-Este guia prepara a execução local de scans de segurança do AutoCare Hub. Ele não registra resultados e não afirma que
-os scans foram executados. Após rodar os comandos, copie os achados relevantes para `docs/SECURITY_REPORT.md` e anexe
-os arquivos gerados em `security-reports/`.
+Este guia é um roteiro operacional para executar scans de segurança do AutoCare Hub, salvar evidências locais e atualizar
+o relatório final. Ele não substitui o `docs/SECURITY_REPORT.md` e não deve registrar resultado que ainda não foi
+validado por execução real.
+
+Depois de rodar os comandos, mantenha os arquivos brutos em `security-reports/` ou `target/` e consolide no
+`docs/SECURITY_REPORT.md` apenas o resumo relevante para a entrega: ferramenta, versão, data, comando, evidência,
+achados, correções e riscos aceitos.
 
 ## Estrutura de resultados
 
@@ -31,15 +35,16 @@ Obrigatórios para o projeto:
 - npm
 - Docker
 
-Ferramentas opcionais para scans complementares:
+Ferramentas usadas ou aceitas no processo de validação:
 
 - OWASP Dependency-Check, já configurado via Maven.
 - `npm audit`, disponível com npm.
-- Trivy ou Docker Scout para imagem Docker.
-- Semgrep para análise estática.
+- Docker Scout ou Trivy para imagem Docker.
+- Semgrep para análise estática, via CLI local ou imagem Docker.
 - Gitleaks ou TruffleHog para secrets.
 
-Se alguma ferramenta opcional não estiver instalada, instale localmente ou use a imagem Docker oficial da ferramenta.
+No relatório final, cite somente as ferramentas realmente executadas. Se trocar Docker Scout por Trivy, ou Gitleaks por
+TruffleHog, atualize também os nomes das evidências e a descrição no `docs/SECURITY_REPORT.md`.
 
 ## 1. Scan de dependências backend
 
@@ -48,7 +53,7 @@ O backend usa Maven e já possui o plugin OWASP Dependency-Check configurado no 
 Comando:
 
 ```powershell
-mvn dependency-check:check
+mvn dependency-check:check -DautoUpdate=false
 ```
 
 Relatórios gerados pelo plugin:
@@ -78,8 +83,8 @@ Comandos:
 
 ```powershell
 cd frontend
-npm audit --json | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit.json
-npm audit | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit.txt
+npm audit --json | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit-report.json
+npm audit | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit-report.txt
 cd ..
 ```
 
@@ -136,6 +141,7 @@ Se Docker Scout estiver disponível:
 
 ```powershell
 docker scout cves autocarehub-api:scan | Out-File -Encoding utf8 security-reports/docker/docker-scout-cves.txt
+docker scout cves soat-fiap-frontend:latest | Out-File -Encoding utf8 security-reports/docker/docker-scout-frontend-cves.txt
 ```
 
 O Dockerfile já executa a aplicação com usuário não-root, usa `read_only` no compose para o serviço da API e adiciona
@@ -159,6 +165,8 @@ Salvar evidências:
 mvn verify | Tee-Object -FilePath security-reports/static-analysis/maven-verify.txt
 mvn spotless:check | Tee-Object -FilePath security-reports/static-analysis/spotless-check.txt
 ```
+
+O comando `mvn spotless:check` se aplica porque o projeto possui Spotless configurado no `pom.xml`.
 
 ### Frontend
 
@@ -244,15 +252,16 @@ Executar validações principais:
 
 ```powershell
 mvn verify | Tee-Object -FilePath security-reports/static-analysis/maven-verify.txt
-mvn dependency-check:check
+mvn dependency-check:check -DautoUpdate=false
 Copy-Item target/dependency-check/* security-reports/backend-dependencies/ -Recurse -Force
 
 cd frontend
-npm audit --json | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit.json
+npm audit --json | Out-File -Encoding utf8 ..\security-reports\frontend-dependencies\npm-audit-report.json
 npm run lint | Tee-Object -FilePath ..\security-reports\static-analysis\frontend-eslint.txt
 cd ..
 
 docker build -t autocarehub-api:scan .
+docker compose build frontend
 ```
 
 Depois rode pelo menos uma ferramenta para container e uma para secrets, conforme disponibilidade local.
@@ -264,8 +273,10 @@ Sugestão de arquivos:
 ```text
 security-reports/backend-dependencies/dependency-check-report.html
 security-reports/backend-dependencies/dependency-check-report.json
-security-reports/frontend-dependencies/npm-audit.json
-security-reports/frontend-dependencies/npm-audit.txt
+security-reports/frontend-dependencies/npm-audit-report.json
+security-reports/frontend-dependencies/npm-audit-report.txt
+security-reports/docker/docker-scout-cves.txt
+security-reports/docker/docker-scout-frontend-cves.txt
 security-reports/docker/trivy-image.json
 security-reports/docker/trivy-image.txt
 security-reports/static-analysis/maven-verify.txt
@@ -288,7 +299,7 @@ Critério recomendado:
 | High       | Corrigir antes da entrega sempre que houver atualização segura disponível.     |
 | Medium     | Avaliar explorabilidade, uso em runtime e impacto no MVP. Corrigir se simples. |
 | Low        | Registrar e corrigir se não gerar risco de regressão.                          |
-| Info       | Usar como melhoria futura ou evidência de boas práticas.                       |
+| Info       | Registrar como observação técnica ou melhoria de processo.                     |
 
 Para dependências:
 
@@ -314,7 +325,7 @@ Ordem recomendada:
 7. CORS permissivo, Swagger produtivo exposto e Docker rodando como root.
 8. Dependências de desenvolvimento com severidade média/baixa.
 
-## 10. Como anexar evidências no relatório final
+## 10. Como consolidar no relatório final
 
 No `docs/SECURITY_REPORT.md`, para cada ferramenta executada, registre:
 
@@ -326,16 +337,27 @@ No `docs/SECURITY_REPORT.md`, para cada ferramenta executada, registre:
 - resumo dos achados por severidade;
 - vulnerabilidades corrigidas;
 - falsos positivos aceitos com justificativa;
-- riscos pendentes.
+- riscos aceitos, quando houver.
 
 Modelo de evidência:
 
 ```text
 Ferramenta: OWASP Dependency-Check
-Comando: mvn dependency-check:check
+Comando: mvn dependency-check:check -DautoUpdate=false
 Saída: security-reports/backend-dependencies/dependency-check-report.html
 Resumo: [preencher após execução]
-Status: [corrigido/pendente/aceito como risco]
+Status: [sem achados/corrigido/aceito como risco]
 ```
 
 Não preencha resultados antes de executar as ferramentas.
+
+## 11. Checklist antes da entrega
+
+Antes de finalizar a documentação:
+
+- confirmar que `docs/SECURITY_REPORT.md` cita apenas ferramentas executadas de verdade;
+- conferir se `.env`, `target/` e `security-reports/` continuam fora do versionamento;
+- validar se os caminhos de evidência do relatório final existem localmente ou podem ser gerados pelos comandos acima;
+- revisar se não há tokens, senhas, CPF/CNPJ real ou caminhos sensíveis nos arquivos que serão publicados;
+- reexecutar `mvn verify` e `mvn dependency-check:check -DautoUpdate=false`;
+- se Docker Scout, Semgrep, Gitleaks ou npm audit forem reexecutados, atualizar o resumo final com a data e o resultado mais recente.

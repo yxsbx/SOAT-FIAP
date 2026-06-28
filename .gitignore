@@ -49,6 +49,8 @@ replay_pid*
 .classpath
 .factorypath
 .sts4-cache/
+/.agents/
+/.codex/
 
 # OS
 .DS_Store
