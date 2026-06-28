@@ -10,8 +10,7 @@ entrega é `main`.
 
 ## Sumário da Entrega
 
-`docs/` concentra a documentação pública exigida para avaliação. O roteiro do vídeo fica em `video/` porque é material
-de apresentação, não documento final para PDF.
+`docs/` concentra a documentação pública exigida para avaliação.
 
 Documentos oficiais:
 
@@ -45,8 +44,6 @@ Documentos de apoio:
 
 | Material               | Onde abrir                                                     |
 | ---------------------- | -------------------------------------------------------------- |
-| Guia de scans          | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)     |
-| Roteiro do vídeo       | [video/VIDEO_SCRIPT.md](video/VIDEO_SCRIPT.md)                 |
 | Frontend demonstrativo | [frontend/README.md](frontend/README.md)                       |
 
 ## Dados da Entrega
@@ -325,21 +322,19 @@ Scans de segurança:
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-Demais comandos e opções: [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md).
-
 ## Evidências de Qualidade
 
 Resultado de qualidade revalidado em 28/06/2026:
 
 | Área                   | Resultado                                             |
 | ---------------------- | ----------------------------------------------------- |
-| Testes Maven           | 146 testes, 0 falhas, 0 erros, 0 ignorados            |
-| Cobertura JaCoCo       | 96,36% instruções, 97,28% linhas e 90,28% branches    |
+| Testes Maven           | 147 testes, 0 falhas, 0 erros, 0 ignorados            |
+| Cobertura JaCoCo       | 96,37% instruções, 97,28% linhas e 90,28% branches    |
 | Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
 | Frontend lint          | 0 erros e 0 warnings                                  |
 | Frontend build         | Aprovado                                              |
 | npm audit              | 0 vulnerabilidades                                    |
-| OWASP Dependency-Check | 126 dependências, 0 vulneráveis                       |
+| OWASP Dependency-Check | 127 dependências, 0 vulneráveis                       |
 | Docker Scout backend   | 0 vulnerabilidades                                    |
 | Docker Scout frontend  | 0 críticas, 0 altas e 1 média sem correção disponível |
 | Gitleaks               | 0 leaks em 36 commits                                 |

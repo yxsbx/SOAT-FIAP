@@ -1,21 +1,35 @@
 # Event Storming - AutoCare Hub
 
-Este documento apresenta o Event Storming dos fluxos exigidos no MVP do Tech Challenge:
+Este documento apresenta o Event Storming dos fluxos principais do AutoCare Hub, sistema desenvolvido para apoiar o atendimento de uma oficina mecânica.
+
+O foco do MVP está em dois fluxos exigidos no Tech Challenge:
 
 1. Criação e acompanhamento da Ordem de Serviço.
-2. Gestão de peças e insumos.
+2. Gestão de peças, insumos e estoque.
 
-Os nomes seguem a linguagem ubíqua do projeto. Quando uma etapa ainda não está materializada como evento persistido ou
-automação explícita no código, ela é marcada como `prevista no domínio` ou `melhoria futura`.
+Os nomes utilizados seguem a linguagem ubíqua definida para o projeto. Os eventos descritos aqui representam a modelagem do domínio e ajudam a explicar as mudanças importantes que acontecem no sistema. O MVP não foi desenhado como uma aplicação baseada em Event Sourcing, por isso esses eventos não dependem de um event store para existir.
 
-Observação sobre status: os nomes internos do domínio aparecem em português, como `AGUARDANDO_APROVACAO` e
-`EM_EXECUCAO`; a API expõe os códigos externos equivalentes, como `WAITING_APPROVAL` e `IN_PROGRESS`.
+Os status da Ordem de Serviço são descritos na linguagem de negócio como `RECEBIDA`, `EM_DIAGNOSTICO`, `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` e `ENTREGUE`. Quando a API utiliza códigos externos em inglês, eles representam os mesmos estados do domínio.
 
-## Fluxo 1 - Criação da Ordem de Serviço
+## 1. Legenda usada no Event Storming
+
+- **Atores:** pessoas ou sistemas que iniciam ações no fluxo.
+- **Comandos:** intenções executadas no sistema, normalmente disparadas por uma ação do usuário ou por uma regra da aplicação.
+- **Eventos:** fatos relevantes que aconteceram no domínio depois da execução de um comando.
+- **Políticas:** regras que orientam decisões do fluxo.
+- **Agregados:** objetos principais afetados por comandos e eventos.
+- **Exceções:** situações em que o sistema bloqueia a ação para proteger uma regra de negócio.
+- **Dados necessários:** informações mínimas para executar ou consultar cada etapa.
+
+## 2. Fluxo 1 - Criação da Ordem de Serviço
+
+### Objetivo do fluxo
+
+Registrar o atendimento inicial da oficina, identificar o cliente, vincular o veículo, incluir serviços e peças, gerar o orçamento e deixar a Ordem de Serviço pronta para aprovação.
 
 ### Atores
 
-- Admin da oficina.
+- Administrador da oficina.
 - Funcionário autorizado da oficina.
 - Cliente final.
 - Sistema AutoCare Hub.
@@ -43,41 +57,41 @@ Observação sobre status: os nomes internos do domínio aparecem em português,
 - `ServicoIncluidoNaOrdem`
 - `PecaIncluidaNaOrdem`
 - `OrcamentoGerado`
-- `OrcamentoEnviado`
+- `OrcamentoDisponibilizado`
 
-No MVP, esses eventos são usados como linguagem de modelagem. O sistema não possui um event store dedicado.
+### Agregados envolvidos
 
-### Agregados
+- `Customer`: representa o cliente atendido pela oficina.
+- `Vehicle`: representa o veículo vinculado ao cliente.
+- `ServiceOrder`: representa a Ordem de Serviço e concentra o fluxo principal do atendimento.
+- `WorkshopService`: representa os serviços oferecidos pela oficina.
+- `Part`: representa peças e insumos usados no serviço.
+- `Budget`: representa o orçamento calculado a partir dos serviços e peças.
 
-- `Customer` - Cliente.
-- `Vehicle` - Veículo.
-- `ServiceOrder` - Ordem de Serviço.
-- `WorkshopService` - Serviço.
-- `Part` - Peça/Insumo.
-- `Budget` - Orçamento.
+### Políticas de domínio
 
-### Políticas
-
-- Se o cliente não existir, ele deve ser cadastrado antes da criação da OS.
-- Se o veículo não existir, ele deve ser cadastrado e vinculado ao cliente.
-- Se o veículo existir, ele deve pertencer ao cliente informado.
-- A OS deve ter ao menos um serviço solicitado.
-- Peças e insumos são opcionais na OS.
-- Ao gerar o orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
-- Peças vinculadas ao orçamento podem ser reservadas antes da aprovação.
+- O cliente precisa ser identificado por CPF ou CNPJ antes da criação da OS.
+- Quando o cliente ainda não existe, ele deve ser cadastrado antes de seguir com o atendimento.
+- O veículo precisa estar cadastrado e vinculado ao cliente correto.
+- A OS precisa ter pelo menos um serviço solicitado.
+- Peças e insumos podem ser incluídos quando forem necessários para o atendimento.
+- O orçamento é calculado com base nos serviços e peças vinculados à OS.
+- Depois da geração do orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
+- Quando há peças vinculadas ao orçamento, o sistema precisa respeitar a disponibilidade de estoque.
 
 ### Regras de negócio
 
-- O CPF/CNPJ deve ser válido.
-- A placa deve estar em formato válido.
-- O cliente não pode ser duplicado por diferença de máscara no documento.
-- O veículo não pode existir sem cliente.
-- A OS não pode existir sem cliente e veículo.
+- CPF e CNPJ devem ser válidos.
+- A placa do veículo deve estar em formato válido.
+- O mesmo cliente não pode ser duplicado por diferença de máscara no documento.
+- Um veículo não pode ser cadastrado sem cliente.
+- A OS não pode ser criada sem cliente e veículo.
 - A OS não pode ser criada sem serviço solicitado.
-- O orçamento calcula o total de serviços, o total de peças e o total geral.
-- Os itens da OS não devem ser alterados após a geração do orçamento.
+- O veículo informado na OS deve pertencer ao cliente.
+- O orçamento deve calcular total de serviços, total de peças e total geral.
+- Depois da geração do orçamento, os itens da OS ficam protegidos contra alterações indevidas.
 
-### Exceções
+### Exceções mapeadas
 
 - `DocumentoInvalido`
 - `PlacaInvalida`
@@ -93,53 +107,59 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Fluxo principal
 
-1. O funcionário identifica o cliente por CPF/CNPJ.
+1. O funcionário informa o CPF ou CNPJ do cliente.
 2. O sistema valida e normaliza o documento.
-3. O sistema encontra o cliente ou permite o cadastro.
+3. O sistema localiza o cliente existente ou permite o cadastro de um novo cliente.
 4. O funcionário seleciona ou cadastra o veículo.
-5. O sistema valida a placa e o vínculo com o cliente.
+5. O sistema valida a placa e confirma se o veículo pertence ao cliente informado.
 6. O funcionário cria a Ordem de Serviço.
 7. O funcionário inclui os serviços solicitados.
-8. O funcionário inclui peças ou insumos, se necessário.
-9. O sistema gera o orçamento.
-10. O sistema disponibiliza o orçamento para aprovação do cliente.
-11. A OS fica em `AGUARDANDO_APROVACAO`.
+8. O funcionário inclui peças ou insumos, quando necessário.
+9. O sistema calcula o orçamento com base nos serviços e peças vinculados.
+10. O orçamento fica disponível para aprovação do cliente.
+11. A OS passa para `AGUARDANDO_APROVACAO`.
 
 ### Fluxos alternativos
 
-- Cliente não encontrado: cadastrar o cliente e continuar.
-- Veículo não encontrado: cadastrar o veículo e vinculá-lo ao cliente.
-- Veículo pertencente a outro cliente: bloquear a criação da OS.
-- Serviço inativo: bloquear a inclusão do serviço.
-- Peça sem estoque disponível: bloquear a reserva ou a baixa.
-- Orçamento não gerado: a OS permanece na etapa anterior do atendimento.
+- Se o cliente não for encontrado, o funcionário cadastra o cliente e continua o atendimento.
+- Se o veículo não for encontrado, o funcionário cadastra o veículo e o vincula ao cliente.
+- Se o veículo pertencer a outro cliente, o sistema bloqueia a criação da OS.
+- Se o serviço estiver inativo, o sistema bloqueia a inclusão do serviço.
+- Se a peça estiver inativa ou não tiver estoque suficiente, o sistema bloqueia a inclusão ou reserva conforme a regra do fluxo.
+- Se o orçamento ainda não tiver sido gerado, a OS permanece no status anterior.
 
 ### Pontos de decisão
 
 - O cliente já existe?
+- O documento informado é válido?
 - O veículo já existe?
 - O veículo pertence ao cliente?
-- Há ao menos um serviço solicitado?
-- Há peças/insumos vinculados?
-- Há estoque disponível para reservar a peça?
-- O orçamento deve ser gerado agora?
+- Existe ao menos um serviço solicitado?
+- Existem peças ou insumos vinculados?
+- Há estoque disponível para a peça?
+- O orçamento já pode ser gerado?
 
 ### Dados necessários
 
-- CPF/CNPJ do cliente.
+- CPF ou CNPJ do cliente.
 - Nome, telefone e e-mail do cliente.
 - Placa, marca, modelo e ano do veículo.
-- Diagnóstico ou problema percebido.
+- Diagnóstico inicial ou problema informado.
 - Serviços solicitados.
-- Peças/insumos e respectivas quantidades.
+- Peças e insumos necessários.
+- Quantidade de cada peça ou insumo.
 - Preço dos serviços e das peças.
 
-## Fluxo 2 - Acompanhamento da Ordem de Serviço
+## 3. Fluxo 2 - Acompanhamento da Ordem de Serviço
+
+### Objetivo do fluxo
+
+Permitir que a oficina controle o andamento da OS e que o cliente acompanhe o progresso do atendimento pelo status da Ordem de Serviço.
 
 ### Atores
 
 - Cliente final.
-- Admin da oficina.
+- Administrador da oficina.
 - Funcionário autorizado da oficina.
 - Sistema AutoCare Hub.
 
@@ -161,34 +181,36 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 
-### Agregados
+### Agregados envolvidos
 
-- `ServiceOrder` - Ordem de Serviço.
-- `Vehicle` - Veículo.
-- `Customer` - Cliente.
-- `Budget` - Orçamento.
-- `Part` - Peça/Insumo, quando houver baixa de estoque após a aprovação.
+- `ServiceOrder`: controla o status, as datas e as transições da OS.
+- `Vehicle`: identifica o veículo em atendimento.
+- `Customer`: identifica o cliente dono da OS.
+- `Budget`: guarda os valores do orçamento e a situação de aprovação.
+- `Part`: participa do fluxo quando existe confirmação de reserva ou baixa de estoque.
 
-### Políticas
+### Políticas de domínio
 
 - O cliente só pode consultar uma OS vinculada ao seu cadastro.
-- APIs administrativas exigem autenticação JWT.
-- As transições de status devem respeitar a máquina de estados da OS.
-- A aprovação do orçamento libera a OS para execução.
-- A finalização exige que a OS esteja em execução.
-- A entrega exige que a OS esteja finalizada.
+- As APIs administrativas exigem autenticação JWT.
+- As transições de status precisam respeitar a máquina de estados da OS.
+- A aprovação do orçamento é obrigatória antes da execução.
+- A execução só pode iniciar depois da aprovação do orçamento.
+- A finalização só pode ocorrer quando a OS está em execução.
+- A entrega só pode ocorrer quando a OS está finalizada.
 
-### Regras de negócio
+### Regras de transição de status
 
 - `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
-- `RECEBIDA` ou `EM_DIAGNOSTICO` podem ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
-- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` somente em uma transição explícita após a aprovação.
+- `RECEBIDA` pode ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
+- `EM_DIAGNOSTICO` pode ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
+- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` depois da aprovação do orçamento.
 - `EM_EXECUCAO` pode ir para `FINALIZADA`.
 - `FINALIZADA` pode ir para `ENTREGUE`.
-- A OS entregue encerra o fluxo principal de atendimento.
-- O status não pode retroceder para `RECEBIDA`.
+- `ENTREGUE` encerra o fluxo principal da OS.
+- O status não pode voltar para uma etapa anterior.
 
-### Exceções
+### Exceções mapeadas
 
 - `OrdemServicoNaoEncontrada`
 - `AcessoNaoAutorizado`
@@ -199,50 +221,60 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Fluxo principal
 
-1. O cliente consulta a OS via API.
-2. O sistema valida se o cliente tem acesso à OS.
-3. O sistema retorna os dados básicos da OS, veículo, status, serviços, peças e orçamento.
-4. A oficina inicia o diagnóstico, quando aplicável.
-5. O sistema atualiza o status para `EM_DIAGNOSTICO`.
-6. O orçamento é gerado e disponibilizado.
+1. O cliente consulta a OS pela API de acompanhamento.
+2. O sistema valida se o cliente tem permissão para acessar aquela OS.
+3. O sistema retorna os dados principais da OS, incluindo veículo, status, serviços, peças e orçamento.
+4. A oficina inicia o diagnóstico, quando essa etapa se aplica ao atendimento.
+5. O sistema atualiza a OS para `EM_DIAGNOSTICO`.
+6. O orçamento é gerado e disponibilizado para aprovação.
 7. O cliente aprova o orçamento.
-8. O sistema registra a aprovação e libera a OS para a próxima transição.
-9. A oficina inicia a execução em uma ação separada.
-10. A oficina finaliza a OS.
-11. A oficina registra a entrega do veículo.
+8. O sistema registra a aprovação.
+9. A oficina inicia a execução da OS.
+10. O sistema atualiza a OS para `EM_EXECUCAO`.
+11. A oficina finaliza o serviço.
+12. O sistema atualiza a OS para `FINALIZADA`.
+13. A oficina registra a entrega do veículo.
+14. O sistema atualiza a OS para `ENTREGUE`.
 
 ### Fluxos alternativos
 
-- Cliente tenta consultar uma OS de outro cliente: acesso negado.
-- Orçamento ainda não foi gerado: o acompanhamento retorna o status atual, sem aprovação disponível.
-- Cliente não aprova o orçamento: a OS permanece aguardando aprovação. A recusa explícita e a expiração automática são
-  melhorias futuras, caso ainda não estejam ativas no fluxo executado.
-- Tentativa de transição inválida: o sistema bloqueia a alteração.
+- Se o cliente tentar consultar uma OS que não pertence a ele, o sistema nega o acesso.
+- Se o orçamento ainda não foi gerado, o acompanhamento retorna o status atual da OS.
+- Se o orçamento ainda não foi aprovado, a OS permanece em `AGUARDANDO_APROVACAO`.
+- Se houver tentativa de transição inválida, o sistema bloqueia a alteração.
+- Se a OS já estiver entregue, o sistema mantém o fluxo encerrado.
 
 ### Pontos de decisão
 
-- O cliente está autenticado ou validado?
-- A OS pertence ao cliente?
+- O cliente pode acessar a OS?
+- A OS pertence ao cliente informado?
 - O orçamento já foi gerado?
 - O orçamento foi aprovado?
-- O status atual permite a próxima transição?
+- O status atual permite a próxima ação?
+- A OS já pode ser finalizada?
 - O veículo já pode ser entregue?
 
 ### Dados necessários
 
 - Identificador da OS.
-- Identificador do cliente ou CPF/CNPJ, conforme o endpoint.
-- Placa do veículo, quando usada na consulta.
-- Status atual.
+- Identificador do cliente ou documento usado para consulta.
+- Placa do veículo, quando aplicável.
+- Status atual da OS.
 - Datas de criação, diagnóstico, orçamento, aprovação, execução, finalização e entrega.
-- Serviços e peças vinculados.
-- Situação do orçamento.
+- Serviços vinculados.
+- Peças vinculadas.
+- Valores do orçamento.
+- Situação da aprovação.
 
-## Fluxo 3 - Gestão de Peças e Insumos
+## 4. Fluxo 3 - Gestão de Peças e Insumos
+
+### Objetivo do fluxo
+
+Controlar o cadastro de peças e insumos, manter o estoque atualizado e garantir que uma peça só seja usada em uma OS quando houver quantidade disponível.
 
 ### Atores
 
-- Admin da oficina.
+- Administrador da oficina.
 - Funcionário autorizado.
 - Sistema AutoCare Hub.
 
@@ -252,7 +284,6 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `EditarPeca`
 - `RegistrarEntradaEstoque`
 - `RegistrarSaidaEstoque`
-- `VenderPecaIsolada`
 - `ReservarPeca`
 - `LiberarReservaPeca`
 - `BaixarPecaDoEstoque`
@@ -264,7 +295,6 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `PecaAtualizada`
 - `EntradaEstoqueRegistrada`
 - `SaidaEstoqueRegistrada`
-- `VendaPecaRegistrada`
 - `PecaReservada`
 - `ReservaPecaLiberada`
 - `PecaBaixadaDoEstoque`
@@ -272,29 +302,29 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - `EstoqueBaixoIdentificado`
 - `EstoqueInsuficienteIdentificado`
 
-### Agregados
+### Agregados envolvidos
 
-- `Part` - Peça/Insumo.
-- `StockMovement` - Movimentação de estoque.
-- `ServiceOrder` - Ordem de Serviço, quando a peça é usada no atendimento.
-- `Budget` - Orçamento, quando há reserva antes da aprovação.
+- `Part`: controla dados da peça, preço, estoque total, estoque reservado e disponibilidade.
+- `StockMovement`: registra entradas, saídas, baixas e ajustes de estoque.
+- `ServiceOrder`: usa peças e insumos no atendimento.
+- `Budget`: relaciona peças ao orçamento quando existe reserva antes da execução.
 
-### Políticas
+### Políticas de domínio
 
-- A quantidade não pode ser negativa.
-- O preço não pode ser negativo.
+- A quantidade em estoque não pode ser negativa.
+- O preço da peça não pode ser negativo.
 - O estoque mínimo não pode ser negativo.
-- O estoque disponível considera o estoque total menos o estoque reservado.
-- A peça vinculada ao orçamento deve ser reservada, não baixada imediatamente.
-- A peça é baixada quando o orçamento é aprovado ou quando uma saída/venda é registrada.
+- O estoque disponível é calculado a partir do estoque total menos a quantidade reservada.
+- Uma peça vinculada ao orçamento pode ser reservada antes da aprovação.
+- A baixa definitiva acontece quando a peça é consumida no fluxo da OS ou quando uma saída administrativa é registrada.
 - A baixa maior que o estoque disponível deve ser bloqueada.
-- O estoque baixo é identificado quando a disponibilidade é menor ou igual ao estoque mínimo.
+- O estoque baixo é identificado quando a disponibilidade fica menor ou igual ao estoque mínimo.
 
 ### Regras de negócio
 
-- O nome da peça é obrigatório.
-- O preço de venda não pode ser negativo.
-- A quantidade da movimentação deve ser maior que zero.
+- O nome da peça ou insumo é obrigatório.
+- O preço de venda precisa ser válido.
+- A quantidade de uma movimentação precisa ser maior que zero.
 - A entrada aumenta o estoque total.
 - A saída reduz o estoque disponível.
 - A reserva reduz a disponibilidade, mas não reduz o estoque total.
@@ -302,7 +332,7 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - A liberação da reserva reduz apenas a quantidade reservada.
 - O estoque não pode ficar negativo.
 
-### Exceções
+### Exceções mapeadas
 
 - `PecaNaoEncontrada`
 - `PecaInativa`
@@ -314,25 +344,26 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 ### Fluxo principal
 
-1. O admin cadastra a peça ou o insumo.
+1. O administrador cadastra a peça ou o insumo.
 2. O sistema valida os dados obrigatórios.
-3. O funcionário registra a entrada de estoque.
-4. O sistema registra a movimentação e atualiza o estoque.
-5. A peça é vinculada a um orçamento.
-6. O sistema verifica a disponibilidade.
-7. O sistema reserva a quantidade necessária.
-8. O cliente aprova o orçamento.
-9. O sistema confirma a reserva e baixa o estoque.
-10. O sistema registra a movimentação de baixa.
+3. O funcionário registra uma entrada de estoque.
+4. O sistema registra a movimentação.
+5. O sistema atualiza a quantidade disponível.
+6. A peça é vinculada a uma OS ou a um orçamento.
+7. O sistema verifica se há estoque disponível.
+8. O sistema reserva a quantidade necessária, quando o fluxo exige reserva.
+9. Após a aprovação do orçamento, o sistema confirma o uso da peça.
+10. O sistema baixa o estoque.
+11. O sistema registra a movimentação correspondente.
+12. Se a disponibilidade ficar baixa, o sistema identifica a peça como item de baixo estoque.
 
 ### Fluxos alternativos
 
-- Estoque insuficiente: o sistema bloqueia a reserva ou a baixa.
-- Saída administrativa: o sistema reduz o estoque disponível e registra a movimentação.
-- Venda isolada: o sistema baixa o estoque sem depender de OS.
-- Orçamento não aprovado: a reserva pode ser liberada.
-- Expiração automática de orçamento: melhoria futura, caso ainda não esteja ativa no fluxo executado.
-- Integração com fornecedores: melhoria futura.
+- Se não houver estoque suficiente, o sistema bloqueia a reserva ou a baixa.
+- Se a movimentação for uma entrada, o sistema aumenta o estoque total.
+- Se a movimentação for uma saída administrativa, o sistema reduz o estoque disponível e registra a movimentação.
+- Se uma reserva precisar ser desfeita, o sistema libera a quantidade reservada.
+- Se a peça estiver inativa, o sistema bloqueia sua utilização em novos fluxos.
 
 ### Pontos de decisão
 
@@ -340,8 +371,9 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 - A peça está ativa?
 - A quantidade informada é válida?
 - Há estoque disponível?
-- A movimentação é entrada, saída, venda, reserva ou baixa?
-- A peça está vinculada ao orçamento?
+- A movimentação é entrada, saída, reserva, baixa ou ajuste?
+- A peça está vinculada a uma OS?
+- A peça está vinculada a um orçamento?
 - O orçamento foi aprovado?
 - O estoque ficou abaixo do mínimo?
 
@@ -349,17 +381,18 @@ No MVP, esses eventos são usados como linguagem de modelagem. O sistema não po
 
 - Nome da peça ou do insumo.
 - Categoria, marca, SKU e descrição, quando disponíveis.
-- Preço de venda e custo.
+- Preço de venda.
+- Custo, quando controlado pelo cadastro.
 - Quantidade em estoque.
 - Quantidade reservada.
 - Estoque mínimo.
-- Tipo de movimentação.
+- Tipo da movimentação.
 - Quantidade movimentada.
 - Referência da OS ou do orçamento, quando aplicável.
 
-## Diagramas Mermaid
+## 5. Diagramas Mermaid
 
-### 1. Event Storming da criação da OS
+### 5.1 Event Storming da criação da OS
 
 ```mermaid
 flowchart TD
@@ -379,14 +412,17 @@ flowchart TD
     C6 --> E5["Evento: OrdemServicoCriada"]
     E5 --> C7["Comando: IncluirServicoNaOrdem"]
     C7 --> E6["Evento: ServicoIncluidoNaOrdem"]
-    E6 --> C8["Comando: IncluirPecaNaOrdem"]
+    E6 --> D3{Precisa de peças/insumos?}
+    D3 -- "Não" --> C9["Comando: GerarOrcamento"]
+    D3 -- "Sim" --> C8["Comando: IncluirPecaNaOrdem"]
     C8 --> E7["Evento: PecaIncluidaNaOrdem"]
-    E7 --> C9["Comando: GerarOrcamento"]
+    E7 --> C9
     C9 --> E8["Evento: OrcamentoGerado"]
-    E8 --> E9["Evento: OrcamentoEnviado"]
+    E8 --> E9["Evento: OrcamentoDisponibilizado"]
+    E9 --> S1["Status: AGUARDANDO_APROVACAO"]
 ```
 
-### 2. Event Storming do acompanhamento da OS
+### 5.2 Event Storming do acompanhamento da OS
 
 ```mermaid
 flowchart TD
@@ -395,19 +431,26 @@ flowchart TD
     D1 -- "Sim" --> E1["Evento: AcompanhamentoOSConsultado"]
     E1 --> C2["Comando: IniciarDiagnostico"]
     C2 --> E2["Evento: DiagnosticoIniciado"]
-    E2 --> C3["Comando: AprovarOrcamento"]
-    C3 --> D2{Orçamento gerado?}
+    E2 --> S1["Status: EM_DIAGNOSTICO"]
+    S1 --> C3["Comando: GerarOrcamento"]
+    C3 --> E3["Evento: OrcamentoGerado"]
+    E3 --> S2["Status: AGUARDANDO_APROVACAO"]
+    S2 --> C4["Comando: AprovarOrcamento"]
+    C4 --> D2{Orçamento gerado?}
     D2 -- "Não" --> X2["Exceção: OrcamentoNaoGerado"]
-    D2 -- "Sim" --> E3["Evento: OrcamentoAprovado"]
-    E3 --> C4["Comando: IniciarExecucao"]
-    C4 --> E4["Evento: OrdemServicoEmExecucao"]
-    E4 --> C5["Comando: FinalizarOrdemServico"]
-    C5 --> E5["Evento: OrdemServicoFinalizada"]
-    E5 --> C6["Comando: EntregarVeiculo"]
-    C6 --> E6["Evento: VeiculoEntregue"]
+    D2 -- "Sim" --> E4["Evento: OrcamentoAprovado"]
+    E4 --> C5["Comando: IniciarExecucao"]
+    C5 --> E5["Evento: OrdemServicoEmExecucao"]
+    E5 --> S3["Status: EM_EXECUCAO"]
+    S3 --> C6["Comando: FinalizarOrdemServico"]
+    C6 --> E6["Evento: OrdemServicoFinalizada"]
+    E6 --> S4["Status: FINALIZADA"]
+    S4 --> C7["Comando: EntregarVeiculo"]
+    C7 --> E7["Evento: VeiculoEntregue"]
+    E7 --> S5["Status: ENTREGUE"]
 ```
 
-### 3. Event Storming da gestão de estoque
+### 5.3 Event Storming da gestão de peças e estoque
 
 ```mermaid
 flowchart TD
@@ -422,12 +465,16 @@ flowchart TD
     E5 --> D2{Orçamento aprovado?}
     D2 -- "Não" --> C4["Comando: LiberarReservaPeca"]
     C4 --> E6["Evento: ReservaPecaLiberada"]
+    E6 --> E7["Evento: EstoqueAtualizado"]
     D2 -- "Sim" --> C5["Comando: BaixarPecaDoEstoque"]
-    C5 --> E7["Evento: PecaBaixadaDoEstoque"]
-    E7 --> E8["Evento: EstoqueAtualizado"]
+    C5 --> E8["Evento: PecaBaixadaDoEstoque"]
+    E8 --> E9["Evento: EstoqueAtualizado"]
+    E9 --> D3{Estoque abaixo do mínimo?}
+    D3 -- "Sim" --> E10["Evento: EstoqueBaixoIdentificado"]
+    D3 -- "Não" --> F1["Fluxo concluído"]
 ```
 
-### 4. Diagrama de estados da OS
+### 5.4 Máquina de estados da Ordem de Serviço
 
 ```mermaid
 stateDiagram-v2
@@ -440,3 +487,21 @@ stateDiagram-v2
     FINALIZADA --> ENTREGUE: entregar veículo
     ENTREGUE --> [*]
 ```
+
+## 6. Relação com os requisitos do MVP
+
+| Requisito do Tech Challenge | Onde aparece neste Event Storming |
+|---|---|
+| Identificação do cliente por CPF/CNPJ | Fluxo 1, comandos `IdentificarCliente` e `CadastrarCliente` |
+| Cadastro de veículo | Fluxo 1, comando `CadastrarVeiculo` |
+| Inclusão dos serviços solicitados | Fluxo 1, comando `IncluirServicoNaOrdem` |
+| Inclusão de peças e insumos | Fluxo 1 e Fluxo 3 |
+| Orçamento gerado automaticamente | Fluxo 1, comando `GerarOrcamento` |
+| Envio/disponibilização do orçamento ao cliente | Fluxo 1, evento `OrcamentoDisponibilizado` |
+| Acompanhamento da OS | Fluxo 2 |
+| Controle de status da OS | Fluxo 2 e máquina de estados |
+| CRUD de peças e insumos com estoque | Fluxo 3 |
+| Controle de estoque | Fluxo 3 |
+| Autenticação JWT para APIs administrativas | Política do Fluxo 2 |
+| Validação de CPF/CNPJ e placa | Regras do Fluxo 1 |
+| Consulta do cliente via API | Fluxo 2, comando `ConsultarAcompanhamentoOS` |

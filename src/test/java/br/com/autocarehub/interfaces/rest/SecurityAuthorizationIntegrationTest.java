@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +46,11 @@ class SecurityAuthorizationIntegrationTest {
     void shouldExposeOpenApiAndSwaggerUiWithoutAuthentication() throws Exception {
         mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk());
 
-        mockMvc.perform(get("/swagger-ui.html")).andExpect(status().isOk());
+        mockMvc.perform(get("/swagger-ui.html"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/swagger-ui/index.html"));
+
+        mockMvc.perform(get("/swagger-ui/index.html")).andExpect(status().isOk());
 
         mockMvc.perform(get("/webjars/swagger-ui/5.32.6/swagger-ui.css")).andExpect(status().isOk());
     }

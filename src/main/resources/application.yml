@@ -29,9 +29,7 @@ springdoc:
   api-docs:
     enabled: ${SPRINGDOC_API_DOCS_ENABLED:true}
   swagger-ui:
-    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:true}
-    path: /springdoc-ui.html
-    url: /v3/api-docs
+    enabled: false
 
 security:
   jwt:

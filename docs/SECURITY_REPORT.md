@@ -61,7 +61,7 @@ Item fora do escopo desta versão:
 | Campo                                 | Valor                            |
 | ------------------------------------- | -------------------------------- |
 | Data de consolidação                  | 28/06/2026                       |
-| Horário do relatório Dependency-Check | 17:16:12 UTC                     |
+| Horário do relatório Dependency-Check | 17:38:02 UTC                     |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
 | Commit técnico validado               | `dbed819`                        |
@@ -115,7 +115,7 @@ Item fora do escopo desta versão:
 | Maven               | Maven local do projeto                                                                   |
 | Banco usado no scan | Não aplicável ao Dependency-Check                                                        |
 | Perfil Spring       | Não aplicável ao Dependency-Check                                                        |
-| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-28T17:16:12.846950300Z`. |
+| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-28T17:38:02.327271800Z`. |
 
 ## 7. Resumo executivo
 
@@ -134,7 +134,7 @@ As dependências foram atualizadas e o OWASP Dependency-Check foi executado nova
 
 | Indicador                           | Resultado |
 | ----------------------------------- | --------: |
-| Dependências analisadas             |       126 |
+| Dependências analisadas             |       127 |
 | Artefatos vulneráveis               |         0 |
 | Ocorrências de vulnerabilidades     |         0 |
 | Achados únicos                      |         0 |
@@ -166,12 +166,12 @@ Resultado de qualidade revalidado em 28/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 | ---------- | ------: | ----------: | --------: |
-| Instruções |   9.853 |         372 |    96,36% |
+| Instruções |   9.870 |         372 |    96,37% |
 | Branches   |     455 |          49 |    90,28% |
-| Linhas     |   2.361 |          66 |    97,28% |
+| Linhas     |   2.362 |          66 |    97,28% |
 | Métodos    |     644 |          32 |    95,27% |
 
-Resultado validado com 146 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 147 testes automatizados e `mvn verify` concluindo com sucesso.
 
 ## 10. Tabela de vulnerabilidades encontradas
 
@@ -337,7 +337,7 @@ Resultado validado com 146 testes automatizados e `mvn verify` concluindo com su
   - **Valor:**  Build com sucesso, zero vulnerabilidades reportadas.
 
 - **Campo:**  Dependências analisadas no scan final
-  - **Valor:**  126
+  - **Valor:**  127
 
 - **Campo:**  Artefatos vulneráveis no scan final
   - **Valor:**  0
@@ -509,7 +509,7 @@ Não há pendências críticas ou altas. Um DAST dedicado permanece como melhori
 
 - **Controle:**  Swagger público apenas para MVP acadêmico
   - **Status:**  Documentado/configurável
-  - **Evidência/observação:**  Pode ser desabilitado por `SPRINGDOC_API_DOCS_ENABLED` e `SPRINGDOC_SWAGGER_UI_ENABLED`.
+  - **Evidência/observação:**  O contrato OpenAPI pode ser desabilitado por `SPRINGDOC_API_DOCS_ENABLED`. A Swagger UI local é servida como página estática para a avaliação acadêmica.
 
 - **Controle:**  `.env.example` sem secrets reais
   - **Status:**  Implementado/documentado

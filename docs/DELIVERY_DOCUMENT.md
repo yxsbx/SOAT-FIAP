@@ -275,7 +275,7 @@ Controles de segurança implementados:
 - Tratamento global de exceções REST.
 - Erros padronizados, sem retorno intencional de stacktrace ao usuário.
 - CORS configurável e sem wildcard.
-- Swagger desabilitável por variável de ambiente.
+- OpenAPI desabilitável por variável de ambiente; Swagger UI local servido como página estática para a avaliação.
 - Uso de `.env.example` sem secrets reais.
 
 ## 17. Testes e cobertura
@@ -291,12 +291,12 @@ Resultado de qualidade revalidado em 28/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 | ---------- | ------: | ----------: | --------: |
-| Instruções |   9.853 |         372 |    96,36% |
+| Instruções |   9.870 |         372 |    96,37% |
 | Branches   |     455 |          49 |    90,28% |
-| Linhas     |   2.361 |          66 |    97,28% |
+| Linhas     |   2.362 |          66 |    97,28% |
 | Métodos    |     644 |          32 |    95,27% |
 
-Resultado documentado: 146 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige no mínimo 90% de
+Resultado documentado: 147 testes automatizados e `mvn verify` concluindo com sucesso. O gate exige no mínimo 90% de
 instruções, linhas e branches, acima da cobertura mínima de 80% exigida para a entrega.
 
 No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de

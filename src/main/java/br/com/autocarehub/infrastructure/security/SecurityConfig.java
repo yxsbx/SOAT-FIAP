@@ -83,6 +83,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui-init.js",
+                                "/swagger-ui-static.html",
                                 "/webjars/**",
                                 "/openapi.yaml")
                         .permitAll()
