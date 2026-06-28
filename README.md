@@ -328,8 +328,8 @@ Resultado de qualidade revalidado em 28/06/2026:
 
 | Área                   | Resultado                                             |
 | ---------------------- | ----------------------------------------------------- |
-| Testes Maven           | 147 testes, 0 falhas, 0 erros, 0 ignorados            |
-| Cobertura JaCoCo       | 96,37% instruções, 97,28% linhas e 90,28% branches    |
+| Testes Maven           | 143 testes, 0 falhas, 0 erros, 0 ignorados            |
+| Cobertura JaCoCo       | 96,31% instruções, 97,25% linhas e 90,12% branches    |
 | Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
 | Frontend lint          | 0 erros e 0 warnings                                  |
 | Frontend build         | Aprovado                                              |

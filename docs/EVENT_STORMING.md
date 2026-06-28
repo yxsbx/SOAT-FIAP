@@ -73,7 +73,8 @@ Registrar o atendimento inicial da oficina, identificar o cliente, vincular o ve
 - O cliente precisa ser identificado por CPF ou CNPJ antes da criação da OS.
 - Quando o cliente ainda não existe, ele deve ser cadastrado antes de seguir com o atendimento.
 - O veículo precisa estar cadastrado e vinculado ao cliente correto.
-- A OS precisa ter pelo menos um serviço solicitado.
+- A OS precisa ser criada com pelo menos um serviço solicitado.
+- Serviços adicionais podem ser incluídos enquanto o orçamento ainda não foi gerado.
 - Peças e insumos podem ser incluídos quando forem necessários para o atendimento.
 - O orçamento é calculado com base nos serviços e peças vinculados à OS.
 - Depois da geração do orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
@@ -112,8 +113,8 @@ Registrar o atendimento inicial da oficina, identificar o cliente, vincular o ve
 3. O sistema localiza o cliente existente ou permite o cadastro de um novo cliente.
 4. O funcionário seleciona ou cadastra o veículo.
 5. O sistema valida a placa e confirma se o veículo pertence ao cliente informado.
-6. O funcionário cria a Ordem de Serviço.
-7. O funcionário inclui os serviços solicitados.
+6. O funcionário informa os serviços solicitados no comando de criação da Ordem de Serviço.
+7. O sistema cria a Ordem de Serviço com os serviços iniciais.
 8. O funcionário inclui peças ou insumos, quando necessário.
 9. O sistema calcula o orçamento com base nos serviços e peças vinculados.
 10. O orçamento fica disponível para aprovação do cliente.
@@ -215,7 +216,6 @@ Permitir que a oficina controle o andamento da OS e que o cliente acompanhe o pr
 - `OrdemServicoNaoEncontrada`
 - `AcessoNaoAutorizado`
 - `OrcamentoNaoGerado`
-- `OrcamentoJaAprovado`
 - `TransicaoStatusInvalida`
 - `ClienteNaoVinculadoAOrdem`
 
@@ -318,7 +318,8 @@ Controlar o cadastro de peças e insumos, manter o estoque atualizado e garantir
 - Uma peça vinculada ao orçamento pode ser reservada antes da aprovação.
 - A baixa definitiva acontece quando a peça é consumida no fluxo da OS ou quando uma saída administrativa é registrada.
 - A baixa maior que o estoque disponível deve ser bloqueada.
-- O estoque baixo é identificado quando a disponibilidade fica menor ou igual ao estoque mínimo.
+- O estoque baixo é identificado quando a disponibilidade fica menor ou igual ao estoque mínimo. No código, isso aparece
+  como filtro `lowStock=true` na listagem de peças e como `stockStatus` calculado pelo agregado `Part`.
 
 ### Regras de negócio
 
@@ -339,7 +340,6 @@ Controlar o cadastro de peças e insumos, manter o estoque atualizado e garantir
 - `QuantidadeInvalida`
 - `PrecoInvalido`
 - `EstoqueInsuficiente`
-- `ReservaInexistente`
 - `MovimentacaoEstoqueInvalida`
 
 ### Fluxo principal

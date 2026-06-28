@@ -61,7 +61,7 @@ Item fora do escopo desta versão:
 | Campo                                 | Valor                            |
 | ------------------------------------- | -------------------------------- |
 | Data de consolidação                  | 28/06/2026                       |
-| Horário do relatório Dependency-Check | 17:38:02 UTC                     |
+| Horário do relatório Dependency-Check | 18:13:06 UTC                     |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
 | Commit técnico validado               | `dbed819`                        |
@@ -115,7 +115,7 @@ Item fora do escopo desta versão:
 | Maven               | Maven local do projeto                                                                   |
 | Banco usado no scan | Não aplicável ao Dependency-Check                                                        |
 | Perfil Spring       | Não aplicável ao Dependency-Check                                                        |
-| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-28T17:38:02.327271800Z`. |
+| Observações         | O relatório JSON informa `engineVersion` 12.1.1 e data `2026-06-28T18:13:06.803721400Z`. |
 
 ## 7. Resumo executivo
 
@@ -166,12 +166,12 @@ Resultado de qualidade revalidado em 28/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 | ---------- | ------: | ----------: | --------: |
-| Instruções |   9.870 |         372 |    96,37% |
-| Branches   |     455 |          49 |    90,28% |
-| Linhas     |   2.362 |          66 |    97,28% |
-| Métodos    |     644 |          32 |    95,27% |
+| Instruções |   9.701 |         372 |    96,31% |
+| Branches   |     447 |          49 |    90,12% |
+| Linhas     |   2.333 |          66 |    97,25% |
+| Métodos    |     641 |          32 |    95,25% |
 
-Resultado validado com 147 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 143 testes automatizados e `mvn verify` concluindo com sucesso.
 
 ## 10. Tabela de vulnerabilidades encontradas
 

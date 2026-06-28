@@ -211,6 +211,7 @@ A peça ou insumo concentra as regras de estoque. Suas responsabilidades são:
 - reservar quantidade para orçamento;
 - confirmar reserva como baixa;
 - liberar reserva quando necessário;
+- liberar reserva expirada quando a disponibilidade, a reserva ou a baixa é avaliada;
 - registrar movimentações de entrada, saída, ajuste, venda ou baixa.
 
 Principais invariantes:
@@ -222,6 +223,13 @@ Principais invariantes:
 ### Cliente e Veículo
 
 `Customer` e `Vehicle` possuem identidade própria. O veículo sempre pertence a um cliente, e a placa é tratada como identificador único do veículo.
+
+### Métrica de execução
+
+O tempo médio de execução não foi modelado como value object separado. No código, ele é calculado pelo caso de uso
+`GetAverageServiceOrderExecutionTimeUseCase`, usando as datas `startedAt` e `finishedAt` das Ordens de Serviço
+concluídas. Essa decisão mantém a métrica como leitura operacional da aplicação, sem criar um conceito de domínio
+extra apenas para a entrega do MVP.
 
 ## 11. Repositórios
 
@@ -460,6 +468,56 @@ flowchart LR
     ORC --> PE
     ORC --> CLI
     OS --> CLI
+```
+
+### Relação entre contextos e agregados
+
+```mermaid
+flowchart TB
+    subgraph ID["Identidade e Acesso"]
+        User["User"]
+    end
+
+    subgraph CAD["Cadastro de Clientes e Veículos"]
+        Customer["Customer"]
+        Vehicle["Vehicle"]
+        Document["Document"]
+        Plate["Plate"]
+    end
+
+    subgraph CAT["Catálogo de Serviços"]
+        WorkshopService["WorkshopService"]
+    end
+
+    subgraph EST["Gestão de Peças e Estoque"]
+        Part["Part"]
+        StockMovement["StockMovement"]
+    end
+
+    subgraph ATD["Atendimento de Oficina"]
+        ServiceOrder["ServiceOrder"]
+        ServiceOrderService["ServiceOrderService"]
+        ServiceOrderPart["ServiceOrderPart"]
+    end
+
+    subgraph ORC["Orçamentos e Aprovação"]
+        Budget["Budget"]
+        BudgetItem["BudgetItem"]
+    end
+
+    User --> ServiceOrder
+    Customer --> Vehicle
+    Customer --> ServiceOrder
+    Vehicle --> ServiceOrder
+    WorkshopService --> ServiceOrderService
+    Part --> ServiceOrderPart
+    ServiceOrder --> ServiceOrderService
+    ServiceOrder --> ServiceOrderPart
+    ServiceOrder --> Budget
+    Budget --> BudgetItem
+    Part --> StockMovement
+    Document --> Customer
+    Plate --> Vehicle
 ```
 
 ### Fluxo da Ordem de Serviço
