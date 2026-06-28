@@ -64,7 +64,6 @@ Item fora do escopo desta versão:
 | Horário do relatório Dependency-Check | 18:13:06 UTC                     |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
-| Commit técnico validado               | `dbed819`                        |
 
 ## 5. Ferramentas utilizadas
 
@@ -417,31 +416,31 @@ Vulnerabilities e RetireJS.
 - **ID:**  VULN-001 a VULN-009
   - **Severidade:**  Crítica/Alta/Média/Baixa
   - **Correção aplicada:**  Atualização de dependências Maven e novo scan limpo.
-  - **Arquivo/commit:**  `pom.xml`
+  - **Arquivo afetado:**  `pom.xml`
   - **Evidência:**  `target/dependency-check/dependency-check-report.json` com 0 vulnerabilidades.
 
 - **ID:**  VULN-010
   - **Severidade:**  Alta
   - **Correção aplicada:**  Atualização de dependências frontend e novo audit limpo.
-  - **Arquivo/commit:**  `frontend/package.json`, `frontend/package-lock.json`
+  - **Arquivo afetado:**  `frontend/package.json`, `frontend/package-lock.json`
   - **Evidência:**  `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.
 
 - **ID:**  VULN-011
   - **Severidade:**  Média
   - **Correção aplicada:**  Atualização transitiva de `js-yaml` via `npm audit fix`.
-  - **Arquivo/commit:**  `frontend/package-lock.json`
+  - **Arquivo afetado:**  `frontend/package-lock.json`
   - **Evidência:**  Audit de 20/06/2026 com 0 vulnerabilidades.
 
 - **ID:**  VULN-012
   - **Severidade:**  Crítica/Alta/Média
   - **Correção aplicada:**  Substituição da imagem runtime Ubuntu/Temurin por distroless Java 21 non-root.
-  - **Arquivo/commit:**  `Dockerfile`, `docker-compose.yml`
+  - **Arquivo afetado:**  `Dockerfile`, `docker-compose.yml`
   - **Evidência:**  Docker Scout final com 0 vulnerabilidades.
 
 - **ID:**  VULN-013
   - **Severidade:**  Crítica/Alta/Média
   - **Correção aplicada:**  Substituição da imagem Nginx/Alpine antiga por variante unprivileged slim atual.
-  - **Arquivo/commit:**  `frontend/Dockerfile`
+  - **Arquivo afetado:**  `frontend/Dockerfile`
   - **Evidência:**  Scan final sem vulnerabilidades críticas ou altas.
 
 ## 13. Vulnerabilidades aceitas como risco
@@ -457,12 +456,12 @@ Vulnerabilities e RetireJS.
 
 - **ID:**  RISK-001
   - **Severidade:**  Média
-  - **Motivo da pendência:**  Não existe versão corrigida indicada pelo Docker Scout.
+  - **Motivo do risco aceito:**  Não existe versão corrigida indicada pelo Docker Scout.
   - **Plano de correção:**  Atualizar a imagem fixada quando uma base corrigida estiver disponível e repetir o scan.
   - **Prioridade:**  Média
   - **Prazo:**  Próximo ciclo
 
-Não há pendências críticas ou altas. Um DAST dedicado permanece como melhoria futura.
+Não há vulnerabilidades críticas ou altas abertas. Um DAST dedicado fica como melhoria futura fora do critério obrigatório desta entrega.
 
 ## 15. Boas práticas de segurança implementadas
 
