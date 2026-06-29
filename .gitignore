@@ -4,12 +4,12 @@ video/
 # Maven
 target/
 
-# Local reports and scan evidence
-security-reports/
+# Local reports generated outside the final evidence folder
 coverage/
 logs/
+.allure/
+allure-results/
 *.lcov
-*.sarif
 *.tmp
 *.temp
 *.bak

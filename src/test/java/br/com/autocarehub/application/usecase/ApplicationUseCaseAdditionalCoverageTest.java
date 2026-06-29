@@ -85,14 +85,6 @@ class ApplicationUseCaseAdditionalCoverageTest {
         return new Customer("Maria Silva", Document.from("52998224725"), "11999999999", "maria@example.com", address());
     }
 
-    private static Part part(String sku) {
-        return Part.create(
-                new Part.CatalogData("Filtro de oleo", "Filtro de oleo do motor", sku, "Filtros", "Oleo", "Bosch"),
-                new Part.Pricing(Money.of("25.00"), Money.of("50.00")),
-                10,
-                2);
-    }
-
     private static User user(String username, String fullName, UserRole role, boolean active) {
         return new User(
                 UUID.randomUUID(),
@@ -436,7 +428,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .hasMessage("Workshop service not found");
         assertThatThrownBy(() -> new UpdateWorkshopServiceUseCase(workshopServiceRepository)
                         .execute(new UpdateWorkshopServiceUseCase.Command(
-                                missingId, "Servico", "Descrição", Money.of("10.00"), 30, true)))
+                                missingId, "Serviço", "Descrição", Money.of("10.00"), 30, true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
 

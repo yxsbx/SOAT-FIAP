@@ -4,7 +4,7 @@ info:
   version: 1.0.0
   description: >
     API para gerenciamento de clientes, veículos, serviços, peças, ordens de
-    serviço, orçamentos, aprovacoes e acompanhamento de status de uma oficina
+    serviço, orçamentos, aprovações e acompanhamento de status de uma oficina
     mecânica.
 servers:
   - url: http://localhost:8080
@@ -13,7 +13,7 @@ security:
   - bearerAuth: []
 tags:
   - name: Auth
-    description: Autenticação e emissao de token JWT
+    description: Autenticação e emissão de token JWT
   - name: Customers
     description: Cadastro e manutenção de clientes
   - name: Vehicles
@@ -25,7 +25,7 @@ tags:
   - name: Service Orders
     description: Criação, composição, orçamento, aprovação e acompanhamento de ordens de serviço
   - name: Users
-    description: Conta do usuario autenticado, funcionarios, permissoes e preferencias de home
+    description: Conta do usuário autenticado, funcionários, permissões e preferências de home
   - name: Demo Leads
     description: Registro publico e consulta administrativa de interessados em parceria
 paths:
@@ -33,7 +33,7 @@ paths:
     post:
       tags:
         - Auth
-      summary: Autentica um usuario
+      summary: Autentica um usuário
       operationId: login
       security: []
       requestBody:
@@ -315,7 +315,7 @@ paths:
               $ref: '#/components/schemas/CreateWorkshopServiceRequest'
       responses:
         '201':
-          description: Servico criado
+          description: Serviço criado
           content:
             application/json:
               schema:
@@ -356,7 +356,7 @@ paths:
         - $ref: '#/components/parameters/ServiceIdPathParam'
       responses:
         '200':
-          description: Servico encontrado
+          description: Serviço encontrado
           content:
             application/json:
               schema:
@@ -380,7 +380,7 @@ paths:
               $ref: '#/components/schemas/UpdateWorkshopServiceRequest'
       responses:
         '200':
-          description: Servico atualizado
+          description: Serviço atualizado
           content:
             application/json:
               schema:
@@ -400,7 +400,7 @@ paths:
         - $ref: '#/components/parameters/ServiceIdPathParam'
       responses:
         '204':
-          description: Servico removido
+          description: Serviço removido
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -545,7 +545,7 @@ paths:
     patch:
       tags:
         - Parts
-      summary: Registra entrada, saida ou venda isolada de uma peça
+      summary: Registra entrada, saída ou venda isolada de uma peça
       operationId: registerStockMovement
       parameters:
         - $ref: '#/components/parameters/PartIdPathParam'
@@ -838,7 +838,7 @@ paths:
               $ref: '#/components/schemas/AddServiceOrderServiceRequest'
       responses:
         '200':
-          description: Servico adicionado
+          description: Serviço adicionado
           content:
             application/json:
               schema:
@@ -949,12 +949,12 @@ paths:
     get:
       tags:
         - Users
-      summary: Consulta os dados do usuario autenticado
-      description: Retorna perfil, empresa, permissoes e status da conta vinculada ao Bearer Token JWT.
+      summary: Consulta os dados do usuário autenticado
+      description: Retorna perfil, empresa, permissões e status da conta vinculada ao Bearer Token JWT.
       operationId: getCurrentUser
       responses:
         '200':
-          description: Usuario autenticado encontrado
+          description: Usuário autenticado encontrado
           content:
             application/json:
               schema:
@@ -977,8 +977,8 @@ paths:
     put:
       tags:
         - Users
-      summary: Atualiza os dados basicos do usuario autenticado
-      description: Permite ao usuario logado alterar o proprio nome exibido no sistema.
+      summary: Atualiza os dados básicos do usuário autenticado
+      description: Permite ao usuário logado alterar o próprio nome exibido no sistema.
       operationId: updateCurrentUser
       requestBody:
         required: true
@@ -990,7 +990,7 @@ paths:
               fullName: Maria AutoCare Hub
       responses:
         '200':
-          description: Usuario atualizado
+          description: Usuário atualizado
           content:
             application/json:
               schema:
@@ -1007,7 +1007,7 @@ paths:
     patch:
       tags:
         - Users
-      summary: Altera a senha do usuario autenticado
+      summary: Altera a senha do usuário autenticado
       description: Valida a senha atual e define uma nova senha para a conta logada.
       operationId: changeCurrentPassword
       requestBody:
@@ -1034,12 +1034,12 @@ paths:
     get:
       tags:
         - Users
-      summary: Consulta preferencias da home do usuario
-      description: Retorna os widgets visiveis e a preferencia de exibir alertas na home.
+      summary: Consulta preferências da home do usuário
+      description: Retorna os widgets visíveis e a preferência de exibir alertas na home.
       operationId: getHomePreference
       responses:
         '200':
-          description: Preferencia encontrada
+          description: Preferência encontrada
           content:
             application/json:
               schema:
@@ -1058,8 +1058,8 @@ paths:
     put:
       tags:
         - Users
-      summary: Salva preferencias da home do usuario
-      description: Persiste no backend os widgets escolhidos para a home do usuario autenticado.
+      summary: Salva as preferências da home do usuário
+      description: Persiste no backend os widgets escolhidos para a home do usuário autenticado.
       operationId: saveHomePreference
       requestBody:
         required: true
@@ -1075,7 +1075,7 @@ paths:
               showAlertsOnHome: true
       responses:
         '200':
-          description: Preferencia salva
+          description: Preferência salva
           content:
             application/json:
               schema:
@@ -1092,9 +1092,9 @@ paths:
     get:
       tags:
         - Users
-      summary: Lista contas de usuario
+      summary: Lista contas de usuário
       description: >
-        Endpoint administrativo para listar usuarios por status, role, perfil ou termo de busca.
+        Endpoint administrativo para listar usuários por status, role, perfil ou termo de busca.
         Requer Bearer Token JWT de administrador.
       operationId: listUsers
       parameters:
@@ -1123,7 +1123,7 @@ paths:
             maxLength: 120
       responses:
         '200':
-          description: Usuarios encontrados
+          description: Usuários encontrados
           content:
             application/json:
               schema:
@@ -1137,9 +1137,9 @@ paths:
     post:
       tags:
         - Users
-      summary: Cria uma conta de usuario
+      summary: Cria uma conta de usuário
       description: >
-        Endpoint administrativo para criar administradores, funcionarios ou clientes vinculados ao sistema.
+        Endpoint administrativo para criar administradores, funcionários ou clientes vinculados ao sistema.
         Requer Bearer Token JWT de administrador.
       operationId: createUser
       requestBody:
@@ -1163,7 +1163,7 @@ paths:
               active: true
       responses:
         '201':
-          description: Usuario criado
+          description: Usuário criado
           content:
             application/json:
               schema:
@@ -1202,8 +1202,8 @@ paths:
     put:
       tags:
         - Users
-      summary: Atualiza uma conta de usuario
-      description: Endpoint administrativo para editar dados, perfil, subrole, permissoes e status ativo de uma conta.
+      summary: Atualiza uma conta de usuário
+      description: Endpoint administrativo para editar dados, perfil, subrole, permissões e status ativo de uma conta.
       operationId: updateUser
       parameters:
         - name: userId
@@ -1220,7 +1220,7 @@ paths:
               $ref: '#/components/schemas/UpdateUserRequest'
       responses:
         '200':
-          description: Usuario atualizado
+          description: Usuário atualizado
           content:
             application/json:
               schema:
@@ -1243,7 +1243,7 @@ paths:
         - Users
       summary: Redefine a senha de uma conta
       description: >
-        Endpoint administrativo para definir nova senha inicial ou resetar senha de funcionario, cliente ou parceiro.
+        Endpoint administrativo para definir nova senha inicial ou resetar senha de funcionário, cliente ou parceiro.
       operationId: resetUserPassword
       parameters:
         - name: userId
@@ -1277,7 +1277,7 @@ paths:
         - Demo Leads
       summary: Registra interesse em parceria
       description: >
-        Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstracao.
+        Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstração.
       operationId: registerDemoLead
       security: []
       requestBody:
@@ -1417,7 +1417,7 @@ components:
             path: /api/v1/customers
             details: []
     Forbidden:
-      description: Usuario autenticado sem permissao para acessar o recurso
+      description: Usuário autenticado sem permissão para acessar o recurso
       content:
         application/json:
           schema:
@@ -1443,7 +1443,7 @@ components:
             path: /api/v1/customers/00000000-0000-0000-0000-000000000000
             details: []
     Conflict:
-      description: Conflito com estado atual do recurso, como duplicidade de documento, placa, usuario ou SKU
+      description: Conflito com estado atual do recurso, como duplicidade de documento, placa, usuário ou SKU
       content:
         application/json:
           schema:
@@ -1567,7 +1567,7 @@ components:
           minLength: 11
           maxLength: 18
           pattern: "^\\d{11}$|^\\d{14}$|^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$"
-          description: CPF ou CNPJ com ou sem formatacao.
+          description: CPF ou CNPJ com ou sem formatação.
         phone:
           type: string
           minLength: 10
@@ -1984,7 +1984,7 @@ components:
           maxLength: 18
           pattern: "^\\d{11}$|^\\d{14}$|^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$"
           example: '12345678909'
-          description: CPF ou CNPJ do cliente com ou sem formatacao. Se o cliente nao existir, informe tambem customer.
+          description: CPF ou CNPJ do cliente com ou sem formatação. Se o cliente nao existir, informe tambem customer.
         customer:
           $ref: '#/components/schemas/CreateServiceOrderCustomerRequest'
         vehicleId:
@@ -2004,16 +2004,16 @@ components:
           minItems: 1
           items:
             $ref: '#/components/schemas/CreateServiceOrderServiceRequest'
-          description: Serviços solicitados para compor automaticamente o orçamento.
+          description: Serviços solicitados para compor automáticamente o orçamento.
         parts:
           type: array
           items:
             $ref: '#/components/schemas/CreateServiceOrderPartRequest'
-          description: Peças ou insumos necessarios para compor automaticamente o orçamento.
+          description: Peças ou insumos necessários para compor automáticamente o orçamento.
         generateBudget:
           type: boolean
           default: true
-          description: Quando true, gera o orçamento automaticamente e deixa a OS aguardando aprovação.
+          description: Quando true, gera o orçamento automáticamente e deixa a OS aguardando aprovação.
     CreateServiceOrderCustomerRequest:
       type: object
       required:

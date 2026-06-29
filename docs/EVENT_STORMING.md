@@ -1,507 +1,449 @@
 # Event Storming - AutoCare Hub
 
-Este documento apresenta o Event Storming dos fluxos principais do AutoCare Hub, sistema desenvolvido para apoiar o atendimento de uma oficina mecânica.
+## 1. Objetivo do Event Storming
+
+O Event Storming foi usado para modelar os fluxos principais da oficina mecânica antes de olhar apenas para endpoints ou tabelas. A ideia foi entender quais fatos importantes acontecem no negócio, quais comandos causam esses fatos e quais regras protegem o processo.
 
 O foco do MVP está em dois fluxos exigidos no Tech Challenge:
 
-1. Criação e acompanhamento da Ordem de Serviço.
-2. Gestão de peças, insumos e estoque.
+1. criação e acompanhamento da Ordem de Serviço;
+2. gestão de peças, insumos e estoque.
 
-Os nomes utilizados seguem a linguagem ubíqua definida para o projeto. Os eventos descritos aqui representam a modelagem do domínio e ajudam a explicar as mudanças importantes que acontecem no sistema. O MVP não foi desenhado como uma aplicação baseada em Event Sourcing, por isso esses eventos não dependem de um event store para existir.
+Os eventos deste documento são elementos de modelagem DDD. O AutoCare Hub não implementa Event Sourcing nem Event Store.
 
-Os status da Ordem de Serviço são descritos na linguagem de negócio como `RECEBIDA`, `EM_DIAGNOSTICO`, `AGUARDANDO_APROVACAO`, `EM_EXECUCAO`, `FINALIZADA` e `ENTREGUE`. Quando a API utiliza códigos externos em inglês, eles representam os mesmos estados do domínio.
+## 2. Papéis participantes
 
-## 1. Legenda usada no Event Storming
+Como este é um projeto acadêmico, não foi documentado um workshop real com uma oficina específica. A modelagem considera os papéis do domínio descritos no enunciado e no fluxo de uma oficina:
 
-- **Atores:** pessoas ou sistemas que iniciam ações no fluxo.
-- **Comandos:** intenções executadas no sistema, normalmente disparadas por uma ação do usuário ou por uma regra da aplicação.
-- **Eventos:** fatos relevantes que aconteceram no domínio depois da execução de um comando.
-- **Políticas:** regras que orientam decisões do fluxo.
-- **Agregados:** objetos principais afetados por comandos e eventos.
-- **Exceções:** situações em que o sistema bloqueia a ação para proteger uma regra de negócio.
-- **Dados necessários:** informações mínimas para executar ou consultar cada etapa.
+- Cliente;
+- Atendente;
+- Mecânico;
+- Administrador da oficina;
+- Responsável pelo estoque;
+- Sistema AutoCare Hub;
+- domain expert simulado a partir do enunciado;
+- desenvolvedora responsável pelo MVP.
 
-## 2. Fluxo 1 - Criação da Ordem de Serviço
+Os papéis acima são papéis de negócio. No sistema, eles são representados por `UserRole` e campos de perfil:
 
-### Objetivo do fluxo
+| Papel de negócio | Representação técnica |
+|---|---|
+| Dona do projeto / administradora master | `role=ADMIN`, `profileType=MASTER_ADMIN` |
+| Administrador da oficina | `role=ADMIN`, `profileType=WORKSHOP_ADMIN` |
+| Responsável pelo estoque | `role=ADMIN`, `profileType=PARTS_STORE_ADMIN` ou `role=EMPLOYEE`, `profileType=PARTS_STORE_EMPLOYEE` |
+| Atendente | `role=EMPLOYEE`, com perfil operacional da oficina ou loja |
+| Mecânico | `role=EMPLOYEE`, `profileType=WORKSHOP_EMPLOYEE`, `employeeSubRole=MECHANIC` |
+| Cliente | `role=CUSTOMER`, `profileType=CUSTOMER_OWNER` |
 
-Registrar o atendimento inicial da oficina, identificar o cliente, vincular o veículo, incluir serviços e peças, gerar o orçamento e deixar a Ordem de Serviço pronta para aprovação.
+## 3. Escopo
 
-### Atores
+### Dentro do escopo
 
-- Administrador da oficina.
-- Funcionário autorizado da oficina.
-- Cliente final.
-- Sistema AutoCare Hub.
+- criação da OS;
+- acompanhamento da OS;
+- geração de orçamento;
+- aprovação de orçamento;
+- mudança de status;
+- gestão de peças e insumos;
+- controle de estoque;
+- consulta administrativa e consulta do cliente.
 
-### Comandos
+### Fora do escopo
 
-- `IdentificarCliente`
-- `CadastrarCliente`
-- `SelecionarCliente`
-- `CadastrarVeiculo`
-- `SelecionarVeiculo`
-- `CriarOrdemServico`
-- `IncluirServicoNaOrdem`
-- `IncluirPecaNaOrdem`
-- `GerarOrcamento`
-- `DisponibilizarOrcamento`
+- pagamento online;
+- envio real de e-mail, SMS ou WhatsApp;
+- integração com fornecedores;
+- agendamento externo;
+- Event Store;
+- microserviços.
 
-### Eventos de domínio
+Esses itens ficam fora do escopo do MVP e não fazem parte da entrega desta fase.
+
+## 4. Legenda usada
+
+| Elemento | Significado no Event Storming |
+|---|---|
+| Evento | Algo relevante que já aconteceu no domínio. |
+| Comando | Ação ou intenção que causa um evento. |
+| Política | Regra que orienta uma decisão ou reação do sistema. |
+| Ponto de atenção | Risco, exceção ou dúvida do fluxo. |
+| Modelo de leitura | Consulta usada para acompanhar o processo. |
+| Agregado | Objeto principal que protege regras de negócio. |
+| Contexto delimitado | Fronteira conceitual do domínio dentro do monolito. |
+
+## 5. Brainstorming de eventos
+
+Os eventos foram escritos no passado, seguindo a orientação da aula.
+
+### Ordem de Serviço e orçamento
 
 - `ClienteIdentificado`
 - `ClienteCadastrado`
 - `VeiculoCadastrado`
 - `VeiculoSelecionado`
-- `OrdemServicoCriada`
-- `ServicoIncluidoNaOrdem`
+- `OrdemServiçoCriada`
+- `ServiçoIncluidoNaOrdem`
 - `PecaIncluidaNaOrdem`
 - `OrcamentoGerado`
 - `OrcamentoDisponibilizado`
-
-### Agregados envolvidos
-
-- `Customer`: representa o cliente atendido pela oficina.
-- `Vehicle`: representa o veículo vinculado ao cliente.
-- `ServiceOrder`: representa a Ordem de Serviço e concentra o fluxo principal do atendimento.
-- `WorkshopService`: representa os serviços oferecidos pela oficina.
-- `Part`: representa peças e insumos usados no serviço.
-- `Budget`: representa o orçamento calculado a partir dos serviços e peças.
-
-### Políticas de domínio
-
-- O cliente precisa ser identificado por CPF ou CNPJ antes da criação da OS.
-- Quando o cliente ainda não existe, ele deve ser cadastrado antes de seguir com o atendimento.
-- O veículo precisa estar cadastrado e vinculado ao cliente correto.
-- A OS precisa ser criada com pelo menos um serviço solicitado.
-- Serviços adicionais podem ser incluídos enquanto o orçamento ainda não foi gerado.
-- Peças e insumos podem ser incluídos quando forem necessários para o atendimento.
-- O orçamento é calculado com base nos serviços e peças vinculados à OS.
-- Depois da geração do orçamento, a OS passa para `AGUARDANDO_APROVACAO`.
-- Quando há peças vinculadas ao orçamento, o sistema precisa respeitar a disponibilidade de estoque.
-
-### Regras de negócio
-
-- CPF e CNPJ devem ser válidos.
-- A placa do veículo deve estar em formato válido.
-- O mesmo cliente não pode ser duplicado por diferença de máscara no documento.
-- Um veículo não pode ser cadastrado sem cliente.
-- A OS não pode ser criada sem cliente e veículo.
-- A OS não pode ser criada sem serviço solicitado.
-- O veículo informado na OS deve pertencer ao cliente.
-- O orçamento deve calcular total de serviços, total de peças e total geral.
-- Depois da geração do orçamento, os itens da OS ficam protegidos contra alterações indevidas.
-
-### Exceções mapeadas
-
-- `DocumentoInvalido`
-- `PlacaInvalida`
-- `ClienteNaoEncontrado`
-- `VeiculoNaoEncontrado`
-- `VeiculoNaoPertenceAoCliente`
-- `ServicoNaoEncontrado`
-- `ServicoInativo`
-- `PecaNaoEncontrada`
-- `PecaInativa`
-- `EstoqueInsuficiente`
-- `OrdemServicoInvalida`
-
-### Fluxo principal
-
-1. O funcionário informa o CPF ou CNPJ do cliente.
-2. O sistema valida e normaliza o documento.
-3. O sistema localiza o cliente existente ou permite o cadastro de um novo cliente.
-4. O funcionário seleciona ou cadastra o veículo.
-5. O sistema valida a placa e confirma se o veículo pertence ao cliente informado.
-6. O funcionário informa os serviços solicitados no comando de criação da Ordem de Serviço.
-7. O sistema cria a Ordem de Serviço com os serviços iniciais.
-8. O funcionário inclui peças ou insumos, quando necessário.
-9. O sistema calcula o orçamento com base nos serviços e peças vinculados.
-10. O orçamento fica disponível para aprovação do cliente.
-11. A OS passa para `AGUARDANDO_APROVACAO`.
-
-### Fluxos alternativos
-
-- Se o cliente não for encontrado, o funcionário cadastra o cliente e continua o atendimento.
-- Se o veículo não for encontrado, o funcionário cadastra o veículo e o vincula ao cliente.
-- Se o veículo pertencer a outro cliente, o sistema bloqueia a criação da OS.
-- Se o serviço estiver inativo, o sistema bloqueia a inclusão do serviço.
-- Se a peça estiver inativa ou não tiver estoque suficiente, o sistema bloqueia a inclusão ou reserva conforme a regra do fluxo.
-- Se o orçamento ainda não tiver sido gerado, a OS permanece no status anterior.
-
-### Pontos de decisão
-
-- O cliente já existe?
-- O documento informado é válido?
-- O veículo já existe?
-- O veículo pertence ao cliente?
-- Existe ao menos um serviço solicitado?
-- Existem peças ou insumos vinculados?
-- Há estoque disponível para a peça?
-- O orçamento já pode ser gerado?
-
-### Dados necessários
-
-- CPF ou CNPJ do cliente.
-- Nome, telefone e e-mail do cliente.
-- Placa, marca, modelo e ano do veículo.
-- Diagnóstico inicial ou problema informado.
-- Serviços solicitados.
-- Peças e insumos necessários.
-- Quantidade de cada peça ou insumo.
-- Preço dos serviços e das peças.
-
-## 3. Fluxo 2 - Acompanhamento da Ordem de Serviço
-
-### Objetivo do fluxo
-
-Permitir que a oficina controle o andamento da OS e que o cliente acompanhe o progresso do atendimento pelo status da Ordem de Serviço.
-
-### Atores
-
-- Cliente final.
-- Administrador da oficina.
-- Funcionário autorizado da oficina.
-- Sistema AutoCare Hub.
-
-### Comandos
-
-- `ConsultarAcompanhamentoOS`
-- `IniciarDiagnostico`
-- `AprovarOrcamento`
-- `IniciarExecucao`
-- `FinalizarOrdemServico`
-- `EntregarVeiculo`
-
-### Eventos de domínio
-
-- `AcompanhamentoOSConsultado`
-- `DiagnosticoIniciado`
 - `OrcamentoAprovado`
-- `OrdemServicoEmExecucao`
-- `OrdemServicoFinalizada`
+- `DiagnosticoIniciado`
+- `ExecuçãoIniciada`
+- `OrdemServiçoFinalizada`
 - `VeiculoEntregue`
+- `OrdemServiçoConsultadaPeloCliente`
 
-### Agregados envolvidos
-
-- `ServiceOrder`: controla o status, as datas e as transições da OS.
-- `Vehicle`: identifica o veículo em atendimento.
-- `Customer`: identifica o cliente dono da OS.
-- `Budget`: guarda os valores do orçamento e a situação de aprovação.
-- `Part`: participa do fluxo quando existe confirmação de reserva ou baixa de estoque.
-
-### Políticas de domínio
-
-- O cliente só pode consultar uma OS vinculada ao seu cadastro.
-- As APIs administrativas exigem autenticação JWT.
-- As transições de status precisam respeitar a máquina de estados da OS.
-- A aprovação do orçamento é obrigatória antes da execução.
-- A execução só pode iniciar depois da aprovação do orçamento.
-- A finalização só pode ocorrer quando a OS está em execução.
-- A entrega só pode ocorrer quando a OS está finalizada.
-
-### Regras de transição de status
-
-- `RECEBIDA` pode ir para `EM_DIAGNOSTICO`.
-- `RECEBIDA` pode ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
-- `EM_DIAGNOSTICO` pode ir para `AGUARDANDO_APROVACAO` quando o orçamento é gerado.
-- `AGUARDANDO_APROVACAO` pode ir para `EM_EXECUCAO` depois da aprovação do orçamento.
-- `EM_EXECUCAO` pode ir para `FINALIZADA`.
-- `FINALIZADA` pode ir para `ENTREGUE`.
-- `ENTREGUE` encerra o fluxo principal da OS.
-- O status não pode voltar para uma etapa anterior.
-
-### Exceções mapeadas
-
-- `OrdemServicoNaoEncontrada`
-- `AcessoNaoAutorizado`
-- `OrcamentoNaoGerado`
-- `TransicaoStatusInvalida`
-- `ClienteNaoVinculadoAOrdem`
-
-### Fluxo principal
-
-1. O cliente consulta a OS pela API de acompanhamento.
-2. O sistema valida se o cliente tem permissão para acessar aquela OS.
-3. O sistema retorna os dados principais da OS, incluindo veículo, status, serviços, peças e orçamento.
-4. A oficina inicia o diagnóstico, quando essa etapa se aplica ao atendimento.
-5. O sistema atualiza a OS para `EM_DIAGNOSTICO`.
-6. O orçamento é gerado e disponibilizado para aprovação.
-7. O cliente aprova o orçamento.
-8. O sistema registra a aprovação.
-9. A oficina inicia a execução da OS.
-10. O sistema atualiza a OS para `EM_EXECUCAO`.
-11. A oficina finaliza o serviço.
-12. O sistema atualiza a OS para `FINALIZADA`.
-13. A oficina registra a entrega do veículo.
-14. O sistema atualiza a OS para `ENTREGUE`.
-
-### Fluxos alternativos
-
-- Se o cliente tentar consultar uma OS que não pertence a ele, o sistema nega o acesso.
-- Se o orçamento ainda não foi gerado, o acompanhamento retorna o status atual da OS.
-- Se o orçamento ainda não foi aprovado, a OS permanece em `AGUARDANDO_APROVACAO`.
-- Se houver tentativa de transição inválida, o sistema bloqueia a alteração.
-- Se a OS já estiver entregue, o sistema mantém o fluxo encerrado.
-
-### Pontos de decisão
-
-- O cliente pode acessar a OS?
-- A OS pertence ao cliente informado?
-- O orçamento já foi gerado?
-- O orçamento foi aprovado?
-- O status atual permite a próxima ação?
-- A OS já pode ser finalizada?
-- O veículo já pode ser entregue?
-
-### Dados necessários
-
-- Identificador da OS.
-- Identificador do cliente ou documento usado para consulta.
-- Placa do veículo, quando aplicável.
-- Status atual da OS.
-- Datas de criação, diagnóstico, orçamento, aprovação, execução, finalização e entrega.
-- Serviços vinculados.
-- Peças vinculadas.
-- Valores do orçamento.
-- Situação da aprovação.
-
-## 4. Fluxo 3 - Gestão de Peças e Insumos
-
-### Objetivo do fluxo
-
-Controlar o cadastro de peças e insumos, manter o estoque atualizado e garantir que uma peça só seja usada em uma OS quando houver quantidade disponível.
-
-### Atores
-
-- Administrador da oficina.
-- Funcionário autorizado.
-- Sistema AutoCare Hub.
-
-### Comandos
-
-- `CadastrarPeca`
-- `EditarPeca`
-- `RegistrarEntradaEstoque`
-- `RegistrarSaidaEstoque`
-- `ReservarPeca`
-- `LiberarReservaPeca`
-- `BaixarPecaDoEstoque`
-- `ConsultarEstoqueBaixo`
-
-### Eventos de domínio
+### Peças, insumos e estoque
 
 - `PecaCadastrada`
 - `PecaAtualizada`
 - `EntradaEstoqueRegistrada`
 - `SaidaEstoqueRegistrada`
 - `PecaReservada`
-- `ReservaPecaLiberada`
-- `PecaBaixadaDoEstoque`
+- `ReservaLiberada`
+- `EstoqueBaixado`
 - `EstoqueAtualizado`
 - `EstoqueBaixoIdentificado`
 - `EstoqueInsuficienteIdentificado`
 
-### Agregados envolvidos
+## 6. Linha do tempo
 
-- `Part`: controla dados da peça, preço, estoque total, estoque reservado e disponibilidade.
-- `StockMovement`: registra entradas, saídas, baixas e ajustes de estoque.
-- `ServiceOrder`: usa peças e insumos no atendimento.
-- `Budget`: relaciona peças ao orçamento quando existe reserva antes da execução.
+### 6.1 Fluxo 1 - Criação e acompanhamento da OS
 
-### Políticas de domínio
+1. `ClienteIdentificado`
+2. `ClienteCadastrado`, quando necessário
+3. `VeiculoCadastrado`, quando necessário
+4. `VeiculoSelecionado`
+5. `OrdemServiçoCriada`
+6. `ServiçoIncluidoNaOrdem`
+7. `PecaIncluidaNaOrdem`, quando necessário
+8. `OrcamentoGerado`
+9. `OrcamentoDisponibilizado`
+10. `OrcamentoAprovado`
+11. `DiagnosticoIniciado`, quando a oficina usa essa etapa antes do orçamento ou da execução
+12. `ExecuçãoIniciada`
+13. `OrdemServiçoFinalizada`
+14. `VeiculoEntregue`
+15. `OrdemServiçoConsultadaPeloCliente`
 
-- A quantidade em estoque não pode ser negativa.
-- O preço da peça não pode ser negativo.
-- O estoque mínimo não pode ser negativo.
-- O estoque disponível é calculado a partir do estoque total menos a quantidade reservada.
-- Uma peça vinculada ao orçamento pode ser reservada antes da aprovação.
-- A baixa definitiva acontece quando a peça é consumida no fluxo da OS ou quando uma saída administrativa é registrada.
-- A baixa maior que o estoque disponível deve ser bloqueada.
-- O estoque baixo é identificado quando a disponibilidade fica menor ou igual ao estoque mínimo. No código, isso aparece
-  como filtro `lowStock=true` na listagem de peças e como `stockStatus` calculado pelo agregado `Part`.
+### 6.2 Fluxo 2 - Gestão de peças e insumos
 
-### Regras de negócio
+1. `PecaCadastrada`
+2. `EntradaEstoqueRegistrada`
+3. `EstoqueAtualizado`
+4. `PecaReservada`, quando vinculada a orçamento ou reserva administrativa
+5. `EstoqueBaixado`
+6. `SaidaEstoqueRegistrada`, quando há saída administrativa
+7. `EstoqueAtualizado`
+8. `EstoqueBaixoIdentificado`, quando a disponibilidade fica menor ou igual ao estoque mínimo
 
-- O nome da peça ou insumo é obrigatório.
-- O preço de venda precisa ser válido.
-- A quantidade de uma movimentação precisa ser maior que zero.
-- A entrada aumenta o estoque total.
-- A saída reduz o estoque disponível.
-- A reserva reduz a disponibilidade, mas não reduz o estoque total.
-- A confirmação da reserva reduz o estoque total e a quantidade reservada.
-- A liberação da reserva reduz apenas a quantidade reservada.
-- O estoque não pode ficar negativo.
+## 7. Pontos de atenção
 
-### Exceções mapeadas
+| Ponto de atenção | Onde aparece no fluxo |
+|---|---|
+| CPF/CNPJ inválido | Identificação e cadastro do cliente. |
+| Placa inválida | Cadastro ou seleção do veículo. |
+| Cliente inexistente | Abertura da OS. |
+| Veículo não pertence ao cliente | Vínculo do veículo à OS. |
+| Serviço inativo | Inclusão de serviço na OS. |
+| Peça inativa | Inclusão de peça na OS ou movimentação de estoque. |
+| Estoque insuficiente | Inclusão, reserva ou baixa de peça. |
+| Reserva maior que estoque disponível | Reserva de peça. |
+| Orçamento ainda não aprovado | Tentativa de iniciar execução. |
+| Tentativa de iniciar execução sem aprovação | Transição para `EM_EXECUCAO`. |
+| Tentativa de finalizar OS que não está em execução | Transição para `FINALIZADA`. |
+| Tentativa de entregar OS não finalizada | Transição para `ENTREGUE`. |
+| Usuário sem JWT acessando API administrativa | Rotas administrativas. |
+| Cliente tentando consultar OS sem permissão | Acompanhamento da OS pelo cliente. |
 
-- `PecaNaoEncontrada`
-- `PecaInativa`
-- `QuantidadeInvalida`
-- `PrecoInvalido`
-- `EstoqueInsuficiente`
-- `MovimentacaoEstoqueInvalida`
+## 8. Eventos pivotais
 
-### Fluxo principal
+| Evento pivotal | Por que muda a fase do processo |
+|---|---|
+| `OrdemServiçoCriada` | Inicia formalmente o atendimento da oficina. |
+| `OrcamentoGerado` | Fecha a composição de serviços e peças e coloca a OS em aprovação. |
+| `OrcamentoAprovado` | Muda a OS da fase comercial/autorização para a fase de execução. |
+| `ExecuçãoIniciada` | Indica que a oficina começou o trabalho técnico. |
+| `OrdemServiçoFinalizada` | Marca o fim técnico do serviço. |
+| `VeiculoEntregue` | Encerra o atendimento para o cliente. |
+| `EstoqueBaixado` | Confirma consumo ou saída efetiva de peça/insumo. |
 
-1. O administrador cadastra a peça ou o insumo.
-2. O sistema valida os dados obrigatórios.
-3. O funcionário registra uma entrada de estoque.
-4. O sistema registra a movimentação.
-5. O sistema atualiza a quantidade disponível.
-6. A peça é vinculada a uma OS ou a um orçamento.
-7. O sistema verifica se há estoque disponível.
-8. O sistema reserva a quantidade necessária, quando o fluxo exige reserva.
-9. Após a aprovação do orçamento, o sistema confirma o uso da peça.
-10. O sistema baixa o estoque.
-11. O sistema registra a movimentação correspondente.
-12. Se a disponibilidade ficar baixa, o sistema identifica a peça como item de baixo estoque.
+## 9. Comandos
 
-### Fluxos alternativos
+| Comando | Evento esperado | Implementação relacionada |
+|---|---|---|
+| `IdentificarCliente` | `ClienteIdentificado` | `Document`, `CustomerRepository` |
+| `CadastrarCliente` | `ClienteCadastrado` | `CreateCustomerUseCase` |
+| `CadastrarVeiculo` | `VeiculoCadastrado` | `CreateVehicleUseCase` |
+| `CriarOrdemServiço` | `OrdemServiçoCriada` | `CreateServiceOrderUseCase` |
+| `IncluirServiçoNaOrdem` | `ServiçoIncluidoNaOrdem` | `AddServiceToServiceOrderUseCase` |
+| `IncluirPecaNaOrdem` | `PecaIncluidaNaOrdem` | `AddPartToServiceOrderUseCase` |
+| `GerarOrcamento` | `OrcamentoGerado` | `GenerateServiceOrderBudgetUseCase` |
+| `AprovarOrcamento` | `OrcamentoAprovado` | `ApproveServiceOrderBudgetUseCase` |
+| `IniciarDiagnostico` | `DiagnosticoIniciado` | `ServiceOrder.startDiagnosis`, `UpdateServiceOrderStatusUseCase` |
+| `IniciarExecução` | `ExecuçãoIniciada` | `ServiceOrder.startExecution`, `UpdateServiceOrderStatusUseCase` |
+| `FinalizarOrdemServiço` | `OrdemServiçoFinalizada` | `ServiceOrder.finish` |
+| `EntregarVeiculo` | `VeiculoEntregue` | `ServiceOrder.deliver` |
+| `CadastrarPeca` | `PecaCadastrada` | `CreatePartUseCase` |
+| `RegistrarEntradaEstoque` | `EntradaEstoqueRegistrada` | `RegisterPartStockMovementUseCase` |
+| `RegistrarSaidaEstoque` | `SaidaEstoqueRegistrada` | `RegisterPartStockMovementUseCase` |
+| `ReservarPeca` | `PecaReservada` | `ReservePartStockUseCase`, `GenerateServiceOrderBudgetUseCase` |
+| `LiberarReservaPeca` | `ReservaLiberada` | `ReleasePartReservationUseCase` |
+| `BaixarEstoque` | `EstoqueBaixado` | `CommitPartReservationUseCase`, `Part.reduceStock` |
+| `ConsultarOrdemServiço` | `OrdemServiçoConsultadaPeloCliente` | `TrackServiceOrderUseCase`, `FindServiceOrderUseCase` |
 
-- Se não houver estoque suficiente, o sistema bloqueia a reserva ou a baixa.
-- Se a movimentação for uma entrada, o sistema aumenta o estoque total.
-- Se a movimentação for uma saída administrativa, o sistema reduz o estoque disponível e registra a movimentação.
-- Se uma reserva precisar ser desfeita, o sistema libera a quantidade reservada.
-- Se a peça estiver inativa, o sistema bloqueia sua utilização em novos fluxos.
+## 10. Políticas
 
-### Pontos de decisão
+| Política | Regra aplicada |
+|---|---|
+| Ao gerar orçamento, a OS fica aguardando aprovação. | `ServiceOrder.generateBudget` define `AGUARDANDO_APROVACAO`. |
+| Ao aprovar orçamento, a OS fica liberada para execução. | `ServiceOrder.approveBudget` registra `approvedAt`. |
+| Ao iniciar execução, a aprovação é obrigatória. | `ServiceOrder.startExecution` bloqueia execução sem aprovação. |
+| Ao incluir peça, o sistema valida estoque disponível. | `ServiceOrder.addPart` consulta disponibilidade da `Part`. |
+| Ao gerar orçamento com peças, o sistema reserva peças. | `GenerateServiceOrderBudgetUseCase` reserva itens vinculados. |
+| Ao confirmar reserva, o estoque é baixado. | `CommitPartReservationUseCase` registra baixa e movimentação. |
+| O estoque não pode ficar negativo. | `Part` bloqueia baixa sem disponibilidade. |
+| Transições inválidas de status são bloqueadas. | `ServiceOrder` lança exceção de domínio. |
+| APIs administrativas exigem autenticação JWT. | `SecurityConfig` protege rotas administrativas. |
+| Cliente só acompanha OS por consulta permitida. | `TrackServiceOrderUseCase` e autorização validam a consulta. |
 
-- A peça já existe?
-- A peça está ativa?
-- A quantidade informada é válida?
-- Há estoque disponível?
-- A movimentação é entrada, saída, reserva, baixa ou ajuste?
-- A peça está vinculada a uma OS?
-- A peça está vinculada a um orçamento?
-- O orçamento foi aprovado?
-- O estoque ficou abaixo do mínimo?
+## 11. Modelos de leitura
 
-### Dados necessários
+| Modelo de leitura | Finalidade | Endpoint/consulta |
+|---|---|---|
+| Detalhe da Ordem de Serviço | Ver dados completos da OS. | `GET /api/v1/service-orders/{serviceOrderId}` |
+| Listagem de Ordens de Serviço | Consultar OS por filtros administrativos. | `GET /api/v1/service-orders` |
+| Acompanhamento da OS pelo cliente | Permitir que o cliente acompanhe status, itens e histórico. | `GET /api/v1/service-orders/tracking` |
+| Consulta de orçamento | Ver valores de serviços, peças e total dentro da OS. | Resposta de detalhe/tracking da OS. |
+| Consulta de estoque | Ver quantidade total, reservada, disponível e status da peça. | `GET /api/v1/parts` e `GET /api/v1/parts/{partId}` |
+| Consulta de tempo médio de execução | Apoiar monitoramento operacional. | `GET /api/v1/service-orders/metrics/average-execution-time` |
 
-- Nome da peça ou do insumo.
-- Categoria, marca, SKU e descrição, quando disponíveis.
-- Preço de venda.
-- Custo, quando controlado pelo cadastro.
-- Quantidade em estoque.
-- Quantidade reservada.
-- Estoque mínimo.
-- Tipo da movimentação.
-- Quantidade movimentada.
-- Referência da OS ou do orçamento, quando aplicável.
+## 12. Sistemas externos
 
-## 5. Diagramas Mermaid
+O fluxo principal do MVP não depende de sistemas externos. A aplicação usa PostgreSQL, Swagger/OpenAPI e autenticação JWT como infraestrutura local, mas não possui integração real com e-mail, WhatsApp, SMS, pagamento, agenda, ERP ou fornecedores.
 
-### 5.1 Event Storming da criação da OS
+## 13. Agregados
+
+### 13.1 `ServiceOrder`
+
+Comandos e eventos relacionados:
+
+- criar OS;
+- incluir serviço;
+- incluir peça;
+- gerar orçamento;
+- aprovar orçamento;
+- iniciar diagnóstico;
+- iniciar execução;
+- finalizar OS;
+- entregar veículo.
+
+Invariantes:
+
+- OS precisa ter cliente e veículo;
+- orçamento precisa ser gerado antes da aprovação;
+- execução depende da aprovação;
+- finalização depende da execução;
+- entrega depende da finalização.
+
+### 13.2 `Part`
+
+Comandos e eventos relacionados:
+
+- cadastrar peça;
+- registrar entrada;
+- registrar saída;
+- reservar;
+- liberar reserva;
+- baixar estoque.
+
+Invariantes:
+
+- estoque não pode ficar negativo;
+- reserva não pode exceder disponibilidade;
+- baixa não pode exceder estoque disponível ou reservado.
+
+### 13.3 `Customer`
+
+Comandos e eventos relacionados:
+
+- identificar cliente;
+- cadastrar cliente;
+- validar CPF/CNPJ.
+
+Invariantes:
+
+- documento precisa ser CPF ou CNPJ válido;
+- documento normalizado evita duplicidade por máscara.
+
+### 13.4 `Vehicle`
+
+Comandos e eventos relacionados:
+
+- cadastrar veículo;
+- validar placa;
+- vincular a cliente.
+
+Invariantes:
+
+- veículo precisa estar vinculado a um cliente;
+- placa precisa ter formato válido;
+- marca, modelo e ano são obrigatórios.
+
+## 14. Contextos delimitados
+
+O projeto é um monolito em camadas. Os contextos delimitados são usados para organização conceitual do domínio e da documentação, não como microserviços separados.
+
+| Contexto delimitado | Eventos principais | Agregados relacionados |
+|---|---|---|
+| Atendimento de Oficina | `OrdemServiçoCriada`, `DiagnosticoIniciado`, `ExecuçãoIniciada`, `OrdemServiçoFinalizada`, `VeiculoEntregue` | `ServiceOrder` |
+| Cadastro de Clientes e Veículos | `ClienteIdentificado`, `ClienteCadastrado`, `VeiculoCadastrado` | `Customer`, `Vehicle` |
+| Catálogo de Serviços | `ServiçoIncluidoNaOrdem` | `WorkshopService` |
+| Gestão de Peças e Estoque | `PecaCadastrada`, `EntradaEstoqueRegistrada`, `PecaReservada`, `EstoqueBaixado`, `EstoqueAtualizado` | `Part`, `StockMovement` |
+| Orçamentos e Aprovação | `OrcamentoGerado`, `OrcamentoDisponibilizado`, `OrcamentoAprovado` | `ServiceOrder`, `Budget` |
+| Identidade e Acesso | Usuário autenticado e acesso autorizado | `User` |
+
+## 15. Fluxos exigidos pelo Tech Challenge
+
+| Requisito do Tech Challenge | Onde aparece no Event Storming |
+|---|---|
+| Criação e acompanhamento da OS | Linha do tempo 6.1, modelos de leitura e diagramas 16.2 a 16.5 |
+| Gestão de peças e insumos | Linha do tempo 6.2, agregado `Part` e diagrama 16.6 |
+| Identificação por CPF/CNPJ | Eventos `ClienteIdentificado` e `ClienteCadastrado` |
+| Cadastro de veículo | Evento `VeiculoCadastrado` |
+| Inclusão de serviços solicitados | Evento `ServiçoIncluidoNaOrdem` |
+| Inclusão de peças e insumos | Evento `PecaIncluidaNaOrdem` |
+| Geração automática de orçamento | Evento `OrcamentoGerado` |
+| Aprovação de orçamento | Evento `OrcamentoAprovado` |
+| Acompanhamento pelo cliente | Evento `OrdemServiçoConsultadaPeloCliente` e modelo de leitura de tracking |
+| Controle de status | Eventos pivotais e máquina de estados |
+| Controle de estoque | Eventos de estoque, políticas e agregado `Part` |
+| Tempo médio de execução | Modelo de leitura de métrica |
+| JWT para APIs administrativas | Política de autenticação e contexto Identidade e Acesso |
+
+## 16. Diagramas Mermaid
+
+Os diagramas usam `flowchart` e `stateDiagram-v2` para facilitar renderização no IntelliJ com plugin Mermaid.
+
+### 16.1 Visão geral de comandos e eventos
+
+```mermaid
+flowchart LR
+    C1["Comando"] --> P1{"Politica"}
+    P1 --> E1["Evento no passado"]
+    E1 --> A1["Agregado"]
+    E1 --> L1["Modelo de leitura"]
+```
+
+### 16.2 Linha do tempo da OS
 
 ```mermaid
 flowchart TD
-    C1["Comando: IdentificarCliente"] --> E1["Evento: ClienteIdentificado"]
-    E1 --> D1{Cliente existe?}
-    D1 -- "Não" --> C2["Comando: CadastrarCliente"]
-    C2 --> E2["Evento: ClienteCadastrado"]
-    D1 -- "Sim" --> C3["Comando: SelecionarCliente"]
-    E2 --> C4["Comando: SelecionarVeiculo"]
-    C3 --> C4
-    C4 --> D2{Veículo existe?}
-    D2 -- "Não" --> C5["Comando: CadastrarVeiculo"]
-    C5 --> E3["Evento: VeiculoCadastrado"]
-    D2 -- "Sim" --> E4["Evento: VeiculoSelecionado"]
-    E3 --> C6["Comando: CriarOrdemServico"]
-    E4 --> C6
-    C6 --> E5["Evento: OrdemServicoCriada"]
-    E5 --> C7["Comando: IncluirServicoNaOrdem"]
-    C7 --> E6["Evento: ServicoIncluidoNaOrdem"]
-    E6 --> D3{Precisa de peças/insumos?}
-    D3 -- "Não" --> C9["Comando: GerarOrcamento"]
-    D3 -- "Sim" --> C8["Comando: IncluirPecaNaOrdem"]
-    C8 --> E7["Evento: PecaIncluidaNaOrdem"]
-    E7 --> C9
-    C9 --> E8["Evento: OrcamentoGerado"]
-    E8 --> E9["Evento: OrcamentoDisponibilizado"]
-    E9 --> S1["Status: AGUARDANDO_APROVACAO"]
+    E1["ClienteIdentificado"]
+    E2["ClienteCadastrado quando necessario"]
+    E3["VeiculoCadastrado quando necessario"]
+    E4["OrdemServiçoCriada"]
+    E5["ServiçoIncluidoNaOrdem"]
+    E6["PecaIncluidaNaOrdem quando necessario"]
+    E7["OrcamentoGerado"]
+    E8["OrcamentoDisponibilizado"]
+    E9["OrcamentoAprovado"]
+    E10["DiagnosticoIniciado quando aplicavel"]
+    E11["ExecuçãoIniciada"]
+    E12["OrdemServiçoFinalizada"]
+    E13["VeiculoEntregue"]
+    E14["OrdemServiçoConsultadaPeloCliente"]
+
+    E1 --> E2 --> E3 --> E4 --> E5 --> E6 --> E7 --> E8 --> E9 --> E10 --> E11 --> E12 --> E13 --> E14
 ```
 
-### 5.2 Event Storming do acompanhamento da OS
+### 16.3 Aprovação do orçamento
 
 ```mermaid
 flowchart TD
-    C1["Comando: ConsultarAcompanhamentoOS"] --> D1{Cliente pode acessar?}
-    D1 -- "Não" --> X1["Exceção: AcessoNaoAutorizado"]
-    D1 -- "Sim" --> E1["Evento: AcompanhamentoOSConsultado"]
-    E1 --> C2["Comando: IniciarDiagnostico"]
-    C2 --> E2["Evento: DiagnosticoIniciado"]
-    E2 --> S1["Status: EM_DIAGNOSTICO"]
-    S1 --> C3["Comando: GerarOrcamento"]
-    C3 --> E3["Evento: OrcamentoGerado"]
-    E3 --> S2["Status: AGUARDANDO_APROVACAO"]
-    S2 --> C4["Comando: AprovarOrcamento"]
-    C4 --> D2{Orçamento gerado?}
-    D2 -- "Não" --> X2["Exceção: OrcamentoNaoGerado"]
-    D2 -- "Sim" --> E4["Evento: OrcamentoAprovado"]
-    E4 --> C5["Comando: IniciarExecucao"]
-    C5 --> E5["Evento: OrdemServicoEmExecucao"]
-    E5 --> S3["Status: EM_EXECUCAO"]
-    S3 --> C6["Comando: FinalizarOrdemServico"]
-    C6 --> E6["Evento: OrdemServicoFinalizada"]
-    E6 --> S4["Status: FINALIZADA"]
-    S4 --> C7["Comando: EntregarVeiculo"]
-    C7 --> E7["Evento: VeiculoEntregue"]
-    E7 --> S5["Status: ENTREGUE"]
+    C1["AprovarOrcamento"]
+    P1{"Orcamento gerado?"}
+    P2{"OS esta AGUARDANDO_APROVACAO?"}
+    E1["OrcamentoAprovado"]
+    X1["Bloquear aprovação"]
+
+    C1 --> P1
+    P1 -- "Nao" --> X1
+    P1 -- "Sim" --> P2
+    P2 -- "Nao" --> X1
+    P2 -- "Sim" --> E1
 ```
 
-### 5.3 Event Storming da gestão de peças e estoque
+### 16.4 Execução e entrega
 
 ```mermaid
 flowchart TD
-    C1["Comando: CadastrarPeca"] --> E1["Evento: PecaCadastrada"]
-    E1 --> C2["Comando: RegistrarEntradaEstoque"]
-    C2 --> E2["Evento: EntradaEstoqueRegistrada"]
-    E2 --> E3["Evento: EstoqueAtualizado"]
-    E3 --> C3["Comando: ReservarPeca"]
-    C3 --> D1{Há estoque disponível?}
-    D1 -- "Não" --> E4["Evento: EstoqueInsuficienteIdentificado"]
-    D1 -- "Sim" --> E5["Evento: PecaReservada"]
-    E5 --> D2{Orçamento aprovado?}
-    D2 -- "Não" --> C4["Comando: LiberarReservaPeca"]
-    C4 --> E6["Evento: ReservaPecaLiberada"]
-    E6 --> E7["Evento: EstoqueAtualizado"]
-    D2 -- "Sim" --> C5["Comando: BaixarPecaDoEstoque"]
-    C5 --> E8["Evento: PecaBaixadaDoEstoque"]
-    E8 --> E9["Evento: EstoqueAtualizado"]
-    E9 --> D3{Estoque abaixo do mínimo?}
-    D3 -- "Sim" --> E10["Evento: EstoqueBaixoIdentificado"]
-    D3 -- "Não" --> F1["Fluxo concluído"]
+    C1["IniciarExecução"]
+    P1{"Orcamento aprovado?"}
+    E1["ExecuçãoIniciada"]
+    C2["FinalizarOrdemServiço"]
+    P2{"OS em execução?"}
+    E2["OrdemServiçoFinalizada"]
+    C3["EntregarVeiculo"]
+    P3{"OS finalizada?"}
+    E3["VeiculoEntregue"]
+    X1["Transição bloqueada"]
+
+    C1 --> P1
+    P1 -- "Nao" --> X1
+    P1 -- "Sim" --> E1 --> C2 --> P2
+    P2 -- "Nao" --> X1
+    P2 -- "Sim" --> E2 --> C3 --> P3
+    P3 -- "Nao" --> X1
+    P3 -- "Sim" --> E3
 ```
 
-### 5.4 Máquina de estados da Ordem de Serviço
+### 16.5 Acompanhamento pelo cliente
+
+```mermaid
+flowchart TD
+    C1["ConsultarOrdemServiço"]
+    P1{"Dados de busca informados?"}
+    P2{"Consulta permitida?"}
+    E1["OrdemServiçoConsultadaPeloCliente"]
+    L1["Tracking da OS"]
+    X1["Consulta bloqueada"]
+
+    C1 --> P1
+    P1 -- "Nao" --> X1
+    P1 -- "Sim" --> P2
+    P2 -- "Nao" --> X1
+    P2 -- "Sim" --> E1 --> L1
+```
+
+### 16.6 Linha do tempo de estoque
+
+```mermaid
+flowchart TD
+    E1["PecaCadastrada"]
+    E2["EntradaEstoqueRegistrada"]
+    E3["EstoqueAtualizado"]
+    E4["PecaReservada"]
+    E5["EstoqueBaixado"]
+    E6["SaidaEstoqueRegistrada"]
+    E7["EstoqueBaixoIdentificado"]
+    X1["EstoqueInsuficienteIdentificado"]
+
+    E1 --> E2 --> E3 --> E4 --> E5 --> E6 --> E7
+    E4 --> X1
+    E5 --> X1
+```
+
+### 16.7 Máquina de estados da Ordem de Serviço
 
 ```mermaid
 stateDiagram-v2
     [*] --> RECEBIDA
-    RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnóstico
+    RECEBIDA --> EM_DIAGNOSTICO: iniciar diagnostico
     RECEBIDA --> AGUARDANDO_APROVACAO: gerar orçamento
     EM_DIAGNOSTICO --> AGUARDANDO_APROVACAO: gerar orçamento
-    AGUARDANDO_APROVACAO --> EM_EXECUCAO: iniciar execução após aprovação
+    AGUARDANDO_APROVACAO --> EM_EXECUCAO: aprovar e iniciar execução
     EM_EXECUCAO --> FINALIZADA: finalizar serviço
-    FINALIZADA --> ENTREGUE: entregar veículo
+    FINALIZADA --> ENTREGUE: entregar veiculo
     ENTREGUE --> [*]
 ```
-
-## 6. Relação com os requisitos do MVP
-
-| Requisito do Tech Challenge | Onde aparece neste Event Storming |
-|---|---|
-| Identificação do cliente por CPF/CNPJ | Fluxo 1, comandos `IdentificarCliente` e `CadastrarCliente` |
-| Cadastro de veículo | Fluxo 1, comando `CadastrarVeiculo` |
-| Inclusão dos serviços solicitados | Fluxo 1, comando `IncluirServicoNaOrdem` |
-| Inclusão de peças e insumos | Fluxo 1 e Fluxo 3 |
-| Orçamento gerado automaticamente | Fluxo 1, comando `GerarOrcamento` |
-| Envio/disponibilização do orçamento ao cliente | Fluxo 1, evento `OrcamentoDisponibilizado` |
-| Acompanhamento da OS | Fluxo 2 |
-| Controle de status da OS | Fluxo 2 e máquina de estados |
-| CRUD de peças e insumos com estoque | Fluxo 3 |
-| Controle de estoque | Fluxo 3 |
-| Autenticação JWT para APIs administrativas | Política do Fluxo 2 |
-| Validação de CPF/CNPJ e placa | Regras do Fluxo 1 |
-| Consulta do cliente via API | Fluxo 2, comando `ConsultarAcompanhamentoOS` |

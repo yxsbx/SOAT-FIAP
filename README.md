@@ -28,6 +28,23 @@ Documentos oficiais:
   - **O que comprova:**  Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados,
     políticas e fluxos.
 
+- **Item exigido:**  Domain Storytelling
+  - **Onde abrir:**  [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md)
+  - **O que comprova:**  Histórias do domínio por ator, objetos de trabalho, atividades e cenários alternativos.
+
+- **Item exigido:**  Levantamento de requisitos
+  - **Onde abrir:**  [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)
+  - **O que comprova:**  Personas, jornada atual, jornada proposta, requisitos funcionais, requisitos não funcionais e
+    rastreabilidade.
+
+- **Item exigido:**  Arquitetura backend
+  - **Onde abrir:**  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+  - **O que comprova:**  Arquitetura em camadas, modelo C4, componentes backend, decisões técnicas e relação com requisitos.
+
+- **Item exigido:**  Refinamento técnico
+  - **Onde abrir:**  [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)
+  - **O que comprova:**  Jornada técnica da OS, decisões técnicas, validações, riscos tratados e aderência do backend.
+
 - **Item exigido:**  Event Storming
   - **Onde abrir:**  [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)
   - **O que comprova:**  Comandos, eventos, políticas, exceções e fluxos de OS e estoque.
@@ -39,6 +56,16 @@ Documentos oficiais:
 - **Item exigido:**  Relatório de vulnerabilidades
   - **Onde abrir:**  [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
   - **O que comprova:**  Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.
+
+- **Item exigido:**  Análise estática e qualidade
+  - **Onde abrir:**  [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)
+  - **O que comprova:**  Ferramentas de qualidade, comandos executados, cobertura, análise estática, lint, dependências e
+    evidências locais.
+
+- **Item exigido:**  Estratégia de testes
+  - **Onde abrir:**  [docs/TESTING.md](docs/TESTING.md)
+  - **O que comprova:**  Testes unitários, testes de integração, fluxo de API ponta a ponta, ferramentas usadas, comandos e
+    cobertura JaCoCo.
 
 Documentos de apoio:
 
@@ -56,7 +83,7 @@ Documentos de apoio:
 | Discord                         | `yxsbx`                                              |
 | Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                 |
 | Branch final                    | `main`                                               |
-| Acesso de avaliação             | Usuário `soatarchitecture` com acesso Read concedido |
+| Acesso de avaliação             | Usuário `soat-architecture` com acesso Read concedido |
 | Data consolidada nos documentos | 28/06/2026                                           |
 
 ## Escopo do MVP
@@ -93,7 +120,7 @@ Backend:
 - Springdoc Swagger UI;
 - JaCoCo;
 - OWASP Dependency-Check;
-- JUnit 5, Mockito, H2 e Testcontainers.
+- JUnit 5, Mockito, MockMvc e H2.
 
 Frontend demonstrativo:
 
@@ -136,8 +163,12 @@ src/main/java/br/com/autocarehub
         `-- mapper
 ```
 
-Detalhamento completo: [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) e
-[docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md).
+Detalhamento completo:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): HLD, LLD, C4 e decisões arquiteturais.
+- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): RFs, RNFs e matriz de rastreabilidade.
+- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md): domínio, linguagem ubíqua e agregados.
+- [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md): consolidação final da entrega.
 
 ## Execução com Docker
 
@@ -304,7 +335,9 @@ Esse script valida frontend, OpenAPI, login JWT e leitura dos dados seed.
 Validação completa backend:
 
 ```powershell
-mvn verify
+mvn spotless:check
+mvn test
+mvn clean verify
 ```
 
 Validação frontend:
@@ -334,9 +367,10 @@ Resultado de qualidade revalidado em 28/06/2026:
 | Frontend lint          | 0 erros e 0 warnings                                  |
 | Frontend build         | Aprovado                                              |
 | npm audit              | 0 vulnerabilidades                                    |
-| OWASP Dependency-Check | 127 dependências, 0 vulneráveis                       |
-| Docker Scout backend   | 0 vulnerabilidades                                    |
+| OWASP Dependency-Check | 103 dependências, 0 vulneráveis                       |
+| Docker Scout backend   | 0 críticas, 0 altas e 1 média residual               |
 | Docker Scout frontend  | 0 críticas, 0 altas e 1 média sem correção disponível |
+| OWASP ZAP              | 0 falhas e 2 avisos revisados                        |
 | Gitleaks               | 0 leaks em 36 commits                                 |
 | Semgrep                | 0 achados em 200 arquivos com 187 regras              |
 
@@ -349,19 +383,27 @@ Relatórios e evidências gerados localmente:
 ```text
 docs/SECURITY_REPORT.md
 docs/SECURITY_SCAN_GUIDE.md
+docs/STATIC_ANALYSIS.md
+docs/TESTING.md
+docs/VIDEO_SCRIPT.md
 target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
-target/dependency-check/dependency-check-report.html
-target/dependency-check/dependency-check-report.json
+security-reports/backend-dependencies/dependency-check-report.html
+security-reports/backend-dependencies/dependency-check-report.json
 security-reports/frontend-dependencies/npm-audit-report.json
 security-reports/docker/docker-scout-cves.txt
 security-reports/docker/docker-scout-frontend-cves.txt
+security-reports/dast/zap-api-report.html
+security-reports/dast/zap-api-report.json
 security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
+target/site/jacoco/index.html
+target/site/jacoco/jacoco.csv
 ```
 
-Os arquivos em `target/` e `security-reports/` são saídas locais de ferramentas e ficam fora do versionamento. O resumo
-oficial dos resultados está em [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md).
+Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. `target/` continua fora do
+versionamento e permanece como saída local das ferramentas Maven. O resumo oficial dos resultados está em
+[docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md).
 
 ## CI
 
@@ -384,10 +426,11 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 - histórico de status da OS é simplificado para o MVP;
 - multiempresa/multitenancy está simplificado;
 - Swagger fica público no ambiente local acadêmico;
-- teste dinâmico dedicado de segurança permanece como melhoria futura;
+- OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas avisos revisados;
+- imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aguardando versão corrigida publicada no Maven Central;
 - imagem frontend mantém 1 CVE média de BusyBox sem versão corrigida disponível na base analisada.
 
-## Melhorias Futuras
+## Evoluções Técnicas
 
 O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e
 [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:

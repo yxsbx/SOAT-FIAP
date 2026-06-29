@@ -4,9 +4,10 @@ Este guia é um roteiro operacional para executar scans de segurança do AutoCar
 o relatório final. Ele não substitui o `docs/SECURITY_REPORT.md` e não deve registrar resultado que ainda não foi
 validado por execução real.
 
-Depois de rodar os comandos, mantenha os arquivos brutos em `security-reports/` ou `target/` e consolide no
-`docs/SECURITY_REPORT.md` apenas o resumo relevante para a entrega: ferramenta, versão, data, comando, evidência,
-achados, correções e riscos aceitos.
+Depois de rodar os comandos, mantenha as evidências revisadas em `security-reports/` e as saídas locais em `target/`. Consolide no
+`docs/SECURITY_REPORT.md` o resumo de vulnerabilidades: ferramenta, versão, data, comando, evidência, achados, correções
+e riscos aceitos. Para qualidade, manutenibilidade, cobertura, lint e análise estática, atualize também
+`docs/STATIC_ANALYSIS.md`.
 
 ## Estrutura de resultados
 
@@ -19,11 +20,13 @@ security-reports/
   docker/
   static-analysis/
   secrets/
+  dast/
+  coverage/
 ```
 
-Os relatórios gerados são evidências locais e ficam fora do versionamento por padrão via `.gitignore`. Versione arquivos
-brutos somente se a entrega exigir explicitamente e depois de conferir que não contêm secrets, tokens, senhas, CPF/CNPJ
-real, caminhos sensíveis ou dados pessoais.
+Nesta entrega, `security-reports/` fica versionado com evidências revisadas. Antes de publicar qualquer relatório,
+confira que ele não contém secrets, tokens, senhas, CPF/CNPJ real, caminhos sensíveis ou dados pessoais. A pasta `target/`
+continua fora do versionamento.
 
 ## Pré-requisitos
 
@@ -245,7 +248,9 @@ New-Item -ItemType Directory -Force `
   security-reports/frontend-dependencies, `
   security-reports/docker, `
   security-reports/static-analysis, `
-  security-reports/secrets
+  security-reports/secrets, `
+  security-reports/dast, `
+  security-reports/coverage
 ```
 
 Executar validações principais:
@@ -266,7 +271,51 @@ docker compose build frontend
 
 Depois rode pelo menos uma ferramenta para container e uma para secrets, conforme disponibilidade local.
 
-## 7. Onde salvar os resultados
+## 7. Análise complementar de licenças
+
+O relatório final de segurança registra a análise de vulnerabilidades e a revisão de licenças no escopo acadêmico do MVP.
+Se for necessário gerar uma evidência formal de licenças, use os comandos abaixo e cite o resultado no
+`docs/SECURITY_REPORT.md` somente depois da execução real.
+
+Backend Maven:
+
+```powershell
+mvn org.codehaus.mojo:license-maven-plugin:2.5.0:add-third-party
+```
+
+Frontend npm, se usar uma ferramenta local:
+
+```powershell
+cd frontend
+npx license-checker --production --json `
+  --out ..\security-reports\frontend-dependencies\npm-licenses.json
+cd ..
+```
+
+Valide manualmente se o relatório mostra alguma licença incompatível com o uso acadêmico do MVP. Não registre
+"licença aprovada" se a ferramenta não foi executada ou se houver pacote sem licença identificada.
+
+## 8. OWASP ZAP como análise dinâmica complementar
+
+OWASP ZAP pode ser usado como análise dinâmica complementar contra a aplicação local em execução. Ele não substitui os
+scans de dependências, secrets, Docker e análise estática que sustentam o relatório final.
+
+Com a API local em execução:
+
+```powershell
+docker run --rm -t `
+  -v ${PWD}/security-reports/dast:/zap/wrk `
+  ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py `
+  -t http://host.docker.internal:8080/v3/api-docs `
+  -f openapi `
+  -r zap-api-report.html `
+  -J zap-api-report.json
+```
+
+Na validação final, o ZAP importou o contrato OpenAPI local, executou o scan da API e gerou relatório com 0 falhas e 2
+avisos revisados. Se o contrato mudar, reexecute o comando acima e atualize `docs/SECURITY_REPORT.md`.
+
+## 9. Onde salvar os resultados
 
 Sugestão de arquivos:
 
@@ -284,12 +333,15 @@ security-reports/static-analysis/frontend-eslint.txt
 security-reports/static-analysis/semgrep.json
 security-reports/secrets/gitleaks.json
 security-reports/secrets/gitleaks.sarif
+security-reports/dast/zap-api-report.html
+security-reports/dast/zap-api-report.json
+security-reports/coverage/jacoco.csv
 ```
 
 Antes de anexar ou versionar qualquer relatório, confira se ele não contém tokens, senhas, CPF/CNPJ real, caminhos
 sensíveis ou dados pessoais.
 
-## 8. Como interpretar severidades
+## 10. Como interpretar severidades
 
 Critério recomendado:
 
@@ -312,7 +364,7 @@ Para código:
 - Priorize autenticação, autorização, secrets, SQL Injection, exposição de stacktrace e dados sensíveis.
 - Valide se o achado é realmente alcançável por entrada externa.
 
-## 9. Como priorizar correções
+## 11. Como priorizar correções
 
 Ordem recomendada:
 
@@ -325,7 +377,7 @@ Ordem recomendada:
 7. CORS permissivo, Swagger produtivo exposto e Docker rodando como root.
 8. Dependências de desenvolvimento com severidade média/baixa.
 
-## 10. Como consolidar no relatório final
+## 12. Como consolidar no relatório final
 
 No `docs/SECURITY_REPORT.md`, para cada ferramenta executada, registre:
 
@@ -351,12 +403,12 @@ Status: [sem achados/corrigido/aceito como risco]
 
 Não preencha resultados antes de executar as ferramentas.
 
-## 11. Checklist antes da entrega
+## 13. Checklist antes da entrega
 
 Antes de finalizar a documentação:
 
 - confirmar que `docs/SECURITY_REPORT.md` cita apenas ferramentas executadas de verdade;
-- conferir se `.env`, `target/` e `security-reports/` continuam fora do versionamento;
+- conferir se `.env` e `target/` continuam fora do versionamento e se `security-reports/` contém apenas evidências revisadas;
 - validar se os caminhos de evidência do relatório final existem localmente ou podem ser gerados pelos comandos acima;
 - revisar se não há tokens, senhas, CPF/CNPJ real ou caminhos sensíveis nos arquivos que serão publicados;
 - reexecutar `mvn verify` e `mvn dependency-check:check -DautoUpdate=false`;

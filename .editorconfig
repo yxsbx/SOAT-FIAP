@@ -17,11 +17,6 @@ ij_java_names_count_to_use_import_on_demand = 999
 ij_java_layout_static_imports_separately = true
 ij_java_imports_layout = $*, |, java.**, |, javax.**, |, org.**, |, com.**, |, br.**
 
-[pom.xml]
-indent_style = space
-indent_size = 4
-tab_width = 4
-
 [*.{xml,xsd}]
 indent_style = space
 indent_size = 4
@@ -65,18 +60,7 @@ tab_width = 2
 [*.{md,mdx}]
 trim_trailing_whitespace = false
 
-[*.sh]
-indent_style = space
-indent_size = 2
-tab_width = 2
-end_of_line = lf
-
 [Dockerfile]
-indent_style = space
-indent_size = 2
-tab_width = 2
-
-[docker-compose*.{yml,yaml}]
 indent_style = space
 indent_size = 2
 tab_width = 2

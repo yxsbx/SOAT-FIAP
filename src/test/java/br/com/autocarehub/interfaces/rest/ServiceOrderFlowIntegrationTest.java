@@ -35,7 +35,7 @@ class ServiceOrderFlowIntegrationTest {
         UUID vehicleId = createVehicle(token, customerId);
         UUID partId = createPart(token);
         UUID serviceId = createWorkshopService(token);
-        UUID serviceOrderId = createServiceOrder(token, customerId, vehicleId, serviceId);
+        UUID serviceOrderId = createServiceOrder(token, vehicleId, serviceId);
 
         addServiceToServiceOrder(token, serviceOrderId, serviceId);
         addPartToServiceOrder(token, serviceOrderId, partId);
@@ -155,7 +155,7 @@ class ServiceOrderFlowIntegrationTest {
         return uuid(response);
     }
 
-    private UUID createServiceOrder(String token, UUID customerId, UUID vehicleId, UUID serviceId) throws Exception {
+    private UUID createServiceOrder(String token, UUID vehicleId, UUID serviceId) throws Exception {
         String response = mockMvc.perform(post("/api/v1/service-orders")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)

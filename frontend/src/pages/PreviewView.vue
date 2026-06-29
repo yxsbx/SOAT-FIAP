@@ -95,18 +95,6 @@ const partnerDeliveries = [
   },
 ];
 
-const mobileActions = [
-  { label: 'Status', icon: Car },
-  { label: 'Orçamento', icon: FileText },
-  { label: 'Peças', icon: Package },
-  { label: 'Mensagens', icon: MessageCircle },
-];
-
-const mobileUpdates = [
-  { plate: 'MRA2E19', status: 'Em diagnóstico', note: 'Oficina analisando relato inicial' },
-  { plate: 'VRA7B42', status: 'Aguardando aprovação', note: 'Orçamento aguardando aceite' },
-];
-
 function switchAudience(audience) {
   activeAudience.value = audience;
   window.scrollTo({ top: 0, behavior: 'smooth' });

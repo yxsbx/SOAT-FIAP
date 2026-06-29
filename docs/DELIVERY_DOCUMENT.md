@@ -23,7 +23,7 @@
 
 <https://github.com/yxsbx/SOAT-FIAP>
 
-O acesso de leitura ao repositório privado foi concedido ao usuário `soatarchitecture`. A branch final de entrega é `main`.
+O acesso de leitura ao repositório privado foi concedido ao usuário `soat-architecture`. A branch final de entrega é `main`.
 
 ## 5. Link da documentação
 
@@ -31,9 +31,14 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 
 | Documento | Local |
 | --- | --- |
+| Levantamento de requisitos | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/REQUIREMENTS.md> |
+| Arquitetura, HLD, LLD e C4 | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/ARCHITECTURE.md> |
 | Documentação DDD | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DDD_DOCUMENTATION.md> |
+| Domain Storytelling | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DOMAIN_STORYTELLING.md> |
 | Event Storming | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/EVENT_STORMING.md> |
 | Contrato OpenAPI | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/openapi/openapi.yaml> |
+| Estratégia de testes | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/TESTING.md> |
+| Análise estática e qualidade | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/STATIC_ANALYSIS.md> |
 | Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md> |
 | Guia dos scans de segurança | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_SCAN_GUIDE.md> |
 
@@ -63,7 +68,7 @@ Objetivos específicos:
 
 - administrar clientes, veículos, serviços, peças e insumos;
 - criar Ordens de Serviço completas;
-- gerar orçamentos automaticamente a partir de serviços e peças;
+- gerar orçamentos automáticamente a partir de serviços e peças;
 - permitir a aprovação de orçamentos;
 - controlar o status da Ordem de Serviço;
 - permitir a consulta do andamento da OS pelo cliente;
@@ -153,7 +158,7 @@ Tecnologias principais utilizadas:
 - OpenAPI Generator;
 - JaCoCo;
 - OWASP Dependency-Check;
-- JUnit 5, Mockito, H2 e Testcontainers.
+- JUnit 5, Mockito, MockMvc e H2.
 
 ## 11. Justificativa do banco de dados
 
@@ -168,7 +173,7 @@ A escolha é adequada ao domínio porque o MVP trabalha com dados relacionais e 
 - movimentações de estoque precisam manter histórico e integridade;
 - usuários administrativos precisam ser autenticados e autorizados.
 
-O PostgreSQL oferece transações, integridade referencial, índices, maturidade operacional e boa integração com Spring Data JPA e Flyway. Para testes automatizados, o projeto utiliza banco em memória e/ou ambiente isolado com containers, conforme o tipo de teste.
+O PostgreSQL oferece transações, integridade referencial, índices, maturidade operacional e boa integração com Spring Data JPA e Flyway. Para testes automatizados, o projeto utiliza H2 em memória com Spring Boot Test, MockMvc e migrations Flyway.
 
 ## 12. Aplicação de DDD
 
@@ -264,12 +269,12 @@ Resultado de qualidade documentado em 28/06/2026:
 
 | Métrica | Coberto | Não coberto | Cobertura |
 | --- | ---: | ---: | ---: |
-| Instruções | 9.870 | 372 | 96,37% |
-| Branches | 455 | 49 | 90,28% |
-| Linhas | 2.362 | 66 | 97,28% |
-| Métodos | 644 | 32 | 95,27% |
+| Instruções | 9.701 | 372 | 96,31% |
+| Branches | 447 | 49 | 90,12% |
+| Linhas | 2.333 | 66 | 97,25% |
+| Métodos | 641 | 32 | 95,25% |
 
-Resultado documentado: 147 testes automatizados e `mvn verify` concluindo com sucesso. O gate do projeto exige pelo menos 90% de instruções, linhas e branches, ficando acima da cobertura mínima de 80% exigida para a entrega.
+Resultado documentado: 143 testes automatizados e `mvn verify` concluindo com sucesso. O gate do projeto exige pelo menos 90% de instruções, linhas e branches, ficando acima da cobertura mínima de 80% exigida para a entrega.
 
 Relatórios gerados localmente:
 
@@ -373,8 +378,9 @@ Resumo dos scans finais documentados:
 | --- | --- | --- |
 | OWASP Dependency-Check | Backend Maven | 0 vulnerabilidades reportadas no scan final |
 | npm audit | Frontend | 0 vulnerabilidades reportadas no scan final |
-| Docker Scout | Imagem backend | 0 vulnerabilidades na imagem final distroless |
+| Docker Scout | Imagem backend | 0 críticas, 0 altas e 1 média residual |
 | Docker Scout | Imagem frontend | 0 críticas, 0 altas e 1 média sem correção disponível na base |
+| OWASP ZAP | API local via OpenAPI | 0 falhas e 2 avisos revisados |
 | Gitleaks | Repositório Git | 0 leaks em 36 commits |
 | Semgrep | Código-fonte | 0 achados e 0 erros em 200 arquivos com 187 regras |
 
@@ -389,6 +395,7 @@ Resumo por origem:
 | Backend Maven | Spring Boot, Spring Framework, Spring Security, Tomcat, PostgreSQL JDBC, Log4j API, Commons Compress, Commons Lang e Swagger UI | Corrigido |
 | Frontend npm | `vite`, `esbuild`, `@vitejs/plugin-vue` e `js-yaml` transitivo | Corrigido |
 | Imagem backend | Runtime anterior com pacote `/usr/bin/pebble` e CVEs de base | Corrigido |
+| Imagem backend atual | `jackson-databind` transitivo com 1 CVE média e correção ainda indisponível no Maven Central | Aceito temporariamente |
 | Imagem frontend anterior | Base Nginx/Alpine anterior com CVEs críticas, altas e médias | Corrigido |
 | Imagem frontend atual | BusyBox com 1 CVE média sem versão corrigida disponível | Aceito temporariamente |
 
@@ -406,7 +413,10 @@ Correções aplicadas durante a estabilização da entrega:
 - migração da imagem frontend para Nginx unprivileged `mainline-alpine-slim`, fixada por digest;
 - reexecução dos scans finais.
 
-A CVE média restante no BusyBox foi registrada no relatório porque o scanner não indicou versão corrigida disponível na base utilizada. O container permanece non-root, read-only e sem novos privilégios.
+As CVEs médias restantes foram registradas no relatório como riscos residuais aceitos: `jackson-databind` transitivo na
+imagem backend, porque a versão corrigida indicada pelo Docker Scout ainda não está publicada no Maven Central, e BusyBox
+na imagem frontend, porque o scanner não indicou versão corrigida disponível na base utilizada. Os containers permanecem
+non-root, read-only e sem novos privilégios.
 
 ## 21. Escopo não incluído no MVP
 

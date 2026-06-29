@@ -20,7 +20,7 @@ const router = createRouter({
       meta: { public: true },
     },
     {
-      path: '/oficina/usuario',
+      path: '/oficina/usuário',
       name: 'employee-view',
       component: PersonaView,
       props: { persona: 'employee' },
