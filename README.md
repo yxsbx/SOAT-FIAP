@@ -20,7 +20,6 @@ A pasta `docs/` concentra a documentação usada na avaliação.
 | Event Storming                | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)                                                 | Comandos, eventos, políticas, pontos de atenção e fluxos de OS e estoque.                             |
 | Swagger/OpenAPI               | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html` | Contrato REST versionado e interface local para testar a API.                                         |
 | Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)                                               | Scans executados, vulnerabilidades encontradas, correções aplicadas e riscos aceitos.                 |
-| Guia de scans                 | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)                                       | Comandos para reproduzir scans e gerar evidências locais.                                             |
 | Análise estática e qualidade  | [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)                                               | Ferramentas de qualidade, cobertura, lint, análise estática e evidências locais.                      |
 | Estratégia de testes          | [docs/TESTING.md](docs/TESTING.md)                                                               | Testes unitários, integração REST, fluxo completo de API, comandos e cobertura JaCoCo.                |
 | Frontend demonstrativo        | [frontend/README.md](frontend/README.md)                                                         | Como executar e entender o frontend usado na demonstração.                                            |
@@ -325,12 +324,6 @@ Scan de dependências backend:
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-O guia completo de scans está em:
-
-```text
-docs/SECURITY_SCAN_GUIDE.md
-```
-
 ## Evidências de qualidade
 
 Resultado de qualidade revalidado em 29/06/2026:
@@ -356,7 +349,6 @@ Relatórios e evidências:
 
 ```text
 docs/SECURITY_REPORT.md
-docs/SECURITY_SCAN_GUIDE.md
 docs/STATIC_ANALYSIS.md
 docs/TESTING.md
 target/site/jacoco/index.html
