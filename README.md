@@ -346,7 +346,7 @@ Resultado de qualidade revalidado em 29/06/2026:
 | OWASP Dependency-Check | 103 dependências e 0 vulnerabilidades              |
 | Docker Scout backend   | 0 críticas, 0 altas e 1 média residual aceita      |
 | Docker Scout frontend  | 0 críticas, 0 altas e 1 média residual aceita      |
-| OWASP ZAP              | 0 falhas e 2 avisos revisados                      |
+| OWASP ZAP              | 0 falhas e 1 aviso baixo revisado                  |
 | Gitleaks               | 0 leaks em 36 commits                              |
 | Semgrep                | 0 achados em 200 arquivos com 187 regras           |
 
@@ -401,7 +401,7 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 - histórico de status da OS é simplificado para o MVP;
 - multiempresa/multitenancy está simplificado;
 - Swagger fica público no ambiente local acadêmico;
-- OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas avisos revisados;
+- OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas 1 aviso baixo revisado;
 - a imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aceita temporariamente porque a versão corrigida indicada pelo Docker Scout ainda não estava disponível no Maven Central;
 - a imagem frontend mantém 1 CVE média de BusyBox, aceita temporariamente porque o Docker Scout não indicou versão corrigida disponível.
 

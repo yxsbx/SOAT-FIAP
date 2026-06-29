@@ -51,15 +51,15 @@ Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes compl
 
 ### 5.2 Resultado geral dos scans finais
 
-| Categoria             | Crítica | Alta | Média | Status final                  |
-|-----------------------|--------:|-----:|------:|-------------------------------|
-| Dependências backend  |       0 |    0 |     0 | Corrigido                     |
-| Dependências frontend |       0 |    0 |     0 | Corrigido                     |
-| Imagem backend        |       0 |    0 |     1 | Risco médio aceito            |
-| Imagem frontend       |       0 |    0 |     1 | Risco médio aceito            |
-| OWASP ZAP API scan    |       0 |    0 |     0 | 0 falhas e 2 avisos revisados |
-| Análise estática      |       0 |    0 |     0 | Semgrep sem achados           |
-| Secrets               |       0 |    0 |     0 | Gitleaks sem leaks            |
+| Categoria             | Crítica | Alta | Média | Status final                      |
+|-----------------------|--------:|-----:|------:|-----------------------------------|
+| Dependências backend  |       0 |    0 |     0 | Corrigido                         |
+| Dependências frontend |       0 |    0 |     0 | Corrigido                         |
+| Imagem backend        |       0 |    0 |     1 | Risco médio aceito                |
+| Imagem frontend       |       0 |    0 |     1 | Risco médio aceito                |
+| OWASP ZAP API scan    |       0 |    0 |     0 | 0 falhas e 1 aviso baixo revisado |
+| Análise estática      |       0 |    0 |     0 | Semgrep sem achados               |
+| Secrets               |       0 |    0 |     0 | Gitleaks sem leaks                |
 
 Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Permanecem duas CVEs médias aceitas como risco residual: uma em `jackson-databind` transitivo na imagem backend, porque a versão corrigida indicada pelo Docker Scout ainda não estava publicada no Maven Central na validação, e uma em BusyBox na imagem frontend, porque o scanner não indicou versão corrigida disponível.
 
@@ -91,7 +91,7 @@ Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Perma
 - Atualização direta do Swagger UI.
 - Migração da imagem backend para runtime distroless Java 21 non-root.
 - Migração da imagem frontend para Nginx unprivileged `mainline-alpine-slim`, fixada por digest.
-- Execução de OWASP ZAP API scan contra `/v3/api-docs`, com 0 falhas e 2 avisos revisados.
+- Execução de OWASP ZAP API scan contra `/v3/api-docs`, com 0 falhas e 1 aviso baixo revisado.
 - Validação de secrets com Gitleaks, sem leaks encontrados no histórico analisado.
 - Análise estática com Semgrep, sem achados no escopo executado.
 

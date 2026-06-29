@@ -21,7 +21,7 @@ A análise considera apenas ferramentas realmente executadas no projeto: OWASP D
 | Dockerfile backend       | Analisado e corrigido      | Docker Scout executado na imagem final da API.                                                                                                                             |
 | Dockerfile frontend      | Analisado e corrigido      | Docker Scout executado na imagem final do frontend.                                                                                                                        |
 | `docker-compose.yml`     | Revisado na execução local | Containers configurados com usuário não privilegiado, filesystem read-only e `no-new-privileges`, conforme aplicável.                                                      |
-| API local                | Analisada                  | OWASP ZAP API scan executado contra `/v3/api-docs`, com 0 falhas e 2 avisos revisados.                                                                                     |
+| API local                | Analisada                  | OWASP ZAP API scan executado contra `/v3/api-docs`, com 0 falhas e 1 aviso baixo revisado.                                                                                 |
 | Secrets no histórico Git | Analisado                  | Gitleaks executado sobre todos os commits, sem leaks encontrados.                                                                                                          |
 | OpenAPI/Swagger          | Analisado e atualizado     | Vulnerabilidades anteriores no Swagger UI foram tratadas por atualização de versão.                                                                                        |
 | Cobertura de testes      | Analisada                  | Relatórios JaCoCo em `target/site/jacoco/index.html` e `target/site/jacoco/jacoco.csv`. A cobertura é usada como evidência de qualidade, não como scan de vulnerabilidade. |
@@ -129,15 +129,15 @@ No estado final da entrega, não há vulnerabilidades críticas ou altas abertas
 
 ## 8. Resultado geral dos scans
 
-| Categoria             | Critical | High | Medium | Low |  Unknown | Status geral                       |
-|-----------------------|---------:|-----:|-------:|----:|---------:|------------------------------------|
-| Dependências backend  |        0 |    0 |      0 |   0 |        0 | Corrigido                          |
-| Dependências frontend |        0 |    0 |      0 |   0 |        0 | Corrigido                          |
-| Imagem backend        |        0 |    0 |      1 |   0 |        0 | Risco médio aceito temporariamente |
-| Imagem frontend       |        0 |    0 |      1 |   0 |        0 | Risco médio aceito temporariamente |
-| Análise estática      |        0 |    0 |      0 |   0 |        0 | Semgrep sem achados                |
-| Secrets               |        0 |    0 |      0 |   0 |        0 | Gitleaks sem leaks                 |
-| OWASP ZAP API scan    |        0 |    0 |      0 |   0 | 2 avisos | 0 falhas; avisos revisados         |
+| Categoria             | Critical | High | Medium | Low |       Unknown | Status geral                       |
+|-----------------------|---------:|-----:|-------:|----:|--------------:|------------------------------------|
+| Dependências backend  |        0 |    0 |      0 |   0 |             0 | Corrigido                          |
+| Dependências frontend |        0 |    0 |      0 |   0 |             0 | Corrigido                          |
+| Imagem backend        |        0 |    0 |      1 |   0 |             0 | Risco médio aceito temporariamente |
+| Imagem frontend       |        0 |    0 |      1 |   0 |             0 | Risco médio aceito temporariamente |
+| Análise estática      |        0 |    0 |      0 |   0 |             0 | Semgrep sem achados                |
+| Secrets               |        0 |    0 |      0 |   0 |             0 | Gitleaks sem leaks                 |
+| OWASP ZAP API scan    |        0 |    0 |      0 |   0 | 1 aviso baixo | 0 falhas; aviso revisado           |
 
 ## 9. Cobertura de testes
 
@@ -290,15 +290,15 @@ Resultado validado com 143 testes automatizados e `mvn verify` concluindo com su
 
 ### VULN-011 - js-yaml transitivo
 
-| Campo             | Valor                                                                          |
-|-------------------|--------------------------------------------------------------------------------|
-| Ferramenta        | npm audit                                                                      |
-| Severidade        | Média                                                                          |
-| Pacote afetado    | `js-yaml-4.1.1` transitivo do ESLint                                           |
-| Descrição         | GHSA-h67p-54hq-rp68, com risco de DoS por complexidade quadrática.             |
-| Impacto           | Impacto no ferramental de desenvolvimento/lint.                                |
-| Correção aplicada | Execução de `npm audit fix`, atualização transitiva e regeneração do lockfile. |
-| Status            | Corrigido                                                                      |
+| Campo             | Valor                                                                                  |
+|-------------------|----------------------------------------------------------------------------------------|
+| Ferramenta        | npm audit                                                                              |
+| Severidade        | Média                                                                                  |
+| Pacote afetado    | `js-yaml-4.1.1` transitivo do ESLint                                                   |
+| Descrição         | GHSA-h67p-54hq-rp68, com risco de DoS por complexidade quadrática.                     |
+| Impacto           | Impacto no ferramental de desenvolvimento/lint.                                        |
+| Correção aplicada | Execução de `npm audit fix`, atualização transitiva e regeneração do lockfile.         |
+| Status            | Corrigido                                                                              |
 | Evidência         | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades. |
 
 ### VULN-012 - Imagem backend anterior
@@ -342,16 +342,16 @@ Resultado validado com 143 testes automatizados e `mvn verify` concluindo com su
 
 ### RISK-002 - Jackson Databind transitivo na imagem backend
 
-| Campo              | Valor                                                                                                                                 |
-|--------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| Ferramenta         | Docker Scout                                                                                                                          |
-| Severidade         | Média                                                                                                                                 |
-| Pacote afetado     | `jackson-databind 2.21.4`, transitivo de `jjwt-jackson`                                                                               |
+| Campo              | Valor                                                                                                                                                                    |
+|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Ferramenta         | Docker Scout                                                                                                                                                             |
+| Severidade         | Média                                                                                                                                                                    |
+| Pacote afetado     | `jackson-databind 2.21.4`, transitivo de `jjwt-jackson`                                                                                                                  |
 | Descrição          | CVE-2026-54515. O Docker Scout indica correção em `2.21.5`, mas `mvn dependency:get` confirmou que essa versão ainda não estava publicada no Maven Central na validação. |
-| Impacto            | Risco residual em biblioteca empacotada na imagem backend.                                                                            |
-| Mitigação aplicada | Imagem distroless non-root, Dependency-Check Maven limpo e dependência usada no fluxo interno de JWT.                                 |
-| Status             | Aceito temporariamente                                                                                                                |
-| Evidência          | `security-reports/docker/docker-scout-cves.txt`.                                                                                      |
+| Impacto            | Risco residual em biblioteca empacotada na imagem backend.                                                                                                               |
+| Mitigação aplicada | Imagem distroless non-root, Dependency-Check Maven limpo e dependência usada no fluxo interno de JWT.                                                                    |
+| Status             | Aceito temporariamente                                                                                                                                                   |
+| Evidência          | `security-reports/docker/docker-scout-cves.txt`.                                                                                                                         |
 
 ## 11. Análise por ferramenta
 
@@ -419,30 +419,34 @@ Observação técnica: o analisador Sonatype OSS Index retornou 401 sem credenci
 | Comando    | `zap-api-scan.py -t http://host.docker.internal:8080/v3/api-docs -f openapi`              |
 | Relatórios | `security-reports/dast/zap-api-report.html` e `security-reports/dast/zap-api-report.json` |
 | Escopo     | API local importada a partir do OpenAPI, com 49 URLs importadas e 133 URLs avaliadas.     |
-| Resultado  | 0 falhas, 117 regras PASS e 2 avisos.                                                     |
+| Resultado  | 0 falhas, 118 regras PASS e 1 aviso baixo.                                                |
 
-Avisos revisados:
+Aviso revisado:
 
 | Alerta                                                   | Severidade no ZAP | Interpretação no MVP                                                                                   |
 |----------------------------------------------------------|-------------------|--------------------------------------------------------------------------------------------------------|
 | `Timestamp Disclosure - Unix`                            | WARN              | Detectado em respostas 401 de endpoints protegidos. Não expôs dado de negócio nem segredo.             |
-| `Cross-Origin-Resource-Policy Header Missing or Invalid` | WARN              | Detectado no `/v3/api-docs`. Aceito no ambiente local acadêmico com Swagger habilitado para avaliação. |
+
+A execução anterior do ZAP também apontou `Cross-Origin-Resource-Policy Header Missing or Invalid` em `/v3/api-docs`.
+O header `Cross-Origin-Resource-Policy: same-origin` foi adicionado na configuração de segurança e o scan foi reexecutado.
+Na nova evidência, essa regra aparece como PASS.
 
 ## 12. Vulnerabilidades corrigidas
 
-| ID                  | Origem                          | Correção aplicada                                                              | Arquivos afetados                                     | Evidência                                                                                    |
-|---------------------|---------------------------------|--------------------------------------------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------------------------------|
-| VULN-001 a VULN-009 | Dependências Maven              | Atualização de dependências e novo scan limpo.                                 | `pom.xml`                                             | `security-reports/backend-dependencies/dependency-check-report.json` com 0 vulnerabilidades. |
-| VULN-010            | Dependências frontend           | Atualização de Vite/plugin Vue e novo audit limpo.                             | `frontend/package.json`, `frontend/package-lock.json` | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.       |
-| VULN-011            | Dependência transitiva frontend | Atualização transitiva de `js-yaml` via `npm audit fix`.                       | `frontend/package-lock.json`                          | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.        |
-| VULN-012            | Imagem backend                  | Substituição da imagem runtime Ubuntu/Temurin por distroless Java 21 non-root. | `Dockerfile`, `docker-compose.yml`                    | Scan final sem críticas/altas e com 1 risco médio aceito.                                    |
-| VULN-013            | Imagem frontend                 | Substituição da imagem Nginx/Alpine antiga por variante unprivileged slim.     | `frontend/Dockerfile`                                 | Scan final sem críticas/altas e com 1 risco médio aceito.                                    |
+| ID                  | Origem                          | Correção aplicada                                                              | Arquivos afetados                                     | Evidência                                                                                        |
+|---------------------|---------------------------------|--------------------------------------------------------------------------------|-------------------------------------------------------|--------------------------------------------------------------------------------------------------|
+| VULN-001 a VULN-009 | Dependências Maven              | Atualização de dependências e novo scan limpo.                                 | `pom.xml`                                             | `security-reports/backend-dependencies/dependency-check-report.json` com 0 vulnerabilidades.     |
+| VULN-010            | Dependências frontend           | Atualização de Vite/plugin Vue e novo audit limpo.                             | `frontend/package.json`, `frontend/package-lock.json` | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.           |
+| VULN-011            | Dependência transitiva frontend | Atualização transitiva de `js-yaml` via `npm audit fix`.                       | `frontend/package-lock.json`                          | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.           |
+| VULN-012            | Imagem backend                  | Substituição da imagem runtime Ubuntu/Temurin por distroless Java 21 non-root. | `Dockerfile`, `docker-compose.yml`                    | Scan final sem críticas/altas e com 1 risco médio aceito.                                        |
+| VULN-013            | Imagem frontend                 | Substituição da imagem Nginx/Alpine antiga por variante unprivileged slim.     | `frontend/Dockerfile`                                 | Scan final sem críticas/altas e com 1 risco médio aceito.                                        |
+| ZAP-WARN-001        | OWASP ZAP                       | Inclusão do header `Cross-Origin-Resource-Policy: same-origin`.                | `SecurityConfig.java`                                 | Novo ZAP API scan com regra `Insufficient Site Isolation Against Spectre Vulnerability` em PASS. |
 
 ## 13. Risco residual aceito
 
-| ID       | Severidade | Justificativa                                                                                                         | Mitigação existente                                                                                        | Responsável pela aceitação | Revisão                                                                           |
-|----------|------------|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|----------------------------|-----------------------------------------------------------------------------------|
-| RISK-001 | Média      | BusyBox não possui versão corrigida indicada pelo Docker Scout na base analisada.                                     | Imagem slim, usuário não privilegiado, filesystem read-only e `no-new-privileges`.                         | Yasmin Barcelos Pires      | Próxima atualização da imagem base.                                               |
+| ID       | Severidade | Justificativa                                                                                                                                            | Mitigação existente                                                                                        | Responsável pela aceitação | Revisão                                                                           |
+|----------|------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|----------------------------|-----------------------------------------------------------------------------------|
+| RISK-001 | Média      | BusyBox não possui versão corrigida indicada pelo Docker Scout na base analisada.                                                                        | Imagem slim, usuário não privilegiado, filesystem read-only e `no-new-privileges`.                         | Yasmin Barcelos Pires      | Próxima atualização da imagem base.                                               |
 | RISK-002 | Média      | Docker Scout indicou `jackson-databind 2.21.5`, mas `mvn dependency:get` confirmou que essa versão não estava disponível no Maven Central em 29/06/2026. | Backend distroless/non-root; Dependency-Check Maven limpo; dependência usada de forma transitiva pelo JWT. | Yasmin Barcelos Pires      | Reavaliar quando `jackson-databind 2.21.5` ou versão corrigida estiver publicada. |
 
 Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos residuais registrados são médios e foram aceitos temporariamente por ausência de correção aplicável no momento da análise.
@@ -475,7 +479,7 @@ Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos
 | Imagem frontend sem críticas ou altas                     | Validado                 | 1 CVE média aceita temporariamente.                                                                                 |
 | Histórico Git sem secrets detectados                      | Validado                 | Gitleaks analisou 36 commits e encontrou 0 leaks.                                                                   |
 | Análise estática sem achados                              | Validado                 | Semgrep executou 187 regras em 200 arquivos com 0 achados.                                                          |
-| API scan com OWASP ZAP                                    | Validado                 | 0 falhas e 2 avisos revisados.                                                                                      |
+| API scan com OWASP ZAP                                    | Validado                 | 0 falhas e 1 aviso baixo revisado.                                                                                  |
 
 ## 14.1 Análise baseada no OWASP Top 10
 
@@ -516,7 +520,7 @@ Os caminhos abaixo indicam as evidências geradas durante a validação. Nesta e
 | Relatório npm audit JSON        | `security-reports/frontend-dependencies/npm-audit-report.json`       | Evidência estruturada do frontend com 0 vulnerabilidades.              |
 | Relatório Docker Scout backend  | `security-reports/docker/docker-scout-cves.txt`                      | Evidência do scan final da imagem backend com 1 CVE média residual.    |
 | Relatório Docker Scout frontend | `security-reports/docker/docker-scout-frontend-cves.txt`             | Evidência do scan final com 1 CVE média e nenhuma crítica/alta.        |
-| Relatório OWASP ZAP HTML        | `security-reports/dast/zap-api-report.html`                          | Relatório DAST complementar com 0 falhas e 2 avisos.                   |
+| Relatório OWASP ZAP HTML        | `security-reports/dast/zap-api-report.html`                          | Relatório DAST complementar com 0 falhas e 1 aviso baixo.              |
 | Relatório OWASP ZAP JSON        | `security-reports/dast/zap-api-report.json`                          | Evidência estruturada do scan API baseado no OpenAPI local.            |
 | Relatório Gitleaks              | `security-reports/secrets/gitleaks.json`                             | Evidência estruturada com 0 leaks.                                     |
 | Relatório Semgrep               | `security-reports/static-analysis/semgrep.json`                      | Evidência estruturada com 0 achados e 0 erros.                         |
@@ -557,7 +561,7 @@ target/site/jacoco/jacoco.csv
 | Dependências frontend | OK                           | `npm audit` final                                         | Zero vulnerabilidades reportadas.                                    |
 | Dados sensíveis       | OK no escopo revisado        | DTOs e validações de entrada                              | Responses e logs devem continuar sem dados sensíveis desnecessários. |
 | Frontend              | OK no escopo analisado       | `npm audit` e Semgrep sem achados                         | Manter dependências atualizadas.                                     |
-| Backend               | OK no escopo analisado       | Dependency-Check, Semgrep e ZAP sem falhas críticas/altas | ZAP trouxe apenas avisos revisados.                                  |
+| Backend               | OK no escopo analisado       | Dependency-Check, Semgrep e ZAP sem falhas críticas/altas | ZAP trouxe apenas 1 aviso baixo revisado.                            |
 
 ## 17. Recomendações de manutenção
 

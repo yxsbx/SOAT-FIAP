@@ -42,6 +42,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoginRequest'
+            examples:
+              admin:
+                summary: Login administrativo para testar CRUDs e OS
+                value:
+                  username: admin@autocarehub.com
+                  password: autocare123
+              customer:
+                summary: Login de cliente para testar acompanhamento da própria OS
+                value:
+                  username: cliente@autocarehub.com
+                  password: autocare123
       responses:
         '200':
           description: Login realizado com sucesso
@@ -65,6 +76,36 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateCustomerRequest'
+            examples:
+              pessoaFisica:
+                summary: Cliente pessoa física com CPF válido
+                value:
+                  name: Yasmin Barcelos
+                  document: '52998224725'
+                  phone: '11987654321'
+                  email: yasmin.cliente@example.com
+                  address:
+                    street: Avenida Paulista
+                    number: '1000'
+                    complement: Sala 10
+                    neighborhood: Bela Vista
+                    city: Sao Paulo
+                    state: SP
+                    zipCode: 01310-100
+              pessoaJuridica:
+                summary: Cliente empresa com CNPJ válido
+                value:
+                  name: Oficina Parceira Ltda
+                  document: '11222333000181'
+                  phone: '1133332222'
+                  email: contato@oficinaparceira.com.br
+                  address:
+                    street: Rua Vergueiro
+                    number: '1500'
+                    neighborhood: Vila Mariana
+                    city: Sao Paulo
+                    state: SP
+                    zipCode: 04101-000
       responses:
         '201':
           description: Cliente criado
@@ -130,6 +171,22 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateCustomerRequest'
+            examples:
+              atualizarCliente:
+                summary: Atualiza cliente mantendo ativo
+                value:
+                  name: Mariana Costa
+                  document: '12345678909'
+                  phone: '11988887777'
+                  email: mariana.costa@example.com
+                  address:
+                    street: Rua das Oficinas
+                    number: '120'
+                    neighborhood: Centro
+                    city: Sao Paulo
+                    state: SP
+                    zipCode: 01001-000
+                  active: true
       responses:
         '200':
           description: Cliente atualizado
@@ -207,6 +264,16 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateVehicleRequest'
+            examples:
+              veiculoClienteSeed:
+                summary: Veículo novo vinculado a cliente existente
+                value:
+                  customerId: 10000000-0000-0000-0000-000000000001
+                  plate: TST1A23
+                  brand: Honda
+                  model: Civic Touring
+                  year: 2021
+                  mileage: 42000
       responses:
         '201':
           description: Veículo criado
@@ -274,6 +341,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateVehicleRequest'
+            examples:
+              atualizarVeiculo:
+                summary: Atualiza veículo e mantém ativo
+                value:
+                  customerId: 10000000-0000-0000-0000-000000000001
+                  plate: TST1A23
+                  brand: Honda
+                  model: Civic Touring
+                  year: 2021
+                  mileage: 42500
+                  active: true
       responses:
         '200':
           description: Veículo atualizado
@@ -313,6 +391,14 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateWorkshopServiceRequest'
+            examples:
+              diagnostico:
+                summary: Serviço de diagnóstico para catálogo da oficina
+                value:
+                  name: Diagnostico eletrico avancado
+                  description: Verificacao de alternador, bateria, chicote e modulos eletronicos.
+                  basePrice: 250.00
+                  estimatedTimeInMinutes: 120
       responses:
         '201':
           description: Serviço criado
@@ -378,6 +464,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateWorkshopServiceRequest'
+            examples:
+              atualizarServico:
+                summary: Atualiza serviço mantendo ativo
+                value:
+                  name: Diagnostico eletrico avancado
+                  description: Verificacao de alternador, bateria, chicote, fusivel e modulos eletronicos.
+                  basePrice: 280.00
+                  estimatedTimeInMinutes: 150
+                  active: true
       responses:
         '200':
           description: Serviço atualizado
@@ -417,6 +512,20 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreatePartRequest'
+            examples:
+              peca:
+                summary: Peça com estoque inicial
+                value:
+                  name: Sensor de oxigenio universal
+                  description: Sensor lambda universal para diagnostico de mistura ar-combustivel.
+                  sku: MOT-SEN-OXI01
+                  category: Motor
+                  subcategory: Injecao
+                  brand: Bosch
+                  unitPrice: 320.00
+                  costPrice: 210.00
+                  stockQuantity: 12
+                  minimumStock: 3
       responses:
         '201':
           description: Peça criada
@@ -487,6 +596,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdatePartRequest'
+            examples:
+              atualizarPeca:
+                summary: Atualiza peça mantendo ativa
+                value:
+                  name: Sensor de oxigenio universal
+                  description: Sensor lambda universal para diagnostico de mistura ar-combustivel.
+                  sku: MOT-SEN-OXI01
+                  category: Motor
+                  subcategory: Injecao
+                  brand: Bosch
+                  unitPrice: 340.00
+                  costPrice: 220.00
+                  stockQuantity: 12
+                  minimumStock: 3
+                  active: true
       responses:
         '200':
           description: Peça atualizada
@@ -528,6 +652,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdatePartStockRequest'
+            examples:
+              ajusteEstoque:
+                summary: Ajuste direto da quantidade total em estoque
+                value:
+                  stockQuantity: 25
       responses:
         '200':
           description: Estoque atualizado
@@ -555,6 +684,21 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/StockMovementRequest'
+            examples:
+              entradaCompra:
+                summary: Entrada de compra de fornecedor
+                value:
+                  type: ENTRY
+                  quantity: 10
+                  unitCost: 210.00
+                  unitPrice: 320.00
+                  reason: Compra de reposicao de estoque
+              saidaInterna:
+                summary: Saída manual de estoque
+                value:
+                  type: EXIT
+                  quantity: 1
+                  reason: Ajuste por perda operacional
       responses:
         '200':
           description: Movimento registrado
@@ -582,6 +726,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ConfigurePartReservationRequest'
+            examples:
+              prazoReserva:
+                summary: Prazo de reserva usado em orçamentos
+                value:
+                  reservationDays: 3
       responses:
         '200':
           description: Prazo de reserva configurado
@@ -609,6 +758,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PartQuantityRequest'
+            examples:
+              reservar:
+                summary: Reserva quantidade para orçamento
+                value:
+                  quantity: 2
       responses:
         '200':
           description: Estoque reservado
@@ -636,6 +790,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PartQuantityRequest'
+            examples:
+              liberarReserva:
+                summary: Libera quantidade reservada
+                value:
+                  quantity: 1
       responses:
         '200':
           description: Reserva liberada
@@ -663,6 +822,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CommitPartReservationRequest'
+            examples:
+              baixarReserva:
+                summary: Converte reserva em baixa de estoque
+                value:
+                  quantity: 1
+                  reason: Peca utilizada na execucao da OS
       responses:
         '200':
           description: Reserva baixada do estoque
@@ -688,6 +853,56 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateServiceOrderRequest'
+            examples:
+              clienteVeiculoExistentes:
+                summary: OS para cliente e veículo já cadastrados
+                description: Use este exemplo depois de autenticar como admin. Ele já gera orçamento automaticamente.
+                value:
+                  customerDocument: '12345678909'
+                  vehicleId: 20000000-0000-0000-0000-000000000001
+                  diagnosticNotes: Cliente relata ruido ao frear e vibracao no pedal.
+                  services:
+                    - serviceId: 30000000-0000-0000-0000-000000000004
+                      quantity: 1
+                  parts:
+                    - partId: 40000000-0000-0000-0000-000000000005
+                      quantity: 1
+                    - partId: 40000000-0000-0000-0000-000000000007
+                      quantity: 1
+                  generateBudget: true
+              clienteVeiculoNovos:
+                summary: OS cadastrando cliente e veículo no mesmo fluxo
+                description: Demonstra identificação por CPF/CNPJ, cadastro de veículo e geração automática de orçamento.
+                value:
+                  customerDocument: '52998224725'
+                  customer:
+                    name: Yasmin Barcelos
+                    phone: '11987654321'
+                    email: yasmin.cliente@example.com
+                    address:
+                      street: Avenida Paulista
+                      number: '1000'
+                      complement: Sala 10
+                      neighborhood: Bela Vista
+                      city: Sao Paulo
+                      state: SP
+                      zipCode: 01310-100
+                  vehicle:
+                    plate: TST1A23
+                    brand: Honda
+                    model: Civic Touring
+                    year: 2021
+                    mileage: 42000
+                  diagnosticNotes: Cliente solicita revisao preventiva antes de viagem.
+                  services:
+                    - serviceId: 30000000-0000-0000-0000-000000000003
+                      quantity: 1
+                  parts:
+                    - partId: 40000000-0000-0000-0000-000000000001
+                      quantity: 4
+                    - partId: 40000000-0000-0000-0000-000000000002
+                      quantity: 1
+                  generateBudget: true
       responses:
         '201':
           description: Ordem de serviço criada
@@ -773,12 +988,14 @@ paths:
         - name: serviceOrderId
           in: query
           required: false
+          example: 50000000-0000-0000-0000-000000000002
           schema:
             type: string
             format: uuid
         - name: customerDocument
           in: query
           required: false
+          example: '12345678909'
           schema:
             type: string
             minLength: 11
@@ -787,6 +1004,7 @@ paths:
         - name: plate
           in: query
           required: false
+          example: MCA1D23
           schema:
             type: string
             minLength: 7
@@ -836,6 +1054,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AddServiceOrderServiceRequest'
+            examples:
+              adicionarServico:
+                summary: Inclui serviço solicitado na OS
+                value:
+                  serviceId: 30000000-0000-0000-0000-000000000005
+                  quantity: 1
       responses:
         '200':
           description: Serviço adicionado
@@ -863,6 +1087,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/AddServiceOrderPartRequest'
+            examples:
+              adicionarPeca:
+                summary: Inclui peça ou insumo na OS
+                value:
+                  partId: 40000000-0000-0000-0000-000000000005
+                  quantity: 1
       responses:
         '200':
           description: Peça adicionada
@@ -932,6 +1162,23 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/UpdateServiceOrderStatusRequest'
+            examples:
+              iniciarDiagnostico:
+                summary: Muda de Recebida para Em diagnóstico
+                value:
+                  status: IN_DIAGNOSIS
+              iniciarExecucao:
+                summary: Muda para Em execução após aprovação do orçamento
+                value:
+                  status: IN_PROGRESS
+              finalizar:
+                summary: Finaliza a execução da OS
+                value:
+                  status: FINISHED
+              entregar:
+                summary: Marca o veículo como entregue ao cliente
+                value:
+                  status: DELIVERED
       responses:
         '200':
           description: Status atualizado
@@ -1357,6 +1604,7 @@ components:
       name: customerId
       in: path
       required: true
+      example: 10000000-0000-0000-0000-000000000001
       schema:
         type: string
         format: uuid
@@ -1364,6 +1612,7 @@ components:
       name: vehicleId
       in: path
       required: true
+      example: 20000000-0000-0000-0000-000000000001
       schema:
         type: string
         format: uuid
@@ -1371,6 +1620,7 @@ components:
       name: serviceId
       in: path
       required: true
+      example: 30000000-0000-0000-0000-000000000004
       schema:
         type: string
         format: uuid
@@ -1378,6 +1628,7 @@ components:
       name: partId
       in: path
       required: true
+      example: 40000000-0000-0000-0000-000000000005
       schema:
         type: string
         format: uuid
@@ -1385,6 +1636,7 @@ components:
       name: serviceOrderId
       in: path
       required: true
+      example: 50000000-0000-0000-0000-000000000002
       schema:
         type: string
         format: uuid
