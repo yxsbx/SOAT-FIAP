@@ -78,8 +78,8 @@ Ficaram fora do escopo do MVP: auditoria produtiva, WAF, rotação automatizada 
 
 | Campo                                 | Valor                            |
 |---------------------------------------|----------------------------------|
-| Data de consolidação                  | 28/06/2026                       |
-| Horário do relatório Dependency-Check | 2026-06-29T01:44:38Z             |
+| Data de consolidação                  | 29/06/2026                       |
+| Horário do relatório Dependency-Check | 2026-06-29T20:51:40Z             |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
 
@@ -104,7 +104,7 @@ Ficaram fora do escopo do MVP: auditoria produtiva, WAF, rotação automatizada 
 | Maven                                       | Maven local do projeto                                                                                       |
 | Banco usado no scan de dependências         | Não aplicável ao Dependency-Check                                                                            |
 | Perfil Spring usado no scan de dependências | Não aplicável ao Dependency-Check                                                                            |
-| Observação                                  | O relatório JSON do Dependency-Check informa `engineVersion` 12.1.1 e data `2026-06-29T01:44:38.205785500Z`. |
+| Observação                                  | O relatório JSON do Dependency-Check informa `engineVersion` 12.1.1 e data `2026-06-29T20:51:40.997196900Z`. |
 
 ## 7. Resumo executivo
 
@@ -112,7 +112,7 @@ O primeiro scan de dependências backend apontou vulnerabilidades em bibliotecas
 
 O frontend também passou por revisão. O scan inicial do `npm audit` apontou vulnerabilidades altas transitivas em Vite/esbuild. Em 20/06/2026, uma nova execução identificou uma vulnerabilidade moderada transitiva em `js-yaml`, corrigida com atualização do lockfile.
 
-As imagens Docker também foram revisadas. No backend, o Docker Scout encontrou vulnerabilidades associadas ao pacote `/usr/bin/pebble`, presente na imagem base anterior. O runtime foi migrado para `gcr.io/distroless/java21-debian12:nonroot`, eliminando os achados críticos e altos. Na última execução, o backend ficou com 0 críticas, 0 altas e 1 média em `jackson-databind 2.21.4`, transitiva de `jjwt-jackson`; o Scout indica correção em `2.21.5`, mas essa versão ainda não estava publicada no Maven Central na validação. No frontend, a imagem Nginx/Alpine inicial apresentou 75 CVEs. A troca para uma imagem Nginx unprivileged slim, fixada por digest, reduziu o resultado para 0 críticas, 0 altas e 1 média em BusyBox, sem versão corrigida indicada pelo scanner na data da análise.
+As imagens Docker também foram revisadas. No backend, o Docker Scout encontrou vulnerabilidades associadas ao pacote `/usr/bin/pebble`, presente na imagem base anterior. O runtime foi migrado para `gcr.io/distroless/java21-debian12:nonroot`, eliminando os achados críticos e altos. Na última execução, o backend ficou com 0 críticas, 0 altas e 1 média em `jackson-databind 2.21.4`, transitiva de `jjwt-jackson`; o Scout indica correção em `2.21.5`, mas a disponibilidade dessa versão foi testada com `mvn dependency:get` e o artefato ainda não estava publicado no Maven Central na validação. No frontend, a imagem Nginx/Alpine inicial apresentou 75 CVEs. A troca para uma imagem Nginx unprivileged slim, fixada por digest, reduziu o resultado para 0 críticas, 0 altas e 1 média em BusyBox, sem versão corrigida indicada pelo scanner na data da análise.
 
 Resultado final do OWASP Dependency-Check:
 
@@ -145,7 +145,7 @@ O JaCoCo mede domínio, aplicação, controllers REST, segurança, mappers e ada
 
 O gate executado por `mvn verify` exige no mínimo 90% de instruções, linhas e branches.
 
-Resultado de qualidade revalidado em 28/06/2026:
+Resultado de qualidade revalidado em 29/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 |------------|--------:|------------:|----------:|
@@ -299,7 +299,7 @@ Resultado validado com 143 testes automatizados e `mvn verify` concluindo com su
 | Impacto           | Impacto no ferramental de desenvolvimento/lint.                                |
 | Correção aplicada | Execução de `npm audit fix`, atualização transitiva e regeneração do lockfile. |
 | Status            | Corrigido                                                                      |
-| Evidência         | `npm audit --json` de 20/06/2026 com 0 vulnerabilidades.                       |
+| Evidência         | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades. |
 
 ### VULN-012 - Imagem backend anterior
 
@@ -347,7 +347,7 @@ Resultado validado com 143 testes automatizados e `mvn verify` concluindo com su
 | Ferramenta         | Docker Scout                                                                                                                          |
 | Severidade         | Média                                                                                                                                 |
 | Pacote afetado     | `jackson-databind 2.21.4`, transitivo de `jjwt-jackson`                                                                               |
-| Descrição          | CVE-2026-54515. O Docker Scout indica correção em `2.21.5`, mas essa versão ainda não estava publicada no Maven Central na validação. |
+| Descrição          | CVE-2026-54515. O Docker Scout indica correção em `2.21.5`, mas `mvn dependency:get` confirmou que essa versão ainda não estava publicada no Maven Central na validação. |
 | Impacto            | Risco residual em biblioteca empacotada na imagem backend.                                                                            |
 | Mitigação aplicada | Imagem distroless non-root, Dependency-Check Maven limpo e dependência usada no fluxo interno de JWT.                                 |
 | Status             | Aceito temporariamente                                                                                                                |
@@ -434,7 +434,7 @@ Avisos revisados:
 |---------------------|---------------------------------|--------------------------------------------------------------------------------|-------------------------------------------------------|----------------------------------------------------------------------------------------------|
 | VULN-001 a VULN-009 | Dependências Maven              | Atualização de dependências e novo scan limpo.                                 | `pom.xml`                                             | `security-reports/backend-dependencies/dependency-check-report.json` com 0 vulnerabilidades. |
 | VULN-010            | Dependências frontend           | Atualização de Vite/plugin Vue e novo audit limpo.                             | `frontend/package.json`, `frontend/package-lock.json` | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.       |
-| VULN-011            | Dependência transitiva frontend | Atualização transitiva de `js-yaml` via `npm audit fix`.                       | `frontend/package-lock.json`                          | Audit de 20/06/2026 com 0 vulnerabilidades.                                                  |
+| VULN-011            | Dependência transitiva frontend | Atualização transitiva de `js-yaml` via `npm audit fix`.                       | `frontend/package-lock.json`                          | `security-reports/frontend-dependencies/npm-audit-report.json` com 0 vulnerabilidades.        |
 | VULN-012            | Imagem backend                  | Substituição da imagem runtime Ubuntu/Temurin por distroless Java 21 non-root. | `Dockerfile`, `docker-compose.yml`                    | Scan final sem críticas/altas e com 1 risco médio aceito.                                    |
 | VULN-013            | Imagem frontend                 | Substituição da imagem Nginx/Alpine antiga por variante unprivileged slim.     | `frontend/Dockerfile`                                 | Scan final sem críticas/altas e com 1 risco médio aceito.                                    |
 
@@ -443,7 +443,7 @@ Avisos revisados:
 | ID       | Severidade | Justificativa                                                                                                         | Mitigação existente                                                                                        | Responsável pela aceitação | Revisão                                                                           |
 |----------|------------|-----------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|----------------------------|-----------------------------------------------------------------------------------|
 | RISK-001 | Média      | BusyBox não possui versão corrigida indicada pelo Docker Scout na base analisada.                                     | Imagem slim, usuário não privilegiado, filesystem read-only e `no-new-privileges`.                         | Yasmin Barcelos Pires      | Próxima atualização da imagem base.                                               |
-| RISK-002 | Média      | Docker Scout indicou `jackson-databind 2.21.5`, mas essa versão não estava disponível no Maven Central em 28/06/2026. | Backend distroless/non-root; Dependency-Check Maven limpo; dependência usada de forma transitiva pelo JWT. | Yasmin Barcelos Pires      | Reavaliar quando `jackson-databind 2.21.5` ou versão corrigida estiver publicada. |
+| RISK-002 | Média      | Docker Scout indicou `jackson-databind 2.21.5`, mas `mvn dependency:get` confirmou que essa versão não estava disponível no Maven Central em 29/06/2026. | Backend distroless/non-root; Dependency-Check Maven limpo; dependência usada de forma transitiva pelo JWT. | Yasmin Barcelos Pires      | Reavaliar quando `jackson-databind 2.21.5` ou versão corrigida estiver publicada. |
 
 Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos residuais registrados são médios e foram aceitos temporariamente por ausência de correção aplicável no momento da análise.
 

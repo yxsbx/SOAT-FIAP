@@ -15,11 +15,7 @@ class PartTest {
         return part("OIL-001", Money.zero(), Money.of("50.00"), 10);
     }
 
-    private static Part part(
-            String sku,
-            Money costPrice,
-            Money unitPrice,
-            int stockQuantity) {
+    private static Part part(String sku, Money costPrice, Money unitPrice, int stockQuantity) {
         return Part.create(
                 catalog("Oil filter", "Oil filter", sku, "Bosch"),
                 new Part.Pricing(costPrice, unitPrice),
@@ -27,8 +23,7 @@ class PartTest {
                 2);
     }
 
-    private static Part.CatalogData catalog(
-            String name, String description, String sku, String brand) {
+    private static Part.CatalogData catalog(String name, String description, String sku, String brand) {
         return new Part.CatalogData(name, description, sku, "Filters", null, brand);
     }
 
@@ -51,8 +46,7 @@ class PartTest {
 
     @Test
     void shouldNotAllowNegativeStock() {
-        assertThatThrownBy(
-                        () -> part("OIL-001", Money.zero(), Money.of("50.00"), -1))
+        assertThatThrownBy(() -> part("OIL-001", Money.zero(), Money.of("50.00"), -1))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Stock cannot be negative");
     }
@@ -202,8 +196,7 @@ class PartTest {
                         2,
                         3,
                         1,
-                        null
-        ))
+                        null))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Reserved stock cannot be greater than stock");
 
@@ -232,8 +225,7 @@ class PartTest {
                 10,
                 4,
                 2,
-                LocalDateTime.now().minusDays(1)
-        );
+                LocalDateTime.now().minusDays(1));
 
         part.releaseExpiredReservation();
 

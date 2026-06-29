@@ -36,7 +36,7 @@ A pasta `docs/` concentra a documentação usada na avaliação.
 | Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                  |
 | Branch final                    | `main`                                                |
 | Acesso de avaliação             | Usuário `soat-architecture` com acesso Read concedido |
-| Data consolidada nos documentos | 28/06/2026                                            |
+| Data consolidada nos documentos | 29/06/2026                                            |
 
 ## Escopo do MVP
 
@@ -286,7 +286,7 @@ Principais grupos de endpoints:
 | Serviços            | `/api/v1/workshop-services`                                                                  |
 | Peças e estoque     | `/api/v1/parts`                                                                              |
 | Ordens de Serviço   | `/api/v1/service-orders`                                                                     |
-| Orçamento           | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
+| Orçamento           | `/api/v1/service-orders/{serviceOrderId}/budget/generate` e `/api/v1/service-orders/{serviceOrderId}/budget/approve` |
 | Tracking do cliente | `/api/v1/service-orders/tracking`                                                            |
 | Métricas da OS      | `/api/v1/service-orders/metrics/average-execution-time`                                      |
 | Usuários            | `/api/v1/users` e `/api/v1/users/me`                                                         |
@@ -333,7 +333,7 @@ docs/SECURITY_SCAN_GUIDE.md
 
 ## Evidências de qualidade
 
-Resultado de qualidade revalidado em 28/06/2026:
+Resultado de qualidade revalidado em 29/06/2026:
 
 | Área                   | Resultado                                          |
 |------------------------|----------------------------------------------------|
