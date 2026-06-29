@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "2.17.0",
-	"@generated": "Mon, 29 Jun 2026 22:48:31",
-	"created": "2026-06-29T22:48:31.884606119Z",
+	"@generated": "Mon, 29 Jun 2026 23:26:44",
+	"created": "2026-06-29T23:26:44.814477408Z",
 	"site":[ 
 		{
 			"@name": "http://host.docker.internal:8080",
@@ -10,6 +10,66 @@
 			"@port": "8080",
 			"@ssl": "false",
 			"alerts": [ 
+				{
+					"pluginid": "100000",
+					"alertRef": "100000-2",
+					"alert": "A Server Error response code was returned by the server",
+					"name": "A Server Error response code was returned by the server",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A response code of 500 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
+					"instances":[ 
+						{
+							"id": "3699",
+							"uri": "http://host.docker.internal:8080/api/v1/auth/login?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "3745",
+							"uri": "http://host.docker.internal:8080/api/v1/auth/login?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "3698",
+							"uri": "http://host.docker.internal:8080/api/v1/demo-leads?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						},
+						{
+							"id": "3728",
+							"uri": "http://host.docker.internal:8080/api/v1/demo-leads?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "500",
+							"otherinfo": ""
+						}
+					],
+					"count": "4",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "388",
+					"wascid": "20",
+					"sourceid": "3708"
+				},
 				{
 					"pluginid": "10096",
 					"alertRef": "10096",
@@ -21,64 +81,94 @@
 					"desc": "<p>A timestamp was disclosed by the application/web server. - Unix</p>",
 					"instances":[ 
 						{
-							"id": "58",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me",
-							"method": "GET",
+							"id": "62",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId",
+							"method": "DELETE",
 							"param": "",
 							"attack": "",
-							"evidence": "1782773286",
-							"otherinfo": "1782773286, which evaluates to: 2026-06-29 22:48:06."
+							"evidence": "1782774922",
+							"otherinfo": "1782774922, which evaluates to: 2026-06-29 23:15:22."
 						},
 						{
-							"id": "52",
+							"id": "60",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId",
+							"method": "DELETE",
+							"param": "",
+							"attack": "",
+							"evidence": "1782774922",
+							"otherinfo": "1782774922, which evaluates to: 2026-06-29 23:15:22."
+						},
+						{
+							"id": "58",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId",
-							"method": "GET",
+							"method": "DELETE",
 							"param": "",
 							"attack": "",
-							"evidence": "1782773285",
-							"otherinfo": "1782773285, which evaluates to: 2026-06-29 22:48:05."
+							"evidence": "1782774922",
+							"otherinfo": "1782774922, which evaluates to: 2026-06-29 23:15:22."
 						},
 						{
-							"id": "59",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId ()({name,document,phone,email,address,active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "1782773286",
-							"otherinfo": "1782773286, which evaluates to: 2026-06-29 22:48:06."
-						},
-						{
-							"id": "56",
+							"id": "57",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me ()({fullName})",
 							"method": "PUT",
 							"param": "",
 							"attack": "",
-							"evidence": "1782773286",
-							"otherinfo": "1782773286, which evaluates to: 2026-06-29 22:48:06."
+							"evidence": "1782774922",
+							"otherinfo": "1782774922, which evaluates to: 2026-06-29 23:15:22."
 						},
 						{
-							"id": "54",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId ()({name,description,basePrice,estimatedTimeInMinutes,active})",
+							"id": "61",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId ()({customerId,plate,brand,model,year,mileage,active})",
 							"method": "PUT",
 							"param": "",
 							"attack": "",
-							"evidence": "1782773285",
-							"otherinfo": "1782773285, which evaluates to: 2026-06-29 22:48:05."
+							"evidence": "1782774922",
+							"otherinfo": "1782774922, which evaluates to: 2026-06-29 23:15:22."
 						}
 					],
 					"count": "5",
 					"systemic": true,
 					"solution": "<p>Manually confirm that the timestamp data is not sensitive, and that the data cannot be aggregated to disclose exploitable patterns.</p>",
-					"otherinfo": "<p>1782773286, which evaluates to: 2026-06-29 22:48:06.</p>",
+					"otherinfo": "<p>1782774922, which evaluates to: 2026-06-29 23:15:22.</p>",
 					"reference": "<p>https://cwe.mitre.org/data/definitions/200.html</p>",
 					"cweid": "497",
 					"wascid": "13",
-					"sourceid": "16"
+					"sourceid": "25"
+				},
+				{
+					"pluginid": "100001",
+					"alertRef": "100001",
+					"alert": "Unexpected Content-Type was returned",
+					"name": "Unexpected Content-Type was returned",
+					"riskcode": "1",
+					"confidence": "3",
+					"riskdesc": "Low (High)",
+					"desc": "<p>A Content-Type of text/html was returned by the server.</p><p>This is not one of the types expected to be returned by an API.</p><p>Raised by the 'Alert on Unexpected Content Types' script</p>",
+					"instances":[ 
+						{
+							"id": "13987",
+							"uri": "http://host.docker.internal:8080/swagger-ui/index.html",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger-ui\/index.html ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "text/html",
+							"otherinfo": ""
+						}
+					],
+					"count": "1",
+					"systemic": false,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "",
+					"cweid": "-1",
+					"wascid": "-1",
+					"sourceid": "13221"
 				},
 				{
 					"pluginid": "100000",
@@ -91,7 +181,7 @@
 					"desc": "<p>A response code of 401 was returned by the server.</p><p>This may indicate that the application is failing to handle unexpected input correctly.</p><p>Raised by the 'Alert on HTTP Response Code Error' script</p>",
 					"instances":[ 
 						{
-							"id": "17",
+							"id": "16",
 							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId",
 							"method": "DELETE",
@@ -101,17 +191,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12140",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/",
-							"method": "DELETE",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "14",
+							"id": "13",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId",
 							"method": "DELETE",
@@ -121,17 +201,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12136",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/",
-							"method": "DELETE",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "6",
+							"id": "5",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId",
 							"method": "DELETE",
@@ -141,17 +211,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12158",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId\/",
-							"method": "DELETE",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "3",
+							"id": "2",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId",
 							"method": "DELETE",
@@ -161,17 +221,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12164",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId\/",
-							"method": "DELETE",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "133",
+							"id": "124",
 							"uri": "http://host.docker.internal:8080",
 							"nodeName": "http:\/\/host.docker.internal:8080",
 							"method": "GET",
@@ -181,9 +231,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12167",
-							"uri": "http://host.docker.internal:8080/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/",
+							"id": "86",
+							"uri": "http://host.docker.internal:8080/6344334869897609065",
+							"nodeName": "http:\/\/host.docker.internal:8080\/6344334869897609065",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -191,9 +241,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "79",
-							"uri": "http://host.docker.internal:8080/4779045811482703649",
-							"nodeName": "http:\/\/host.docker.internal:8080\/4779045811482703649",
+							"id": "3661",
+							"uri": "http://host.docker.internal:8080/WEB-INF/applicationContext.xml",
+							"nodeName": "http:\/\/host.docker.internal:8080\/WEB-INF\/applicationContext.xml",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -201,7 +251,37 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "155",
+							"id": "3662",
+							"uri": "http://host.docker.internal:8080/WEB-INF/classes/1782774932/113066017.class",
+							"nodeName": "http:\/\/host.docker.internal:8080\/WEB-INF\/classes\/1782774932\/113066017.class",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3663",
+							"uri": "http://host.docker.internal:8080/WEB-INF/classes/1782774932/121787542.class",
+							"nodeName": "http:\/\/host.docker.internal:8080\/WEB-INF\/classes\/1782774932\/121787542.class",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3660",
+							"uri": "http://host.docker.internal:8080/WEB-INF/web.xml",
+							"nodeName": "http:\/\/host.docker.internal:8080\/WEB-INF\/web.xml",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "138",
 							"uri": "http://host.docker.internal:8080/api",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api",
 							"method": "GET",
@@ -211,9 +291,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12169",
-							"uri": "http://host.docker.internal:8080/api/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/",
+							"id": "13951",
+							"uri": "http://host.docker.internal:8080/api-docs",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api-docs ()({username,password})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -221,9 +301,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "80",
-							"uri": "http://host.docker.internal:8080/api/8344740269853259960",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/8344740269853259960",
+							"id": "87",
+							"uri": "http://host.docker.internal:8080/api/3839410319221638380",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/3839410319221638380",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -231,7 +311,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "168",
+							"id": "162",
 							"uri": "http://host.docker.internal:8080/api/v1",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1",
 							"method": "GET",
@@ -241,9 +321,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12172",
-							"uri": "http://host.docker.internal:8080/api/v1/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/",
+							"id": "88",
+							"uri": "http://host.docker.internal:8080/api/v1/2427280754603110356",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/2427280754603110356",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -251,17 +331,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "81",
-							"uri": "http://host.docker.internal:8080/api/v1/8553333866352472403",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/8553333866352472403",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "193",
+							"id": "194",
 							"uri": "http://host.docker.internal:8080/api/v1/auth",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth",
 							"method": "GET",
@@ -271,9 +341,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12174",
-							"uri": "http://host.docker.internal:8080/api/v1/auth/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/",
+							"id": "89",
+							"uri": "http://host.docker.internal:8080/api/v1/auth/5750561083604427558",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/5750561083604427558",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -281,27 +351,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "82",
-							"uri": "http://host.docker.internal:8080/api/v1/auth/8074768836597733715",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/8074768836597733715",
+							"id": "14009",
+							"uri": "http://host.docker.internal:8080/api/v1/auth/login",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login ()({username,password})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
-							"evidence": "401",
+							"evidence": "405",
 							"otherinfo": ""
 						},
 						{
-							"id": "13680",
-							"uri": "http://host.docker.internal:8080/api/v1/auth/actuator/health",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/actuator\/health",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "211",
+							"id": "218",
 							"uri": "http://host.docker.internal:8080/api/v1/customers",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers",
 							"method": "GET",
@@ -311,7 +371,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "34",
+							"id": "13932",
+							"uri": "http://host.docker.internal:8080/api/v1/customers",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers ()({name,document,phone,email,address})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "33",
 							"uri": "http://host.docker.internal:8080/api/v1/customers?page=0&size=20&active=true",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers (active,page,size)",
 							"method": "GET",
@@ -321,9 +391,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12177",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/",
+							"id": "90",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/9115697962942751976",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/9115697962942751976",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -331,17 +401,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "83",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/4498981247524694892",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/4498981247524694892",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "15",
+							"id": "14",
 							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId",
 							"method": "GET",
@@ -351,9 +411,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12176",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/",
+							"id": "13933",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId ()({name,document,phone,email,address,active})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -361,9 +421,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "84",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/4380491862340700938",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/4380491862340700938",
+							"id": "12272",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId?name=abc",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId (name)",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -371,7 +431,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "51",
+							"id": "91",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/5604547594734888348",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/5604547594734888348",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "50",
 							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/service-orders",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/service-orders",
 							"method": "GET",
@@ -381,17 +451,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12175",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/service-orders/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/service-orders\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "50",
+							"id": "49",
 							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/vehicles",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/vehicles",
 							"method": "GET",
@@ -401,17 +461,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12179",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/vehicles/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/vehicles\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "32",
+							"id": "31",
 							"uri": "http://host.docker.internal:8080/api/v1/demo-leads",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads",
 							"method": "GET",
@@ -421,9 +471,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12181",
-							"uri": "http://host.docker.internal:8080/api/v1/demo-leads/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads\/",
+							"id": "13934",
+							"uri": "http://host.docker.internal:8080/api/v1/demo-leads",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads ()({contactName,companyName,demoProfile,email,phone,cnpj,city,message})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -431,7 +481,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "258",
+							"id": "257",
 							"uri": "http://host.docker.internal:8080/api/v1/parts",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts",
 							"method": "GET",
@@ -441,7 +491,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "30",
+							"id": "13945",
+							"uri": "http://host.docker.internal:8080/api/v1/parts",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "29",
 							"uri": "http://host.docker.internal:8080/api/v1/parts?page=0&size=20&active=true&lowStock=true",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts (active,lowStock,page,size)",
 							"method": "GET",
@@ -451,9 +511,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12182",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/",
+							"id": "92",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/8128083935588369471",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/8128083935588369471",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -461,17 +521,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "85",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/135892840476853087",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/135892840476853087",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "12",
+							"id": "11",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId",
 							"method": "GET",
@@ -481,9 +531,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12185",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/",
+							"id": "13944",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock,active})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -491,9 +541,69 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "86",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/2387357847594925416",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/2387357847594925416",
+							"id": "93",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/8312081759228075412",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/8312081759228075412",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13937",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/commit-reservation",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/commit-reservation ()({quantity,reason})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13938",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/release-reservation",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/release-reservation ()({quantity})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13940",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reservation",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reservation ()({reservationDays})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13941",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reserve",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reserve ()({quantity})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13942",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock ()({stockQuantity})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13943",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement ()({type,quantity,unitCost,unitPrice,reason})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -511,7 +621,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "24",
+							"id": "13957",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders ()({customerDocument,customer:{name,phone,email,address},vehicleId,vehicle:{plate,brand,model,year,mileage},diagnosticNotes,services:[{serviceId,quantity}],parts:[{partId,quantity}],generateBudget})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "23",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders?page=0&size=20&status=RECEIVED&customerId=customerId&vehicleId=vehicleId&createdFrom=createdFrom&createdTo=createdTo",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders (createdFrom,createdTo,customerId,page,size,status,vehicleId)",
 							"method": "GET",
@@ -521,9 +641,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12186",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/",
+							"id": "94",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/7455075519578617162",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/7455075519578617162",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -531,17 +651,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "87",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/4234366225743562765",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/4234366225743562765",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "300",
+							"id": "299",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics",
 							"method": "GET",
@@ -551,9 +661,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12191",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/",
+							"id": "95",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/5099827772837947252",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/5099827772837947252",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -561,17 +671,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "88",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/2811972553268668588",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/2811972553268668588",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "49",
+							"id": "48",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/average-execution-time",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/average-execution-time",
 							"method": "GET",
@@ -581,17 +681,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12188",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/average-execution-time/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/average-execution-time\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "47",
+							"id": "46",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId",
 							"method": "GET",
@@ -601,9 +691,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12189",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/",
+							"id": "96",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/1229768112010395613",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/1229768112010395613",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -611,17 +701,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "89",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/4408614084331405096",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/4408614084331405096",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "334",
+							"id": "342",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget",
 							"method": "GET",
@@ -631,9 +711,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12195",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/",
+							"id": "97",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/2930597813214257764",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/2930597813214257764",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -641,9 +721,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "90",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/9211890843984913018",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/9211890843984913018",
+							"id": "13946",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/approve",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/approve",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -651,7 +731,57 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "48",
+							"id": "13947",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/generate",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/generate",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13948",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/parts",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/parts ()({partId,quantity})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13952",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/services",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/services ()({serviceId,quantity})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13956",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/status",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/status ()({status})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13997",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/tracking",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/tracking",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "47",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/tracking?serviceOrderId=serviceOrderId&customerDocument=customerDocument&plate=plate",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/tracking (customerDocument,plate,serviceOrderId)",
 							"method": "GET",
@@ -661,17 +791,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12192",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/tracking/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/tracking\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "374",
+							"id": "368",
 							"uri": "http://host.docker.internal:8080/api/v1/users",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users",
 							"method": "GET",
@@ -681,7 +801,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "22",
+							"id": "13963",
+							"uri": "http://host.docker.internal:8080/api/v1/users",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users ()({username,password,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "21",
 							"uri": "http://host.docker.internal:8080/api/v1/users?active=true&role=role&profileType=profileType&search=ZAP",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users (active,profileType,role,search)",
 							"method": "GET",
@@ -691,9 +821,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12197",
-							"uri": "http://host.docker.internal:8080/api/v1/users/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/",
+							"id": "98",
+							"uri": "http://host.docker.internal:8080/api/v1/users/4765104570912316586",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/4765104570912316586",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -701,17 +831,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "91",
-							"uri": "http://host.docker.internal:8080/api/v1/users/307498784225972233",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/307498784225972233",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "8",
+							"id": "7",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me",
 							"method": "GET",
@@ -721,9 +841,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12196",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/",
+							"id": "13960",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me ()({fullName})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -731,9 +851,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "92",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/2908370516652910104",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/2908370516652910104",
+							"id": "99",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/6803465859442387716",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/6803465859442387716",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -741,7 +861,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "413",
+							"id": "13958",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/password",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/password ()({currentPassword,newPassword})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "409",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences",
 							"method": "GET",
@@ -751,9 +881,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12202",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/",
+							"id": "100",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/7743383055517799839",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/7743383055517799839",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -761,17 +891,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "93",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/6910818371552197467",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/6910818371552197467",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "10",
+							"id": "9",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home",
 							"method": "GET",
@@ -781,9 +901,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12199",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home\/",
+							"id": "13959",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home ()({widgets:[],showAlertsOnHome})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -791,7 +911,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "46",
+							"id": "45",
 							"uri": "http://host.docker.internal:8080/api/v1/users/partners",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/partners",
 							"method": "GET",
@@ -801,17 +921,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12200",
-							"uri": "http://host.docker.internal:8080/api/v1/users/partners/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/partners\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "444",
+							"id": "438",
 							"uri": "http://host.docker.internal:8080/api/v1/users/userId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId",
 							"method": "GET",
@@ -821,9 +931,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12204",
-							"uri": "http://host.docker.internal:8080/api/v1/users/userId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/",
+							"id": "13962",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId ()({username,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -831,9 +941,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "94",
-							"uri": "http://host.docker.internal:8080/api/v1/users/userId/4972094332892350056",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/4972094332892350056",
+							"id": "101",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId/4505969266293642946",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/4505969266293642946",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -841,7 +951,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "464",
+							"id": "13961",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId/password",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/password ()({newPassword})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "448",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles",
 							"method": "GET",
@@ -851,7 +971,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "20",
+							"id": "13965",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles ()({customerId,plate,brand,model,year,mileage})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "19",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles?page=0&size=20&active=true",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles (active,page,size)",
 							"method": "GET",
@@ -861,9 +991,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12207",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/",
+							"id": "102",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/7468656445560530639",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/7468656445560530639",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -871,17 +1001,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "95",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/5628819014016217567",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/5628819014016217567",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "4",
+							"id": "3",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId",
 							"method": "GET",
@@ -891,9 +1011,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12206",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId\/",
+							"id": "13968",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId ()({customerId,plate,brand,model,year,mileage,active})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -901,7 +1021,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "471",
+							"id": "476",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services",
 							"method": "GET",
@@ -911,7 +1031,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "18",
+							"id": "13974",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services ()({name,description,basePrice,estimatedTimeInMinutes})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "17",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services?page=0&size=20&active=true",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services (active,page,size)",
 							"method": "GET",
@@ -921,9 +1051,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12210",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/",
+							"id": "103",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/888004726861968326",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/888004726861968326",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -931,17 +1061,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "96",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/2965430369346061471",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/2965430369346061471",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "1",
+							"id": "0",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId",
 							"method": "GET",
@@ -951,9 +1071,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12213",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId\/",
+							"id": "13970",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId ()({name,description,basePrice,estimatedTimeInMinutes,active})",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -961,7 +1081,107 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "492",
+							"id": "13953",
+							"uri": "http://host.docker.internal:8080/docs/",
+							"nodeName": "http:\/\/host.docker.internal:8080\/docs\/ ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "12270",
+							"uri": "http://host.docker.internal:8080/favicon.ico",
+							"nodeName": "http:\/\/host.docker.internal:8080\/favicon.ico",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13950",
+							"uri": "http://host.docker.internal:8080/openapi.json",
+							"nodeName": "http:\/\/host.docker.internal:8080\/openapi.json ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13998",
+							"uri": "http://host.docker.internal:8080/openapi.yaml",
+							"nodeName": "http:\/\/host.docker.internal:8080\/openapi.yaml ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13954",
+							"uri": "http://host.docker.internal:8080/swagger",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13939",
+							"uri": "http://host.docker.internal:8080/swagger-ui/",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger-ui\/ ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "404",
+							"otherinfo": ""
+						},
+						{
+							"id": "13949",
+							"uri": "http://host.docker.internal:8080/swagger.json",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger.json ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13999",
+							"uri": "http://host.docker.internal:8080/swagger.yaml",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger.yaml ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "14006",
+							"uri": "http://host.docker.internal:8080/swagger/ui/index.html",
+							"nodeName": "http:\/\/host.docker.internal:8080\/swagger\/ui\/index.html ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "13955",
+							"uri": "http://host.docker.internal:8080/v2/api-docs",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v2\/api-docs ()({username,password})",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "509",
 							"uri": "http://host.docker.internal:8080/v3",
 							"nodeName": "http:\/\/host.docker.internal:8080\/v3",
 							"method": "GET",
@@ -971,9 +1191,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12214",
-							"uri": "http://host.docker.internal:8080/v3/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/",
+							"id": "104",
+							"uri": "http://host.docker.internal:8080/v3/791880432657743327",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/791880432657743327",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -981,27 +1201,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "97",
-							"uri": "http://host.docker.internal:8080/v3/3305689758421026007",
-							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/3305689758421026007",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "12215",
-							"uri": "http://host.docker.internal:8080/v3/api-docs/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/api-docs\/",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "404",
-							"otherinfo": ""
-						},
-						{
-							"id": "45",
+							"id": "44",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/commit-reservation",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/commit-reservation ()({quantity,reason})",
 							"method": "PATCH",
@@ -1011,17 +1211,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12146",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/commit-reservation/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/commit-reservation\/ ()({quantity,reason})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "44",
+							"id": "43",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/release-reservation",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/release-reservation ()({quantity})",
 							"method": "PATCH",
@@ -1031,17 +1221,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12137",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/release-reservation/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/release-reservation\/ ()({quantity})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "43",
+							"id": "42",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reservation",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reservation ()({reservationDays})",
 							"method": "PATCH",
@@ -1051,17 +1231,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12141",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reservation/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reservation\/ ()({reservationDays})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "42",
+							"id": "41",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reserve",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reserve ()({quantity})",
 							"method": "PATCH",
@@ -1071,17 +1241,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12143",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reserve/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reserve\/ ()({quantity})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "40",
+							"id": "39",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock ()({stockQuantity})",
 							"method": "PATCH",
@@ -1091,7 +1251,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "41",
+							"id": "40",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement ()({type,quantity,unitCost,unitPrice,reason})",
 							"method": "PATCH",
@@ -1101,27 +1261,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12144",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement\/ ()({type,quantity,unitCost,unitPrice,reason})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "12142",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock\/ ()({stockQuantity})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "39",
+							"id": "38",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/status",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/status ()({status})",
 							"method": "PATCH",
@@ -1131,17 +1271,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12153",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/status/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/status\/ ()({status})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "38",
+							"id": "37",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me/password",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/password ()({currentPassword,newPassword})",
 							"method": "PATCH",
@@ -1151,17 +1281,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12156",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/password/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/password\/ ()({currentPassword,newPassword})",
-							"method": "PATCH",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "37",
+							"id": "36",
 							"uri": "http://host.docker.internal:8080/api/v1/users/userId/password",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/password ()({newPassword})",
 							"method": "PATCH",
@@ -1171,17 +1291,87 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12155",
-							"uri": "http://host.docker.internal:8080/api/v1/users/userId/password/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/password\/ ()({newPassword})",
-							"method": "PATCH",
+							"id": "3725",
+							"uri": "http://host.docker.internal:8080/?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/ (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
 							"param": "",
 							"attack": "",
 							"evidence": "401",
 							"otherinfo": ""
 						},
 						{
-							"id": "36",
+							"id": "3744",
+							"uri": "http://host.docker.internal:8080/?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/ (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3748",
+							"uri": "http://host.docker.internal:8080/api?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3750",
+							"uri": "http://host.docker.internal:8080/api?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3749",
+							"uri": "http://host.docker.internal:8080/api/v1?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1 (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3754",
+							"uri": "http://host.docker.internal:8080/api/v1?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1 (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3753",
+							"uri": "http://host.docker.internal:8080/api/v1/auth?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3755",
+							"uri": "http://host.docker.internal:8080/api/v1/auth?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "35",
 							"uri": "http://host.docker.internal:8080/api/v1/auth/login",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login ()({username,password})",
 							"method": "POST",
@@ -1191,7 +1381,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "781",
+							"id": "681",
 							"uri": "http://host.docker.internal:8080/api/v1/auth/login",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login ()({username,password})",
 							"method": "POST",
@@ -1201,17 +1391,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12138",
-							"uri": "http://host.docker.internal:8080/api/v1/auth/login/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login\/ ()({username,password})",
-							"method": "POST",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "35",
+							"id": "34",
 							"uri": "http://host.docker.internal:8080/api/v1/customers",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers ()({name,document,phone,email,address})",
 							"method": "POST",
@@ -1221,9 +1401,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12134",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/ ()({name,document,phone,email,address})",
+							"id": "3683",
+							"uri": "http://host.docker.internal:8080/api/v1/customers?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1231,7 +1411,77 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "33",
+							"id": "3690",
+							"uri": "http://host.docker.internal:8080/api/v1/customers?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3679",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3706",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3760",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/service-orders?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/service-orders (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3770",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/service-orders?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/service-orders (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3762",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/vehicles?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/vehicles (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3772",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/vehicles?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/vehicles (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "32",
 							"uri": "http://host.docker.internal:8080/api/v1/demo-leads",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads ()({contactName,companyName,demoProfile,email,phone,cnpj,city,message})",
 							"method": "POST",
@@ -1241,17 +1491,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12135",
-							"uri": "http://host.docker.internal:8080/api/v1/demo-leads/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/demo-leads\/ ()({contactName,companyName,demoProfile,email,phone,cnpj,city,message})",
-							"method": "POST",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "31",
+							"id": "30",
 							"uri": "http://host.docker.internal:8080/api/v1/parts",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock})",
 							"method": "POST",
@@ -1261,9 +1501,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12148",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/ ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock})",
+							"id": "3705",
+							"uri": "http://host.docker.internal:8080/api/v1/parts?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1271,7 +1511,157 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "25",
+							"id": "3733",
+							"uri": "http://host.docker.internal:8080/api/v1/parts?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3684",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3694",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3681",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/commit-reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/commit-reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3703",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/commit-reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/commit-reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3680",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/release-reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/release-reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3702",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/release-reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/release-reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3682",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3719",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reservation?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reservation (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3697",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reserve?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reserve (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3747",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/reserve?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/reserve (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3687",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3701",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3688",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3721",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "24",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders ()({customerDocument,customer:{name,phone,email,address},vehicleId,vehicle:{plate,brand,model,year,mileage},diagnosticNotes,services:[{serviceId,quantity}],parts:[{partId,quantity}],generateBudget})",
 							"method": "POST",
@@ -1281,9 +1671,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12147",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/ ()({customerDocument,customer:{name,phone,email,address},vehicleId,vehicle:{plate,brand,model,year,mileage},diagnosticNotes,services:[{serviceId,quantity}],parts:[{partId,quantity}],generateBudget})",
+							"id": "3711",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1291,7 +1681,97 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "29",
+							"id": "3735",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3781",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3788",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3779",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/average-execution-time?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/average-execution-time (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3789",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/metrics/average-execution-time?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/metrics\/average-execution-time (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3780",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3783",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3787",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3794",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "28",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/approve",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/approve",
 							"method": "POST",
@@ -1301,9 +1781,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12150",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/approve/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/approve\/",
+							"id": "3704",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/approve?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/approve (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1311,7 +1791,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "28",
+							"id": "3740",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/approve?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/approve (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "27",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/generate",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/generate",
 							"method": "POST",
@@ -1321,9 +1811,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12151",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/generate/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/generate\/",
+							"id": "3708",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/generate?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/generate (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1331,7 +1821,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "27",
+							"id": "3734",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/budget/generate?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/budget\/generate (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "26",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/parts",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/parts ()({partId,quantity})",
 							"method": "POST",
@@ -1341,9 +1841,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12149",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/parts/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/parts\/ ()({partId,quantity})",
+							"id": "3715",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/parts?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/parts (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1351,7 +1851,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "26",
+							"id": "3739",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/parts?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/parts (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "25",
 							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/services",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/services ()({serviceId,quantity})",
 							"method": "POST",
@@ -1361,9 +1871,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12154",
-							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/services/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/services\/ ()({serviceId,quantity})",
+							"id": "3709",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/services?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/services (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1371,7 +1881,57 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "23",
+							"id": "3731",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/services?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/services (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3710",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/status?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/status (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3738",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/serviceOrderId/status?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/serviceOrderId\/status (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3786",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/tracking?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/tracking (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3793",
+							"uri": "http://host.docker.internal:8080/api/v1/service-orders/tracking?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/service-orders\/tracking (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "22",
 							"uri": "http://host.docker.internal:8080/api/v1/users",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users ()({username,password,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
 							"method": "POST",
@@ -1381,9 +1941,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12160",
-							"uri": "http://host.docker.internal:8080/api/v1/users/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/ ()({username,password,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
+							"id": "3717",
+							"uri": "http://host.docker.internal:8080/api/v1/users?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1391,7 +1951,157 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "21",
+							"id": "3742",
+							"uri": "http://host.docker.internal:8080/api/v1/users?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3714",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3737",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3712",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/password?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/password (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3732",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/password?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/password (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3801",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3807",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3696",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3727",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3797",
+							"uri": "http://host.docker.internal:8080/api/v1/users/partners?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/partners (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3802",
+							"uri": "http://host.docker.internal:8080/api/v1/users/partners?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/partners (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3686",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3700",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3713",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId/password?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/password (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3736",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId/password?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/password (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "20",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles ()({customerId,plate,brand,model,year,mileage})",
 							"method": "POST",
@@ -1401,9 +2111,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12161",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/ ()({customerId,plate,brand,model,year,mileage})",
+							"id": "3720",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1411,7 +2121,37 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "19",
+							"id": "3743",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3692",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "3724",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
+							"method": "POST",
+							"param": "",
+							"attack": "",
+							"evidence": "401",
+							"otherinfo": ""
+						},
+						{
+							"id": "18",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services ()({name,description,basePrice,estimatedTimeInMinutes})",
 							"method": "POST",
@@ -1421,9 +2161,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12162",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/ ()({name,description,basePrice,estimatedTimeInMinutes})",
+							"id": "3693",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1431,9 +2171,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9073",
-							"uri": "http://host.docker.internal:8080/computeMetadata/v1/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/computeMetadata\/v1\/ ()({username,password})",
+							"id": "3723",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1441,9 +2181,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9049",
-							"uri": "http://host.docker.internal:8080/latest/meta-data/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/latest\/meta-data\/ ()({username,password})",
+							"id": "3691",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1451,9 +2191,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9571",
-							"uri": "http://host.docker.internal:8080/metadata/instance",
-							"nodeName": "http:\/\/host.docker.internal:8080\/metadata\/instance ()({username,password})",
+							"id": "3722",
+							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1461,9 +2201,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9589",
-							"uri": "http://host.docker.internal:8080/metadata/v1",
-							"nodeName": "http:\/\/host.docker.internal:8080\/metadata\/v1 ()({username,password})",
+							"id": "3824",
+							"uri": "http://host.docker.internal:8080/v3?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v3 (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1471,9 +2211,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9140",
-							"uri": "http://host.docker.internal:8080/opc/v1/instance/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/opc\/v1\/instance\/ ()({username,password})",
+							"id": "3825",
+							"uri": "http://host.docker.internal:8080/v3?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v3 (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
@@ -1481,27 +2221,27 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9488",
-							"uri": "http://host.docker.internal:8080/opc/v2/instance/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/opc\/v2\/instance\/ ()({username,password})",
+							"id": "3826",
+							"uri": "http://host.docker.internal:8080/v3/api-docs?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/api-docs (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('cmd.exe \/C echo jy7e0h0n308q...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
-							"evidence": "401",
+							"evidence": "405",
 							"otherinfo": ""
 						},
 						{
-							"id": "9607",
-							"uri": "http://host.docker.internal:8080/openstack/latest/meta_data.json",
-							"nodeName": "http:\/\/host.docker.internal:8080\/openstack\/latest\/meta_data.json ()({username,password})",
+							"id": "3827",
+							"uri": "http://host.docker.internal:8080/v3/api-docs?-d+allow_url_include%3d1+-d+auto_prepend_file%3dphp://input",
+							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/api-docs (-d allow_url_include=1 -d auto_prepend_f...)(<?php exec('echo jy7e0h0n308qkkyawqq3',$...)",
 							"method": "POST",
 							"param": "",
 							"attack": "",
-							"evidence": "401",
+							"evidence": "405",
 							"otherinfo": ""
 						},
 						{
-							"id": "16",
+							"id": "15",
 							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId ()({name,document,phone,email,address,active})",
 							"method": "PUT",
@@ -1511,17 +2251,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12139",
-							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId\/ ()({name,document,phone,email,address,active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "13",
+							"id": "12",
 							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock,active})",
 							"method": "PUT",
@@ -1531,17 +2261,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12166",
-							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/ ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock,active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "9",
+							"id": "8",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me ()({fullName})",
 							"method": "PUT",
@@ -1551,17 +2271,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12152",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/ ()({fullName})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "11",
+							"id": "10",
 							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home ()({widgets:[],showAlertsOnHome})",
 							"method": "PUT",
@@ -1571,17 +2281,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12157",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home\/ ()({widgets:[],showAlertsOnHome})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "7",
+							"id": "6",
 							"uri": "http://host.docker.internal:8080/api/v1/users/userId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId ()({username,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
 							"method": "PUT",
@@ -1591,17 +2291,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12159",
-							"uri": "http://host.docker.internal:8080/api/v1/users/userId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId\/ ()({username,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "5",
+							"id": "4",
 							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId ()({customerId,plate,brand,model,year,mileage,active})",
 							"method": "PUT",
@@ -1611,17 +2301,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "12145",
-							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId\/ ()({customerId,plate,brand,model,year,mileage,active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
-						},
-						{
-							"id": "2",
+							"id": "1",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId ()({name,description,basePrice,estimatedTimeInMinutes,active})",
 							"method": "PUT",
@@ -1629,19 +2309,9 @@
 							"attack": "",
 							"evidence": "401",
 							"otherinfo": ""
-						},
-						{
-							"id": "12163",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId/",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId\/ ()({name,description,basePrice,estimatedTimeInMinutes,active})",
-							"method": "PUT",
-							"param": "",
-							"attack": "",
-							"evidence": "401",
-							"otherinfo": ""
 						}
 					],
-					"count": "155",
+					"count": "213",
 					"systemic": false,
 					"solution": "",
 					"otherinfo": "",
@@ -1661,7 +2331,7 @@
 					"desc": "<p>The given request has been identified as an authentication request. The 'Other Info' field contains a set of key=value lines which identify any relevant fields. If the request is in a context which has an Authentication Method set to \"Auto-Detect\" then this rule will change the authentication to match the request identified.</p>",
 					"instances":[ 
 						{
-							"id": "77",
+							"id": "84",
 							"uri": "http://host.docker.internal:8080/api/v1/users",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users ()({username,password,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
 							"method": "POST",
@@ -1671,7 +2341,7 @@
 							"otherinfo": "userParam=username\nuserValue=John Doe\npasswordParam=password"
 						},
 						{
-							"id": "78",
+							"id": "85",
 							"uri": "http://host.docker.internal:8080/api/v1/auth/login",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/auth\/login ()({username,password})",
 							"method": "POST",
@@ -1701,39 +2371,29 @@
 					"desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
 					"instances":[ 
 						{
-							"id": "60",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me",
-							"method": "GET",
+							"id": "66",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId",
+							"method": "DELETE",
 							"param": "",
 							"attack": "",
-							"evidence": "no-store",
+							"evidence": "DELETE ",
 							"otherinfo": ""
 						},
 						{
-							"id": "53",
-							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId",
-							"method": "GET",
+							"id": "65",
+							"uri": "http://host.docker.internal:8080/api/v1/vehicles/vehicleId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/vehicles\/vehicleId",
+							"method": "DELETE",
 							"param": "",
 							"attack": "",
-							"evidence": "no-store",
+							"evidence": "DELETE ",
 							"otherinfo": ""
 						},
 						{
-							"id": "0",
-							"uri": "http://host.docker.internal:8080/v3/api-docs",
-							"nodeName": "http:\/\/host.docker.internal:8080\/v3\/api-docs",
-							"method": "GET",
-							"param": "",
-							"attack": "",
-							"evidence": "no-store",
-							"otherinfo": ""
-						},
-						{
-							"id": "57",
-							"uri": "http://host.docker.internal:8080/api/v1/users/me",
-							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me ()({fullName})",
+							"id": "68",
+							"uri": "http://host.docker.internal:8080/api/v1/users/me/preferences/home",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/me\/preferences\/home ()({widgets:[],showAlertsOnHome})",
 							"method": "PUT",
 							"param": "",
 							"attack": "",
@@ -1741,7 +2401,17 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "55",
+							"id": "67",
+							"uri": "http://host.docker.internal:8080/api/v1/users/userId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/users\/userId ()({username,role,customerId,fullName,profileType,companyName,companyType,employeeSubRole,permissions:[],active})",
+							"method": "PUT",
+							"param": "",
+							"attack": "",
+							"evidence": "PUT ",
+							"otherinfo": ""
+						},
+						{
+							"id": "79",
 							"uri": "http://host.docker.internal:8080/api/v1/workshop-services/serviceId",
 							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/workshop-services\/serviceId ()({name,description,basePrice,estimatedTimeInMinutes,active})",
 							"method": "PUT",
@@ -1758,7 +2428,77 @@
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "16"
+					"sourceid": "25"
+				},
+				{
+					"pluginid": "10104",
+					"alertRef": "10104",
+					"alert": "User Agent Fuzzer",
+					"name": "User Agent Fuzzer",
+					"riskcode": "0",
+					"confidence": "2",
+					"riskdesc": "Informational (Medium)",
+					"desc": "<p>Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response.</p>",
+					"instances":[ 
+						{
+							"id": "12292",
+							"uri": "http://host.docker.internal:8080/api/v1/customers/customerId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/customers\/customerId",
+							"method": "DELETE",
+							"param": "Header User-Agent",
+							"attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12307",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId",
+							"method": "DELETE",
+							"param": "Header User-Agent",
+							"attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12303",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock ()({stockQuantity})",
+							"method": "PATCH",
+							"param": "Header User-Agent",
+							"attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12309",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId/stock-movement",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId\/stock-movement ()({type,quantity,unitCost,unitPrice,reason})",
+							"method": "PATCH",
+							"param": "Header User-Agent",
+							"attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+							"evidence": "",
+							"otherinfo": ""
+						},
+						{
+							"id": "12305",
+							"uri": "http://host.docker.internal:8080/api/v1/parts/partId",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/v1\/parts\/partId ()({name,description,sku,category,subcategory,brand,unitPrice,costPrice,stockQuantity,minimumStock,active})",
+							"method": "PUT",
+							"param": "Header User-Agent",
+							"attack": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1)",
+							"evidence": "",
+							"otherinfo": ""
+						}
+					],
+					"count": "5",
+					"systemic": true,
+					"solution": "",
+					"otherinfo": "",
+					"reference": "<p>https://owasp.org/wstg</p>",
+					"cweid": "0",
+					"wascid": "0",
+					"sourceid": "12298"
 				}
 			]
 		}
