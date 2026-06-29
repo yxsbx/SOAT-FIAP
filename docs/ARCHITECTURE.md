@@ -15,7 +15,6 @@ Esta documentação apresenta como o AutoCare Hub foi organizado para atender ao
 | `docs/openapi/openapi.yaml`    | Contrato REST usado pela API e pela geração das interfaces.                                          |
 | `docs/TESTING.md`              | Estratégia de testes, cobertura e comandos de validação.                                             |
 | `docs/SECURITY_REPORT.md`      | Vulnerabilidades encontradas, scans executados, riscos aceitos e evidências consolidadas.            |
-| `docs/SECURITY_SCAN_GUIDE.md`  | Roteiro para reproduzir os scans e gerar evidências locais.                                          |
 | `docs/TECHNICAL_REFINEMENT.md` | Relação entre decisões técnicas, requisitos e implementação.                                         |
 
 ## 1. HLD: High-Level Design

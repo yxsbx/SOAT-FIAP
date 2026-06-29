@@ -34,7 +34,6 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 | Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/TESTING.md>             |
 | Análise estática e qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/STATIC_ANALYSIS.md>     |
 | Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>     |
-| Guia dos scans de segurança   | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_SCAN_GUIDE.md> |
 
 ## 5. Relatório com análise de vulnerabilidades encontradas no sistema
 
