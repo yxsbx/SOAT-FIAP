@@ -2,9 +2,9 @@
 
 ## 1. Introdução
 
-O Domain Storytelling do AutoCare Hub descreve como cliente, atendente, mecânico, administrador e sistema participam do fluxo de atendimento de uma oficina mecânica.
+O Domain Storytelling do AutoCare Hub descreve como cliente, atendente, mecânico, administrador e sistema participam do atendimento de uma oficina mecânica.
 
-O objetivo não é mostrar endpoints nem estrutura técnica. A proposta é contar as histórias do domínio: quem faz o quê, com qual objeto de trabalho e em qual ordem.
+O objetivo deste documento não é detalhar endpoints ou estrutura técnica. A proposta é contar as histórias do domínio: quem participa do processo, quais objetos de trabalho são usados e em que ordem as atividades acontecem.
 
 ## 2. Escopo das histórias
 
@@ -15,70 +15,73 @@ As histórias documentadas para o MVP são:
 3. Execução, finalização e entrega da Ordem de Serviço.
 4. Gestão de peças e insumos no estoque.
 
-Essas histórias refletem o que está implementado no backend. Pagamento, agenda, WhatsApp, SMS e integrações externas não fazem parte deste escopo.
+Essas histórias representam os fluxos principais do domínio da oficina. Pagamento, agenda, WhatsApp, SMS, e-mail e integrações externas não fazem parte deste escopo.
 
 ## 3. Atores
 
-| Ator | Papel na história |
-|---|---|
-| Cliente | Informa seus dados, solicita atendimento, aprova orçamento e acompanha a OS. |
-| Atendente | Abre a OS, identifica cliente e veículo, registra serviços e entrega o veículo. |
-| Mecânico | Analisa o veículo, executa o serviço e finaliza a OS. |
-| Administrador da oficina | Mantém cadastros, peças, serviços, estoque e usuários administrativos. |
-| Sistema AutoCare Hub | Valida dados, registra informações, calcula orçamento, controla status e disponibiliza acompanhamento. |
+| Ator                     | Papel na história                                                                                      |
+|--------------------------|--------------------------------------------------------------------------------------------------------|
+| Cliente                  | Informa seus dados, solicita atendimento, aprova orçamento e acompanha a OS.                           |
+| Atendente                | Identifica cliente e veículo, abre a OS, registra serviços solicitados e entrega o veículo.            |
+| Mecânico                 | Analisa o veículo, executa o serviço e finaliza a OS.                                                  |
+| Administrador da oficina | Mantém cadastros, peças, serviços, estoque e usuários administrativos.                                 |
+| Responsável pelo estoque | Registra entradas, saídas, reservas e baixas de peças e insumos.                                       |
+| Sistema AutoCare Hub     | Valida dados, registra informações, calcula orçamento, controla status e disponibiliza acompanhamento. |
 
 ### 3.1 Mapeamento para usuários do sistema
 
 No Domain Storytelling, `Atendente`, `Mecânico` e `Responsável pelo estoque` são papéis de negócio. No código, o acesso é controlado por `UserRole` e por campos complementares de perfil.
 
-| Papel na história | Representação técnica |
-|---|---|
-| Dona do projeto / administradora master | `role=ADMIN`, `profileType=MASTER_ADMIN` |
-| Administrador da oficina | `role=ADMIN`, `profileType=WORKSHOP_ADMIN` |
+| Papel na história        | Representação técnica                                                                                |
+|--------------------------|------------------------------------------------------------------------------------------------------|
+| Administrador master     | `role=ADMIN`, `profileType=MASTER_ADMIN`                                                             |
+| Administrador da oficina | `role=ADMIN`, `profileType=WORKSHOP_ADMIN`                                                           |
 | Responsável pelo estoque | `role=ADMIN`, `profileType=PARTS_STORE_ADMIN` ou `role=EMPLOYEE`, `profileType=PARTS_STORE_EMPLOYEE` |
-| Atendente | `role=EMPLOYEE`, com perfil operacional da oficina ou loja |
-| Mecânico | `role=EMPLOYEE`, `profileType=WORKSHOP_EMPLOYEE`, `employeeSubRole=MECHANIC` |
-| Cliente | `role=CUSTOMER`, `profileType=CUSTOMER_OWNER` |
+| Atendente                | `role=EMPLOYEE`, com perfil operacional da oficina ou loja                                           |
+| Mecânico                 | `role=EMPLOYEE`, `profileType=WORKSHOP_EMPLOYEE`, `employeeSubRole=MECHANIC`                         |
+| Cliente                  | `role=CUSTOMER`, `profileType=CUSTOMER_OWNER`                                                        |
+
+Essa separação evita confundir o papel de negócio com a implementação técnica. A história mostra como o trabalho acontece na oficina; o backend autoriza as ações por perfis e permissões do usuário autenticado.
 
 ## 4. Objetos de trabalho
 
-| Objeto de trabalho | Uso no domínio |
-|---|---|
-| CPF/CNPJ | Identifica o cliente. |
-| Cadastro do cliente | Guarda dados do cliente atendido. |
-| Placa | Identifica o veículo. |
-| Cadastro do veículo | Guarda marca, modelo, ano e vínculo com o cliente. |
-| Ordem de Serviço | Concentra o atendimento da oficina. |
-| Diagnóstico | Registra o problema relatado ou avaliação inicial. |
-| Serviço solicitado | Representa o trabalho que a oficina deve executar. |
-| Peça/Insumo | Item usado no serviço ou controlado em estoque. |
-| Estoque | Controla quantidade disponível e reservada. |
-| Orçamento | Valor calculado a partir dos serviços e peças. |
-| Aprovação | Aceite do cliente para iniciar a execução. |
-| Status da OS | Indica a etapa atual do atendimento. |
-| Histórico de acompanhamento | Mostra ao cliente a evolução da OS. |
-| Tempo de execução | Base para a métrica de tempo médio. |
+| Objeto de trabalho          | Uso no domínio                                       |
+|-----------------------------|------------------------------------------------------|
+| CPF/CNPJ                    | Identifica o cliente.                                |
+| Cadastro do cliente         | Guarda os dados do cliente atendido.                 |
+| Placa                       | Identifica o veículo.                                |
+| Cadastro do veículo         | Guarda marca, modelo, ano e vínculo com o cliente.   |
+| Ordem de Serviço            | Concentra o atendimento da oficina.                  |
+| Diagnóstico                 | Registra o problema relatado ou a avaliação inicial. |
+| Serviço solicitado          | Representa o trabalho que a oficina deve executar.   |
+| Peça/Insumo                 | Item usado no serviço ou controlado em estoque.      |
+| Estoque                     | Controla quantidade total, disponível e reservada.   |
+| Orçamento                   | Valor calculado com base nos serviços e peças.       |
+| Aprovação                   | Aceite do cliente para seguir com a execução.        |
+| Status da OS                | Indica a etapa atual do atendimento.                 |
+| Histórico de acompanhamento | Mostra ao cliente a evolução da OS.                  |
+| Tempo de execução           | Base para a métrica de tempo médio.                  |
 
 ## 5. Atividades usadas nas histórias
 
 As principais atividades do domínio são:
 
-- informa;
-- consulta;
-- cadastra;
-- seleciona;
-- cria;
-- adiciona;
-- calcula;
-- disponibiliza;
-- aprova;
-- reserva;
-- baixa;
-- inicia;
-- finaliza;
-- entrega;
-- atualiza;
-- acompanha.
+- informar;
+- consultar;
+- cadastrar;
+- selecionar;
+- criar;
+- adicionar;
+- calcular;
+- disponibilizar;
+- aprovar;
+- reservar;
+- baixar;
+- iniciar;
+- finalizar;
+- entregar;
+- atualizar;
+- acompanhar.
 
 ## 6. História 1 - Criação e acompanhamento da Ordem de Serviço
 
@@ -86,16 +89,16 @@ As principais atividades do domínio são:
 
 1. O Cliente informa CPF/CNPJ ao Atendente.
 2. O Atendente consulta o Cliente no Sistema AutoCare Hub.
-3. O Sistema retorna o cadastro existente do Cliente.
+3. O Sistema retorna o cadastro existente ou informa que o Cliente precisa ser cadastrado.
 4. O Atendente consulta o Veículo pela placa.
-5. O Sistema retorna o Veículo vinculado ao Cliente.
+5. O Sistema retorna o Veículo vinculado ao Cliente ou informa que o veículo precisa ser cadastrado.
 6. O Atendente registra o diagnóstico ou problema relatado.
 7. O Atendente cria a Ordem de Serviço.
 8. O Atendente adiciona os serviços solicitados.
 9. O Atendente adiciona peças ou insumos, quando necessário.
 10. O Sistema calcula o orçamento quando a geração é solicitada.
 11. O Sistema disponibiliza a Ordem de Serviço para acompanhamento.
-12. O Cliente consulta a OS pelo identificador, CPF/CNPJ ou placa.
+12. O Cliente consulta a OS pelos dados definidos no contrato da API.
 13. O Sistema mostra status, veículo, serviços, peças, orçamento e histórico de acompanhamento.
 
 ### Representação visual
@@ -108,11 +111,11 @@ sequenceDiagram
 
     Cliente->>Atendente: informa CPF/CNPJ
     Atendente->>Sistema: consulta cliente
-    Sistema-->>Atendente: retorna cadastro do cliente
-    Atendente->>Sistema: consulta veiculo pela placa
-    Sistema-->>Atendente: retorna veiculo vinculado
+    Sistema-->>Atendente: retorna cadastro ou necessidade de cadastro
+    Atendente->>Sistema: consulta veículo pela placa
+    Sistema-->>Atendente: retorna veículo vinculado ou necessidade de cadastro
     Atendente->>Sistema: cria Ordem de Serviço
-    Atendente->>Sistema: adiciona serviços e pecas
+    Atendente->>Sistema: adiciona serviços e peças
     Sistema->>Sistema: calcula orçamento quando solicitado
     Cliente->>Sistema: consulta acompanhamento da OS
     Sistema-->>Cliente: mostra status e dados da OS
@@ -120,7 +123,7 @@ sequenceDiagram
 
 ## 7. História 2 - Aprovação do orçamento pelo cliente
 
-Esta história fica separada porque muda o ator principal. A oficina monta e disponibiliza o orçamento, mas quem decide aprovar é o Cliente.
+Esta história fica separada porque muda o ator principal. A oficina monta e disponibiliza o orçamento, mas a aprovação representa o aceite do Cliente para seguir com a execução.
 
 ### Cenário principal
 
@@ -139,7 +142,7 @@ sequenceDiagram
     participant Sistema as Sistema AutoCare Hub
 
     Sistema-->>Cliente: disponibiliza orçamento
-    Cliente->>Sistema: consulta serviços, pecas e total
+    Cliente->>Sistema: consulta serviços, peças e total
     Cliente->>Sistema: aprova orçamento
     Sistema->>Sistema: registra aprovação
     Sistema-->>Cliente: confirma aprovação
@@ -165,7 +168,7 @@ Esta história é separada da aprovação porque o ator principal volta a ser a 
 
 ```mermaid
 sequenceDiagram
-    participant Mecanico as Mecanico
+    participant Mecanico as Mecânico
     participant Atendente
     participant Sistema as Sistema AutoCare Hub
     participant Cliente
@@ -174,7 +177,7 @@ sequenceDiagram
     Sistema->>Sistema: atualiza status para EM_EXECUCAO
     Mecanico->>Sistema: finaliza serviço
     Sistema->>Sistema: atualiza status para FINALIZADA
-    Atendente->>Sistema: registra entrega do veiculo
+    Atendente->>Sistema: registra entrega do veículo
     Sistema->>Sistema: atualiza status para ENTREGUE
     Cliente->>Sistema: consulta acompanhamento final
 ```
@@ -185,26 +188,26 @@ sequenceDiagram
 
 1. O Administrador cadastra uma Peça ou Insumo no Sistema.
 2. O Sistema valida nome, SKU, categoria, marca, preços e quantidade inicial.
-3. O Administrador registra uma entrada, saída, venda, ajuste, reserva ou baixa.
+3. O Responsável pelo estoque registra uma entrada, saída, ajuste, reserva ou baixa.
 4. O Sistema verifica se a quantidade informada é válida.
 5. O Sistema atualiza o estoque total, reservado e disponível.
 6. O Sistema registra a movimentação de estoque.
-7. O Administrador consulta o status da peça no estoque.
+7. O Administrador consulta a situação da peça no estoque.
 
 ### Representação visual
 
 ```mermaid
 sequenceDiagram
     participant Administrador
+    participant Estoque as Responsável pelo estoque
     participant Sistema as Sistema AutoCare Hub
-    participant Estoque
 
-    Administrador->>Sistema: cadastra peca ou insumo
-    Sistema->>Sistema: valida dados obrigatorios
-    Administrador->>Sistema: registra movimentação
-    Sistema->>Estoque: atualiza quantidade e reserva
+    Administrador->>Sistema: cadastra peça ou insumo
+    Sistema->>Sistema: valida dados obrigatórios
+    Estoque->>Sistema: registra movimentação
+    Sistema->>Sistema: atualiza quantidade e reserva
     Sistema->>Sistema: registra StockMovement
-    Sistema-->>Administrador: mostra status do estoque
+    Sistema-->>Administrador: mostra situação do estoque
 ```
 
 ## 10. Cenários alternativos

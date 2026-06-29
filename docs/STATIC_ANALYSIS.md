@@ -2,7 +2,9 @@
 
 ## 1. Objetivo
 
-Este documento registra a validação de qualidade, manutenibilidade, cobertura e análise estática aplicada ao AutoCare Hub. Ele complementa o `docs/SECURITY_REPORT.md`: o relatório de segurança consolida vulnerabilidades, enquanto este documento mostra como o código foi analisado para reduzir bugs, inconsistências, dependências vulneráveis e problemas de manutenção.
+Este documento registra a validação de qualidade, manutenibilidade, cobertura e análise estática aplicada ao AutoCare Hub.
+
+Ele complementa o `docs/SECURITY_REPORT.md`: o relatório de segurança consolida vulnerabilidades e riscos residuais, enquanto este documento mostra como o código foi analisado para reduzir bugs, inconsistências, problemas de manutenção, falhas de formatação e riscos técnicos antes da entrega.
 
 ## 2. Escopo analisado
 
@@ -10,31 +12,33 @@ A análise considerou:
 
 - backend Spring Boot em `src/main/java`;
 - testes automatizados em `src/test/java`;
-- contrato OpenAPI em `docs/openapi/openapi.yaml`, usado para geração de interfaces;
+- contrato OpenAPI em `docs/openapi/openapi.yaml`;
 - configuração Maven em `pom.xml`;
 - frontend demonstrativo em `frontend/`;
-- relatórios locais em `target/` e `security-reports/`.
+- configuração Docker e Docker Compose;
+- relatórios locais em `target/`;
+- evidências revisadas em `security-reports/`.
 
-Não foi encontrada configuração de SonarQube ou SonarCloud no projeto. Por isso, a análise estática final foi baseada nas ferramentas realmente configuradas ou com evidência local: Spotless, JaCoCo, OWASP Dependency-Check, ESLint, npm audit, Semgrep e Gitleaks.
+Não foi encontrada configuração de SonarQube ou SonarCloud no projeto. Por isso, a análise estática final foi baseada nas ferramentas configuradas ou executadas com evidência local: Spotless, JaCoCo, OWASP Dependency-Check, ESLint, npm audit, Semgrep e Gitleaks.
+
+Checkstyle, PMD, SpotBugs, FindSecBugs, SonarQube e SonarCloud podem ser usados em ciclos futuros, mas não fazem parte da evidência final desta entrega.
 
 ## 3. Ferramentas utilizadas
 
-| Ferramenta | Onde está no projeto | Finalidade |
-| --- | --- | --- |
-| Spotless 2.44.4 | `pom.xml` | Padronização Java com Palantir Java Format, remoção de imports não usados e whitespace consistente. |
-| JaCoCo 0.8.12 | `pom.xml` | Cobertura de testes e gate mínimo automatizado. |
-| OWASP Dependency-Check 12.1.1 | `pom.xml` | Análise de CVEs nas dependências Maven. |
-| OpenAPI Generator 7.22.0 | `pom.xml` | Geração de contratos Java a partir do `openapi.yaml`, reduzindo divergência entre documentação e implementação. |
-| ESLint | `frontend/package.json` | Análise estática do frontend demonstrativo. |
-| npm audit 9.6.6 | npm local | Análise de vulnerabilidades das dependências do frontend. |
-| Semgrep 1.166.0 | Evidência em `security-reports/static-analysis/semgrep.json` | Análise estática de segurança em arquivos Java, JavaScript, JSON e Dockerfile. |
-| Gitleaks | Evidência em `security-reports/secrets/gitleaks.json` | Verificação de secrets no histórico Git. |
-
-Checkstyle, PMD, SpotBugs, FindSecBugs, SonarQube e SonarCloud não estão configurados no projeto. Eles podem ser usados como complemento local, mas não fazem parte da evidência final desta validação.
+| Ferramenta                    | Onde está no projeto                            | Finalidade                                                                                                      |
+|-------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| Spotless 2.44.4               | `pom.xml`                                       | Padronização Java com Palantir Java Format, remoção de imports não usados e consistência de whitespace.         |
+| JaCoCo 0.8.12                 | `pom.xml`                                       | Cobertura de testes e gate mínimo automatizado.                                                                 |
+| OWASP Dependency-Check 12.1.1 | `pom.xml`                                       | Análise de CVEs nas dependências Maven.                                                                         |
+| OpenAPI Generator 7.22.0      | `pom.xml`                                       | Geração de contratos Java a partir do `openapi.yaml`, reduzindo divergência entre documentação e implementação. |
+| ESLint                        | `frontend/package.json`                         | Análise estática do frontend demonstrativo.                                                                     |
+| npm audit 9.6.6               | npm local                                       | Análise de vulnerabilidades nas dependências do frontend.                                                       |
+| Semgrep 1.166.0               | `security-reports/static-analysis/semgrep.json` | Análise estática de segurança em arquivos Java, JavaScript, JSON e Dockerfile.                                  |
+| Gitleaks                      | `security-reports/secrets/gitleaks.json`        | Verificação de secrets no histórico Git.                                                                        |
 
 ## 4. Comandos executados
 
-Validação backend:
+### Backend
 
 ```powershell
 mvn spotless:check
@@ -42,48 +46,52 @@ mvn clean verify
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-Validação frontend:
+### Frontend
 
 ```powershell
 cd frontend
 npm run lint
 npm run build
 npm audit --json
+cd ..
 ```
 
-Conferência Docker não destrutiva:
+### Docker Compose
 
 ```powershell
 docker compose config --quiet
 ```
 
-O comando `docker compose down -v` não foi executado nesta revisão porque remove volumes locais. Para uma validação limpa antes da entrega, ele pode ser rodado manualmente em ambiente descartável.
+A validação com `docker compose config --quiet` é não destrutiva e verifica se o arquivo Compose é válido. O comando `docker compose down -v` não é necessário para a análise estática, porque remove volumes locais. Ele deve ser usado apenas na demonstração de execução limpa do projeto ou em ambiente descartável.
 
 ## 5. Resultados por ferramenta
 
-| Ferramenta | Resultado |
-| --- | --- |
-| Spotless | Build aprovado. 173 arquivos Java verificados; 0 exigiram alteração. |
-| Maven/JUnit | `mvn clean verify` aprovado com 143 testes, 0 falhas, 0 erros e 0 ignorados. |
-| JaCoCo | Gate aprovado. Cobertura: 96,31% instruções, 97,25% linhas e 90,12% branches. |
-| OWASP Dependency-Check | Build aprovado. 103 dependências analisadas, 0 vulnerabilidades no relatório final. |
-| ESLint frontend | Aprovado com `--max-warnings=0`. |
-| Vite build | Build de produção aprovado. |
-| npm audit | 172 dependências no relatório JSON, 0 vulnerabilidades. |
-| Semgrep | Evidência local com 200 arquivos analisados, 0 achados e 0 erros. |
-| Gitleaks | Evidência local com 0 leaks. |
-| Docker Compose config | Arquivo Compose válido em validação não destrutiva. |
+| Ferramenta             | Resultado                                                                              |
+|------------------------|----------------------------------------------------------------------------------------|
+| Spotless               | Build aprovado. 173 arquivos Java verificados e 0 arquivos exigindo alteração.         |
+| Maven/JUnit            | `mvn clean verify` aprovado com 143 testes, 0 falhas, 0 erros e 0 ignorados.           |
+| JaCoCo                 | Gate aprovado. Cobertura: 96,31% de instruções, 97,25% de linhas e 90,12% de branches. |
+| OWASP Dependency-Check | Build aprovado. 103 dependências analisadas e 0 vulnerabilidades no relatório final.   |
+| ESLint frontend        | Aprovado com `--max-warnings=0`.                                                       |
+| Vite build             | Build de produção aprovado.                                                            |
+| npm audit              | 172 dependências no relatório JSON e 0 vulnerabilidades.                               |
+| Semgrep                | Evidência local com 200 arquivos analisados, 0 achados e 0 erros.                      |
+| Gitleaks               | Evidência local com 0 leaks encontrados.                                               |
+| Docker Compose config  | Arquivo Compose válido na validação não destrutiva.                                    |
 
-## 6. Correções aplicadas
+## 6. Correções e ajustes aplicados
 
-Nesta revisão não foi necessário alterar código backend nem frontend. Os gates configurados passaram sem exigir correção de formatação, teste ou cobertura. Também foi removida do `pom.xml` a configuração de Testcontainers e `commons-compress` em escopo de teste, porque a suíte real usa H2 em memória e MockMvc, sem containers de teste.
+Nesta revisão, não foi necessário alterar código backend ou frontend para que os gates passassem. Os comandos configurados foram aprovados sem exigir correção de formatação, teste ou cobertura.
 
-A documentação foi ajustada para deixar a análise estática explícita e separada do relatório de vulnerabilidades:
+Também foi removida do `pom.xml` a configuração de Testcontainers e o override de `commons-compress` em escopo de teste, porque a suíte real usa H2 em memória e MockMvc, sem containers de teste. Essa remoção reduziu dependências sem uso no fluxo real de validação.
+
+A documentação foi ajustada para separar melhor qualidade de código e vulnerabilidades:
 
 - criação deste documento;
 - criação de `docs/TESTING.md`;
-- inclusão do documento no índice do `README.md`;
-- ajuste do guia de scans para indicar onde consolidar qualidade e vulnerabilidades.
+- inclusão deste documento no índice do `README.md`;
+- ajuste do guia de scans para indicar onde consolidar qualidade, cobertura, análise estática e vulnerabilidades;
+- alinhamento com `docs/SECURITY_REPORT.md`, que permanece como documento oficial de vulnerabilidades e riscos residuais.
 
 ## 7. Qualidade e manutenibilidade
 
@@ -96,23 +104,23 @@ A revisão técnica confirmou que:
 - Spotless remove imports não usados e mantém formatação consistente;
 - os testes cobrem domínio, aplicação, segurança, integração REST, validações sensíveis, estoque e fluxo completo de OS.
 
-O único alerta observado durante os testes foi emitido por Hibernate Validator em código gerado dentro de `target/generated-sources/openapi`, indicando uso de `@Valid` em listas geradas. Como o código é gerado a partir do contrato OpenAPI e a build passa, isso não foi tratado como falha de entrega.
+O único alerta observado durante os testes foi emitido pelo Hibernate Validator em código gerado dentro de `target/generated-sources/openapi`, indicando uso de `@Valid` em listas geradas. Como o código é gerado a partir do contrato OpenAPI e a build passa, esse alerta foi registrado como observação técnica, não como falha da entrega.
 
 ## 8. Cobertura de testes
 
 O projeto exige internamente cobertura mínima de 90% em instruções, linhas e branches pelo JaCoCo, acima dos 80% mínimos esperados para a entrega.
 
-| Métrica | Resultado atual | Gate do projeto |
-| --- | --- | --- |
-| Instruções | 96,31% | 90% |
-| Linhas | 97,25% | 90% |
-| Branches | 90,12% | 90% |
+| Métrica    | Resultado atual | Gate do projeto |
+|------------|----------------:|----------------:|
+| Instruções |          96,31% |             90% |
+| Linhas     |          97,25% |             90% |
+| Branches   |          90,12% |             90% |
 
 Os testes incluem:
 
 - entidades e value objects de domínio;
 - regras de estoque em `Part`;
-- transições e orçamento em `ServiceOrder`;
+- transições de status e orçamento em `ServiceOrder`;
 - criação, geração e aprovação de orçamento;
 - acompanhamento de OS;
 - autenticação e autorização JWT;
@@ -123,7 +131,7 @@ Os testes incluem:
 
 ## 9. Evidências
 
-Relatórios gerados localmente:
+Relatórios gerados ou usados como evidência da entrega:
 
 ```text
 target/site/jacoco/index.html
@@ -140,12 +148,44 @@ security-reports/dast/zap-api-report.html
 security-reports/dast/zap-api-report.json
 ```
 
-Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. `target/` permanece fora do
-versionamento e é usado como saída local dos comandos Maven. O resumo de vulnerabilidades fica em
-`docs/SECURITY_REPORT.md`.
+Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. A pasta `target/` permanece fora do versionamento e é usada como saída local dos comandos Maven.
 
-## 10. Conclusão
+O resumo de vulnerabilidades, CVEs corrigidas e riscos residuais aceitos fica em:
 
-O projeto possui evidência suficiente de análise estática para a entrega: formatação automatizada, cobertura com gate, testes unitários e de integração, análise de dependências backend, análise de dependências frontend, análise estática de segurança e verificação de secrets.
+```text
+docs/SECURITY_REPORT.md
+```
 
-Não há finding relevante aberto nesta revisão. SonarQube/SonarCloud não foi executado e não deve ser citado como evidência final, apenas como ferramenta complementar possível para ciclos futuros.
+## 10. Pontos fora da evidência final
+
+As ferramentas abaixo não foram usadas como evidência final da entrega:
+
+| Ferramenta           | Motivo                                                                                    |
+|----------------------|-------------------------------------------------------------------------------------------|
+| SonarQube/SonarCloud | Não há configuração no projeto e não houve execução evidenciada.                          |
+| Checkstyle           | Não está configurado no projeto.                                                          |
+| PMD                  | Não está configurado no projeto.                                                          |
+| SpotBugs/FindSecBugs | Não está configurado no projeto.                                                          |
+| Trivy                | Não foi usado como evidência final porque a entrega consolidou Docker Scout para imagens. |
+| TruffleHog           | Não foi usado como evidência final porque a entrega consolidou Gitleaks para secrets.     |
+
+Essas ferramentas podem ser adicionadas em ciclos futuros, mas não devem ser citadas como resultado executado nesta entrega.
+
+## 11. Pendências identificadas
+
+Não há pendência obrigatória aberta para a entrega dentro do escopo desta análise estática.
+
+Os pontos abaixo ficam apenas como melhoria futura:
+
+- configurar SonarQube ou SonarCloud em pipeline CI/CD;
+- adicionar Checkstyle, PMD ou SpotBugs caso o projeto evolua e precise de regras mais rígidas de qualidade;
+- automatizar Semgrep, Gitleaks, Docker Scout e npm audit em pipeline;
+- revisar o alerta do Hibernate Validator se o OpenAPI Generator passar a gerar código diferente em versões futuras.
+
+Esses itens não bloqueiam o Tech Challenge, porque os gates configurados e as evidências locais já cobrem formatação, testes, cobertura, dependências, análise estática de segurança e secrets.
+
+## 12. Conclusão
+
+O projeto possui evidência suficiente de análise estática e qualidade para a entrega: formatação automatizada, cobertura com gate, testes unitários e de integração, análise de dependências backend, análise de dependências frontend, análise estática de segurança e verificação de secrets.
+
+Não há achado relevante aberto nesta revisão. SonarQube/SonarCloud não foi executado e não deve ser citado como evidência final, apenas como ferramenta complementar possível para ciclos futuros.

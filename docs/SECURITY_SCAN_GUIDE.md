@@ -346,7 +346,7 @@ sensíveis ou dados pessoais.
 Critério recomendado:
 
 | Severidade | Tratamento recomendado                                                         |
-| ---------- | ------------------------------------------------------------------------------ |
+|------------|--------------------------------------------------------------------------------|
 | Critical   | Corrigir antes da entrega ou justificar formalmente se for falso positivo.     |
 | High       | Corrigir antes da entrega sempre que houver atualização segura disponível.     |
 | Medium     | Avaliar explorabilidade, uso em runtime e impacto no MVP. Corrigir se simples. |

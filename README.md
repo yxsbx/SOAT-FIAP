@@ -1,90 +1,42 @@
 # AutoCare Hub
 
-AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em
-Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de
-Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger, Docker, testes e relatório de
-vulnerabilidades.
+AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger/OpenAPI, Docker, testes automatizados e relatório de vulnerabilidades.
 
-O repositório também inclui um frontend Vue/Vite em `frontend/` para apoiar a demonstração visual. A branch final de
-entrega é `main`.
+O repositório também inclui um frontend demonstrativo em Vue/Vite, localizado em `frontend/`, usado para apoiar a apresentação visual do MVP. A branch final de entrega é `main`.
 
-## Sumário da Entrega
+## Sumário da entrega
 
-`docs/` concentra a documentação pública exigida para avaliação.
+A pasta `docs/` concentra a documentação usada na avaliação.
 
-Documentos oficiais:
+| Documento                     | Onde abrir                                                                                       | O que comprova                                                                                        |
+|-------------------------------|--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Documento final de entrega    | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)                                           | Dados da entrega, links, escopo, segurança, testes, vulnerabilidades e conclusão.                     |
+| PDF final gerado              | `output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf`                                       | Versão em PDF do documento final para envio.                                                          |
+| DDD                           | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)                                           | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects e agregados.       |
+| Domain Storytelling           | [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md)                                       | Histórias do domínio por ator, objetos de trabalho, atividades e cenários alternativos.               |
+| Levantamento de requisitos    | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)                                                     | Personas, jornada da solução, requisitos funcionais, requisitos não funcionais e rastreabilidade.     |
+| Arquitetura                   | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)                                                     | Arquitetura em camadas, HLD, LLD, C4 Model, decisões técnicas e relação com requisitos.               |
+| Refinamento técnico           | [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)                                     | Jornada técnica da OS, decisões de implementação, validações, riscos tratados e aderência do backend. |
+| Event Storming                | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)                                                 | Comandos, eventos, políticas, pontos de atenção e fluxos de OS e estoque.                             |
+| Swagger/OpenAPI               | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html` | Contrato REST versionado e interface local para testar a API.                                         |
+| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)                                               | Scans executados, vulnerabilidades encontradas, correções aplicadas e riscos aceitos.                 |
+| Guia de scans                 | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)                                       | Comandos para reproduzir scans e gerar evidências locais.                                             |
+| Análise estática e qualidade  | [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)                                               | Ferramentas de qualidade, cobertura, lint, análise estática e evidências locais.                      |
+| Estratégia de testes          | [docs/TESTING.md](docs/TESTING.md)                                                               | Testes unitários, integração REST, fluxo completo de API, comandos e cobertura JaCoCo.                |
+| Frontend demonstrativo        | [frontend/README.md](frontend/README.md)                                                         | Como executar e entender o frontend usado na demonstração.                                            |
 
-- **Item exigido:**  Documento final de entrega
-  - **Onde abrir:**  [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
-  - **O que comprova:**  Dados da entrega, links, escopo, arquitetura, DDD, segurança, testes, Docker, vulnerabilidades,
-    limitações e conclusão.
+## Dados da entrega
 
-- **Item exigido:**  PDF final gerado
-  - **Onde abrir:**  `output/pdf/AutoCare_Hub_Tech_Challenge_Entrega_Final.pdf`
-  - **O que comprova:**  Versão em PDF do documento final para envio.
-
-- **Item exigido:**  DDD
-  - **Onde abrir:**  [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
-  - **O que comprova:**  Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects, agregados,
-    políticas e fluxos.
-
-- **Item exigido:**  Domain Storytelling
-  - **Onde abrir:**  [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md)
-  - **O que comprova:**  Histórias do domínio por ator, objetos de trabalho, atividades e cenários alternativos.
-
-- **Item exigido:**  Levantamento de requisitos
-  - **Onde abrir:**  [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)
-  - **O que comprova:**  Personas, jornada atual, jornada proposta, requisitos funcionais, requisitos não funcionais e
-    rastreabilidade.
-
-- **Item exigido:**  Arquitetura backend
-  - **Onde abrir:**  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-  - **O que comprova:**  Arquitetura em camadas, modelo C4, componentes backend, decisões técnicas e relação com requisitos.
-
-- **Item exigido:**  Refinamento técnico
-  - **Onde abrir:**  [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)
-  - **O que comprova:**  Jornada técnica da OS, decisões técnicas, validações, riscos tratados e aderência do backend.
-
-- **Item exigido:**  Event Storming
-  - **Onde abrir:**  [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)
-  - **O que comprova:**  Comandos, eventos, políticas, exceções e fluxos de OS e estoque.
-
-- **Item exigido:**  Swagger/OpenAPI
-  - **Onde abrir:**  [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html`
-  - **O que comprova:**  Contrato REST versionado e interface local para testar a API.
-
-- **Item exigido:**  Relatório de vulnerabilidades
-  - **Onde abrir:**  [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
-  - **O que comprova:**  Scans executados, vulnerabilidades encontradas, correções e riscos aceitos.
-
-- **Item exigido:**  Análise estática e qualidade
-  - **Onde abrir:**  [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)
-  - **O que comprova:**  Ferramentas de qualidade, comandos executados, cobertura, análise estática, lint, dependências e
-    evidências locais.
-
-- **Item exigido:**  Estratégia de testes
-  - **Onde abrir:**  [docs/TESTING.md](docs/TESTING.md)
-  - **O que comprova:**  Testes unitários, testes de integração, fluxo de API ponta a ponta, ferramentas usadas, comandos e
-    cobertura JaCoCo.
-
-Documentos de apoio:
-
-| Material               | Onde abrir                                                     |
-| ---------------------- | -------------------------------------------------------------- |
-| Frontend demonstrativo | [frontend/README.md](frontend/README.md)                       |
-
-## Dados da Entrega
-
-| Campo                           | Valor                                                |
-| ------------------------------- | ---------------------------------------------------- |
-| Projeto                         | AutoCare Hub                                         |
-| Responsável                     | Yasmin Barcelos Pires                                |
-| RM                              | RM370897                                             |
-| Discord                         | `yxsbx`                                              |
-| Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                 |
-| Branch final                    | `main`                                               |
+| Campo                           | Valor                                                 |
+|---------------------------------|-------------------------------------------------------|
+| Projeto                         | AutoCare Hub                                          |
+| Responsável                     | Yasmin Barcelos Pires                                 |
+| RM                              | RM370897                                              |
+| Discord                         | `yxsbx`                                               |
+| Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                  |
+| Branch final                    | `main`                                                |
 | Acesso de avaliação             | Usuário `soat-architecture` com acesso Read concedido |
-| Data consolidada nos documentos | 28/06/2026                                           |
+| Data consolidada nos documentos | 28/06/2026                                            |
 
 ## Escopo do MVP
 
@@ -102,14 +54,19 @@ O Tech Challenge solicita um MVP backend para uma oficina mecânica. O AutoCare 
 - autenticação e autorização com JWT;
 - Swagger/OpenAPI;
 - Docker e execução local reproduzível;
-- testes automatizados, cobertura e relatório de vulnerabilidades.
+- testes automatizados;
+- cobertura JaCoCo;
+- análise estática;
+- relatório de vulnerabilidades.
 
-## Visão Técnica Resumida
+Ficam fora do MVP: pagamento online, envio real de e-mail/SMS/WhatsApp, integração com fornecedores, ERP, mensageria, app mobile real e deploy produtivo em cloud.
+
+## Visão técnica resumida
 
 Backend:
 
 - Java 21;
-- Spring Boot 4.1.0;
+- Spring Boot;
 - Spring Web MVC;
 - Spring Security;
 - Spring Data JPA;
@@ -125,7 +82,7 @@ Backend:
 Frontend demonstrativo:
 
 - Vue 3;
-- Vite 8;
+- Vite;
 - Pinia;
 - Vue Router;
 - Lucide Vue;
@@ -137,7 +94,7 @@ Infraestrutura:
 - Docker Compose;
 - Nginx para servir o frontend em container.
 
-## Arquitetura em uma Página
+## Arquitetura em uma página
 
 O backend é um monolito em camadas:
 
@@ -147,10 +104,10 @@ src/main/java/br/com/autocarehub
 |   |-- enums
 |   |-- exception
 |   |-- model
-|   |-- policy
 |   |-- service
 |   `-- valueobject
 |-- application
+|   |-- port
 |   `-- usecase
 |-- infrastructure
 |   |-- config
@@ -165,9 +122,9 @@ src/main/java/br/com/autocarehub
 
 Detalhamento completo:
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): HLD, LLD, C4 e decisões arquiteturais.
-- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): RFs, RNFs e matriz de rastreabilidade.
-- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md): domínio, linguagem ubíqua e agregados.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): HLD, LLD, C4 e decisões arquiteturais;
+- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): RFs, RNFs e matriz de rastreabilidade;
+- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md): domínio, linguagem ubíqua e agregados;
 - [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md): consolidação final da entrega.
 
 ## Execução com Docker
@@ -177,13 +134,17 @@ Pré-requisitos:
 - Docker;
 - Docker Compose.
 
-Crie o `.env` a partir do exemplo:
+Crie o `.env` a partir do exemplo.
+
+Linux, macOS ou Git Bash:
+
+```bash
+cp .env.example .env
+```
+
+PowerShell:
 
 ```powershell
-# Linux/macOS/Git Bash
-cp .env.example .env
-
-# PowerShell
 Copy-Item .env.example .env
 ```
 
@@ -210,10 +171,13 @@ Acompanhe a inicialização da API e as migrations Flyway criando a base:
 docker compose logs -f app
 ```
 
-O serviço da API no `docker-compose.yml` se chama `app`. Portanto, o comando correto é `docker compose logs -f app`;
-`docker compose logs -f backend` não funciona neste projeto.
+O serviço da API no `docker-compose.yml` se chama `app`. Portanto, o comando correto é:
 
-URLs:
+```powershell
+docker compose logs -f app
+```
+
+URLs locais:
 
 ```text
 Frontend: http://localhost:5173
@@ -221,9 +185,6 @@ API: http://localhost:8080
 Swagger: http://localhost:8080/swagger-ui.html
 PostgreSQL: localhost:5432
 ```
-
-O frontend usa proxy reverso para a API. Assim, ele também pode ser acessado pelo IP local da máquina, por exemplo
-`http://192.168.x.x:5173`, sem depender de CORS entre navegador e backend.
 
 Parar os serviços sem apagar dados:
 
@@ -237,19 +198,24 @@ Remover o volume local do banco para recriar a base do zero:
 docker compose down -v
 ```
 
-Opcional, com cuidado: `docker volume prune` remove volumes Docker não usados por outros projetos também. Use apenas se
-você souber que não precisa desses volumes.
+Opcional, com cuidado:
 
-## Execução em Desenvolvimento
+```powershell
+docker volume prune
+```
 
-Backend:
+Esse comando remove volumes Docker não usados por outros projetos. Use apenas se souber que não precisa desses volumes.
+
+## Execução em desenvolvimento
+
+Backend com PostgreSQL pelo Docker Compose:
 
 ```powershell
 docker compose up -d postgres
 mvn spring-boot:run
 ```
 
-Frontend:
+Frontend com hot reload:
 
 ```powershell
 cd frontend
@@ -257,18 +223,22 @@ npm ci
 npm run dev
 ```
 
-## Usuários de Demonstração
+## Usuários de demonstração
 
-Os usuários seed são carregados por `src/main/resources/db/migration/V1__create_autocarehub_baseline.sql`.
+Os usuários seed são carregados por:
 
-A senha universal de todos os usuários seed abaixo é exclusiva do ambiente local:
+```text
+src/main/resources/db/migration/V1__create_autocarehub_baseline.sql
+```
+
+A senha universal dos usuários seed abaixo é exclusiva do ambiente local acadêmico:
 
 ```text
 autocare123
 ```
 
 | Usuário                               | Perfil                       | Senha         |
-| ------------------------------------- | ---------------------------- | ------------- |
+|---------------------------------------|------------------------------|---------------|
 | `admin@autocarehub.com`               | Admin técnico inicial        | `autocare123` |
 | `master@autocarehub.com`              | Admin Master da plataforma   | `autocare123` |
 | `oficina.admin@autocarehub.com`       | Admin de oficina             | `autocare123` |
@@ -282,10 +252,10 @@ Exemplo de login:
 ```powershell
 curl -X POST http://localhost:8080/api/v1/auth/login `
   -H "Content-Type: application/json" `
-  -d "{\"username\":\"admin@autocarehub.com\",\"password\":\"autocare123\"}"
+  -d "{"username":"admin@autocarehub.com","password":"autocare123"}"
 ```
 
-## Swagger e Endpoints
+## Swagger e endpoints
 
 Swagger local:
 
@@ -308,21 +278,20 @@ Autenticação no Swagger:
 
 Principais grupos de endpoints:
 
-| Grupo                 | Rotas principais                                                                             |
-| --------------------- | -------------------------------------------------------------------------------------------- |
-| Autenticação          | `POST /api/v1/auth/login`                                                                    |
-| Clientes              | `/api/v1/customers`                                                                          |
-| Veículos              | `/api/v1/vehicles`                                                                           |
-| Serviços              | `/api/v1/workshop-services`                                                                  |
-| Peças e estoque       | `/api/v1/parts`                                                                              |
-| Ordens de Serviço     | `/api/v1/service-orders`                                                                     |
-| Orçamento             | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
-| Tracking do cliente   | `/api/v1/service-orders/tracking`                                                            |
-| Métricas da OS        | `/api/v1/service-orders/metrics/average-execution-time`                                       |
-| Usuários              | `/api/v1/users` e `/api/v1/users/me`                                                         |
-| Leads de demonstração | `/api/v1/demo-leads`                                                                         |
+| Grupo               | Rotas principais                                                                             |
+|---------------------|----------------------------------------------------------------------------------------------|
+| Autenticação        | `POST /api/v1/auth/login`                                                                    |
+| Clientes            | `/api/v1/customers`                                                                          |
+| Veículos            | `/api/v1/vehicles`                                                                           |
+| Serviços            | `/api/v1/workshop-services`                                                                  |
+| Peças e estoque     | `/api/v1/parts`                                                                              |
+| Ordens de Serviço   | `/api/v1/service-orders`                                                                     |
+| Orçamento           | `/api/v1/service-orders/{id}/budget/generate` e `/api/v1/service-orders/{id}/budget/approve` |
+| Tracking do cliente | `/api/v1/service-orders/tracking`                                                            |
+| Métricas da OS      | `/api/v1/service-orders/metrics/average-execution-time`                                      |
+| Usuários            | `/api/v1/users` e `/api/v1/users/me`                                                         |
 
-## Validação Rápida
+## Validação rápida
 
 Com o ambiente Docker ativo:
 
@@ -347,45 +316,49 @@ cd frontend
 npm run lint
 npm run build
 npm audit --audit-level=low
+cd ..
 ```
 
-Scans de segurança:
+Scan de dependências backend:
 
 ```powershell
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-## Evidências de Qualidade
+O guia completo de scans está em:
+
+```text
+docs/SECURITY_SCAN_GUIDE.md
+```
+
+## Evidências de qualidade
 
 Resultado de qualidade revalidado em 28/06/2026:
 
-| Área                   | Resultado                                             |
-| ---------------------- | ----------------------------------------------------- |
-| Testes Maven           | 143 testes, 0 falhas, 0 erros, 0 ignorados            |
-| Cobertura JaCoCo       | 96,31% instruções, 97,25% linhas e 90,12% branches    |
-| Gate de cobertura      | 90% instruções, 90% linhas e 90% branches             |
-| Frontend lint          | 0 erros e 0 warnings                                  |
-| Frontend build         | Aprovado                                              |
-| npm audit              | 0 vulnerabilidades                                    |
-| OWASP Dependency-Check | 103 dependências, 0 vulneráveis                       |
-| Docker Scout backend   | 0 críticas, 0 altas e 1 média residual               |
-| Docker Scout frontend  | 0 críticas, 0 altas e 1 média sem correção disponível |
-| OWASP ZAP              | 0 falhas e 2 avisos revisados                        |
-| Gitleaks               | 0 leaks em 36 commits                                 |
-| Semgrep                | 0 achados em 200 arquivos com 187 regras              |
+| Área                   | Resultado                                          |
+|------------------------|----------------------------------------------------|
+| Testes Maven           | 143 testes, 0 falhas, 0 erros e 0 ignorados        |
+| Cobertura JaCoCo       | 96,31% instruções, 97,25% linhas e 90,12% branches |
+| Gate de cobertura      | 90% instruções, 90% linhas e 90% branches          |
+| Frontend lint          | 0 erros e 0 warnings                               |
+| Frontend build         | Aprovado                                           |
+| npm audit              | 0 vulnerabilidades                                 |
+| OWASP Dependency-Check | 103 dependências e 0 vulnerabilidades              |
+| Docker Scout backend   | 0 críticas, 0 altas e 1 média residual aceita      |
+| Docker Scout frontend  | 0 críticas, 0 altas e 1 média residual aceita      |
+| OWASP ZAP              | 0 falhas e 2 avisos revisados                      |
+| Gitleaks               | 0 leaks em 36 commits                              |
+| Semgrep                | 0 achados em 200 arquivos com 187 regras           |
 
-O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos
-condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso o gate interno também
-exige 90% nessa métrica.
+O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso, o gate interno também exige 90% nessa métrica.
 
-Relatórios e evidências gerados localmente:
+Relatórios e evidências:
 
 ```text
 docs/SECURITY_REPORT.md
 docs/SECURITY_SCAN_GUIDE.md
 docs/STATIC_ANALYSIS.md
 docs/TESTING.md
-docs/VIDEO_SCRIPT.md
 target/site/jacoco/index.html
 target/site/jacoco/jacoco.csv
 security-reports/backend-dependencies/dependency-check-report.html
@@ -397,13 +370,15 @@ security-reports/dast/zap-api-report.html
 security-reports/dast/zap-api-report.json
 security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
-target/site/jacoco/index.html
-target/site/jacoco/jacoco.csv
 ```
 
-Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. `target/` continua fora do
-versionamento e permanece como saída local das ferramentas Maven. O resumo oficial dos resultados está em
-[docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md).
+Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. A pasta `target/` continua fora do versionamento e permanece como saída local das ferramentas Maven.
+
+O resumo oficial dos resultados está em:
+
+```text
+docs/SECURITY_REPORT.md
+```
 
 ## CI
 
@@ -417,7 +392,7 @@ O workflow [.github/workflows/quality.yml](.github/workflows/quality.yml) execut
 - validação do Docker Compose;
 - build das imagens Docker.
 
-## Limitações Conhecidas
+## Limitações conhecidas
 
 As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md). Resumo:
 
@@ -427,13 +402,14 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 - multiempresa/multitenancy está simplificado;
 - Swagger fica público no ambiente local acadêmico;
 - OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas avisos revisados;
-- imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aguardando versão corrigida publicada no Maven Central;
-- imagem frontend mantém 1 CVE média de BusyBox sem versão corrigida disponível na base analisada.
+- a imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aceita temporariamente porque a versão corrigida indicada pelo Docker Scout ainda não estava disponível no Maven Central;
+- a imagem frontend mantém 1 CVE média de BusyBox, aceita temporariamente porque o Docker Scout não indicou versão corrigida disponível.
 
-## Evoluções Técnicas
+Essas limitações não impedem a execução do fluxo principal exigido no Tech Challenge.
 
-O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e
-[docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções:
+## Evoluções técnicas
+
+O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções futuras:
 
 - ampliar cenários extremos e fluxos de regressão;
 - criar auditoria de ações sensíveis;
@@ -441,4 +417,5 @@ O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e
 - integrar notificações reais para cliente;
 - restringir Swagger por ambiente/perfil;
 - evoluir multiempresa/multitenancy;
+- automatizar scans de segurança em pipeline;
 - reexecutar scans de segurança em cada ciclo de entrega.
