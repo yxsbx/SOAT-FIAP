@@ -265,9 +265,11 @@ class ApplicationUseCaseAdditionalCoverageTest {
                         "Bosch",
                         Money.of("30.00"),
                         Money.of("80.00"),
+                        11,
                         4,
                         false));
         assertThat(updated.active()).isFalse();
+        assertThat(updated.stockQuantity()).isEqualTo(11);
 
         assertThat(new ListPartsUseCase(partRepository).execute(new ListPartsUseCase.Query(false, false)))
                 .containsExactly(updated);

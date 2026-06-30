@@ -44,6 +44,7 @@ public final class PartRestMapper {
                 request.getBrand(),
                 new Money(BigDecimal.valueOf(request.getCostPrice() == null ? 0 : request.getCostPrice())),
                 new Money(BigDecimal.valueOf(request.getUnitPrice())),
+                request.getStockQuantity(),
                 request.getMinimumStock(),
                 Boolean.TRUE.equals(request.getActive()));
     }

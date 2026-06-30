@@ -28,6 +28,13 @@ public class UpdatePartUseCase {
                 command.costPrice(),
                 command.unitPrice(),
                 command.minimumStock());
+        int stockDifference = command.stockQuantity() - part.stockQuantity();
+        if (stockDifference > 0) {
+            part.increaseStock(stockDifference);
+        }
+        if (stockDifference < 0) {
+            part.reduceStock(Math.abs(stockDifference));
+        }
         if (command.active()) {
             part.activate();
         } else {
@@ -46,6 +53,7 @@ public class UpdatePartUseCase {
             String brand,
             Money costPrice,
             Money unitPrice,
+            int stockQuantity,
             int minimumStock,
             boolean active) {}
 }

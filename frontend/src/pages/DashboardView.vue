@@ -2418,11 +2418,17 @@ function createPart() {
   return runAction(
     async () => {
       const payload = {
-        ...forms.part,
+        name: forms.part.name,
+        description: forms.part.description,
+        sku: forms.part.sku,
+        category: forms.part.category,
+        subcategory: forms.part.subcategory,
+        brand: forms.part.brand,
         costPrice: Number(forms.part.costPrice),
         unitPrice: Number(forms.part.unitPrice),
         stockQuantity: Number(forms.part.stockQuantity),
         minimumStock: Number(forms.part.minimumStock),
+        active: forms.part.active !== false,
       };
       if (forms.part.id) {
         await resources.updatePart(forms.part.id, payload);
