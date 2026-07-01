@@ -2,16 +2,14 @@ package br.com.autocarehub.interfaces.rest.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class CustomerRestMapperTest {
 
@@ -22,13 +20,13 @@ class CustomerRestMapperTest {
     @Test
     void shouldMapCreateAndUpdateCommandsWithAddress() {
         var apiAddress = new br.com.autocarehub.interfaces.rest.generated.model.Address(
-                "Avenida Paulista", "1000", "Bela Vista", "São Paulo", "SP", "01310-100")
+                        "Avenida Paulista", "1000", "Bela Vista", "São Paulo", "SP", "01310-100")
                 .complement("10 andar");
         CreateCustomerRequest createRequest =
                 new CreateCustomerRequest("Maria Silva", "52998224725", "11999999999", "maria@example.com", apiAddress);
         UUID customerId = UUID.randomUUID();
         UpdateCustomerRequest updateRequest = new UpdateCustomerRequest(
-                "Maria Souza", "52998224725", "11888888888", "maria.souza@example.com", apiAddress, null)
+                        "Maria Souza", "52998224725", "11888888888", "maria.souza@example.com", apiAddress, null)
                 .active(null);
 
         var createCommand = CustomerRestMapper.toCommand(createRequest);

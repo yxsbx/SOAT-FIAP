@@ -37,6 +37,5 @@ public class CreatePartUseCase {
             Money costPrice,
             Money unitPrice,
             int stockQuantity,
-            int minimumStock) {
-    }
+            int minimumStock) {}
 }

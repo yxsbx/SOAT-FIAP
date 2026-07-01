@@ -2083,6 +2083,10 @@ button.billing-metric {
     );
 }
 
+.employee-grid--no-action {
+  grid-template-columns: minmax(0, 1.35fr) minmax(120px, 170px) minmax(110px, 150px) minmax(86px, 110px);
+}
+
 .vehicles-grid {
   grid-template-columns: minmax(0, 1.25fr) minmax(86px, 110px) minmax(0, 1.25fr) minmax(120px, 160px) minmax(
       110px,

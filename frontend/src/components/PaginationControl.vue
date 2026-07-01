@@ -38,7 +38,7 @@ function commitInput() {
 <template>
   <nav aria-label="Paginação" class="pagination-control">
     <button :disabled="page <= 0" title="Página anterior" type="button" @click="goTo(page - 1)">
-      <ChevronLeft :size="18"/>
+      <ChevronLeft :size="18" />
     </button>
     <label>
       Página
@@ -53,7 +53,7 @@ function commitInput() {
       <span>de {{ safeTotalPages }}</span>
     </label>
     <button :disabled="page + 1 >= safeTotalPages" title="Próxima página" type="button" @click="goTo(page + 1)">
-      <ChevronRight :size="18"/>
+      <ChevronRight :size="18" />
     </button>
   </nav>
 </template>

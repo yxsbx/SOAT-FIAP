@@ -6,8 +6,7 @@ import br.com.autocarehub.infrastructure.persistence.entity.WorkshopServiceJpaEn
 
 public final class WorkshopServiceJpaMapper {
 
-    private WorkshopServiceJpaMapper() {
-    }
+    private WorkshopServiceJpaMapper() {}
 
     public static WorkshopServiceJpaEntity toEntity(WorkshopService workshopService) {
         WorkshopServiceJpaEntity entity = new WorkshopServiceJpaEntity();

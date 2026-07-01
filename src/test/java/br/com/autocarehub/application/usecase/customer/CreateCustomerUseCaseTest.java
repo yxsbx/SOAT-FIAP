@@ -3,19 +3,20 @@ package br.com.autocarehub.application.usecase.customer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.domain.model.Customer;
+import br.com.autocarehub.domain.model.User;
+import br.com.autocarehub.domain.valueobject.Address;
+import br.com.autocarehub.domain.valueobject.Document;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
-
-import br.com.autocarehub.application.exception.ApplicationException;
-import br.com.autocarehub.application.port.out.CustomerRepository;
-import br.com.autocarehub.domain.model.Customer;
-import br.com.autocarehub.domain.valueobject.Address;
-import br.com.autocarehub.domain.valueobject.Document;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 class CreateCustomerUseCaseTest {
 
@@ -48,6 +49,50 @@ class CreateCustomerUseCaseTest {
                 .hasMessage("Customer document already exists");
     }
 
+    @Test
+    void shouldCreateCustomerLoginWhenUserRepositoryIsConfigured() {
+        InMemoryUserRepository userRepository = new InMemoryUserRepository();
+        CreateCustomerUseCase useCase =
+                new CreateCustomerUseCase(repository, userRepository, new TestPasswordEncoder());
+
+        Customer customer = useCase.execute(new CreateCustomerUseCase.Command(
+                "Maria Silva", "52998224725", "11999999999", "maria@example.com", address()));
+
+        User user = userRepository.findByUsername("maria@example.com").orElseThrow();
+        assertThat(user.customerId()).isEqualTo(customer.id());
+        assertThat(user.role().name()).isEqualTo("CUSTOMER");
+        assertThat(user.profileType()).isEqualTo("CUSTOMER_OWNER");
+        assertThat(user.passwordHash()).isEqualTo("encoded:admin");
+    }
+
+    @Test
+    void shouldRejectCustomerWhenEmailAlreadyExistsAsLogin() {
+        InMemoryUserRepository userRepository = new InMemoryUserRepository();
+        userRepository.save(new User(
+                UUID.randomUUID(),
+                "maria@example.com",
+                "encoded:any",
+                br.com.autocarehub.domain.enums.UserRole.CUSTOMER,
+                null,
+                null,
+                "Maria",
+                "CUSTOMER_OWNER",
+                "",
+                "",
+                "",
+                List.of(),
+                true,
+                java.time.LocalDateTime.now()));
+        CreateCustomerUseCase useCase =
+                new CreateCustomerUseCase(repository, userRepository, new TestPasswordEncoder());
+
+        assertThatThrownBy(() -> useCase.execute(new CreateCustomerUseCase.Command(
+                        "Maria Silva", "52998224725", "11999999999", "maria@example.com", address())))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessage("Username already exists");
+        assertThat(repository.findByDocument(Document.from("52998224725"))).isEmpty();
+    }
+
     private static class InMemoryCustomerRepository implements CustomerRepository {
 
         private final Map<UUID, Customer> customers = new LinkedHashMap<>();
@@ -73,6 +118,47 @@ class CreateCustomerUseCaseTest {
         @Override
         public List<Customer> findAll() {
             return List.copyOf(customers.values());
+        }
+    }
+
+    private static class InMemoryUserRepository implements UserRepository {
+
+        private final Map<UUID, User> users = new LinkedHashMap<>();
+
+        @Override
+        public User save(User user) {
+            users.put(user.id(), user);
+            return user;
+        }
+
+        @Override
+        public Optional<User> findById(UUID id) {
+            return Optional.ofNullable(users.get(id));
+        }
+
+        @Override
+        public Optional<User> findByUsername(String username) {
+            return users.values().stream()
+                    .filter(user -> user.username().equals(username))
+                    .findFirst();
+        }
+
+        @Override
+        public List<User> findAll() {
+            return List.copyOf(users.values());
+        }
+    }
+
+    private static class TestPasswordEncoder implements PasswordEncoder {
+
+        @Override
+        public String encode(CharSequence rawPassword) {
+            return "encoded:" + rawPassword;
+        }
+
+        @Override
+        public boolean matches(CharSequence rawPassword, String encodedPassword) {
+            return encodedPassword.equals("encoded:" + rawPassword);
         }
     }
 }

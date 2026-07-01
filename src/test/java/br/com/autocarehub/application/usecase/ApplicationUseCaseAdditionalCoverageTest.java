@@ -3,19 +3,6 @@ package br.com.autocarehub.application.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -79,6 +66,17 @@ import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 class ApplicationUseCaseAdditionalCoverageTest {
 
@@ -172,8 +170,8 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThat(vehicleRepository.findById(vehicle.id()).orElseThrow().active())
                 .isFalse();
         assertThatThrownBy(() -> new CreateVehicleUseCase(vehicleRepository, customerRepository)
-                .execute(new CreateVehicleUseCase.Command(
-                        UUID.randomUUID(), "GHI3J45", "Fiat", "Argo", 2022, 10000)))
+                        .execute(new CreateVehicleUseCase.Command(
+                                UUID.randomUUID(), "GHI3J45", "Fiat", "Argo", 2022, 10000)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
     }
@@ -306,29 +304,28 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .extracting(User::id)
                 .contains(admin.id(), employee.id());
         assertThat(new ListUsersUseCase(userRepository)
-                .execute(new ListUsersUseCase.Query(true, "ADMIN", "admin", "admin")))
+                        .execute(new ListUsersUseCase.Query(true, "ADMIN", "admin", "admin")))
                 .extracting(User::id)
                 .containsExactly(admin.id());
         assertThat(new ListUsersUseCase(userRepository)
-                .execute(new ListUsersUseCase.Query(false, "EMPLOYEE", "employee", "consultor")))
+                        .execute(new ListUsersUseCase.Query(false, "EMPLOYEE", "employee", "consultor")))
                 .extracting(User::id)
                 .containsExactly(employee.id());
         assertThat(new ListUsersUseCase(userRepository).execute(new ListUsersUseCase.Query(null, null, null, "user")))
                 .extracting(User::id)
                 .contains(admin.id(), employee.id());
         assertThat(new ListUsersUseCase(userRepository)
-                .execute(new ListUsersUseCase.Query(null, null, null, "employee")))
+                        .execute(new ListUsersUseCase.Query(null, null, null, "employee")))
                 .extracting(User::id)
                 .containsExactly(employee.id());
         assertThat(new ListUsersUseCase(userRepository).execute(new ListUsersUseCase.Query(null, null, null, "admin")))
                 .extracting(User::id)
                 .containsExactly(admin.id());
-        assertThat(new ListUsersUseCase(userRepository)
-                .execute(new ListUsersUseCase.Query(null, null, null, "gestor")))
+        assertThat(new ListUsersUseCase(userRepository).execute(new ListUsersUseCase.Query(null, null, null, "gestor")))
                 .extracting(User::id)
                 .containsExactly(admin.id());
         assertThat(new ListUsersUseCase(userRepository)
-                .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
+                        .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
                 .isEmpty();
 
         User created = new CreateUserUseCase(userRepository, passwordEncoder)
@@ -406,64 +403,64 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isEqualTo("encoded:new-secret");
 
         assertThat(new GetUserPreferenceUseCase(preferenceRepository)
-                .execute(admin.id(), "home", "{\"page\":\"dashboard\"}"))
+                        .execute(admin.id(), "home", "{\"page\":\"dashboard\"}"))
                 .isEqualTo("{\"page\":\"dashboard\"}");
         assertThat(new SaveUserPreferenceUseCase(preferenceRepository)
-                .execute(admin.id(), "home", "{\"page\":\"orders\"}"))
+                        .execute(admin.id(), "home", "{\"page\":\"orders\"}"))
                 .isEqualTo("{\"page\":\"orders\"}");
         assertThat(new GetUserPreferenceUseCase(preferenceRepository).execute(admin.id(), "home", "{}"))
                 .isEqualTo("{\"page\":\"orders\"}");
 
         assertThatThrownBy(() -> new CreateUserUseCase(userRepository, passwordEncoder)
-                .execute(new CreateUserUseCase.Command(
-                        "admin",
-                        "plain",
-                        "ADMIN",
-                        null,
-                        COMPANY_ID,
-                        "Admin",
-                        "admin",
-                        "",
-                        "",
-                        "",
-                        List.of(),
-                        true)))
+                        .execute(new CreateUserUseCase.Command(
+                                "admin",
+                                "plain",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Admin",
+                                "admin",
+                                "",
+                                "",
+                                "",
+                                List.of(),
+                                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Username already exists");
         assertThatThrownBy(() -> new UpdateUserUseCase(userRepository)
-                .execute(new UpdateUserUseCase.Command(
-                        updated.id(),
-                        "admin",
-                        "ADMIN",
-                        null,
-                        COMPANY_ID,
-                        "Duplicado",
-                        "admin",
-                        "AutoCare",
-                        "Oficina",
-                        "Gestor",
-                        List.of(),
-                        true)))
+                        .execute(new UpdateUserUseCase.Command(
+                                updated.id(),
+                                "admin",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Duplicado",
+                                "admin",
+                                "AutoCare",
+                                "Oficina",
+                                "Gestor",
+                                List.of(),
+                                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Username already exists");
         assertThatThrownBy(() -> new UpdateUserUseCase(userRepository)
-                .execute(new UpdateUserUseCase.Command(
-                        UUID.randomUUID(),
-                        "missing",
-                        "ADMIN",
-                        null,
-                        COMPANY_ID,
-                        "Missing",
-                        "admin",
-                        "AutoCare",
-                        "Oficina",
-                        "Gestor",
-                        List.of(),
-                        true)))
+                        .execute(new UpdateUserUseCase.Command(
+                                UUID.randomUUID(),
+                                "missing",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Missing",
+                                "admin",
+                                "AutoCare",
+                                "Oficina",
+                                "Gestor",
+                                List.of(),
+                                true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
         assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
-                .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "wrong", "new-secret", true)))
+                        .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "wrong", "new-secret", true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Current password is invalid");
     }
@@ -510,8 +507,8 @@ class ApplicationUseCaseAdditionalCoverageTest {
         InMemoryPasswordEncoder passwordEncoder = new InMemoryPasswordEncoder();
 
         assertThatThrownBy(() -> new UpdateCustomerUseCase(customerRepository)
-                .execute(new UpdateCustomerUseCase.Command(
-                        missingId, "Nome", "11999999999", "mail@example.com", address(), true)))
+                        .execute(new UpdateCustomerUseCase.Command(
+                                missingId, "Nome", "11999999999", "mail@example.com", address(), true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
         assertThatThrownBy(() -> new DeleteCustomerUseCase(customerRepository).execute(missingId))
@@ -524,12 +521,12 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
         assertThatThrownBy(() ->
-                new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository).execute(missingId))
+                        new ListVehiclesByCustomerUseCase(vehicleRepository, customerRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
         assertThatThrownBy(() -> new UpdateVehicleUseCase(vehicleRepository)
-                .execute(new UpdateVehicleUseCase.Command(
-                        missingId, "ABC1D23", "Honda", "Civic", 2020, 10000, true)))
+                        .execute(new UpdateVehicleUseCase.Command(
+                                missingId, "ABC1D23", "Honda", "Civic", 2020, 10000, true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
 
@@ -540,8 +537,8 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
         assertThatThrownBy(() -> new UpdateWorkshopServiceUseCase(workshopServiceRepository)
-                .execute(new UpdateWorkshopServiceUseCase.Command(
-                        missingId, "Serviço", "Descrição", Money.of("10.00"), 30, true)))
+                        .execute(new UpdateWorkshopServiceUseCase.Command(
+                                missingId, "Serviço", "Descrição", Money.of("10.00"), 30, true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Workshop service not found");
 
@@ -549,23 +546,23 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
         assertThatThrownBy(() -> new ReservePartStockUseCase(partRepository)
-                .execute(new ReservePartStockUseCase.Command(missingId, 1)))
+                        .execute(new ReservePartStockUseCase.Command(missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
         assertThatThrownBy(() -> new ReleasePartReservationUseCase(partRepository)
-                .execute(new ReleasePartReservationUseCase.Command(missingId, 1)))
+                        .execute(new ReleasePartReservationUseCase.Command(missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
         assertThatThrownBy(() -> new ConfigurePartReservationUseCase(partRepository)
-                .execute(new ConfigurePartReservationUseCase.Command(missingId, 3)))
+                        .execute(new ConfigurePartReservationUseCase.Command(missingId, 3)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
         assertThatThrownBy(() -> new UpdatePartStockUseCase(partRepository)
-                .execute(new UpdatePartStockUseCase.Command(missingId, 10)))
+                        .execute(new UpdatePartStockUseCase.Command(missingId, 10)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
         assertThatThrownBy(() -> new CommitPartReservationUseCase(partRepository, movementRepository)
-                .execute(new CommitPartReservationUseCase.Command(missingId, 1, "Venda")))
+                        .execute(new CommitPartReservationUseCase.Command(missingId, 1, "Venda")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Part not found");
 
@@ -573,27 +570,27 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() -> new AddServiceToServiceOrderUseCase(serviceOrderRepository, workshopServiceRepository)
-                .execute(new AddServiceToServiceOrderUseCase.Command(missingId, missingId, 1)))
+                        .execute(new AddServiceToServiceOrderUseCase.Command(missingId, missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() -> new AddPartToServiceOrderUseCase(serviceOrderRepository, partRepository)
-                .execute(new AddPartToServiceOrderUseCase.Command(missingId, missingId, 1)))
+                        .execute(new AddPartToServiceOrderUseCase.Command(missingId, missingId, 1)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() -> new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(missingId))
+                        .execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() ->
-                new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(missingId))
+                        new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() -> new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository)
-                .execute(new UpdateServiceOrderStatusUseCase.Command(missingId, null)))
+                        .execute(new UpdateServiceOrderStatusUseCase.Command(missingId, null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
         assertThatThrownBy(() -> new ListServiceOrdersByCustomerUseCase(serviceOrderRepository, customerRepository)
-                .execute(missingId))
+                        .execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Customer not found");
 
@@ -601,7 +598,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
         assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
-                .execute(new ChangeUserPasswordUseCase.Command(missingId, "old", "new", true)))
+                        .execute(new ChangeUserPasswordUseCase.Command(missingId, "old", "new", true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
     }
@@ -808,7 +805,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         public boolean matches(@Nullable CharSequence rawPassword, @Nullable String encodedPassword) {
             return encodedPassword != null
                     && (encodedPassword.equals("encoded:" + rawPassword)
-                    || encodedPassword.equals("{encoded}" + rawPassword));
+                            || encodedPassword.equals("{encoded}" + rawPassword));
         }
     }
 }

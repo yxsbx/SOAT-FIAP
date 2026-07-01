@@ -3,16 +3,14 @@ package br.com.autocarehub.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class ServiceOrderTest {
 
@@ -38,7 +36,7 @@ class ServiceOrderTest {
 
     private static void assertCannotAddService(ServiceOrder serviceOrder) {
         assertThatThrownBy(() -> serviceOrder.addService(
-                new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
+                        new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
                 .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
                 .hasMessage("Service order items cannot be changed in current status");
     }
@@ -138,7 +136,7 @@ class ServiceOrderTest {
         serviceOrder.generateBudget();
 
         assertThatThrownBy(() -> serviceOrder.addService(
-                new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
+                        new WorkshopService("Alignment", "Wheel alignment", Money.of("120.00"), 60), 1))
                 .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
                 .hasMessage("Service order items cannot be changed in current status");
     }
@@ -215,7 +213,7 @@ class ServiceOrderTest {
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Service name is required");
         assertThatThrownBy(
-                () -> new ServiceOrder.ServiceOrderPart(UUID.randomUUID(), "Part", "   ", 1, Money.of("10.00")))
+                        () -> new ServiceOrder.ServiceOrderPart(UUID.randomUUID(), "Part", "   ", 1, Money.of("10.00")))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("SKU is required");
     }

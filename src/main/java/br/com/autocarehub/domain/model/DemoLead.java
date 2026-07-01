@@ -13,5 +13,4 @@ public record DemoLead(
         String cnpj,
         String city,
         String message,
-        LocalDateTime createdAt) {
-}
+        LocalDateTime createdAt) {}

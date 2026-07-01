@@ -3,14 +3,6 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
@@ -20,6 +12,12 @@ import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class GenerateServiceOrderBudgetUseCaseTest {
 
@@ -90,7 +88,7 @@ class GenerateServiceOrderBudgetUseCaseTest {
         partRepository.save(part);
 
         assertThatThrownBy(() -> new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(serviceOrder.id()))
+                        .execute(serviceOrder.id()))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Insufficient stock");
     }
@@ -98,7 +96,7 @@ class GenerateServiceOrderBudgetUseCaseTest {
     @Test
     void shouldRejectBudgetGenerationWhenServiceOrderDoesNotExist() {
         assertThatThrownBy(() -> new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                .execute(UUID.randomUUID()))
+                        .execute(UUID.randomUUID()))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found");
     }

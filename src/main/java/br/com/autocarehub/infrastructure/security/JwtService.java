@@ -1,19 +1,16 @@
 package br.com.autocarehub.infrastructure.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.crypto.SecretKey;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
@@ -73,6 +70,5 @@ public class JwtService {
                 .getPayload();
     }
 
-    public record IssuedToken(String accessToken, String tokenType, long expiresIn) {
-    }
+    public record IssuedToken(String accessToken, String tokenType, long expiresIn) {}
 }

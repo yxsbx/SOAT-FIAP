@@ -1,16 +1,14 @@
 package br.com.autocarehub.infrastructure.security;
 
+import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.domain.valueobject.Document;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import br.com.autocarehub.application.port.out.CustomerRepository;
-import br.com.autocarehub.application.port.out.ServiceOrderRepository;
-import br.com.autocarehub.domain.valueobject.Document;
 
 @Service("authorizationService")
 public class AuthorizationService {

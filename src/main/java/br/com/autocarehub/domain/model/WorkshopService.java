@@ -1,11 +1,10 @@
 package br.com.autocarehub.domain.model;
 
-import java.util.Objects;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.util.Objects;
+import java.util.UUID;
 
 public class WorkshopService {
 

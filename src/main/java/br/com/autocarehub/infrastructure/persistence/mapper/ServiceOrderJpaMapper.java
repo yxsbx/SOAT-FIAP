@@ -1,19 +1,17 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import java.util.List;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderPartJpaEntity;
 import br.com.autocarehub.infrastructure.persistence.entity.ServiceOrderServiceJpaEntity;
+import java.util.List;
+import java.util.UUID;
 
 public final class ServiceOrderJpaMapper {
 
-    private ServiceOrderJpaMapper() {
-    }
+    private ServiceOrderJpaMapper() {}
 
     public static ServiceOrderJpaEntity toEntity(ServiceOrder serviceOrder) {
         ServiceOrderJpaEntity entity = new ServiceOrderJpaEntity();

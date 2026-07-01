@@ -1,11 +1,10 @@
 package br.com.autocarehub.application.usecase.user;
 
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.domain.model.User;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
-import br.com.autocarehub.application.port.out.UserRepository;
-import br.com.autocarehub.domain.model.User;
 
 public class ListUsersUseCase {
 
@@ -40,6 +39,5 @@ public class ListUsersUseCase {
                 .toList();
     }
 
-    public record Query(Boolean active, String role, String profileType, String search) {
-    }
+    public record Query(Boolean active, String role, String profileType, String search) {}
 }

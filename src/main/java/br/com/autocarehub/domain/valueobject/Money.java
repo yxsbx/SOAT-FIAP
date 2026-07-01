@@ -1,10 +1,9 @@
 package br.com.autocarehub.domain.valueobject;
 
+import br.com.autocarehub.domain.exception.DomainException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
-
-import br.com.autocarehub.domain.exception.DomainException;
 
 public record Money(BigDecimal value) implements Comparable<Money> {
 

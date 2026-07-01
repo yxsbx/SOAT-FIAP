@@ -1,12 +1,5 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
-
 import br.com.autocarehub.application.usecase.workshopservice.CreateWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
@@ -19,6 +12,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.UpdateWorkshopServiceR
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.WorkshopServiceResponse;
 import br.com.autocarehub.interfaces.rest.mapper.WorkshopServiceRestMapper;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class WorkshopServicesController implements WorkshopServicesApi {

@@ -3,14 +3,6 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -22,6 +14,12 @@ import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class TrackServiceOrderUseCaseTest {
 
@@ -102,11 +100,11 @@ class TrackServiceOrderUseCaseTest {
         TrackServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(
-                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), "11222333000181", null)))
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), "11222333000181", null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found for customer document");
         assertThatThrownBy(() -> useCase.execute(
-                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, "DEF2G34")))
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, "DEF2G34")))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Service order not found for vehicle plate");
     }
@@ -118,12 +116,12 @@ class TrackServiceOrderUseCaseTest {
 
         vehicleRepository.vehicles.clear();
         assertThatThrownBy(() -> useCase.execute(
-                new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null)))
+                        new TrackServiceOrderUseCase.Query(seed.serviceOrder().id(), null, null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
 
         assertThatThrownBy(() -> useCase.execute(new TrackServiceOrderUseCase.Query(
-                null, seed.customer().document().value(), null)))
+                        null, seed.customer().document().value(), null)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Vehicle not found");
     }
@@ -158,8 +156,7 @@ class TrackServiceOrderUseCaseTest {
         return new Seed(customer, vehicle, serviceOrder);
     }
 
-    private record Seed(Customer customer, Vehicle vehicle, ServiceOrder serviceOrder) {
-    }
+    private record Seed(Customer customer, Vehicle vehicle, ServiceOrder serviceOrder) {}
 
     private static class InMemoryCustomerRepository implements CustomerRepository {
 

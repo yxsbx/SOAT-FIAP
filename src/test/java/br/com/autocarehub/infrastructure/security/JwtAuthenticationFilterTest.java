@@ -6,22 +6,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.FilterChain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.model.User;
-
-import io.jsonwebtoken.JwtException;
-import jakarta.servlet.FilterChain;
 
 class JwtAuthenticationFilterTest {
 

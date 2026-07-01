@@ -1,8 +1,13 @@
 package br.com.autocarehub.interfaces.rest.exception;
 
+import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.interfaces.rest.generated.model.ErrorResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 import java.time.OffsetDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,14 +20,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-
-import br.com.autocarehub.application.exception.ApplicationException;
-import br.com.autocarehub.application.exception.ResourceNotFoundException;
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.interfaces.rest.generated.model.ErrorResponse;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
@@ -97,11 +94,11 @@ public class RestExceptionHandler {
     private ResponseEntity<ErrorResponse> error(
             HttpStatus status, String message, List<String> details, HttpServletRequest request) {
         ErrorResponse response = new ErrorResponse(
-                OffsetDateTime.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                message,
-                request.getRequestURI())
+                        OffsetDateTime.now(),
+                        status.value(),
+                        status.getReasonPhrase(),
+                        message,
+                        request.getRequestURI())
                 .details(details);
         return ResponseEntity.status(status).body(response);
     }

@@ -3,7 +3,6 @@ package br.com.autocarehub.infrastructure.persistence.entity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

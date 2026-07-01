@@ -1,12 +1,11 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
+import java.util.UUID;
 
 public class AddPartToServiceOrderUseCase {
 
@@ -29,6 +28,5 @@ public class AddPartToServiceOrderUseCase {
         return serviceOrderRepository.save(serviceOrder);
     }
 
-    public record Command(UUID serviceOrderId, UUID partId, int quantity) {
-    }
+    public record Command(UUID serviceOrderId, UUID partId, int quantity) {}
 }

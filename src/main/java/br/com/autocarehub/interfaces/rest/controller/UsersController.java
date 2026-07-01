@@ -1,8 +1,28 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
+import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.port.out.CompanyRepository;
+import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
+import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.GetUserUseCase;
+import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
+import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
+import br.com.autocarehub.domain.model.Company;
+import br.com.autocarehub.domain.model.User;
+import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +37,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import br.com.autocarehub.application.exception.ApplicationException;
-import br.com.autocarehub.application.port.out.CompanyRepository;
-import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
-import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
-import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
-import br.com.autocarehub.application.usecase.user.GetUserUseCase;
-import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
-import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
-import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
-import br.com.autocarehub.domain.model.Company;
-import br.com.autocarehub.domain.model.User;
-import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
-
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -311,22 +307,22 @@ public class UsersController {
                 normalized.active());
         if (current != null
                 && !canManageUser(
-                requester,
-                new User(
-                        current.id(),
-                        scoped.username(),
-                        current.passwordHash(),
-                        current.role(),
-                        scoped.customerId(),
-                        scoped.companyId(),
-                        scoped.fullName(),
-                        scoped.profileType(),
-                        scoped.companyName(),
-                        scoped.companyType(),
-                        scoped.employeeSubRole(),
-                        scoped.permissions(),
-                        scoped.active(),
-                        current.createdAt()))) {
+                        requester,
+                        new User(
+                                current.id(),
+                                scoped.username(),
+                                current.passwordHash(),
+                                current.role(),
+                                scoped.customerId(),
+                                scoped.companyId(),
+                                scoped.fullName(),
+                                scoped.profileType(),
+                                scoped.companyName(),
+                                scoped.companyType(),
+                                scoped.employeeSubRole(),
+                                scoped.permissions(),
+                                scoped.active(),
+                                current.createdAt()))) {
             throw new ApplicationException("User is outside the current company scope");
         }
         return scoped;
@@ -372,14 +368,18 @@ public class UsersController {
     private UserCommandData normalizeRoleProfile(UserCommandData data) {
         return switch (data.profileType()) {
             case "MASTER_ADMIN" -> data.withRole("ADMIN").withoutCompany().withoutEmployeeSubRole();
-            case "WORKSHOP_ADMIN" -> data.withRole("ADMIN").withCompanyType("WORKSHOP").withoutEmployeeSubRole();
-            case "PARTS_STORE_ADMIN" -> data.withRole("ADMIN").withCompanyType("PARTS_STORE").withoutEmployeeSubRole();
-            case "WORKSHOP_EMPLOYEE" -> data.withRole("EMPLOYEE")
-                    .withCompanyType("WORKSHOP")
-                    .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
-            case "PARTS_STORE_EMPLOYEE" -> data.withRole("EMPLOYEE")
-                    .withCompanyType("PARTS_STORE")
-                    .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
+            case "WORKSHOP_ADMIN" ->
+                data.withRole("ADMIN").withCompanyType("WORKSHOP").withoutEmployeeSubRole();
+            case "PARTS_STORE_ADMIN" ->
+                data.withRole("ADMIN").withCompanyType("PARTS_STORE").withoutEmployeeSubRole();
+            case "WORKSHOP_EMPLOYEE" ->
+                data.withRole("EMPLOYEE")
+                        .withCompanyType("WORKSHOP")
+                        .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
+            case "PARTS_STORE_EMPLOYEE" ->
+                data.withRole("EMPLOYEE")
+                        .withCompanyType("PARTS_STORE")
+                        .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
             case "CUSTOMER_OWNER" -> data.withRole("CUSTOMER").withoutCompany().withoutEmployeeSubRole();
             default -> throw new ApplicationException("Invalid user profile type");
         };
@@ -415,17 +415,13 @@ public class UsersController {
             String companyType,
             String employeeSubRole,
             List<String> permissions,
-            boolean active) {
-    }
+            boolean active) {}
 
-    public record UserListResponse(List<UserResponse> items) {
-    }
+    public record UserListResponse(List<UserResponse> items) {}
 
-    public record CompanyResponse(UUID id, String name, String type, boolean active) {
-    }
+    public record CompanyResponse(UUID id, String name, String type, boolean active) {}
 
-    public record CompanyListResponse(List<CompanyResponse> items) {
-    }
+    public record CompanyListResponse(List<CompanyResponse> items) {}
 
     public record CreateUserRequest(
             @Email @NotBlank String username,
@@ -601,21 +597,16 @@ public class UsersController {
         }
     }
 
-    public record UpdateCurrentUserRequest(@NotBlank @Size(max = 120) String fullName) {
-    }
+    public record UpdateCurrentUserRequest(@NotBlank @Size(max = 120) String fullName) {}
 
     public record ChangePasswordRequest(
-            @NotBlank @Size(max = 72) String currentPassword, @Size(min = 8, max = 72) String newPassword) {
-    }
+            @NotBlank @Size(max = 72) String currentPassword, @Size(min = 8, max = 72) String newPassword) {}
 
-    public record ResetPasswordRequest(@Size(min = 8, max = 72) String newPassword) {
-    }
+    public record ResetPasswordRequest(@Size(min = 8, max = 72) String newPassword) {}
 
     public record HomePreferenceRequest(
             @NotEmpty @Size(max = 30) List<@Pattern(regexp = "^[a-z0-9-]{3,60}$") String> widgets,
-            boolean showAlertsOnHome) {
-    }
+            boolean showAlertsOnHome) {}
 
-    public record HomePreferenceResponse(List<String> widgets, boolean showAlertsOnHome) {
-    }
+    public record HomePreferenceResponse(List<String> widgets, boolean showAlertsOnHome) {}
 }

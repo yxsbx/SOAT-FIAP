@@ -16,7 +16,7 @@ services:
       timeout: 5s
       retries: 5
 
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -57,7 +57,7 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      - app
+      - backend
 
 volumes:
   autocarehub-postgres-data:

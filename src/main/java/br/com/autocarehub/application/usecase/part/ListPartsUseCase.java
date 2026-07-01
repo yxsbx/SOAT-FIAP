@@ -1,9 +1,8 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.List;
-
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.List;
 
 public class ListPartsUseCase {
 
@@ -26,6 +25,5 @@ public class ListPartsUseCase {
                 .toList();
     }
 
-    public record Query(Boolean active, Boolean lowStock) {
-    }
+    public record Query(Boolean active, Boolean lowStock) {}
 }

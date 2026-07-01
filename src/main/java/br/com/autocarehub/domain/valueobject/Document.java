@@ -1,10 +1,9 @@
 package br.com.autocarehub.domain.valueobject;
 
-import java.util.Objects;
-import java.util.regex.Pattern;
-
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.exception.DomainException;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public record Document(DocumentType type, String value) {
 

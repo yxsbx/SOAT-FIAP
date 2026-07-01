@@ -1,18 +1,16 @@
 package br.com.autocarehub.domain.model;
 
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
+import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.jspecify.annotations.Nullable;
-
-import br.com.autocarehub.domain.enums.ServiceOrderStatus;
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.exception.InvalidServiceOrderStatusTransitionException;
-import br.com.autocarehub.domain.valueobject.Money;
 
 public class ServiceOrder {
 

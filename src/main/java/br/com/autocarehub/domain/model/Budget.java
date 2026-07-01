@@ -1,10 +1,9 @@
 package br.com.autocarehub.domain.model;
 
-import java.util.List;
-import java.util.Objects;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.util.List;
+import java.util.Objects;
 
 public class Budget {
 

@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.user;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
+import java.util.UUID;
 
 public class GetUserUseCase {
 

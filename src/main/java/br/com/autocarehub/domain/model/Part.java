@@ -1,14 +1,12 @@
 package br.com.autocarehub.domain.model;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
-
-import org.jspecify.annotations.Nullable;
-
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.service.DomainValidation;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 
 public class Part {
 
@@ -378,8 +376,7 @@ public class Part {
     }
 
     public record CatalogData(
-            String name, String description, String sku, String category, @Nullable String subcategory, String brand) {
-    }
+            String name, String description, String sku, String category, @Nullable String subcategory, String brand) {}
 
     public record Pricing(Money costPrice, Money unitPrice) {
 

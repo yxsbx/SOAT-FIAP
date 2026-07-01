@@ -1,14 +1,12 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Repository;
-
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.infrastructure.persistence.mapper.ServiceOrderJpaMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {

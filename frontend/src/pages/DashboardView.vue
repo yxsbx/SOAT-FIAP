@@ -3259,11 +3259,17 @@ async function saveDetailModal() {
   }
 }
 
-function editCustomer(customer) {
+async function editCustomer(customer) {
+  let customerDetail = customer;
+  try {
+    customerDetail = await resources.customer(customer.id);
+  } catch (err) {
+    showError(err.message || 'Não foi possível carregar os dados completos do cliente.');
+  }
   Object.assign(forms.customer, {
-    ...customer,
-    address: {...(customer.address || forms.customer.address)},
-    active: customer.active !== false,
+    ...customerDetail,
+    address: {...(customerDetail.address || forms.customer.address)},
+    active: customerDetail.active !== false,
   });
   selectTab('customers');
 }
@@ -3631,13 +3637,13 @@ onMounted(async () => {
     <header class="site-navbar">
       <div class="navbar-inner">
         <button class="menu-button" title="Abrir menu" type="button" @click="mobileMenuOpen = !mobileMenuOpen">
-          <X v-if="mobileMenuOpen" :size="22"/>
-          <Menu v-else :size="22"/>
+          <X v-if="mobileMenuOpen" :size="22" />
+          <Menu v-else :size="22" />
         </button>
 
         <div class="navbar-brand">
           <div class="brand-mark">
-            <Wrench :size="22"/>
+            <Wrench :size="22" />
           </div>
           <div>
             <strong>AutoCare Hub</strong>
@@ -3646,7 +3652,7 @@ onMounted(async () => {
         </div>
 
         <div class="navbar-search">
-          <Search :size="17"/>
+          <Search :size="17" />
           <input
             v-model="globalSearch"
             aria-label="Busca global"
@@ -3660,7 +3666,7 @@ onMounted(async () => {
               type="button"
               @click="selectSearchResult(result)"
             >
-              <component :is="result.icon" :size="17"/>
+              <component :is="result.icon" :size="17" />
               <span>
                 <strong>{{ result.label }}</strong>
                 <small>{{ result.type }} - {{ result.detail }}</small>
@@ -3683,15 +3689,15 @@ onMounted(async () => {
             </button>
             <div v-if="profileMenuOpen" class="profile-popover" role="menu">
               <button role="menuitem" type="button" @click="showProfileAction('Minha conta')">
-                <UserCog :size="17"/>
+                <UserCog :size="17" />
                 <span>Minha conta</span>
               </button>
               <button role="menuitem" type="button" @click="showProfileAction('Alterar senha')">
-                <KeyRound :size="17"/>
+                <KeyRound :size="17" />
                 <span>Alterar senha</span>
               </button>
               <button role="menuitem" type="button" @click="logout">
-                <LogOut :size="17"/>
+                <LogOut :size="17" />
                 <span>Sair</span>
               </button>
             </div>
@@ -3708,8 +3714,8 @@ onMounted(async () => {
           type="button"
           @click="sidebarCollapsed = !sidebarCollapsed"
         >
-          <ChevronRight v-if="sidebarCollapsed" :size="18"/>
-          <ChevronLeft v-else :size="18"/>
+          <ChevronRight v-if="sidebarCollapsed" :size="18" />
+          <ChevronLeft v-else :size="18" />
           <span>{{ sidebarCollapsed ? 'Expandir' : 'Recolher' }}</span>
         </button>
 
@@ -3722,7 +3728,7 @@ onMounted(async () => {
             type="button"
             @click="selectTab(tab.id)"
           >
-            <component :is="tab.icon" :size="20"/>
+            <component :is="tab.icon" :size="20" />
             <span>
               <strong>{{ tab.label }}</strong>
             </span>
@@ -3739,14 +3745,14 @@ onMounted(async () => {
       ></button>
 
       <section class="content">
-        <ToastAlert :message="success" type="success" @close="resetMessage"/>
-        <ToastAlert :message="error" type="error" @close="resetMessage"/>
+        <ToastAlert :message="success" type="success" @close="resetMessage" />
+        <ToastAlert :message="error" type="error" @close="resetMessage" />
 
         <section v-if="activeTab === 'overview'" class="screen-stack">
           <div class="home-toolbar">
-            <span><ShieldCheck :size="16"/> {{ auth.user?.username }}</span>
+            <span><ShieldCheck :size="16" /> {{ auth.user?.username }}</span>
             <button v-if="!isCustomerProfile" class="secondary-button" type="button" @click="toggleHomeSettings">
-              <Plus :size="17"/>
+              <Plus :size="17" />
               Personalizar home
             </button>
           </div>
@@ -3784,7 +3790,7 @@ onMounted(async () => {
                   type="button"
                   @click="openRecord('Orçamento pendente', order)"
                 >
-                  <AlertTriangle :size="18"/>
+                  <AlertTriangle :size="18" />
                   <span>Orçamento pendente de aprovação</span>
                   <strong>R$ {{ money(order.totalAmount) }}</strong>
                 </button>
@@ -3794,7 +3800,7 @@ onMounted(async () => {
                   type="button"
                   @click="openRecord('Veículo pronto', order)"
                 >
-                  <CheckCircle2 :size="18"/>
+                  <CheckCircle2 :size="18" />
                   <span>Veículo pronto para retirada</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
@@ -3804,7 +3810,7 @@ onMounted(async () => {
                   type="button"
                   @click="openRecord('Veículo concluído', order)"
                 >
-                  <CheckCircle2 :size="18"/>
+                  <CheckCircle2 :size="18" />
                   <span>Atendimento concluído</span>
                   <strong>{{ statusLabels[order.status] }}</strong>
                 </button>
@@ -3836,7 +3842,7 @@ onMounted(async () => {
                 class="data-table-row orders-grid clickable-row"
                 @click="openRecord('Histórico', order)"
               >
-                <StatusBadge :value="order.status"/>
+                <StatusBadge :value="order.status" />
                 <span
                 >{{ order.diagnosticNotes }}<small>{{ order.id }}</small></span
                 >
@@ -3873,7 +3879,7 @@ onMounted(async () => {
             <div v-if="auth.role === 'ADMIN'">
               <strong>{{ isPartsStoreProfile ? 'Configuração da loja' : 'Configuração da oficina' }}</strong>
               <label class="home-alert-toggle">
-                <input :checked="homePreferenceDraft.showAlertsOnHome" type="checkbox" @change="toggleHomeAlerts"/>
+                <input :checked="homePreferenceDraft.showAlertsOnHome" type="checkbox" @change="toggleHomeAlerts" />
                 <span>Exibir avisos críticos de estoque para a equipe</span>
               </label>
               <div class="home-option-grid">
@@ -3915,7 +3921,7 @@ onMounted(async () => {
               type="button"
               @click="openHomeWidget(widget)"
             >
-              <component :is="widget.icon" :size="22"/>
+              <component :is="widget.icon" :size="22" />
               <strong>{{ widget.value }}</strong>
               <span>{{ widget.label }}</span>
             </button>
@@ -3964,7 +3970,7 @@ onMounted(async () => {
                   type="button"
                   @click="openHomeWidget(widget)"
                 >
-                  <component :is="widget.icon" :size="22"/>
+                  <component :is="widget.icon" :size="22" />
                   <strong>{{ widget.value }}</strong>
                   <span>{{ widget.label }}</span>
                 </button>
@@ -3984,7 +3990,7 @@ onMounted(async () => {
                   type="button"
                   @click="openHomeWidget(widget)"
                 >
-                  <component :is="widget.icon" :size="22"/>
+                  <component :is="widget.icon" :size="22" />
                   <strong>{{ widget.value }}</strong>
                   <span>{{ widget.label }}</span>
                 </button>
@@ -4053,22 +4059,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <article class="metric-card">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
                 <span>Vendas aprovadas</span>
               </article>
               <article class="metric-card">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ storeBillingSummary.conversion }}%</strong>
                 <span>Taxa de conversão</span>
               </article>
               <article class="metric-card">
-                <ShoppingCart :size="22"/>
+                <ShoppingCart :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
                 <span>Ticket médio</span>
               </article>
               <article class="metric-card">
-                <Package :size="22"/>
+                <Package :size="22" />
                 <strong>{{ storeTopProducts[0]?.name || 'Sem vendas' }}</strong>
                 <span>Produto mais vendido</span>
               </article>
@@ -4094,7 +4100,7 @@ onMounted(async () => {
 
           <section v-if="showHomeAlerts && data.lowStockParts.length" class="home-alerts-panel">
             <div class="home-alerts-heading">
-              <AlertTriangle :size="22"/>
+              <AlertTriangle :size="22" />
               <strong>Atenção necessária</strong>
             </div>
             <div class="home-alert-list">
@@ -4114,25 +4120,25 @@ onMounted(async () => {
         <section v-if="activeTab === 'billing' && isWorkshopAdmin" class="screen-stack billing-screen">
           <section class="billing-hero-grid">
             <button class="billing-card tone-green" type="button" @click="selectTab('orders')">
-              <DollarSign :size="22"/>
+              <DollarSign :size="22" />
               <span>Faturamento bruto</span>
               <strong>R$ {{ money(billingSummary.gross) }}</strong>
               <small>Ordens e orçamentos aprovados</small>
             </button>
             <article class="billing-card tone-blue">
-              <BadgePercent :size="22"/>
+              <BadgePercent :size="22" />
               <span>Taxa atual AutoCare Hub</span>
               <strong>{{ billingSummary.feeRateLabel }}</strong>
               <small>Aplicada sobre o faturamento mensal</small>
             </article>
             <article class="billing-card tone-teal billing-card--featured">
-              <CheckCircle2 :size="22"/>
+              <CheckCircle2 :size="22" />
               <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(billingSummary.net) }}</strong>
               <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
             <button class="billing-card tone-amber" type="button" @click="selectTab('orders')">
-              <TrendingUp :size="22"/>
+              <TrendingUp :size="22" />
               <span>Ticket médio</span>
               <strong>R$ {{ money(billingSummary.ticket) }}</strong>
               <small>Baseado nos orçamentos aprovados</small>
@@ -4176,22 +4182,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('orders')">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ billingSummary.sentBudgets }}</strong>
                 <span>Orçamentos enviados</span>
               </button>
               <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('orders')">
-                <CheckCircle2 :size="22"/>
+                <CheckCircle2 :size="22" />
                 <strong>{{ billingSummary.approvedBudgets }}</strong>
                 <span>Orçamentos aprovados</span>
               </button>
               <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('orders')">
-                <Wrench :size="22"/>
+                <Wrench :size="22" />
                 <strong>{{ billingSummary.completed }}</strong>
                 <span>Serviços concluídos</span>
               </button>
               <article class="metric-card billing-metric tone-violet">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(billingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
               </article>
@@ -4213,7 +4219,7 @@ onMounted(async () => {
               </div>
             </div>
             <article class="selected-record billing-tier-callout">
-              <BarChart3 :size="20"/>
+              <BarChart3 :size="20" />
               <strong>
                 {{
                   billingSummary.nextTierGap > 0
@@ -4238,7 +4244,7 @@ onMounted(async () => {
               <h2>Funcionários</h2>
               <span>{{ workshopEmployees.length }} pessoas na oficina</span>
               <button class="primary-button" type="button" @click="openCreateWorkshopEmployeeModal">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar funcionário</span>
               </button>
             </div>
@@ -4260,7 +4266,7 @@ onMounted(async () => {
                 >
                 <span>{{ employeeSubRoleLabels[employee.employeeSubRole] || employee.employeeSubRole }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <StatusBadge :value="employee.active"/>
+                <StatusBadge :value="employee.active" />
               </article>
             </div>
           </section>
@@ -4271,7 +4277,7 @@ onMounted(async () => {
               <span>Indicadores ordenados do maior para o menor desempenho</span>
             </div>
             <div class="filters">
-              <input v-model="employeeMetricSearch" placeholder="Buscar funcionário nas métricas" type="search"/>
+              <input v-model="employeeMetricSearch" placeholder="Buscar funcionário nas métricas" type="search" />
             </div>
             <div class="employee-metrics-grid">
               <article
@@ -4300,25 +4306,25 @@ onMounted(async () => {
         <section v-if="activeTab === 'store-billing' && isPartsStoreAdmin" class="screen-stack billing-screen">
           <section class="billing-hero-grid">
             <button class="billing-card tone-green" type="button" @click="selectTab('store-quotes')">
-              <DollarSign :size="22"/>
+              <DollarSign :size="22" />
               <span>Faturamento bruto</span>
               <strong>R$ {{ money(storeBillingSummary.gross) }}</strong>
               <small>Carrinhos e orçamentos aprovados</small>
             </button>
             <article class="billing-card tone-blue">
-              <BadgePercent :size="22"/>
+              <BadgePercent :size="22" />
               <span>Taxa atual AutoCare Hub</span>
               <strong>{{ storeBillingSummary.feeRateLabel }}</strong>
               <small>Aplicada sobre o faturamento mensal</small>
             </article>
             <article class="billing-card tone-teal billing-card--featured">
-              <CheckCircle2 :size="22"/>
+              <CheckCircle2 :size="22" />
               <span>Líquido com taxa descontada</span>
               <strong>R$ {{ money(storeBillingSummary.net) }}</strong>
               <small>Valor estimado já descontando a taxa da plataforma</small>
             </article>
             <button class="billing-card tone-amber" type="button" @click="selectTab('store-quotes')">
-              <TrendingUp :size="22"/>
+              <TrendingUp :size="22" />
               <span>Ticket médio</span>
               <strong>R$ {{ money(storeBillingSummary.ticket) }}</strong>
               <small>Baseado nos orçamentos aprovados</small>
@@ -4366,22 +4372,22 @@ onMounted(async () => {
             </div>
             <div class="analytics-grid">
               <button class="metric-card billing-metric tone-blue" type="button" @click="selectTab('store-quotes')">
-                <ClipboardList :size="22"/>
+                <ClipboardList :size="22" />
                 <strong>{{ storeBillingSummary.sentQuotes }}</strong>
                 <span>Orçamentos enviados</span>
               </button>
               <button class="metric-card billing-metric tone-green" type="button" @click="selectTab('store-quotes')">
-                <CheckCircle2 :size="22"/>
+                <CheckCircle2 :size="22" />
                 <strong>{{ storeBillingSummary.approvedQuotes }}</strong>
                 <span>Orçamentos aprovados</span>
               </button>
               <button class="metric-card billing-metric tone-cyan" type="button" @click="selectTab('store-quotes')">
-                <BadgePercent :size="22"/>
+                <BadgePercent :size="22" />
                 <strong>{{ storeBillingSummary.conversion }}%</strong>
                 <span>Taxa de conversão</span>
               </button>
               <article class="metric-card billing-metric tone-violet">
-                <DollarSign :size="22"/>
+                <DollarSign :size="22" />
                 <strong>R$ {{ money(storeBillingSummary.feeAmount) }}</strong>
                 <span>Taxa estimada da plataforma</span>
               </article>
@@ -4405,7 +4411,7 @@ onMounted(async () => {
               </div>
             </div>
             <article class="selected-record billing-tier-callout">
-              <BarChart3 :size="20"/>
+              <BarChart3 :size="20" />
               <strong>
                 {{
                   storeBillingSummary.nextTierGap > 0
@@ -4464,7 +4470,7 @@ onMounted(async () => {
               <span>Atendentes, administradores e permissões comerciais</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateStoreEmployeeModal">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Criar funcionário</span>
             </button>
           </section>
@@ -4475,18 +4481,17 @@ onMounted(async () => {
               <span>{{ storeEmployees.length }} pessoas cadastradas</span>
             </div>
             <div class="data-table">
-              <div class="data-table-header employee-grid">
+              <div class="data-table-header employee-grid employee-grid--no-action">
                 <span>Funcionário</span>
                 <span>Subfunção</span>
                 <span>Permissões</span>
                 <span>Status</span>
-                <span>Ação</span>
               </div>
               <article
                 v-for="employee in storeEmployees"
                 :key="employee.id"
-                class="data-table-row employee-grid clickable-row"
-                @click="openRecord('Funcionário da loja', employee)"
+                class="data-table-row employee-grid employee-grid--no-action clickable-row"
+                @click="editUser(employee)"
               >
                 <strong
                 >{{ employee.fullName }}<small>{{ employee.username }}</small></strong
@@ -4495,12 +4500,9 @@ onMounted(async () => {
                     employee.profileType === 'PARTS_STORE_ADMIN'
                       ? 'Administrador'
                       : employeeSubRoleLabels[employee.employeeSubRole]
-                  }}</span>
+                }}</span>
                 <span>{{ employee.permissions?.length || 0 }} permissões</span>
-                <StatusBadge :value="employee.active"/>
-                <button class="secondary-button compact-action" type="button" @click.stop="editUser(employee)">
-                  Editar
-                </button>
+                <StatusBadge :value="employee.active" />
               </article>
             </div>
           </section>
@@ -4557,7 +4559,7 @@ onMounted(async () => {
               <span>Monte solicitações de peças, negocie valores e acompanhe a aprovação do cliente</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateStoreQuoteModal">
-              <ShoppingCart :size="18"/>
+              <ShoppingCart :size="18" />
               <span>Novo carrinho/orçamento</span>
             </button>
           </section>
@@ -4591,7 +4593,7 @@ onMounted(async () => {
                       quote.contactRequested ? 'Cliente aguardando contato' : `${quote.items.length} item(ns) no carrinho`
                     }}</small>
                 </span>
-                <StatusBadge :label="storeQuoteStatusLabels[quote.status]" :value="quote.status"/>
+                <StatusBadge :label="storeQuoteStatusLabels[quote.status]" :value="quote.status" />
                 <span class="table-center">{{ storeQuoteUpdatedAt(quote) }}</span>
                 <strong class="table-money">R$ {{ money(storeQuoteTotal(quote)) }}</strong>
               </article>
@@ -4612,18 +4614,18 @@ onMounted(async () => {
             <form class="modal-form store-quote-modal-form" @submit.prevent="saveStoreQuote()">
               <label class="form-field">
                 <span>Cliente</span>
-                <input v-model="forms.storeQuote.customerName" placeholder="Nome do cliente ou empresa" required/>
+                <input v-model="forms.storeQuote.customerName" placeholder="Nome do cliente ou empresa" required />
               </label>
               <label class="form-field">
                 <span>Contato do cliente</span>
-                <input v-model="forms.storeQuote.customerContact" placeholder="Telefone ou e-mail"/>
+                <input v-model="forms.storeQuote.customerContact" placeholder="Telefone ou e-mail" />
               </label>
               <label class="form-field">
                 <span>Status atual</span>
-                <input :value="storeQuoteStatusLabels[forms.storeQuote.status] || forms.storeQuote.status" disabled/>
+                <input :value="storeQuoteStatusLabels[forms.storeQuote.status] || forms.storeQuote.status" disabled />
               </label>
               <label class="check-row">
-                <input v-model="forms.storeQuote.contactRequested" type="checkbox"/>
+                <input v-model="forms.storeQuote.contactRequested" type="checkbox" />
                 <span>Cliente quer ser contatado pela loja</span>
               </label>
 
@@ -4640,14 +4642,14 @@ onMounted(async () => {
                 </label>
                 <label class="form-field">
                   <span>Quantidade</span>
-                  <input v-model.number="forms.storeQuote.quantity" min="1" type="number"/>
+                  <input v-model.number="forms.storeQuote.quantity" min="1" type="number" />
                 </label>
                 <label class="form-field">
                   <span>Valor unitário negociado</span>
-                  <input v-model.number="forms.storeQuote.quotedPrice" min="0" step="0.01" type="number"/>
+                  <input v-model.number="forms.storeQuote.quotedPrice" min="0" step="0.01" type="number" />
                 </label>
                 <button class="secondary-button" type="button" @click="addStoreQuoteItem">
-                  <Plus :size="18"/>
+                  <Plus :size="18" />
                   Adicionar peça
                 </button>
               </div>
@@ -4682,7 +4684,7 @@ onMounted(async () => {
 
               <div class="quote-status-actions modal-save">
                 <button :disabled="saving" class="primary-button" type="submit">
-                  <ShoppingCart :size="18"/>
+                  <ShoppingCart :size="18" />
                   <span>{{ forms.storeQuote.id ? 'Salvar ajustes' : 'Criar carrinho' }}</span>
                 </button>
                 <button
@@ -4855,7 +4857,7 @@ onMounted(async () => {
                   </small>
                 </span>
                 <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
-                <StatusBadge :label="partner.status" :value="partner.status"/>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
             <PaginationControl
@@ -4928,7 +4930,7 @@ onMounted(async () => {
                   </small>
                 </span>
                 <strong class="platform-fee-value">R$ {{ money(partner.feeAmount) }}</strong>
-                <StatusBadge :label="partner.status" :value="partner.status"/>
+                <StatusBadge :label="partner.status" :value="partner.status" />
               </article>
             </div>
             <PaginationControl
@@ -4968,7 +4970,7 @@ onMounted(async () => {
                     lead.contactName
                   }}<small>{{ lead.email }} · {{ lead.phone }} · {{ lead.message || 'Sem mensagem' }}</small></span
                 >
-                <StatusBadge :label="lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças'" value="NEUTRAL"/>
+                <StatusBadge :label="lead.demoProfile === 'workshop' ? 'Oficina' : 'Loja de peças'" value="NEUTRAL" />
                 <span>{{ new Date(lead.createdAt).toLocaleDateString('pt-BR') }}</span>
               </article>
             </div>
@@ -4983,11 +4985,11 @@ onMounted(async () => {
             </div>
             <div class="account-cta-row">
               <button class="primary-button" type="button" @click="openCreatePartnerAdminModal('WORKSHOP_ADMIN')">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar administrador de oficina</span>
               </button>
               <button class="secondary-button" type="button" @click="openCreatePartnerAdminModal('PARTS_STORE_ADMIN')">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar administrador de loja</span>
               </button>
             </div>
@@ -5001,7 +5003,7 @@ onMounted(async () => {
               <span>Busque por nome, localização, especialidade ou produto</span>
             </div>
             <div class="filters">
-              <input v-model="customerPartnerSearch" placeholder="Buscar parceiro" type="search"/>
+              <input v-model="customerPartnerSearch" placeholder="Buscar parceiro" type="search" />
             </div>
             <div class="customer-partner-grid">
               <article>
@@ -5012,7 +5014,7 @@ onMounted(async () => {
                   type="button"
                   @click="openRecord('Oficina', workshop)"
                 >
-                  <Wrench :size="20"/>
+                  <Wrench :size="20" />
                   <span>
                     <strong>{{ workshop.name }}</strong>
                     <small>{{ workshop.location }} · {{ workshop.specialty }}</small>
@@ -5028,7 +5030,7 @@ onMounted(async () => {
                   type="button"
                   @click="openRecord('Loja de peças', store)"
                 >
-                  <Package :size="20"/>
+                  <Package :size="20" />
                   <span>
                     <strong>{{ store.name }}</strong>
                     <small>{{ store.location }} · {{ store.specialty }}</small>
@@ -5047,7 +5049,7 @@ onMounted(async () => {
               <span>Pesquise por nome, marca, categoria ou modelo do veículo</span>
             </div>
             <div class="filters">
-              <input v-model="customerPartSearch" placeholder="Ex.: filtro, freio, civic, onix" type="search"/>
+              <input v-model="customerPartSearch" placeholder="Ex.: filtro, freio, civic, onix" type="search" />
             </div>
             <div class="customer-part-grid">
               <button
@@ -5056,7 +5058,7 @@ onMounted(async () => {
                 type="button"
                 @click="selectCustomerPart(part)"
               >
-                <Package :size="20"/>
+                <Package :size="20" />
                 <span>
                   <strong>{{ part.name }}</strong>
                   <small>{{ part.brand }} · {{ part.category }} · R$ {{ money(part.unitPrice) }}</small>
@@ -5126,8 +5128,8 @@ onMounted(async () => {
                   {{ vehicle.plate }} - {{ vehicle.brand }} {{ vehicle.model }}
                 </option>
               </select>
-              <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada"/>
-              <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada"/>
+              <input v-model="forms.customerQuote.storeName" placeholder="Loja selecionada" />
+              <input v-model="forms.customerQuote.workshopName" placeholder="Oficina selecionada" />
               <textarea
                 v-model="forms.customerQuote.problemDescription"
                 placeholder="Descreva o problema do veículo ou observações da compra"
@@ -5155,7 +5157,7 @@ onMounted(async () => {
                 <span>Simulação de compra. O parceiro pode responder com outro valor.</span>
               </article>
               <button class="primary-button" type="submit">
-                <ShoppingCart :size="18"/>
+                <ShoppingCart :size="18" />
                 <span>Enviar solicitação</span>
               </button>
             </form>
@@ -5171,11 +5173,11 @@ onMounted(async () => {
             <form class="form-grid account-form" @submit.prevent="saveAccount">
               <label class="form-field">
                 <span>Nome completo</span>
-                <input v-model="forms.account.fullName" placeholder="Nome completo" required/>
+                <input v-model="forms.account.fullName" placeholder="Nome completo" required />
               </label>
               <label class="form-field">
                 <span>E-mail de login</span>
-                <input :value="currentUser?.username || auth.user?.username || ''" disabled/>
+                <input :value="currentUser?.username || auth.user?.username || ''" disabled />
               </label>
               <button :disabled="saving || !accountDirty" class="primary-button account-save-button" type="submit">
                 Salvar dados
@@ -5184,7 +5186,7 @@ onMounted(async () => {
             <form class="form-grid account-form" @submit.prevent="changePassword">
               <label class="form-field">
                 <span>Senha atual</span>
-                <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password"/>
+                <input v-model="forms.password.currentPassword" placeholder="Senha atual" required type="password" />
               </label>
               <label class="form-field">
                 <span>Nova senha</span>
@@ -5207,7 +5209,7 @@ onMounted(async () => {
               <h2>Contas</h2>
               <span>{{ listTotal('users') }} contas</span>
               <button class="primary-button" type="button" @click="openCreateUserModal">
-                <UserPlus :size="18"/>
+                <UserPlus :size="18" />
                 <span>Criar nova conta</span>
               </button>
             </div>
@@ -5267,7 +5269,7 @@ onMounted(async () => {
                 <span
                 >{{ user.companyName || '-' }}<small>{{ companyTypeLabel(user.companyType) }}</small></span
                 >
-                <StatusBadge :value="user.active"/>
+                <StatusBadge :value="user.active" />
               </article>
             </div>
             <PaginationControl
@@ -5285,7 +5287,7 @@ onMounted(async () => {
               <span>Cria o cadastro base usado por veículos e ordens</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateCustomerModal">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Cadastrar cliente</span>
             </button>
           </section>
@@ -5340,7 +5342,7 @@ onMounted(async () => {
                 >{{ customer.email }}<small>{{ customer.phone }}</small></span
                 >
                 <code>{{ customer.document }}</code>
-                <StatusBadge :value="customer.active"/>
+                <StatusBadge :value="customer.active" />
               </article>
             </div>
             <PaginationControl
@@ -5358,7 +5360,7 @@ onMounted(async () => {
               <span>Vinculado ao cliente</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openCreateVehicleModal">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Cadastrar veículo</span>
             </button>
           </section>
@@ -5416,7 +5418,7 @@ onMounted(async () => {
                 <strong class="plate-chip">{{ vehicle.plate }}</strong>
                 <strong>{{ vehicleOwner(vehicle).name || 'Cliente não informado' }}</strong>
                 <span>{{ vehicleOwner(vehicle).document || '-' }}</span>
-                <StatusBadge :label="vehicleStatusLabel(vehicle)" :value="vehicleStatusValue(vehicle)"/>
+                <StatusBadge :label="vehicleStatusLabel(vehicle)" :value="vehicleStatusValue(vehicle)" />
               </article>
             </div>
             <PaginationControl
@@ -5452,7 +5454,7 @@ onMounted(async () => {
               <h2>Cadastro de peças</h2>
               <span>Catálogo, custo, venda e reserva</span>
               <button class="primary-button" type="button" @click="openCreatePartModal">
-                <Plus :size="18"/>
+                <Plus :size="18" />
                 <span>Cadastrar peça</span>
               </button>
             </div>
@@ -5499,9 +5501,9 @@ onMounted(async () => {
                 step="0.01"
                 type="number"
               />
-              <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação"/>
+              <input v-model="forms.stockMovement.reason" placeholder="Motivo ou observação" />
               <button :disabled="saving" class="primary-button" type="submit">
-                <Package :size="18"/>
+                <Package :size="18" />
                 <span>Registrar</span>
               </button>
             </form>
@@ -5619,7 +5621,7 @@ onMounted(async () => {
               <span>Crie uma nova OS em um fluxo guiado.</span>
             </div>
             <button class="primary-button action-hero-button" type="button" @click="openOrderModal">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Criar nova ordem de serviço</span>
             </button>
           </section>
@@ -5661,21 +5663,21 @@ onMounted(async () => {
               <div v-if="forms.orderWizard.step === 1" class="wizard-panel">
                 <template v-if="isNewCustomerScenario">
                   <div class="form-grid">
-                    <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required/>
+                    <input v-model="forms.orderWizard.customer.name" placeholder="Nome do cliente" required />
                     <input
                       v-model="forms.orderWizard.customer.document"
                       placeholder="CPF/CNPJ somente números"
                       required
                     />
-                    <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required/>
-                    <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email"/>
-                    <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required/>
-                    <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required/>
-                    <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required/>
-                    <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required/>
-                    <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required/>
-                    <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required/>
-                    <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento"/>
+                    <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required />
+                    <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email" />
+                    <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required />
+                    <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required />
+                    <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required />
+                    <input v-model="forms.orderWizard.customer.address.city" placeholder="Cidade" required />
+                    <input v-model="forms.orderWizard.customer.address.state" maxlength="2" placeholder="UF" required />
+                    <input v-model="forms.orderWizard.customer.address.zipCode" placeholder="CEP" required />
+                    <input v-model="forms.orderWizard.customer.address.complement" placeholder="Complemento" />
                   </div>
                 </template>
                 <template v-else>
@@ -5700,11 +5702,11 @@ onMounted(async () => {
                     <span>Cliente confirmado para cadastro do veículo.</span>
                   </article>
                   <div class="form-grid compact">
-                    <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required/>
-                    <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required/>
-                    <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required/>
-                    <input v-model.number="forms.orderWizard.vehicle.year" placeholder="Ano" required type="number"/>
-                    <input v-model.number="forms.orderWizard.vehicle.mileage" placeholder="Km" required type="number"/>
+                    <input v-model="forms.orderWizard.vehicle.plate" placeholder="Placa ABC1D23" required />
+                    <input v-model="forms.orderWizard.vehicle.brand" placeholder="Marca" required />
+                    <input v-model="forms.orderWizard.vehicle.model" placeholder="Modelo" required />
+                    <input v-model.number="forms.orderWizard.vehicle.year" placeholder="Ano" required type="number" />
+                    <input v-model.number="forms.orderWizard.vehicle.mileage" placeholder="Km" required type="number" />
                   </div>
                 </template>
                 <template v-else>
@@ -5732,7 +5734,7 @@ onMounted(async () => {
                   required
                 ></textarea>
                 <label class="check-row">
-                  <input v-model="forms.orderWizard.contactRequested" type="checkbox"/>
+                  <input v-model="forms.orderWizard.contactRequested" type="checkbox" />
                   <span>Cliente quer ser contatado antes do envio do orçamento</span>
                 </label>
               </div>
@@ -5829,7 +5831,7 @@ onMounted(async () => {
                     Salvar como orçamento pendente
                   </button>
                   <button :disabled="saving" class="primary-button" type="button" @click="createOrderFromWizard(true)">
-                    <Plus :size="18"/>
+                    <Plus :size="18" />
                     <span>Salvar e criar orçamento agora</span>
                   </button>
                 </div>
@@ -5925,7 +5927,7 @@ onMounted(async () => {
                   ></span
                 >
                 <strong class="plate-chip">{{ orderPlate(order) }}</strong>
-                <StatusBadge :value="order.status"/>
+                <StatusBadge :value="order.status" />
                 <span>{{ orderDate(order) }}</span>
                 <strong>R$ {{ money(order.totalAmount) }}</strong>
               </article>
@@ -5946,7 +5948,7 @@ onMounted(async () => {
               <h2>Cadastro de serviços</h2>
               <span>Catálogo da oficina</span>
               <button v-if="auth.role === 'ADMIN'" class="primary-button" type="button" @click="openCreateServiceModal">
-                <Plus :size="18"/>
+                <Plus :size="18" />
                 <span>Cadastrar serviço</span>
               </button>
             </div>
@@ -6000,7 +6002,7 @@ onMounted(async () => {
                 >
                 <span class="centered-number">{{ formatDuration(service.estimatedTimeInMinutes) }}</span>
                 <strong class="money-value">R$ {{ money(service.basePrice) }}</strong>
-                <StatusBadge :value="service.active !== false"/>
+                <StatusBadge :value="service.active !== false" />
               </article>
             </div>
             <PaginationControl
@@ -6020,54 +6022,54 @@ onMounted(async () => {
           <form class="modal-form" @submit.prevent="createCustomer">
             <label class="form-field">
               <span>Nome</span>
-              <input v-model="forms.customer.name" placeholder="Nome completo" required/>
+              <input v-model="forms.customer.name" placeholder="Nome completo" required />
             </label>
             <label class="form-field">
               <span>CPF/CNPJ</span>
-              <input v-model="forms.customer.document" placeholder="Somente números" required/>
+              <input v-model="forms.customer.document" placeholder="Somente números" required />
             </label>
             <label class="form-field">
               <span>Telefone</span>
-              <input v-model="forms.customer.phone" placeholder="Telefone" required/>
+              <input v-model="forms.customer.phone" placeholder="Telefone" required />
             </label>
             <label class="form-field">
               <span>E-mail</span>
-              <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email"/>
+              <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email" />
             </label>
             <label class="form-field">
               <span>Rua</span>
-              <input v-model="forms.customer.address.street" placeholder="Rua" required/>
+              <input v-model="forms.customer.address.street" placeholder="Rua" required />
             </label>
             <label class="form-field">
               <span>Número</span>
-              <input v-model="forms.customer.address.number" placeholder="Número" required/>
+              <input v-model="forms.customer.address.number" placeholder="Número" required />
             </label>
             <label class="form-field">
               <span>Bairro</span>
-              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required/>
+              <input v-model="forms.customer.address.neighborhood" placeholder="Bairro" required />
             </label>
             <label class="form-field">
               <span>Cidade</span>
-              <input v-model="forms.customer.address.city" placeholder="Cidade" required/>
+              <input v-model="forms.customer.address.city" placeholder="Cidade" required />
             </label>
             <label class="form-field">
               <span>UF</span>
-              <input v-model="forms.customer.address.state" maxlength="2" placeholder="SP" required/>
+              <input v-model="forms.customer.address.state" maxlength="2" placeholder="SP" required />
             </label>
             <label class="form-field">
               <span>CEP</span>
-              <input v-model="forms.customer.address.zipCode" placeholder="00000-000" required/>
+              <input v-model="forms.customer.address.zipCode" placeholder="00000-000" required />
             </label>
             <label class="form-field">
               <span>Complemento</span>
-              <input v-model="forms.customer.address.complement" placeholder="Complemento"/>
+              <input v-model="forms.customer.address.complement" placeholder="Complemento" />
             </label>
             <label class="check-row">
-              <input v-model="forms.customer.active" type="checkbox"/>
+              <input v-model="forms.customer.active" type="checkbox" />
               <span>Cliente ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>Cadastrar cliente</span>
             </button>
           </form>
@@ -6091,30 +6093,30 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required/>
+              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required/>
+              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required/>
+              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number"/>
+              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
-              <input v-model.number="forms.vehicle.mileage" min="0" placeholder="Km" required type="number"/>
+              <input v-model.number="forms.vehicle.mileage" min="0" placeholder="Km" required type="number" />
             </label>
             <label class="check-row">
-              <input v-model="forms.vehicle.active" type="checkbox"/>
+              <input v-model="forms.vehicle.active" type="checkbox" />
               <span>Veículo ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Plus :size="18"/>
+              <Plus :size="18" />
               <span>Cadastrar veículo</span>
             </button>
           </form>
@@ -6129,11 +6131,11 @@ onMounted(async () => {
           <form class="modal-form service-modal-form" @submit.prevent="createWorkshopService">
             <label class="form-field">
               <span>Nome do serviço</span>
-              <input v-model="forms.service.name" placeholder="Ex.: Revisão preventiva" required/>
+              <input v-model="forms.service.name" placeholder="Ex.: Revisão preventiva" required />
             </label>
             <label class="form-field">
               <span>Preço base</span>
-              <input v-model.number="forms.service.basePrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.service.basePrice" min="0" required step="0.01" type="number" />
             </label>
 
             <div v-if="serviceDuplicateMatches.length" class="duplicate-suggestions">
@@ -6153,7 +6155,7 @@ onMounted(async () => {
 
             <label class="form-field">
               <span>Tempo previsto</span>
-              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" required type="number"/>
+              <input v-model.number="forms.service.estimatedTimeInMinutes" min="1" required type="number" />
             </label>
             <label class="form-field service-description-field">
               <span>Descrição</span>
@@ -6164,11 +6166,11 @@ onMounted(async () => {
               ></textarea>
             </label>
             <label class="check-row">
-              <input v-model="forms.service.active" type="checkbox"/>
+              <input v-model="forms.service.active" type="checkbox" />
               <span>Serviço ativo</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Wrench :size="18"/>
+              <Wrench :size="18" />
               <span>{{ forms.service.id ? 'Salvar serviço' : 'Cadastrar serviço' }}</span>
             </button>
           </form>
@@ -6183,11 +6185,11 @@ onMounted(async () => {
           <form class="modal-form part-modal-form" @submit.prevent="createPart">
             <label class="form-field">
               <span>Nome da peça</span>
-              <input v-model="forms.part.name" placeholder="Ex.: Filtro de óleo" required/>
+              <input v-model="forms.part.name" placeholder="Ex.: Filtro de óleo" required />
             </label>
             <label class="form-field">
               <span>SKU</span>
-              <input v-model="forms.part.sku" placeholder="Código interno ou SKU" required/>
+              <input v-model="forms.part.sku" placeholder="Código interno ou SKU" required />
             </label>
 
             <div v-if="partDuplicateMatches.length" class="duplicate-suggestions">
@@ -6207,35 +6209,35 @@ onMounted(async () => {
 
             <label class="form-field">
               <span>Categoria</span>
-              <input v-model="forms.part.category" placeholder="Categoria" required/>
+              <input v-model="forms.part.category" placeholder="Categoria" required />
             </label>
             <label class="form-field">
               <span>Subcategoria</span>
-              <input v-model="forms.part.subcategory" placeholder="Subcategoria"/>
+              <input v-model="forms.part.subcategory" placeholder="Subcategoria" />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.part.brand" placeholder="Marca" required/>
+              <input v-model="forms.part.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Valor de custo</span>
-              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number" />
             </label>
             <label class="form-field">
               <span>Valor de venda</span>
-              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number"/>
+              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number" />
             </label>
             <label class="form-field">
               <span>Quantidade em estoque</span>
-              <input v-model.number="forms.part.stockQuantity" min="0" required type="number"/>
+              <input v-model.number="forms.part.stockQuantity" min="0" required type="number" />
             </label>
             <label class="form-field">
               <span>Estoque mínimo</span>
-              <input v-model.number="forms.part.minimumStock" min="0" required type="number"/>
+              <input v-model.number="forms.part.minimumStock" min="0" required type="number" />
             </label>
             <label class="form-field">
               <span>Dias de bloqueio em orçamento</span>
-              <input v-model.number="forms.part.reservationDays" min="1" required type="number"/>
+              <input v-model.number="forms.part.reservationDays" min="1" required type="number" />
             </label>
             <label class="form-field part-description-field">
               <span>Descrição</span>
@@ -6246,11 +6248,11 @@ onMounted(async () => {
               ></textarea>
             </label>
             <label class="check-row">
-              <input v-model="forms.part.active" type="checkbox"/>
+              <input v-model="forms.part.active" type="checkbox" />
               <span>Peça ativa</span>
             </label>
             <button :disabled="saving" class="primary-button modal-save" type="submit">
-              <Package :size="18"/>
+              <Package :size="18" />
               <span>{{ forms.part.id ? 'Salvar peça' : 'Cadastrar peça' }}</span>
             </button>
           </form>
@@ -6273,11 +6275,11 @@ onMounted(async () => {
           <form class="modal-form account-modal-form" @submit.prevent="saveUser">
             <label class="form-field">
               <span>Nome completo</span>
-              <input v-model="forms.user.fullName" placeholder="Ex.: Carlos Atendimento" required/>
+              <input v-model="forms.user.fullName" placeholder="Ex.: Carlos Atendimento" required />
             </label>
             <label class="form-field">
               <span>E-mail de login</span>
-              <input v-model="forms.user.username" placeholder="email@autocarehub.com" required type="email"/>
+              <input v-model="forms.user.username" placeholder="email@autocarehub.com" required type="email" />
             </label>
             <label class="form-field">
               <span>{{ forms.user.id ? 'Nova senha' : 'Senha inicial' }}</span>
@@ -6309,7 +6311,7 @@ onMounted(async () => {
               v-if="canEditUserCompanyFields && !['MASTER_ADMIN', 'CUSTOMER_OWNER'].includes(forms.user.profileType)"
               class="check-row"
             >
-              <input v-model="forms.user.createCompany" type="checkbox" @change="syncUserProfileDefaults"/>
+              <input v-model="forms.user.createCompany" type="checkbox" @change="syncUserProfileDefaults" />
               <span>Criar nova empresa para esta conta</span>
             </label>
             <label
@@ -6337,7 +6339,7 @@ onMounted(async () => {
               class="form-field"
             >
               <span>Nome da nova empresa</span>
-              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja" required/>
+              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja" required />
             </label>
             <label
               v-if="canEditUserCompanyFields && !['CUSTOMER_OWNER'].includes(forms.user.profileType)"
@@ -6371,10 +6373,10 @@ onMounted(async () => {
             </label>
             <label v-if="forms.user.profileType === 'CUSTOMER_OWNER'" class="form-field">
               <span>Cliente vinculado</span>
-              <input v-model="forms.user.customerId" placeholder="Informe apenas se já existir vínculo com cliente"/>
+              <input v-model="forms.user.customerId" placeholder="Informe apenas se já existir vínculo com cliente" />
             </label>
             <label class="check-row">
-              <input v-model="forms.user.active" type="checkbox"/>
+              <input v-model="forms.user.active" type="checkbox" />
               <span>{{ userModalIsEmployee ? 'Funcionário ativo' : 'Conta ativa' }}</span>
             </label>
             <div v-if="userModalEmployeeMetrics.length" class="modal-readonly-grid employee-modal-metrics">
@@ -6397,7 +6399,7 @@ onMounted(async () => {
               class="primary-button modal-save"
               type="submit"
             >
-              <UserPlus :size="18"/>
+              <UserPlus :size="18" />
               <span>{{
                   forms.user.id
                     ? userModalIsEmployee
@@ -6419,19 +6421,19 @@ onMounted(async () => {
           @close="closeRecord"
         >
           <form v-if="isCustomerDetail" class="modal-form" @submit.prevent="saveDetailModal">
-            <input v-model="modalDraft.customer.name" placeholder="Nome"/>
-            <input v-model="modalDraft.customer.document" placeholder="CPF/CNPJ"/>
-            <input v-model="modalDraft.customer.phone" placeholder="Telefone"/>
-            <input v-model="modalDraft.customer.email" placeholder="E-mail" type="email"/>
-            <input v-model="modalDraft.customer.address.street" placeholder="Rua"/>
-            <input v-model="modalDraft.customer.address.number" placeholder="Número"/>
-            <input v-model="modalDraft.customer.address.neighborhood" placeholder="Bairro"/>
-            <input v-model="modalDraft.customer.address.city" placeholder="Cidade"/>
-            <input v-model="modalDraft.customer.address.state" maxlength="2" placeholder="UF"/>
-            <input v-model="modalDraft.customer.address.zipCode" placeholder="CEP"/>
-            <input v-model="modalDraft.customer.address.complement" placeholder="Complemento"/>
+            <input v-model="modalDraft.customer.name" placeholder="Nome" />
+            <input v-model="modalDraft.customer.document" placeholder="CPF/CNPJ" />
+            <input v-model="modalDraft.customer.phone" placeholder="Telefone" />
+            <input v-model="modalDraft.customer.email" placeholder="E-mail" type="email" />
+            <input v-model="modalDraft.customer.address.street" placeholder="Rua" />
+            <input v-model="modalDraft.customer.address.number" placeholder="Número" />
+            <input v-model="modalDraft.customer.address.neighborhood" placeholder="Bairro" />
+            <input v-model="modalDraft.customer.address.city" placeholder="Cidade" />
+            <input v-model="modalDraft.customer.address.state" maxlength="2" placeholder="UF" />
+            <input v-model="modalDraft.customer.address.zipCode" placeholder="CEP" />
+            <input v-model="modalDraft.customer.address.complement" placeholder="Complemento" />
             <label class="check-row">
-              <input v-model="modalDraft.customer.active" type="checkbox"/>
+              <input v-model="modalDraft.customer.active" type="checkbox" />
               <span>Cliente ativo</span>
             </label>
             <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
@@ -6444,9 +6446,9 @@ onMounted(async () => {
               v-model="modalDraft.partner.companyName"
               :placeholder="selectedRecordType === 'Loja parceira' ? 'Nome da loja' : 'Nome da oficina'"
             />
-            <input v-model="modalDraft.partner.fullName" placeholder="Responsável"/>
+            <input v-model="modalDraft.partner.fullName" placeholder="Responsável" />
             <label class="check-row">
-              <input v-model="modalDraft.partner.active" type="checkbox"/>
+              <input v-model="modalDraft.partner.active" type="checkbox" />
               <span>{{ selectedRecordType === 'Loja parceira' ? 'Loja ativa' : 'Oficina ativa' }}</span>
             </label>
             <div class="modal-readonly-grid">
@@ -6480,23 +6482,23 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required/>
+              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required/>
+              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required/>
+              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number"/>
+              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
-              <input v-model.number="modalDraft.vehicle.mileage" min="0" required type="number"/>
+              <input v-model.number="modalDraft.vehicle.mileage" min="0" required type="number" />
             </label>
             <div class="modal-readonly-grid">
               <span
@@ -6513,7 +6515,7 @@ onMounted(async () => {
               >
             </div>
             <label class="check-row">
-              <input v-model="modalDraft.vehicle.active" type="checkbox"/>
+              <input v-model="modalDraft.vehicle.active" type="checkbox" />
               <span>Veículo ativo</span>
             </label>
             <button :disabled="!detailModalDirty || saving" class="primary-button modal-save" type="submit">
@@ -6555,7 +6557,7 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Valor total</span>
-              <input :value="`R$ ${money(selectedRecord.totalAmount)}`" disabled/>
+              <input :value="`R$ ${money(selectedRecord.totalAmount)}`" disabled />
             </label>
             <label class="form-field order-notes-field">
               <span>Problema relatado e observações</span>

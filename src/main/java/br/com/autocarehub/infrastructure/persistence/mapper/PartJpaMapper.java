@@ -6,8 +6,7 @@ import br.com.autocarehub.infrastructure.persistence.entity.PartJpaEntity;
 
 public final class PartJpaMapper {
 
-    private PartJpaMapper() {
-    }
+    private PartJpaMapper() {}
 
     public static PartJpaEntity toEntity(Part part) {
         PartJpaEntity entity = new PartJpaEntity();

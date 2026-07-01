@@ -1,10 +1,9 @@
 package br.com.autocarehub.domain.model;
 
+import br.com.autocarehub.domain.exception.DomainException;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
-
-import br.com.autocarehub.domain.exception.DomainException;
 
 public record Company(UUID id, String name, String type, boolean active, LocalDateTime createdAt) {
 

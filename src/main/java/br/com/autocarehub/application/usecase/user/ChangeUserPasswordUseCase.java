@@ -2,14 +2,12 @@ package br.com.autocarehub.application.usecase.user;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.UUID;
-
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
+import java.util.UUID;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class ChangeUserPasswordUseCase {
 
@@ -47,6 +45,5 @@ public class ChangeUserPasswordUseCase {
         userRepository.save(updated);
     }
 
-    public record Command(UUID userId, String currentPassword, String newPassword, boolean currentPasswordRequired) {
-    }
+    public record Command(UUID userId, String currentPassword, String newPassword, boolean currentPasswordRequired) {}
 }

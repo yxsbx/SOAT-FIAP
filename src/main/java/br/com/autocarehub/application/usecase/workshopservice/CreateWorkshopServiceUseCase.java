@@ -18,6 +18,5 @@ public class CreateWorkshopServiceUseCase {
         return workshopServiceRepository.save(workshopService);
     }
 
-    public record Command(String name, String description, Money basePrice, int estimatedTimeInMinutes) {
-    }
+    public record Command(String name, String description, Money basePrice, int estimatedTimeInMinutes) {}
 }

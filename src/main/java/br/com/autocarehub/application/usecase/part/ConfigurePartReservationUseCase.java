@@ -1,10 +1,9 @@
 package br.com.autocarehub.application.usecase.part;
 
-import java.util.UUID;
-
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
+import java.util.UUID;
 
 public class ConfigurePartReservationUseCase {
 
@@ -22,6 +21,5 @@ public class ConfigurePartReservationUseCase {
         return partRepository.save(part);
     }
 
-    public record Command(UUID partId, int reservationDays) {
-    }
+    public record Command(UUID partId, int reservationDays) {}
 }

@@ -2,15 +2,13 @@ package br.com.autocarehub.infrastructure.persistence.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-
-import org.junit.jupiter.api.Test;
-
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.infrastructure.persistence.entity.UserJpaEntity;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
 
 class UserJpaMapperTest {
 

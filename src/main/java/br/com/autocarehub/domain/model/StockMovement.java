@@ -1,12 +1,11 @@
 package br.com.autocarehub.domain.model;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
-
 import br.com.autocarehub.domain.enums.StockMovementType;
 import br.com.autocarehub.domain.exception.DomainException;
 import br.com.autocarehub.domain.valueobject.Money;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 public record StockMovement(
         UUID partId,

@@ -87,13 +87,13 @@ async function submit() {
     <header class="login-navbar">
       <div class="login-brand">
         <div class="brand-mark">
-          <Wrench :size="20"/>
+          <Wrench :size="20" />
         </div>
         <strong>AutoCare Hub</strong>
       </div>
 
       <RouterLink class="login-back-link" to="/">
-        <ArrowLeft :size="17"/>
+        <ArrowLeft :size="17" />
         Voltar para a home
       </RouterLink>
     </header>
@@ -110,14 +110,14 @@ async function submit() {
           <form class="login-form" @submit.prevent="submit">
             <label>
               Usuário
-              <input v-model="username" autocomplete="username" required type="email"/>
+              <input v-model="username" autocomplete="username" required type="email" />
             </label>
             <label>
               Senha
-              <input v-model="password" autocomplete="current-password" required type="password"/>
+              <input v-model="password" autocomplete="current-password" required type="password" />
             </label>
             <button :disabled="loading" class="primary-button" type="submit">
-              <LogIn :size="18"/>
+              <LogIn :size="18" />
               <span>{{ loading ? 'Entrando...' : 'Entrar' }}</span>
             </button>
             <p v-if="error" class="form-error">{{ error }}</p>
