@@ -400,7 +400,7 @@ public class UsersController {
     }
 
     private String normalizeEmployeeSubRole(String value) {
-        return value == null || value.isBlank() ? "UNSPECIFIED" : value;
+        return value.isBlank() ? "UNSPECIFIED" : value;
     }
 
     public record UserResponse(
@@ -450,11 +450,11 @@ public class UsersController {
                     companyId,
                     fullName,
                     profileType,
-                    companyName == null ? "" : companyName,
-                    companyType == null ? "" : companyType,
+                    companyName,
+                    companyType,
                     Boolean.TRUE.equals(createCompany),
-                    employeeSubRole == null ? "" : employeeSubRole,
-                    permissions == null ? List.of() : permissions,
+                    employeeSubRole,
+                    permissions,
                     active);
         }
     }
@@ -481,11 +481,11 @@ public class UsersController {
                     companyId,
                     fullName,
                     profileType,
-                    companyName == null ? "" : companyName,
-                    companyType == null ? "" : companyType,
+                    companyName,
+                    companyType,
                     Boolean.TRUE.equals(createCompany),
-                    employeeSubRole == null ? "" : employeeSubRole,
-                    permissions == null ? List.of() : permissions,
+                    employeeSubRole,
+                    permissions,
                     active);
         }
     }

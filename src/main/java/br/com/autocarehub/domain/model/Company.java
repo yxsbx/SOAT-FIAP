@@ -20,7 +20,7 @@ public record Company(UUID id, String name, String type, boolean active, LocalDa
     }
 
     private static String requireText(String value, String message) {
-        if (value == null || value.isBlank()) {
+        if (value.isBlank()) {
             throw new DomainException(message);
         }
         return value.trim();
