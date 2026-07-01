@@ -201,20 +201,23 @@ class UserCompanyManagementIntegrationTest {
                 .andExpect(jsonPath("$.role").value("EMPLOYEE"))
                 .andExpect(jsonPath("$.profileType").value("PARTS_STORE_EMPLOYEE"))
                 .andExpect(jsonPath("$.companyId").value(PARTS_STORE_COMPANY_ID))
-                .andExpect(jsonPath("$.employeeSubRole").value("MECHANIC"));
+                .andExpect(jsonPath("$.employeeSubRole").value("UNSPECIFIED"));
+
+        Map<String, Object> updateOutsideScope = userPayload(
+                "oficina.funcionario@autocarehub.com",
+                "EMPLOYEE",
+                "PARTS_STORE_EMPLOYEE",
+                PARTS_STORE_COMPANY_ID,
+                "Loja peças Prime",
+                "PARTS_STORE",
+                false,
+                "ATTENDANT");
+        updateOutsideScope.remove("password");
 
         mockMvc.perform(put("/api/v1/users/{userId}", WORKSHOP_EMPLOYEE_ID)
                         .header("Authorization", bearer(storeToken))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json(userPayload(
-                                "oficina.funcionario@autocarehub.com",
-                                "EMPLOYEE",
-                                "PARTS_STORE_EMPLOYEE",
-                                PARTS_STORE_COMPANY_ID,
-                                "Loja peças Prime",
-                                "PARTS_STORE",
-                                false,
-                                "ATTENDANT"))))
+                        .content(json(updateOutsideScope)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("User is outside the current company scope"));
     }

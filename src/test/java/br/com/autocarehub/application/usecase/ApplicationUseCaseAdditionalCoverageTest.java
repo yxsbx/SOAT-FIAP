@@ -52,7 +52,10 @@ import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServ
 import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
+import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.model.Company;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
@@ -312,6 +315,17 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .extracting(User::id)
                 .contains(admin.id(), employee.id());
         assertThat(new ListUsersUseCase(userRepository)
+                        .execute(new ListUsersUseCase.Query(null, null, null, "employee")))
+                .extracting(User::id)
+                .containsExactly(employee.id());
+        assertThat(new ListUsersUseCase(userRepository).execute(new ListUsersUseCase.Query(null, null, null, "admin")))
+                .extracting(User::id)
+                .containsExactly(admin.id());
+        assertThat(new ListUsersUseCase(userRepository)
+                        .execute(new ListUsersUseCase.Query(null, null, null, "gestor")))
+                .extracting(User::id)
+                .containsExactly(admin.id());
+        assertThat(new ListUsersUseCase(userRepository)
                         .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
                 .isEmpty();
 
@@ -367,6 +381,23 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThat(keptIdentity.role()).isEqualTo(UserRole.ADMIN);
         assertThat(keptIdentity.active()).isTrue();
 
+        User nullIdentity = new UpdateUserUseCase(userRepository)
+                .execute(new UpdateUserUseCase.Command(
+                        keptIdentity.id(),
+                        null,
+                        null,
+                        null,
+                        COMPANY_ID,
+                        "Consultor Quatro",
+                        "admin",
+                        "AutoCare",
+                        "Oficina",
+                        "Gestor",
+                        List.of("users:read"),
+                        true));
+        assertThat(nullIdentity.username()).isEqualTo("consultor2");
+        assertThat(nullIdentity.role()).isEqualTo(UserRole.ADMIN);
+
         new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
                 .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "plain", "new-secret", true));
         assertThat(userRepository.findById(updated.id()).orElseThrow().passwordHash())
@@ -397,10 +428,71 @@ class ApplicationUseCaseAdditionalCoverageTest {
                                 true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Username already exists");
+        assertThatThrownBy(() -> new UpdateUserUseCase(userRepository)
+                        .execute(new UpdateUserUseCase.Command(
+                                updated.id(),
+                                "admin",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Duplicado",
+                                "admin",
+                                "AutoCare",
+                                "Oficina",
+                                "Gestor",
+                                List.of(),
+                                true)))
+                .isInstanceOf(ApplicationException.class)
+                .hasMessage("Username already exists");
+        assertThatThrownBy(() -> new UpdateUserUseCase(userRepository)
+                        .execute(new UpdateUserUseCase.Command(
+                                UUID.randomUUID(),
+                                "missing",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Missing",
+                                "admin",
+                                "AutoCare",
+                                "Oficina",
+                                "Gestor",
+                                List.of(),
+                                true)))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("User not found");
         assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
                         .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "wrong", "new-secret", true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Current password is invalid");
+    }
+
+    @Test
+    void shouldCoverCompanyAndDocumentBranches() {
+        Company company = Company.create(" Oficina Teste ", "workshop");
+
+        assertThat(company.name()).isEqualTo("Oficina Teste");
+        assertThat(company.type()).isEqualTo("WORKSHOP");
+        assertThat(company.active()).isTrue();
+
+        assertThatThrownBy(() -> new Company(UUID.randomUUID(), " ", "WORKSHOP", true, LocalDateTime.now()))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Company name is required");
+        assertThatThrownBy(() -> Company.create("Empresa", ""))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Company type is required");
+        assertThatThrownBy(() -> Company.create("Empresa", "INVALID"))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Invalid company type");
+
+        assertThatThrownBy(() -> new Document(DocumentType.CPF, "11222333000181"))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Invalid document");
+        assertThatThrownBy(() -> new Document(DocumentType.CNPJ, "11111111111111"))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Invalid document");
+        assertThatThrownBy(() -> new Document(null, "52998224725"))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("type is required");
     }
 
     @Test
