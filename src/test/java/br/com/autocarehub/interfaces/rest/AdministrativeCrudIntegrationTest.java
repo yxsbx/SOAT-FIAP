@@ -298,6 +298,7 @@ class AdministrativeCrudIntegrationTest {
                 Map.entry("profileType", "WORKSHOP_EMPLOYEE"),
                 Map.entry("companyName", "Oficina CRUD"),
                 Map.entry("companyType", "WORKSHOP"),
+                Map.entry("createCompany", true),
                 Map.entry("employeeSubRole", "MECHANIC"),
                 Map.entry("permissions", List.of("CREATE_ORDER", "EDIT_ORDER")),
                 Map.entry("active", true));
@@ -311,10 +312,16 @@ class AdministrativeCrudIntegrationTest {
                 .getResponse()
                 .getContentAsString();
         UUID userId = id(response);
+        UUID companyId =
+                UUID.fromString(objectMapper.readTree(response).get("companyId").asText());
 
         mockMvc.perform(get("/api/v1/users").param("search", "crud.employee").header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.items[0].id").value(userId.toString()));
+
+        mockMvc.perform(get("/api/v1/users/companies").header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[?(@.id == '" + companyId + "')]").exists());
 
         mockMvc.perform(get("/api/v1/users/partners").header("Authorization", bearer(token)))
                 .andExpect(status().isOk())
@@ -325,8 +332,10 @@ class AdministrativeCrudIntegrationTest {
                 Map.entry("role", "EMPLOYEE"),
                 Map.entry("fullName", "Funcionário CRUD Atualizado"),
                 Map.entry("profileType", "WORKSHOP_EMPLOYEE"),
+                Map.entry("companyId", companyId.toString()),
                 Map.entry("companyName", "Oficina CRUD"),
                 Map.entry("companyType", "WORKSHOP"),
+                Map.entry("createCompany", false),
                 Map.entry("employeeSubRole", "ADVISOR"),
                 Map.entry("permissions", List.of("CREATE_ORDER")),
                 Map.entry("active", true));

@@ -32,13 +32,28 @@ export async function apiRequest(path, options = {}) {
   }
 
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+  try {
+    data = text ? JSON.parse(text) : null;
+  } catch {
+    data = text ? { message: text } : null;
+  }
 
   if (!response.ok) {
-    const message = data?.message || `Erro HTTP ${response.status}`;
+    const message = data?.message || data?.error || `Erro HTTP ${response.status}`;
     const error = new Error(message);
     error.status = response.status;
     error.path = path;
+    error.details = data;
+    if (import.meta.env.DEV) {
+      console.error('[AutoCare API]', {
+        method: options.method || 'GET',
+        path,
+        status: response.status,
+        requestBody: options.body ? JSON.parse(options.body) : null,
+        responseBody: data,
+      });
+    }
     throw error;
   }
 
@@ -78,6 +93,7 @@ export const resources = {
       method: 'PUT',
       body: JSON.stringify(payload),
     }),
+  companies: () => apiRequest('/api/v1/users/companies'),
   users: (params) => apiRequest(`/api/v1/users${toQueryString(params)}`),
   partners: () => apiRequest('/api/v1/users/partners'),
   createUser: (payload) =>

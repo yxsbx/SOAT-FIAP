@@ -164,13 +164,16 @@ docker compose up -d --build
 docker compose ps
 ```
 
-Acompanhe a inicialização da API e as migrations Flyway criando a base:
+Acompanhe a inicialização dos serviços:
 
 ```powershell
+docker compose logs -f
 docker compose logs -f app
+docker compose logs -f frontend
 ```
 
-O serviço da API no `docker-compose.yml` se chama `app`. Portanto, o comando correto é:
+No `docker-compose.yml`, o backend Spring Boot usa o serviço `app` e o frontend usa o serviço `frontend`.
+Se algum roteiro mencionar `backend`, use `app` neste repositório:
 
 ```powershell
 docker compose logs -f app
@@ -245,6 +248,19 @@ autocare123
 | `oficina.funcionario@autocarehub.com` | Funcionário de oficina       | `autocare123` |
 | `loja.funcionario@autocarehub.com`    | Funcionário de loja de peças | `autocare123` |
 | `cliente@autocarehub.com`             | Cliente final demo           | `autocare123` |
+
+Regras de criação de contas:
+
+- `MASTER_ADMIN` pode criar e editar qualquer perfil.
+- Admin Master fica vinculado à empresa base `AutoCare Hub`, cadastrada como tipo `PLATFORM`.
+- Admin Master pode criar admin de oficina, admin de loja e funcionários usando uma empresa existente ou marcando a opção de criar uma nova empresa no cadastro.
+- Ao criar uma nova empresa ou usuário, o ID é gerado automaticamente pelo backend; na interface, o usuário seleciona ou informa o nome da empresa.
+- A nova empresa recebe um `companyId` próprio na resposta e passa a ser usada como escopo dos usuários vinculados a ela.
+- Admin de oficina cria apenas funcionários vinculados à própria oficina.
+- Admin de loja de peças cria apenas funcionários vinculados à própria loja.
+- Admin de oficina ou loja não escolhe outra empresa no formulário; o backend força o `companyId` da empresa do usuário autenticado.
+- Funcionário sem subfunção e funcionário sem especificação são tratados como `UNSPECIFIED`.
+- E-mails de login são únicos; duplicidade retorna erro de negócio.
 
 Exemplo de login:
 

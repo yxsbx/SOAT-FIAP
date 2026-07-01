@@ -33,6 +33,7 @@ public class ChangeUserPasswordUseCase {
                 requireNonNull(passwordEncoder.encode(command.newPassword())),
                 current.role(),
                 current.customerId(),
+                current.companyId(),
                 current.fullName(),
                 current.profileType(),
                 current.companyName(),

@@ -17,6 +17,7 @@ public final class UserJpaMapper {
                 entity.getPasswordHash(),
                 UserRole.valueOf(entity.getRole()),
                 entity.getCustomerId(),
+                entity.getCompanyId(),
                 entity.getFullName(),
                 entity.getProfileType(),
                 entity.getCompanyName(),
@@ -34,6 +35,7 @@ public final class UserJpaMapper {
         entity.setPasswordHash(user.passwordHash());
         entity.setRole(user.role().name());
         entity.setCustomerId(user.customerId());
+        entity.setCompanyId(user.companyId());
         entity.setFullName(user.fullName());
         entity.setProfileType(user.profileType());
         entity.setCompanyName(user.companyName());

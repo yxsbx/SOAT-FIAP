@@ -105,4 +105,6 @@ Como mitigação, os containers permanecem configurados com usuário não privil
 
 O AutoCare Hub entrega um MVP backend alinhado ao desafio proposto, cobrindo o ciclo principal de atendimento de uma oficina mecânica: cadastro de clientes e veículos, criação de Ordem de Serviço, composição com serviços e peças, geração e aprovação de orçamento, controle de status, estoque e consulta pelo cliente.
 
+A gestão administrativa diferencia Admin Master, admins de oficina/loja, funcionários e cliente final. As contas de oficinas e lojas são vinculadas por `companyId`, mas os IDs são gerados pelo backend. Na interface, o Admin Master seleciona a empresa pelo nome ou cadastra uma nova empresa informando nome e tipo.
+
 A entrega também inclui documentação DDD, Event Storming, contrato OpenAPI, testes automatizados, execução local com Docker e relatório de vulnerabilidades. As vulnerabilidades críticas e altas encontradas nos scans iniciais foram corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica e mitigação documentada.

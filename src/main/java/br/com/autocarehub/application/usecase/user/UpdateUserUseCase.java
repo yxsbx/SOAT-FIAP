@@ -1,5 +1,6 @@
 package br.com.autocarehub.application.usecase.user;
 
+import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.enums.UserRole;
@@ -18,12 +19,20 @@ public class UpdateUserUseCase {
         User current = userRepository
                 .findById(command.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        if (command.username() != null
+                && !command.username().isBlank()
+                && !command.username().equals(current.username())) {
+            userRepository.findByUsername(command.username()).ifPresent(user -> {
+                throw new ApplicationException("Username already exists");
+            });
+        }
         User updated = new User(
                 current.id(),
                 command.username() == null || command.username().isBlank() ? current.username() : command.username(),
                 current.passwordHash(),
                 command.role() == null || command.role().isBlank() ? current.role() : UserRole.valueOf(command.role()),
                 command.customerId(),
+                command.companyId(),
                 command.fullName(),
                 command.profileType(),
                 command.companyName(),
@@ -40,6 +49,7 @@ public class UpdateUserUseCase {
             String username,
             String role,
             UUID customerId,
+            UUID companyId,
             String fullName,
             String profileType,
             String companyName,

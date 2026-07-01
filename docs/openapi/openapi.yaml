@@ -1387,7 +1387,9 @@ paths:
       summary: Cria uma conta de usuário
       description: >
         Endpoint administrativo para criar administradores, funcionários ou clientes vinculados ao sistema.
-        Requer Bearer Token JWT de administrador.
+        Requer Bearer Token JWT de administrador. IDs de usuário e de empresa nova são gerados pelo backend.
+        Para vincular uma conta a empresa existente, consulte antes `GET /api/v1/users/companies` e use a empresa selecionada.
+        Para criar uma empresa nova, envie `createCompany: true`, `companyName` e `companyType`, sem informar `companyId`.
       operationId: createUser
       requestBody:
         required: true
@@ -1395,19 +1397,43 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/CreateUserRequest'
-            example:
-              username: mecanico@example.com
-              password: 'autocare123'
-              role: EMPLOYEE
-              fullName: Carlos Oficina
-              profileType: WORKSHOP_EMPLOYEE
-              companyName: Oficina Central AutoCare
-              companyType: workshop
-              employeeSubRole: MECHANIC
-              permissions:
-                - CREATE_ORDER
-                - EDIT_ORDER
-              active: true
+            examples:
+              funcionarioEmpresaExistente:
+                summary: Funcionário em empresa existente selecionada
+                value:
+                  username: mecanico@example.com
+                  password: 'autocare123'
+                  role: EMPLOYEE
+                  fullName: Carlos Oficina
+                  profileType: WORKSHOP_EMPLOYEE
+                  companyId: 90000000-0000-0000-0000-000000000011
+                  companyName: Oficina Central AutoCare
+                  companyType: WORKSHOP
+                  createCompany: false
+                  employeeSubRole: MECHANIC
+                  permissions:
+                    - CREATE_ORDER
+                    - EDIT_ORDER
+                  active: true
+              adminNovaEmpresa:
+                summary: Admin Master criando nova oficina sem informar id
+                value:
+                  username: nova.oficina@example.com
+                  password: 'autocare123'
+                  role: ADMIN
+                  fullName: Ana Oficina
+                  profileType: WORKSHOP_ADMIN
+                  companyName: Oficina Nova AutoCare
+                  companyType: WORKSHOP
+                  createCompany: true
+                  employeeSubRole: ''
+                  permissions:
+                    - VIEW_BILLING
+                    - MANAGE_STOCK
+                    - CREATE_BUDGET
+                    - EDIT_EMPLOYEES
+                    - VIEW_STATS
+                  active: true
       responses:
         '201':
           description: Usuário criado
@@ -1439,6 +1465,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/v1/users/companies:
+    get:
+      tags:
+        - Users
+      summary: Lista empresas disponíveis para vínculo de usuários
+      description: >
+        Endpoint administrativo usado no cadastro de contas. Admin Master visualiza todas as empresas.
+        Admin de oficina ou loja visualiza somente a própria empresa.
+      operationId: listCompaniesForUsers
+      responses:
+        '200':
+          description: Empresas encontradas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyListResponse'
+              example:
+                items:
+                  - id: 90000000-0000-0000-0000-000000000001
+                    name: AutoCare Hub
+                    type: PLATFORM
+                    active: true
+                  - id: 90000000-0000-0000-0000-000000000011
+                    name: Oficina Central AutoCare
+                    type: WORKSHOP
+                    active: true
+                  - id: 90000000-0000-0000-0000-000000000012
+                    name: Loja peças Prime
+                    type: PARTS_STORE
+                    active: true
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -2644,6 +2706,10 @@ components:
         customerId:
           type: string
           format: uuid
+        companyId:
+          type: string
+          format: uuid
+          description: Use somente para vincular a uma empresa existente retornada por GET /api/v1/users/companies. Não informe ao criar uma nova empresa.
         fullName:
           type: string
           maxLength: 160
@@ -2669,6 +2735,39 @@ components:
             - MANAGE_STOCK
         active:
           type: boolean
+    CompanyResponse:
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - active
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 160
+          example: Oficina Central AutoCare
+        type:
+          type: string
+          enum:
+            - PLATFORM
+            - WORKSHOP
+            - PARTS_STORE
+          example: WORKSHOP
+        active:
+          type: boolean
+    CompanyListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyResponse'
     UserListResponse:
       type: object
       required:
@@ -2706,6 +2805,9 @@ components:
         customerId:
           type: string
           format: uuid
+        companyId:
+          type: string
+          format: uuid
         fullName:
           type: string
           minLength: 1
@@ -2718,7 +2820,15 @@ components:
           maxLength: 160
         companyType:
           type: string
-          example: workshop
+          enum:
+            - PLATFORM
+            - WORKSHOP
+            - PARTS_STORE
+          example: WORKSHOP
+        createCompany:
+          type: boolean
+          default: false
+          description: Quando true, o backend cria a empresa e gera o companyId automaticamente.
         employeeSubRole:
           type: string
           example: MECHANIC
@@ -2750,6 +2860,10 @@ components:
         customerId:
           type: string
           format: uuid
+        companyId:
+          type: string
+          format: uuid
+          description: Use somente para manter ou trocar o vínculo para uma empresa existente. Não é preenchido manualmente para empresa nova.
         fullName:
           type: string
           minLength: 1
@@ -2762,7 +2876,15 @@ components:
           maxLength: 160
         companyType:
           type: string
-          example: workshop
+          enum:
+            - PLATFORM
+            - WORKSHOP
+            - PARTS_STORE
+          example: WORKSHOP
+        createCompany:
+          type: boolean
+          default: false
+          description: Quando true, o backend cria a empresa e gera o companyId automaticamente.
         employeeSubRole:
           type: string
           example: MECHANIC

@@ -32,6 +32,9 @@ public class UserJpaEntity {
     @Column(name = "customer_id")
     private UUID customerId;
 
+    @Column(name = "company_id")
+    private UUID companyId;
+
     @Column(name = "full_name", nullable = false, length = 160)
     private String fullName;
 

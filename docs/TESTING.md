@@ -84,8 +84,8 @@ Principais classes:
 
 | Teste                                    | Cobertura principal                                                    |
 |------------------------------------------|------------------------------------------------------------------------|
-| `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças e usuários. |
-| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido e acessos negados.           |
+| `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças, usuários e criação/vínculo de empresa. |
+| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa. |
 | `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ e placa inválidos.                         |
 | `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                      |
 | `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API.                                         |
@@ -133,6 +133,8 @@ Para o escopo acadêmico, esse teste funciona como teste de sistema da API, porq
 | Acompanhamento pelo cliente | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
 | Tempo médio de execução     | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
 | JWT e autorização           | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `SecurityAuthorizationIntegrationTest`        |
+| Criação de empresa por Admin Master | `AdministrativeCrudIntegrationTest`                                                       |
+| Escopo de usuários por empresa | `SecurityAuthorizationIntegrationTest`                                                       |
 | CPF/CNPJ e placa            | `CustomerTest`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                        |
 
 ## 9. Cobertura JaCoCo

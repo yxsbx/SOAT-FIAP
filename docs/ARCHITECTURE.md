@@ -227,15 +227,17 @@ flowchart LR
     Atendente["Atendente"]
     Mecanico["Mecânico / equipe técnica"]
     Admin["Administrador da oficina"]
+    Master["Admin Master"]
     Sistema["AutoCare Hub\nBackend/API"]
 
     Cliente -->|"Consulta OS e aprova orçamento"| Sistema
     Atendente -->|"Cadastra cliente, veículo e abre OS"| Sistema
     Mecanico -->|"Acompanha diagnóstico, execução e finalização"| Sistema
     Admin -->|"Gerencia cadastros, estoque, usuários e indicadores"| Sistema
+    Master -->|"Cria empresas, admins e usuários globais"| Sistema
 ```
 
-O MVP não possui integrações externas reais. Pagamento, e-mail, SMS, WhatsApp, fornecedores, ERP, API Gateway, mensageria e cloud produtiva não aparecem no diagrama porque não fazem parte da implementação desta entrega.
+O MVP não possui integrações externas reais. Pagamento, e-mail, SMS, WhatsApp, fornecedores, ERP, API Gateway, mensageria e cloud produtiva não aparecem no diagrama porque não fazem parte da implementação desta entrega. A separação entre empresas é representada por `companyId`: Admin Master pertence à empresa `AutoCare Hub` do tipo `PLATFORM`, enquanto oficinas e lojas possuem empresas próprias para restringir usuários e operações administrativas.
 
 ### 4.2 C2 - Contêineres
 

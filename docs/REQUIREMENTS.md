@@ -14,9 +14,10 @@ O AutoCare Hub organiza esse fluxo em um backend monolítico. A oficina cadastra
 | Atendente                | Cadastrar cliente, veículo e abrir OS.                    | Usuário administrativo ou funcionário (`ADMIN`/`EMPLOYEE`). |
 | Mecânico/equipe técnica  | Diagnosticar, executar e finalizar serviços.              | Usuário funcionário, representado nos fluxos de status.     |
 | Administrador da oficina | Gerenciar cadastros, usuários, OS, estoque e indicadores. | `role=ADMIN`.                                               |
+| Admin Master             | Administrar a plataforma, empresas e contas globais.      | `profileType=MASTER_ADMIN`, vinculado à empresa `PLATFORM`. |
 | Responsável pelo estoque | Controlar entrada, saída, reserva e baixa de peças.       | `ADMIN` ou `EMPLOYEE` com acesso aos endpoints de peças.    |
 
-Os papéis de negócio aparecem na documentação para explicar a rotina da oficina. No código, a autorização usa `UserRole`, `profileType`, `employeeSubRole` e regras de acesso por cliente quando necessário.
+Os papéis de negócio aparecem na documentação para explicar a rotina da oficina. No código, a autorização usa `UserRole`, `profileType`, `employeeSubRole`, `companyId` e regras de acesso por cliente quando necessário. Admin Master pode criar usuários em empresa existente ou criar uma nova empresa; administradores de oficina e loja ficam restritos à própria empresa.
 
 ## 3. Jornada da solução
 

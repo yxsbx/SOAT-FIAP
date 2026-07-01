@@ -77,6 +77,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 class ApplicationUseCaseAdditionalCoverageTest {
 
+    private static final UUID COMPANY_ID = UUID.fromString("90000000-0000-0000-0000-000000000011");
+
     private static Address address() {
         return new Address("Rua A", "10", null, "Centro", "São Paulo", "SP", "01001000");
     }
@@ -92,6 +94,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 "{encoded}secret",
                 role,
                 null,
+                COMPANY_ID,
                 fullName,
                 role == UserRole.ADMIN ? "admin" : "employee",
                 "AutoCare",
@@ -318,6 +321,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                         "plain",
                         "EMPLOYEE",
                         null,
+                        COMPANY_ID,
                         "Consultor",
                         "employee",
                         "AutoCare",
@@ -333,6 +337,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                         "consultor2",
                         "ADMIN",
                         null,
+                        COMPANY_ID,
                         "Consultor Dois",
                         "admin",
                         "AutoCare",
@@ -350,6 +355,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                         "   ",
                         "",
                         null,
+                        COMPANY_ID,
                         "Consultor Tres",
                         "admin",
                         "AutoCare",
@@ -377,7 +383,18 @@ class ApplicationUseCaseAdditionalCoverageTest {
 
         assertThatThrownBy(() -> new CreateUserUseCase(userRepository, passwordEncoder)
                         .execute(new CreateUserUseCase.Command(
-                                "admin", "plain", "ADMIN", null, "Admin", "admin", "", "", "", List.of(), true)))
+                                "admin",
+                                "plain",
+                                "ADMIN",
+                                null,
+                                COMPANY_ID,
+                                "Admin",
+                                "admin",
+                                "",
+                                "",
+                                "",
+                                List.of(),
+                                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Username already exists");
         assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)

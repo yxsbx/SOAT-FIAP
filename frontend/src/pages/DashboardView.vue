@@ -286,6 +286,7 @@ const orderSteps = ['Cenário', 'Cliente', 'Veículo', 'Defeitos', 'Valores', 'F
 
 const data = reactive({
   users: [],
+  companies: [],
   customers: [],
   vehicles: [],
   services: [],
@@ -377,8 +378,10 @@ const forms = reactive({
     password: '',
     role: 'EMPLOYEE',
     profileType: 'WORKSHOP_EMPLOYEE',
+    companyId: '',
     companyName: '',
     companyType: '',
+    createCompany: false,
     employeeSubRole: 'UNSPECIFIED',
     permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
     customerId: '',
@@ -533,6 +536,67 @@ const isCustomerProfile = computed(
 );
 
 const userPermissions = computed(() => currentUser.value?.permissions || []);
+
+const userProfileOptions = computed(() => {
+  if (isMasterAdmin.value) {
+    return [
+      { value: 'MASTER_ADMIN', label: 'Admin Master' },
+      { value: 'WORKSHOP_ADMIN', label: 'Admin de oficina' },
+      { value: 'PARTS_STORE_ADMIN', label: 'Admin de loja de peças' },
+      { value: 'WORKSHOP_EMPLOYEE', label: 'Funcionário de oficina' },
+      { value: 'PARTS_STORE_EMPLOYEE', label: 'Funcionário de loja de peças' },
+      { value: 'CUSTOMER_OWNER', label: 'Cliente final' },
+    ];
+  }
+  if (isPartsStoreAdmin.value) {
+    return [{ value: 'PARTS_STORE_EMPLOYEE', label: 'Funcionário de loja de peças' }];
+  }
+  return [{ value: 'WORKSHOP_EMPLOYEE', label: 'Funcionário de oficina' }];
+});
+
+const canEditUserCompanyFields = computed(() => isMasterAdmin.value);
+
+const companyOptions = computed(() =>
+  data.companies.filter((company) => {
+    if (forms.user.profileType === 'WORKSHOP_ADMIN' || forms.user.profileType === 'WORKSHOP_EMPLOYEE') {
+      return company.type === 'WORKSHOP';
+    }
+    if (forms.user.profileType === 'PARTS_STORE_ADMIN' || forms.user.profileType === 'PARTS_STORE_EMPLOYEE') {
+      return company.type === 'PARTS_STORE';
+    }
+    if (forms.user.profileType === 'MASTER_ADMIN') {
+      return company.type === 'PLATFORM';
+    }
+    return true;
+  })
+);
+
+function selectedUserCompany() {
+  return data.companies.find((company) => company.id === forms.user.companyId);
+}
+
+function selectUserCompany() {
+  const company = selectedUserCompany();
+  if (!company) {
+    return;
+  }
+  forms.user.companyName = company.name;
+  forms.user.companyType = company.type;
+}
+
+function ensureUserCompanySelection() {
+  if (!isMasterAdmin.value || forms.user.createCompany || forms.user.profileType === 'CUSTOMER_OWNER') {
+    return;
+  }
+  const currentSelection = selectedUserCompany();
+  if (currentSelection && companyOptions.value.some((company) => company.id === currentSelection.id)) {
+    selectUserCompany();
+    return;
+  }
+  const firstCompany = companyOptions.value[0];
+  forms.user.companyId = firstCompany?.id || '';
+  forms.user.companyName = firstCompany?.name || '';
+}
 
 function can(permission) {
   return isWorkshopAdmin.value || userPermissions.value.includes(permission);
@@ -729,8 +793,10 @@ function comparableUserForm() {
     password: forms.user.password || '',
     role: forms.user.role || '',
     profileType: forms.user.profileType || '',
+    companyId: forms.user.companyId || '',
     companyName: forms.user.companyName || '',
     companyType: forms.user.companyType || '',
+    createCompany: Boolean(forms.user.createCompany),
     employeeSubRole: forms.user.employeeSubRole || '',
     permissions: [...(forms.user.permissions || [])].sort(),
     customerId: forms.user.customerId || '',
@@ -1214,7 +1280,11 @@ const storeFrequentCustomers = computed(() => {
 });
 
 const storeEmployees = computed(() =>
-  data.users.filter((user) => ['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType))
+  data.users.filter(
+    (user) =>
+      ['PARTS_STORE_EMPLOYEE', 'PARTS_STORE_ADMIN'].includes(user.profileType) &&
+      (isMasterAdmin.value || user.companyName === currentUser.value?.companyName)
+  )
 );
 
 const masterCustomers = computed(() =>
@@ -1472,7 +1542,12 @@ const storeHomeWidgetDefinitions = computed(() => [
 ]);
 
 const workshopEmployees = computed(() =>
-  data.users.filter((user) => user.role === 'EMPLOYEE' && user.profileType === 'WORKSHOP_EMPLOYEE')
+  data.users.filter(
+    (user) =>
+      user.role === 'EMPLOYEE' &&
+      user.profileType === 'WORKSHOP_EMPLOYEE' &&
+      (isMasterAdmin.value || user.companyName === currentUser.value?.companyName)
+  )
 );
 
 function storeEmployeeMetrics(user) {
@@ -1997,6 +2072,25 @@ function persistHomePreferencesLocally() {
   );
 }
 
+function buildCustomerPayload(customer) {
+  return {
+    name: customer.name,
+    document: onlyDigits(customer.document),
+    phone: onlyDigits(customer.phone),
+    email: customer.email,
+    address: {
+      street: customer.address?.street || '',
+      number: customer.address?.number || '',
+      complement: customer.address?.complement || '',
+      neighborhood: customer.address?.neighborhood || '',
+      city: customer.address?.city || '',
+      state: customer.address?.state || 'SP',
+      zipCode: onlyDigits(customer.address?.zipCode || ''),
+    },
+    active: customer.active !== false,
+  };
+}
+
 function toggleHomeSettings() {
   if (!homeSettingsOpen.value) {
     syncHomePreferenceDraft();
@@ -2043,6 +2137,7 @@ async function saveHomePreferenceDraft() {
     homePreferences.showAlertsOnHome = nextShowAlertsOnHome;
     persistHomePreferencesLocally();
     syncHomePreferenceDraft();
+    homeSettingsOpen.value = false;
     showSuccess('Preferências da home salvas.');
   } catch (err) {
     showError(err.message || 'Não foi possível salvar as preferências da home.');
@@ -2114,9 +2209,10 @@ async function loadDashboard(options = {}) {
       resources.serviceOrders({ status: pagination.serviceOrders.status, size: API_MAX_PAGE_SIZE }),
       resources.averageExecutionTime(),
       auth.role === 'ADMIN' ? resources.demoLeads() : Promise.resolve([]),
+      auth.role === 'ADMIN' ? resources.companies() : Promise.resolve([]),
     ]);
 
-    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average, demoLeads] =
+    const [user, users, customers, vehicles, services, parts, lowStockParts, serviceOrders, average, demoLeads, companies] =
       requests;
 
     currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
@@ -2133,6 +2229,7 @@ async function loadDashboard(options = {}) {
     data.serviceOrders = serviceOrders.status === 'fulfilled' ? listItems(serviceOrders.value) : [];
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
     data.demoLeads = demoLeads.status === 'fulfilled' ? demoLeads.value || [] : [];
+    data.companies = companies.status === 'fulfilled' && companies.value ? listItems(companies.value) : [];
     ensureStoreQuotes();
 
     const failed = requests.filter((request) => {
@@ -2155,11 +2252,11 @@ async function loadDashboard(options = {}) {
 
 async function runAction(action, message) {
   saving.value = true;
-  resetMessage();
+    resetMessage();
 
-  try {
-    await action();
-    await loadDashboard({ silent: true });
+    try {
+      await action();
+      await loadDashboard({ silent: true });
     showSuccess(message);
   } catch (err) {
     showError(err.message || 'Não foi possível concluir a operação.');
@@ -2332,10 +2429,11 @@ async function createOrderFromWizard(createBudgetNow) {
 function createCustomer() {
   return runAction(
     async () => {
+      const payload = buildCustomerPayload(forms.customer);
       if (forms.customer.id) {
-        await resources.updateCustomer(forms.customer.id, forms.customer);
+        await resources.updateCustomer(forms.customer.id, payload);
       } else {
-        await resources.createCustomer(forms.customer);
+        await resources.createCustomer(payload);
       }
       customerModalOpen.value = false;
       resetCustomerForm();
@@ -3038,17 +3136,24 @@ const detailModalDirty = computed(() => {
   return false;
 });
 
-function openRecord(type, record) {
+async function openRecord(type, record) {
   selectedRecordType.value = type;
   selectedRecord.value = record;
   if (type === 'Cliente') {
+    let customer = record;
+    try {
+      customer = await resources.customer(record.id);
+      selectedRecord.value = customer;
+    } catch (err) {
+      showError(err.message || 'Não foi possível carregar os dados completos do cliente.');
+    }
     Object.assign(modalDraft.customer, {
-      name: record.name || '',
-      document: record.document || '',
-      phone: record.phone || '',
-      email: record.email || '',
-      address: { ...(record.address || forms.customer.address) },
-      active: record.active !== false,
+      name: customer.name || '',
+      document: customer.document || '',
+      phone: customer.phone || '',
+      email: customer.email || '',
+      address: { ...(customer.address || forms.customer.address) },
+      active: customer.active !== false,
     });
   }
   if (['Oficina', 'Oficina parceira'].includes(type)) {
@@ -3100,7 +3205,7 @@ function closeRecord() {
 async function saveDetailModal() {
   if (isCustomerDetail.value) {
     await runAction(async () => {
-      await resources.updateCustomer(selectedRecord.value.id, modalDraft.customer);
+      await resources.updateCustomer(selectedRecord.value.id, buildCustomerPayload(modalDraft.customer));
       closeRecord(true);
     }, 'Cliente atualizado.');
     return;
@@ -3206,8 +3311,10 @@ function editUser(user) {
     password: '',
     role: user.role,
     profileType: user.profileType,
+    companyId: user.companyId || '',
     companyName: user.companyName || '',
     companyType: user.companyType || '',
+    createCompany: false,
     employeeSubRole: user.employeeSubRole || 'UNSPECIFIED',
     permissions: [...(user.permissions || [])],
     customerId: user.customerId || '',
@@ -3218,15 +3325,20 @@ function editUser(user) {
 }
 
 function resetUserForm() {
+  const defaultProfileType = isPartsStoreAdmin.value ? 'PARTS_STORE_EMPLOYEE' : 'WORKSHOP_EMPLOYEE';
+  const defaultCompanyType =
+    isMasterAdmin.value || !currentUser.value?.companyType ? 'WORKSHOP' : currentUser.value.companyType;
   Object.assign(forms.user, {
     id: '',
     fullName: '',
     username: '',
     password: '',
     role: 'EMPLOYEE',
-    profileType: 'WORKSHOP_EMPLOYEE',
-    companyName: '',
-    companyType: '',
+    profileType: defaultProfileType,
+    companyId: isMasterAdmin.value ? '' : currentUser.value?.companyId || '',
+    companyName: isMasterAdmin.value ? '' : currentUser.value?.companyName || '',
+    companyType: defaultCompanyType,
+    createCompany: false,
     employeeSubRole: 'UNSPECIFIED',
     permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
     customerId: '',
@@ -3237,6 +3349,7 @@ function resetUserForm() {
 
 function openCreateUserModal() {
   resetUserForm();
+  syncUserProfileDefaults();
   userModalOpen.value = true;
 }
 
@@ -3246,9 +3359,11 @@ function openCreatePartnerAdminModal(profileType = 'WORKSHOP_ADMIN') {
     role: 'ADMIN',
     profileType,
     companyType: profileType === 'WORKSHOP_ADMIN' ? 'WORKSHOP' : 'PARTS_STORE',
+    createCompany: false,
     employeeSubRole: '',
     permissions: ['VIEW_BILLING', 'MANAGE_STOCK', 'CREATE_BUDGET', 'EDIT_EMPLOYEES', 'VIEW_STATS'],
   });
+  ensureUserCompanySelection();
   userFormInitial.value = comparableUserForm();
   userModalOpen.value = true;
 }
@@ -3259,6 +3374,8 @@ function openCreateWorkshopEmployeeModal() {
     role: 'EMPLOYEE',
     profileType: 'WORKSHOP_EMPLOYEE',
     companyType: 'WORKSHOP',
+    companyId: isMasterAdmin.value ? forms.user.companyId : currentUser.value?.companyId || '',
+    companyName: isMasterAdmin.value ? forms.user.companyName : currentUser.value?.companyName || '',
     employeeSubRole: 'UNSPECIFIED',
     permissions: ['CREATE_ORDER', 'EDIT_ORDER', 'CREATE_BUDGET'],
   });
@@ -3272,6 +3389,8 @@ function openCreateStoreEmployeeModal() {
     role: 'EMPLOYEE',
     profileType: 'PARTS_STORE_EMPLOYEE',
     companyType: 'PARTS_STORE',
+    companyId: isMasterAdmin.value ? forms.user.companyId : currentUser.value?.companyId || '',
+    companyName: isMasterAdmin.value ? forms.user.companyName : currentUser.value?.companyName || '',
     employeeSubRole: 'ATTENDANT',
     permissions: ['MANAGE_STOCK', 'CREATE_BUDGET'],
   });
@@ -3285,9 +3404,30 @@ function closeUserModal() {
 }
 
 function syncUserProfileDefaults() {
+  if (!isMasterAdmin.value) {
+    forms.user.companyId = currentUser.value?.companyId || '';
+    forms.user.companyName = currentUser.value?.companyName || '';
+    forms.user.companyType = currentUser.value?.companyType || forms.user.companyType;
+    forms.user.createCompany = false;
+    if (isPartsStoreAdmin.value) {
+      forms.user.profileType = 'PARTS_STORE_EMPLOYEE';
+      forms.user.role = 'EMPLOYEE';
+      forms.user.companyType = 'PARTS_STORE';
+    } else {
+      forms.user.profileType = 'WORKSHOP_EMPLOYEE';
+      forms.user.role = 'EMPLOYEE';
+      forms.user.companyType = 'WORKSHOP';
+    }
+    forms.user.employeeSubRole = forms.user.employeeSubRole || 'UNSPECIFIED';
+    return;
+  }
   if (forms.user.profileType === 'MASTER_ADMIN') {
     forms.user.role = 'ADMIN';
-    forms.user.companyType = '';
+    const platform = data.companies.find((company) => company.type === 'PLATFORM');
+    forms.user.companyId = platform?.id || '';
+    forms.user.companyName = platform?.name || 'AutoCare Hub';
+    forms.user.companyType = 'PLATFORM';
+    forms.user.createCompany = false;
     forms.user.employeeSubRole = '';
     return;
   }
@@ -3295,29 +3435,36 @@ function syncUserProfileDefaults() {
     forms.user.role = 'ADMIN';
     forms.user.companyType = 'WORKSHOP';
     forms.user.employeeSubRole = '';
+    ensureUserCompanySelection();
     return;
   }
   if (forms.user.profileType === 'PARTS_STORE_ADMIN') {
     forms.user.role = 'ADMIN';
     forms.user.companyType = 'PARTS_STORE';
     forms.user.employeeSubRole = '';
+    ensureUserCompanySelection();
     return;
   }
   if (forms.user.profileType === 'WORKSHOP_EMPLOYEE') {
     forms.user.role = 'EMPLOYEE';
     forms.user.companyType = 'WORKSHOP';
     forms.user.employeeSubRole = forms.user.employeeSubRole || 'UNSPECIFIED';
+    ensureUserCompanySelection();
     return;
   }
   if (forms.user.profileType === 'PARTS_STORE_EMPLOYEE') {
     forms.user.role = 'EMPLOYEE';
     forms.user.companyType = 'PARTS_STORE';
     forms.user.employeeSubRole = forms.user.employeeSubRole || 'UNSPECIFIED';
+    ensureUserCompanySelection();
     return;
   }
   if (forms.user.profileType === 'CUSTOMER_OWNER') {
     forms.user.role = 'CUSTOMER';
+    forms.user.companyId = '';
     forms.user.companyType = '';
+    forms.user.companyName = '';
+    forms.user.createCompany = false;
     forms.user.employeeSubRole = '';
   }
 }
@@ -3345,13 +3492,16 @@ function saveUser() {
       ? 'Funcionário criado.'
       : 'Conta criada.';
   return runAction(async () => {
+    syncUserProfileDefaults();
     const payload = {
       fullName: forms.user.fullName,
       username: forms.user.username,
       role: forms.user.role,
       profileType: forms.user.profileType,
+      companyId: forms.user.createCompany ? null : forms.user.companyId || null,
       companyName: forms.user.companyName,
       companyType: forms.user.companyType,
+      createCompany: Boolean(forms.user.createCompany),
       employeeSubRole: forms.user.employeeSubRole,
       permissions: forms.user.permissions,
       customerId: forms.user.customerId || null,
@@ -6137,35 +6287,73 @@ onMounted(async () => {
             <label class="form-field">
               <span>Perfil</span>
               <select v-model="forms.user.profileType" @change="syncUserProfileDefaults">
-                <option value="MASTER_ADMIN">Admin Master</option>
-                <option value="WORKSHOP_ADMIN">Admin de oficina</option>
-                <option value="PARTS_STORE_ADMIN">Admin de loja de peças</option>
-                <option value="WORKSHOP_EMPLOYEE">Funcionário de oficina</option>
-                <option value="PARTS_STORE_EMPLOYEE">Funcionário de loja de peças</option>
-                <option value="CUSTOMER_OWNER">Cliente final</option>
+                <option v-for="option in userProfileOptions" :key="option.value" :value="option.value">
+                  {{ option.label }}
+                </option>
               </select>
             </label>
-            <label class="form-field">
+            <label v-if="canEditUserCompanyFields" class="form-field">
               <span>Role geral</span>
-              <select v-model="forms.user.role">
+              <select v-model="forms.user.role" disabled>
                 <option value="ADMIN">Administrador</option>
                 <option value="EMPLOYEE">Funcionário</option>
                 <option value="CUSTOMER">Cliente</option>
               </select>
             </label>
-            <label class="form-field">
+            <label
+              v-if="canEditUserCompanyFields && !['MASTER_ADMIN', 'CUSTOMER_OWNER'].includes(forms.user.profileType)"
+              class="check-row"
+            >
+              <input v-model="forms.user.createCompany" type="checkbox" @change="syncUserProfileDefaults" />
+              <span>Criar nova empresa para esta conta</span>
+            </label>
+            <label
+              v-if="
+                canEditUserCompanyFields &&
+                !forms.user.createCompany &&
+                !['CUSTOMER_OWNER'].includes(forms.user.profileType)
+              "
+              class="form-field"
+            >
+              <span>Empresa existente</span>
+              <select v-model="forms.user.companyId" required @change="selectUserCompany">
+                <option value="" disabled>Selecione uma empresa</option>
+                <option v-for="company in companyOptions" :key="company.id" :value="company.id">
+                  {{ company.name }} · {{ companyTypeLabel(company.type) }}
+                </option>
+              </select>
+            </label>
+            <label
+              v-if="
+                canEditUserCompanyFields &&
+                forms.user.createCompany &&
+                !['MASTER_ADMIN', 'CUSTOMER_OWNER'].includes(forms.user.profileType)
+              "
+              class="form-field"
+            >
+              <span>Nome da nova empresa</span>
+              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja" required />
+            </label>
+            <label
+              v-if="canEditUserCompanyFields && !['CUSTOMER_OWNER'].includes(forms.user.profileType)"
+              class="form-field"
+            >
               <span>Tipo de empresa</span>
-              <select v-model="forms.user.companyType">
-                <option value="">Sem empresa</option>
+              <select v-model="forms.user.companyType" disabled>
+                <option value="PLATFORM">Plataforma AutoCare Hub</option>
                 <option value="WORKSHOP">Oficina</option>
                 <option value="PARTS_STORE">Loja de peças</option>
               </select>
             </label>
-            <label class="form-field">
-              <span>Empresa vinculada</span>
-              <input v-model="forms.user.companyName" placeholder="Nome da oficina ou loja" />
-            </label>
-            <label class="form-field">
+            <div v-else class="modal-readonly-grid">
+              <span
+                >Empresa vinculada<strong>{{ forms.user.companyName || currentUser?.companyName || '-' }}</strong></span
+              >
+              <span
+                >Tipo de empresa<strong>{{ companyTypeLabel(forms.user.companyType || currentUser?.companyType) }}</strong></span
+              >
+            </div>
+            <label v-if="userModalIsEmployee" class="form-field">
               <span>Função do funcionário</span>
               <select v-model="forms.user.employeeSubRole">
                 <option value="">Sem subfunção</option>

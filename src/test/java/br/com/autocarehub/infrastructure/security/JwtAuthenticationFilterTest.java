@@ -34,6 +34,7 @@ class JwtAuthenticationFilterTest {
                 "$2a$10$hashhashhashhashhashhashhashhashhashhashhashhashhash",
                 UserRole.ADMIN,
                 null,
+                UUID.fromString("90000000-0000-0000-0000-000000000011"),
                 "Admin",
                 "admin",
                 "AutoCare",

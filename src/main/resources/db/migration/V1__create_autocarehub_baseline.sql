@@ -70,6 +70,16 @@ CREATE TABLE parts
     CONSTRAINT chk_parts_reserved_not_greater_than_stock CHECK (reserved_quantity <= stock_quantity)
 );
 
+CREATE TABLE companies
+(
+    id         UUID PRIMARY KEY,
+    name       VARCHAR(160) NOT NULL UNIQUE,
+    type       VARCHAR(60)  NOT NULL,
+    active     BOOLEAN      NOT NULL,
+    created_at TIMESTAMP    NOT NULL,
+    CONSTRAINT chk_companies_type CHECK (type IN ('PLATFORM', 'WORKSHOP', 'PARTS_STORE'))
+);
+
 CREATE TABLE users
 (
     id                UUID PRIMARY KEY,
@@ -77,6 +87,7 @@ CREATE TABLE users
     password_hash     VARCHAR(255) NOT NULL,
     role              VARCHAR(50)  NOT NULL,
     customer_id       UUID REFERENCES customers (id),
+    company_id        UUID REFERENCES companies (id),
     full_name         VARCHAR(160) NOT NULL,
     profile_type      VARCHAR(60)  NOT NULL,
     employee_sub_role VARCHAR(60)  NOT NULL,
@@ -381,40 +392,50 @@ VALUES ('40000000-0000-0000-0000-000000000001', 'Oleo sintetico 5W30 1L', 'OLE-5
        ('40000000-0000-0000-0000-000000000042', 'Correia de acessorios diesel', 'MOT-COR-DIE01', 'Motor', 'Correias',
         'Gates', 'Correia de acessorios diesel', 220.00, 136.40, 7, 0, 3, 3, NULL, TRUE);
 
-INSERT INTO users (id, username, password_hash, role, customer_id, full_name, profile_type, employee_sub_role,
+INSERT INTO companies (id, name, type, active, created_at)
+VALUES ('90000000-0000-0000-0000-000000000001', 'AutoCare Hub', 'PLATFORM', TRUE, CURRENT_TIMESTAMP),
+       ('90000000-0000-0000-0000-000000000011', 'Oficina Central AutoCare', 'WORKSHOP', TRUE, CURRENT_TIMESTAMP),
+       ('90000000-0000-0000-0000-000000000012', 'Loja peças Prime', 'PARTS_STORE', TRUE, CURRENT_TIMESTAMP);
+
+INSERT INTO users (id, username, password_hash, role, customer_id, company_id, full_name, profile_type, employee_sub_role,
                    permissions, company_name, company_type, active, created_at)
 VALUES ('00000000-0000-0000-0000-000000000001', 'admin@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL, 'admin@autocarehub.com', 'ADMIN',
-        '', 'VIEW_BILLING,CREATE_ORDER,EDIT_ORDER,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS', '', '', TRUE,
-        CURRENT_TIMESTAMP),
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL,
+        '90000000-0000-0000-0000-000000000001', 'admin@autocarehub.com', 'MASTER_ADMIN', '',
+        'VIEW_BILLING,CREATE_ORDER,EDIT_ORDER,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS', 'AutoCare Hub',
+        'PLATFORM', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000002', 'funcionario@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL, 'funcionario@autocarehub.com',
-        'EMPLOYEE', '', '', '', '', TRUE, CURRENT_TIMESTAMP),
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL,
+        '90000000-0000-0000-0000-000000000011', 'funcionario@autocarehub.com', 'WORKSHOP_EMPLOYEE',
+        'UNSPECIFIED', '', 'Oficina Central AutoCare', 'WORKSHOP', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000003', 'cliente@autocarehub.com',
         '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'CUSTOMER',
-        '10000000-0000-0000-0000-000000000001', 'Eduardo Cliente Veículos', 'CUSTOMER_OWNER', '', '', '', '', TRUE,
-        CURRENT_TIMESTAMP),
+        '10000000-0000-0000-0000-000000000001', NULL, 'Eduardo Cliente Veículos', 'CUSTOMER_OWNER', '', '', '', '',
+        TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000010', 'master@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL, 'Marina AutoCare Hub',
-        'MASTER_ADMIN', '', 'VIEW_BILLING,CREATE_ORDER,EDIT_ORDER,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS',
-        'AutoCare Hub', 'PLATFORM', TRUE, CURRENT_TIMESTAMP),
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL,
+        '90000000-0000-0000-0000-000000000001', 'Marina AutoCare Hub', 'MASTER_ADMIN', '',
+        'VIEW_BILLING,CREATE_ORDER,EDIT_ORDER,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS', 'AutoCare Hub',
+        'PLATFORM', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000011', 'oficina.admin@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL, 'Ana Oficina Central',
-        'WORKSHOP_ADMIN', '',
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL,
+        '90000000-0000-0000-0000-000000000011', 'Ana Oficina Central', 'WORKSHOP_ADMIN', '',
         'VIEW_BILLING,CREATE_ORDER,EDIT_ORDER,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS',
         'Oficina Central AutoCare', 'WORKSHOP', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000012', 'loja.admin@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL, 'Bruno Loja de Peças',
-        'PARTS_STORE_ADMIN', '', 'VIEW_BILLING,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS',
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL,
+        '90000000-0000-0000-0000-000000000012', 'Bruno Loja de Peças', 'PARTS_STORE_ADMIN', '',
+        'VIEW_BILLING,MANAGE_STOCK,CREATE_BUDGET,EDIT_EMPLOYEES,VIEW_STATS',
         'Loja peças Prime', 'PARTS_STORE', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000013', 'oficina.funcionario@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL, 'Carlos Atendimento Oficina',
-        'WORKSHOP_EMPLOYEE', 'MECHANIC', 'CREATE_ORDER,EDIT_ORDER,CREATE_BUDGET,VIEW_STATS', 'Oficina Central AutoCare',
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL,
+        '90000000-0000-0000-0000-000000000011', 'Carlos Atendimento Oficina', 'WORKSHOP_EMPLOYEE', 'MECHANIC',
+        'CREATE_ORDER,EDIT_ORDER,CREATE_BUDGET,VIEW_STATS', 'Oficina Central AutoCare',
         'WORKSHOP', TRUE, CURRENT_TIMESTAMP),
        ('00000000-0000-0000-0000-000000000014', 'loja.funcionario@autocarehub.com',
-        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL, 'Daniel Estoque Peças',
-        'PARTS_STORE_EMPLOYEE', 'ATTENDANT', 'MANAGE_STOCK,CREATE_BUDGET,VIEW_STATS', 'Loja peças Prime', 'PARTS_STORE',
-        TRUE, CURRENT_TIMESTAMP);
+        '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'EMPLOYEE', NULL,
+        '90000000-0000-0000-0000-000000000012', 'Daniel Estoque Peças', 'PARTS_STORE_EMPLOYEE', 'ATTENDANT',
+        'MANAGE_STOCK,CREATE_BUDGET,VIEW_STATS', 'Loja peças Prime', 'PARTS_STORE', TRUE, CURRENT_TIMESTAMP);
 
 INSERT INTO service_orders (id, customer_id, vehicle_id, status, diagnostic_notes, total_amount, created_at,
                             budget_generated_at, approved_at, started_at, finished_at, delivered_at)

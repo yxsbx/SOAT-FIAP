@@ -68,6 +68,34 @@ class SecurityAuthorizationIntegrationTest {
     }
 
     @Test
+    void shouldRestrictCompanyAdminUserManagementToOwnCompanyEmployees() throws Exception {
+        String token = login("oficina.admin@autocarehub.com");
+
+        mockMvc.perform(get("/api/v1/users").header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(
+                        jsonPath("$.items[?(@.profileType == 'MASTER_ADMIN')]").isEmpty())
+                .andExpect(jsonPath("$.items[?(@.companyName == 'Loja peças Prime')]")
+                        .isEmpty());
+
+        mockMvc.perform(post("/api/v1/users")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.ofEntries(
+                                Map.entry("username", "master.falso@example.com"),
+                                Map.entry("password", "autocare123"),
+                                Map.entry("role", "ADMIN"),
+                                Map.entry("fullName", "Master Falso"),
+                                Map.entry("profileType", "MASTER_ADMIN"),
+                                Map.entry("companyName", "AutoCare Hub"),
+                                Map.entry("companyType", "PLATFORM"),
+                                Map.entry("employeeSubRole", ""),
+                                Map.entry("permissions", java.util.List.of("VIEW_STATS")),
+                                Map.entry("active", true)))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldBlockCustomerFromAdministrativeApis() throws Exception {
         String token = login("cliente@autocarehub.com");
 
