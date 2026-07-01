@@ -1,8 +1,12 @@
 # AutoCare Hub
 
-AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger/OpenAPI, Docker, testes automatizados e relatório de vulnerabilidades.
+AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em
+Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de
+Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger/OpenAPI, Docker, testes automatizados
+e relatório de vulnerabilidades.
 
-O repositório também inclui um frontend demonstrativo em Vue/Vite, localizado em `frontend/`, usado para apoiar a apresentação visual do MVP. A branch final de entrega é `main`.
+O repositório também inclui um frontend demonstrativo em Vue/Vite, localizado em `frontend/`, usado para apoiar a
+apresentação visual do MVP. A branch final de entrega é `main`.
 
 ## Sumário da entrega
 
@@ -11,7 +15,7 @@ A pasta `docs/` concentra a documentação usada na avaliação.
 | Documento                     | Onde abrir                                                                                       | O que comprova                                                                                        |
 |-------------------------------|--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
 | Documento final de entrega    | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)                                           | Dados da entrega, links, escopo, segurança, testes, vulnerabilidades e conclusão.                     |
-| PDF final gerado              | `output/pdf/Entrega Final - Yasmin Barcelos.pdf`                                       | Versão em PDF do documento final para envio.                                                          |
+| PDF final gerado              | `output/pdf/Entrega Final - Yasmin Barcelos.pdf`                                                 | Versão em PDF do documento final para envio.                                                          |
 | DDD                           | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)                                           | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects e agregados.       |
 | Domain Storytelling           | [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md)                                       | Histórias do domínio por ator, objetos de trabalho, atividades e cenários alternativos.               |
 | Levantamento de requisitos    | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)                                                     | Personas, jornada da solução, requisitos funcionais, requisitos não funcionais e rastreabilidade.     |
@@ -35,7 +39,7 @@ A pasta `docs/` concentra a documentação usada na avaliação.
 | Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                  |
 | Branch final                    | `main`                                                |
 | Acesso de avaliação             | Usuário `soat-architecture` com acesso Read concedido |
-| Data consolidada nos documentos | 29/06/2026                                            |
+| Data consolidada nos documentos | 30/06/2026                                            |
 
 ## Escopo do MVP
 
@@ -58,7 +62,8 @@ O Tech Challenge solicita um MVP backend para uma oficina mecânica. O AutoCare 
 - análise estática;
 - relatório de vulnerabilidades.
 
-Ficam fora do MVP: pagamento online, envio real de e-mail/SMS/WhatsApp, integração com fornecedores, ERP, mensageria, app mobile real e deploy produtivo em cloud.
+Ficam fora do MVP: pagamento online, envio real de e-mail/SMS/WhatsApp, integração com fornecedores, ERP, mensageria,
+app mobile real e deploy produtivo em cloud.
 
 ## Visão técnica resumida
 
@@ -154,7 +159,8 @@ POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
 JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
 ```
 
-Para demonstrar o projeto rodando do zero, pare containers antigos, remova volumes locais do banco e suba tudo novamente:
+Para demonstrar o projeto rodando do zero, pare containers antigos, remova volumes locais do banco e suba tudo
+novamente:
 
 ```powershell
 docker compose down
@@ -253,12 +259,16 @@ Regras de criação de contas:
 
 - `MASTER_ADMIN` pode criar e editar qualquer perfil.
 - Admin Master fica vinculado à empresa base `AutoCare Hub`, cadastrada como tipo `PLATFORM`.
-- Admin Master pode criar admin de oficina, admin de loja e funcionários usando uma empresa existente ou marcando a opção de criar uma nova empresa no cadastro.
-- Ao criar uma nova empresa ou usuário, o ID é gerado automaticamente pelo backend; na interface, o usuário seleciona ou informa o nome da empresa.
-- A nova empresa recebe um `companyId` próprio na resposta e passa a ser usada como escopo dos usuários vinculados a ela.
+- Admin Master pode criar admin de oficina, admin de loja e funcionários usando uma empresa existente ou marcando a
+  opção de criar uma nova empresa no cadastro.
+- Ao criar uma nova empresa ou usuário, o ID é gerado automaticamente pelo backend; na interface, o usuário seleciona ou
+  informa o nome da empresa.
+- A nova empresa recebe um `companyId` próprio na resposta e passa a ser usada como escopo dos usuários vinculados a
+  ela.
 - Admin de oficina cria apenas funcionários vinculados à própria oficina.
 - Admin de loja de peças cria apenas funcionários vinculados à própria loja.
-- Admin de oficina ou loja não escolhe outra empresa no formulário; o backend força o `companyId` da empresa do usuário autenticado.
+- Admin de oficina ou loja não escolhe outra empresa no formulário; o backend força o `companyId` da empresa do usuário
+  autenticado.
 - Funcionário sem subfunção e funcionário sem especificação são tratados como `UNSPECIFIED`.
 - E-mails de login são únicos; duplicidade retorna erro de negócio.
 
@@ -293,18 +303,18 @@ Autenticação no Swagger:
 
 Principais grupos de endpoints:
 
-| Grupo               | Rotas principais                                                                             |
-|---------------------|----------------------------------------------------------------------------------------------|
-| Autenticação        | `POST /api/v1/auth/login`                                                                    |
-| Clientes            | `/api/v1/customers`                                                                          |
-| Veículos            | `/api/v1/vehicles`                                                                           |
-| Serviços            | `/api/v1/workshop-services`                                                                  |
-| Peças e estoque     | `/api/v1/parts`                                                                              |
-| Ordens de Serviço   | `/api/v1/service-orders`                                                                     |
+| Grupo               | Rotas principais                                                                                                     |
+|---------------------|----------------------------------------------------------------------------------------------------------------------|
+| Autenticação        | `POST /api/v1/auth/login`                                                                                            |
+| Clientes            | `/api/v1/customers`                                                                                                  |
+| Veículos            | `/api/v1/vehicles`                                                                                                   |
+| Serviços            | `/api/v1/workshop-services`                                                                                          |
+| Peças e estoque     | `/api/v1/parts`                                                                                                      |
+| Ordens de Serviço   | `/api/v1/service-orders`                                                                                             |
 | Orçamento           | `/api/v1/service-orders/{serviceOrderId}/budget/generate` e `/api/v1/service-orders/{serviceOrderId}/budget/approve` |
-| Tracking do cliente | `/api/v1/service-orders/tracking`                                                            |
-| Métricas da OS      | `/api/v1/service-orders/metrics/average-execution-time`                                      |
-| Usuários            | `/api/v1/users` e `/api/v1/users/me`                                                         |
+| Tracking do cliente | `/api/v1/service-orders/tracking`                                                                                    |
+| Métricas da OS      | `/api/v1/service-orders/metrics/average-execution-time`                                                              |
+| Usuários            | `/api/v1/users` e `/api/v1/users/me`                                                                                 |
 
 ## Validação rápida
 
@@ -342,12 +352,12 @@ mvn dependency-check:check -DautoUpdate=false
 
 ## Evidências de qualidade
 
-Resultado de qualidade revalidado em 29/06/2026:
+Resultado de qualidade revalidado em 30/06/2026:
 
 | Área                   | Resultado                                          |
 |------------------------|----------------------------------------------------|
-| Testes Maven           | 143 testes, 0 falhas, 0 erros e 0 ignorados        |
-| Cobertura JaCoCo       | 96,31% instruções, 97,25% linhas e 90,12% branches |
+| Testes Maven           | 149 testes, 0 falhas, 0 erros e 0 ignorados        |
+| Cobertura JaCoCo       | 96,02% instruções, 96,66% linhas e 90,12% branches |
 | Gate de cobertura      | 90% instruções, 90% linhas e 90% branches          |
 | Frontend lint          | 0 erros e 0 warnings                               |
 | Frontend build         | Aprovado                                           |
@@ -359,7 +369,9 @@ Resultado de qualidade revalidado em 29/06/2026:
 | Gitleaks               | 0 leaks em 36 commits                              |
 | Semgrep                | 0 achados em 200 arquivos com 187 regras           |
 
-O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso, o gate interno também exige 90% nessa métrica.
+O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos
+condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso, o gate interno também
+exige 90% nessa métrica.
 
 Relatórios e evidências:
 
@@ -380,7 +392,8 @@ security-reports/secrets/gitleaks.json
 security-reports/static-analysis/semgrep.json
 ```
 
-Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. A pasta `target/` continua fora do versionamento e permanece como saída local das ferramentas Maven.
+Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. A pasta `target/` continua fora
+do versionamento e permanece como saída local das ferramentas Maven.
 
 O resumo oficial dos resultados está em:
 
@@ -410,14 +423,17 @@ As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs
 - multiempresa/multitenancy está simplificado;
 - Swagger fica público no ambiente local acadêmico;
 - OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas 1 aviso baixo revisado;
-- a imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aceita temporariamente porque a versão corrigida indicada pelo Docker Scout ainda não estava disponível no Maven Central;
-- a imagem frontend mantém 1 CVE média de BusyBox, aceita temporariamente porque o Docker Scout não indicou versão corrigida disponível.
+- a imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aceita temporariamente porque a versão corrigida
+  indicada pelo Docker Scout ainda não estava disponível no Maven Central;
+- a imagem frontend mantém 1 CVE média de BusyBox, aceita temporariamente porque o Docker Scout não indicou versão
+  corrigida disponível.
 
 Essas limitações não impedem a execução do fluxo principal exigido no Tech Challenge.
 
 ## Evoluções técnicas
 
-O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções futuras:
+O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
+e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções futuras:
 
 - ampliar cenários extremos e fluxos de regressão;
 - criar auditoria de ações sensíveis;

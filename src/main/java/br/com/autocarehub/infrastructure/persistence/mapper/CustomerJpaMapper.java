@@ -1,15 +1,17 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
+import java.util.Objects;
+
 import br.com.autocarehub.domain.enums.DocumentType;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.infrastructure.persistence.entity.CustomerJpaEntity;
-import java.util.Objects;
 
 public final class CustomerJpaMapper {
 
-    private CustomerJpaMapper() {}
+    private CustomerJpaMapper() {
+    }
 
     public static CustomerJpaEntity toEntity(Customer customer) {
         CustomerJpaEntity entity = new CustomerJpaEntity();

@@ -6,7 +6,8 @@ import br.com.autocarehub.interfaces.rest.generated.model.LoginResponse;
 
 public final class AuthRestMapper {
 
-    private AuthRestMapper() {}
+    private AuthRestMapper() {
+    }
 
     public static LoginUseCase.Command toCommand(LoginRequest request) {
         return new LoginUseCase.Command(request.getUsername(), request.getPassword());

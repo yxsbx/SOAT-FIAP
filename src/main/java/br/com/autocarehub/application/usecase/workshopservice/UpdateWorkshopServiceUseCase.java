@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.workshopservice;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.WorkshopServiceRepository;
 import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Money;
-import java.util.UUID;
 
 public class UpdateWorkshopServiceUseCase {
 
@@ -34,5 +35,6 @@ public class UpdateWorkshopServiceUseCase {
             String description,
             Money basePrice,
             int estimatedTimeInMinutes,
-            boolean active) {}
+            boolean active) {
+    }
 }

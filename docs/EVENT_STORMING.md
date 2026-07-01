@@ -2,18 +2,22 @@
 
 ## 1. Objetivo do Event Storming
 
-O Event Storming foi usado para entender os fluxos principais da oficina antes de olhar para endpoints, tabelas ou telas. A proposta é registrar os fatos relevantes do negócio, os comandos que disparam esses fatos e as regras que protegem o processo.
+O Event Storming foi usado para entender os fluxos principais da oficina antes de olhar para endpoints, tabelas ou
+telas. A proposta é registrar os fatos relevantes do negócio, os comandos que disparam esses fatos e as regras que
+protegem o processo.
 
 O foco do MVP está em dois fluxos centrais do Tech Challenge:
 
 1. criação e acompanhamento da Ordem de Serviço;
 2. gestão de peças, insumos e estoque.
 
-Os eventos descritos neste documento são elementos de modelagem DDD. O AutoCare Hub não implementa Event Sourcing nem Event Store.
+Os eventos descritos neste documento são elementos de modelagem DDD. O AutoCare Hub não implementa Event Sourcing nem
+Event Store.
 
 ## 2. Papéis considerados na modelagem
 
-Como este é um projeto acadêmico, não houve um workshop real com uma oficina específica. A modelagem foi feita a partir do enunciado do Tech Challenge e dos papéis normalmente envolvidos na rotina de uma oficina mecânica:
+Como este é um projeto acadêmico, não houve um workshop real com uma oficina específica. A modelagem foi feita a partir
+do enunciado do Tech Challenge e dos papéis normalmente envolvidos na rotina de uma oficina mecânica:
 
 - Cliente;
 - Atendente;
@@ -22,7 +26,8 @@ Como este é um projeto acadêmico, não houve um workshop real com uma oficina 
 - Responsável pelo estoque;
 - Sistema AutoCare Hub.
 
-Esses papéis representam o negócio. No sistema, o acesso é controlado por `UserRole` e pelos campos de perfil do usuário autenticado.
+Esses papéis representam o negócio. No sistema, o acesso é controlado por `UserRole` e pelos campos de perfil do usuário
+autenticado.
 
 | Papel de negócio                        | Representação técnica                                                                                |
 |-----------------------------------------|------------------------------------------------------------------------------------------------------|
@@ -221,7 +226,9 @@ Os eventos foram escritos no passado, como recomendado na técnica de Event Stor
 
 ## 12. Sistemas externos
 
-O fluxo principal do MVP não depende de sistemas externos. A aplicação usa PostgreSQL, Swagger/OpenAPI e autenticação JWT como recursos técnicos locais, mas não possui integração real com e-mail, WhatsApp, SMS, pagamento, agenda, ERP ou fornecedores.
+O fluxo principal do MVP não depende de sistemas externos. A aplicação usa PostgreSQL, Swagger/OpenAPI e autenticação
+JWT como recursos técnicos locais, mas não possui integração real com e-mail, WhatsApp, SMS, pagamento, agenda, ERP ou
+fornecedores.
 
 ## 13. Agregados
 
@@ -293,7 +300,8 @@ Invariantes:
 
 ## 14. Contextos delimitados
 
-O projeto é um monolito em camadas. Os contextos delimitados são usados para organização conceitual do domínio e da documentação, não como microserviços separados.
+O projeto é um monolito em camadas. Os contextos delimitados são usados para organização conceitual do domínio e da
+documentação, não como microserviços separados.
 
 | Contexto delimitado             | Eventos principais                                                                                           | Agregados relacionados   |
 |---------------------------------|--------------------------------------------------------------------------------------------------------------|--------------------------|
@@ -452,6 +460,9 @@ stateDiagram-v2
 
 ## 17. Conclusão
 
-O Event Storming do AutoCare Hub mostra os principais acontecimentos do domínio da oficina, os comandos que causam esses eventos, as políticas que protegem o fluxo e os agregados responsáveis por manter as regras consistentes.
+O Event Storming do AutoCare Hub mostra os principais acontecimentos do domínio da oficina, os comandos que causam esses
+eventos, as políticas que protegem o fluxo e os agregados responsáveis por manter as regras consistentes.
 
-A modelagem cobre os pontos exigidos no Tech Challenge: criação e acompanhamento da OS, identificação do cliente por CPF/CNPJ, cadastro de veículo, inclusão de serviços e peças, geração e aprovação de orçamento, controle de status, gestão de estoque, consulta pelo cliente, tempo médio de execução e autenticação JWT nas APIs administrativas.
+A modelagem cobre os pontos exigidos no Tech Challenge: criação e acompanhamento da OS, identificação do cliente por
+CPF/CNPJ, cadastro de veículo, inclusão de serviços e peças, geração e aprovação de orçamento, controle de status,
+gestão de estoque, consulta pelo cliente, tempo médio de execução e autenticação JWT nas APIs administrativas.

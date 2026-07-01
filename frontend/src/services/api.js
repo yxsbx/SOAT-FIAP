@@ -17,8 +17,8 @@ export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('autocare.token');
   const headers = {
     Accept: 'application/json',
-    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.body ? {'Content-Type': 'application/json'} : {}),
+    ...(token ? {Authorization: `Bearer ${token}`} : {}),
     ...options.headers,
   };
 
@@ -36,7 +36,7 @@ export async function apiRequest(path, options = {}) {
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
-    data = text ? { message: text } : null;
+    data = text ? {message: text} : null;
   }
 
   if (!response.ok) {
@@ -63,7 +63,7 @@ export async function apiRequest(path, options = {}) {
 export function login(username, password) {
   return apiRequest('/api/v1/auth/login', {
     method: 'POST',
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({username, password}),
   });
 }
 
@@ -109,7 +109,7 @@ export const resources = {
   resetUserPassword: (userId, newPassword) =>
     apiRequest(`/api/v1/users/${userId}/password`, {
       method: 'PATCH',
-      body: JSON.stringify({ newPassword }),
+      body: JSON.stringify({newPassword}),
     }),
   customers: (params) => apiRequest(`/api/v1/customers${toQueryString(params)}`),
   customer: (customerId) => apiRequest(`/api/v1/customers/${customerId}`),
@@ -131,7 +131,7 @@ export const resources = {
       body: JSON.stringify(payload),
     }),
   parts: (params) => apiRequest(`/api/v1/parts${toQueryString(params)}`),
-  lowStockParts: (params = {}) => apiRequest(`/api/v1/parts${toQueryString({ ...params, lowStock: true })}`),
+  lowStockParts: (params = {}) => apiRequest(`/api/v1/parts${toQueryString({...params, lowStock: true})}`),
   serviceOrders: (params) => apiRequest(`/api/v1/service-orders${toQueryString(params)}`),
   averageExecutionTime: () => apiRequest('/api/v1/service-orders/metrics/average-execution-time'),
   customerServiceOrders: (customerId) => apiRequest(`/api/v1/customers/${customerId}/service-orders`),
@@ -159,7 +159,7 @@ export const resources = {
   updatePartStock: (partId, stockQuantity) =>
     apiRequest(`/api/v1/parts/${partId}/stock`, {
       method: 'PATCH',
-      body: JSON.stringify({ stockQuantity: Number(stockQuantity) }),
+      body: JSON.stringify({stockQuantity: Number(stockQuantity)}),
     }),
   registerStockMovement: (partId, payload) =>
     apiRequest(`/api/v1/parts/${partId}/stock-movement`, {
@@ -169,17 +169,17 @@ export const resources = {
   configurePartReservation: (partId, reservationDays) =>
     apiRequest(`/api/v1/parts/${partId}/reservation`, {
       method: 'PATCH',
-      body: JSON.stringify({ reservationDays: Number(reservationDays) }),
+      body: JSON.stringify({reservationDays: Number(reservationDays)}),
     }),
   reservePart: (partId, quantity) =>
     apiRequest(`/api/v1/parts/${partId}/reserve`, {
       method: 'PATCH',
-      body: JSON.stringify({ quantity: Number(quantity) }),
+      body: JSON.stringify({quantity: Number(quantity)}),
     }),
   releasePartReservation: (partId, quantity) =>
     apiRequest(`/api/v1/parts/${partId}/release-reservation`, {
       method: 'PATCH',
-      body: JSON.stringify({ quantity: Number(quantity) }),
+      body: JSON.stringify({quantity: Number(quantity)}),
     }),
   commitPartReservation: (partId, payload) =>
     apiRequest(`/api/v1/parts/${partId}/commit-reservation`, {
@@ -217,6 +217,6 @@ export const resources = {
   updateOrderStatus: (serviceOrderId, status) =>
     apiRequest(`/api/v1/service-orders/${serviceOrderId}/status`, {
       method: 'PATCH',
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({status}),
     }),
 };

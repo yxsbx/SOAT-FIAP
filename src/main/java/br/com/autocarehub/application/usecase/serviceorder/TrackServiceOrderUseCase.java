@@ -1,5 +1,9 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -10,9 +14,6 @@ import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
 
 public class TrackServiceOrderUseCase {
 
@@ -106,7 +107,9 @@ public class TrackServiceOrderUseCase {
         return value == null || value.isBlank();
     }
 
-    public record Query(UUID serviceOrderId, String customerDocument, String plate) {}
+    public record Query(UUID serviceOrderId, String customerDocument, String plate) {
+    }
 
-    public record Output(ServiceOrder serviceOrder, Customer customer, Vehicle vehicle) {}
+    public record Output(ServiceOrder serviceOrder, Customer customer, Vehicle vehicle) {
+    }
 }

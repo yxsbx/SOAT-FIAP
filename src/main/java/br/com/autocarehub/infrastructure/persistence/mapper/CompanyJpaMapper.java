@@ -5,7 +5,8 @@ import br.com.autocarehub.infrastructure.persistence.entity.CompanyJpaEntity;
 
 public final class CompanyJpaMapper {
 
-    private CompanyJpaMapper() {}
+    private CompanyJpaMapper() {
+    }
 
     public static Company toDomain(CompanyJpaEntity entity) {
         return new Company(

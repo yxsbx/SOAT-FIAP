@@ -1,14 +1,16 @@
 package br.com.autocarehub.infrastructure.persistence.mapper;
 
-import br.com.autocarehub.domain.enums.UserRole;
-import br.com.autocarehub.domain.model.User;
-import br.com.autocarehub.infrastructure.persistence.entity.UserJpaEntity;
 import java.util.Arrays;
 import java.util.List;
 
+import br.com.autocarehub.domain.enums.UserRole;
+import br.com.autocarehub.domain.model.User;
+import br.com.autocarehub.infrastructure.persistence.entity.UserJpaEntity;
+
 public final class UserJpaMapper {
 
-    private UserJpaMapper() {}
+    private UserJpaMapper() {
+    }
 
     public static User toDomain(UserJpaEntity entity) {
         return new User(

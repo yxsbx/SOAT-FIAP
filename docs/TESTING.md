@@ -2,9 +2,12 @@
 
 ## 1. Objetivo
 
-Este documento explica como os testes automatizados do AutoCare Hub foram organizados para validar os fluxos críticos do MVP.
+Este documento explica como os testes automatizados do AutoCare Hub foram organizados para validar os fluxos críticos do
+MVP.
 
-A proposta não é comprovar um histórico formal de TDD por commits, mas demonstrar que os principais comportamentos do domínio foram transformados em testes de sucesso e de falha. A estratégia cobre regras de negócio, casos de uso, segurança, integração REST e o fluxo principal da Ordem de Serviço.
+A proposta não é comprovar um histórico formal de TDD por commits, mas demonstrar que os principais comportamentos do
+domínio foram transformados em testes de sucesso e de falha. A estratégia cobre regras de negócio, casos de uso,
+segurança, integração REST e o fluxo principal da Ordem de Serviço.
 
 ## 2. Escopo dos testes
 
@@ -18,9 +21,11 @@ A suíte cobre:
 - fluxo principal da OS, incluindo criação, orçamento, aprovação, status, finalização, entrega e acompanhamento;
 - geração de relatório JaCoCo e gate de cobertura.
 
-O build padrão não usa REST-assured, Cucumber nem Testcontainers. Os testes de integração usam Spring Boot Test, MockMvc, H2 em memória e Flyway.
+O build padrão não usa REST-assured, Cucumber nem Testcontainers. Os testes de integração usam Spring Boot Test,
+MockMvc, H2 em memória e Flyway.
 
-Há um profile opcional para geração de relatório Allure local. Esse relatório é apenas uma evidência complementar e não faz parte do gate obrigatório da entrega.
+Há um profile opcional para geração de relatório Allure local. Esse relatório é apenas uma evidência complementar e não
+faz parte do gate obrigatório da entrega.
 
 ## 3. Pirâmide de testes aplicada ao projeto
 
@@ -30,7 +35,8 @@ Há um profile opcional para geração de relatório Allure local. Esse relatór
 | Integração            | Classes REST com `@SpringBootTest` e `@AutoConfigureMockMvc`.   | API REST, serialização JSON, validações HTTP, filtros de segurança, banco H2 e migrations Flyway. |
 | Fluxo completo de API | `ServiceOrderFlowIntegrationTest`.                              | Jornada principal da Ordem de Serviço usando a aplicação Spring em teste.                         |
 
-Essa divisão mantém testes rápidos para regras de domínio e testes mais completos para provar que as camadas funcionam juntas.
+Essa divisão mantém testes rápidos para regras de domínio e testes mais completos para provar que as camadas funcionam
+juntas.
 
 ## 4. Ferramentas utilizadas
 
@@ -48,7 +54,8 @@ Essa divisão mantém testes rápidos para regras de domínio e testes mais comp
 | Maven Surefire       | Execução padrão dos testes com `mvn test` e `mvn verify`.                                            |
 | Allure               | Relatório navegável opcional, fora do gate obrigatório.                                              |
 
-Não há Maven Failsafe nem profiles separados para integração/E2E. Para este MVP, `mvn verify` continua sendo o comando principal, porque executa a suíte completa e o gate de cobertura sem exigir comandos diferentes.
+Não há Maven Failsafe nem profiles separados para integração/E2E. Para este MVP, `mvn verify` continua sendo o comando
+principal, porque executa a suíte completa e o gate de cobertura sem exigir comandos diferentes.
 
 ## 5. Testes unitários
 
@@ -82,19 +89,21 @@ Os testes REST usam `@SpringBootTest`, `@AutoConfigureMockMvc`, H2 em memória e
 
 Principais classes:
 
-| Teste                                    | Cobertura principal                                                    |
-|------------------------------------------|------------------------------------------------------------------------|
+| Teste                                    | Cobertura principal                                                                                |
+|------------------------------------------|----------------------------------------------------------------------------------------------------|
 | `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças, usuários e criação/vínculo de empresa. |
-| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa. |
-| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ e placa inválidos.                         |
-| `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                      |
-| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API.                                         |
+| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa.       |
+| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ e placa inválidos.                                                     |
+| `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                                                  |
+| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API.                                                                     |
+| `UserCompanyManagementIntegrationTest`   | Criação de usuários por perfil, vínculo com empresas e restrições de escopo.                       |
 
 Esses testes validam controller, DTO, mapper, segurança, use case, persistência e migrations no mesmo fluxo.
 
 ## 7. Teste de fluxo completo da API
 
-O projeto não usa um runner E2E externo. A validação ponta a ponta do MVP é feita por teste de integração de API com MockMvc.
+O projeto não usa um runner E2E externo. A validação ponta a ponta do MVP é feita por teste de integração de API com
+MockMvc.
 
 O fluxo principal coberto em `ServiceOrderFlowIntegrationTest` valida:
 
@@ -115,27 +124,28 @@ O fluxo principal coberto em `ServiceOrderFlowIntegrationTest` valida:
 15. acompanhamento da OS pelo cliente;
 16. consulta do tempo médio de execução.
 
-Para o escopo acadêmico, esse teste funciona como teste de sistema da API, porque exercita a aplicação Spring com banco em memória e chamadas HTTP simuladas.
+Para o escopo acadêmico, esse teste funciona como teste de sistema da API, porque exercita a aplicação Spring com banco
+em memória e chamadas HTTP simuladas.
 
 ## 8. Cenários críticos cobertos
 
-| Requisito crítico           | Cobertura de teste                                                                             |
-|-----------------------------|------------------------------------------------------------------------------------------------|
-| CRUD de clientes            | `AdministrativeCrudIntegrationTest`, `CustomerTest`, `CreateCustomerUseCaseTest`               |
-| CRUD de veículos            | `AdministrativeCrudIntegrationTest`, `VehicleTest`                                             |
-| CRUD de serviços            | `AdministrativeCrudIntegrationTest`, `WorkshopServiceTest`                                     |
-| CRUD de peças/insumos       | `AdministrativeCrudIntegrationTest`, `PartTest`                                                |
-| Controle de estoque         | `PartTest`, `RegisterPartStockMovementUseCaseTest`, `PartStockFlowIntegrationTest`             |
-| Criação da OS               | `CreateServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                             |
-| Geração de orçamento        | `GenerateServiceOrderBudgetUseCaseTest`, `ServiceOrderTest`, `ServiceOrderFlowIntegrationTest` |
-| Aprovação de orçamento      | `ApproveServiceOrderBudgetUseCaseTest`, `ServiceOrderFlowIntegrationTest`                      |
-| Status da OS                | `ServiceOrderTest`, `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`   |
-| Acompanhamento pelo cliente | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
-| Tempo médio de execução     | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
-| JWT e autorização           | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `SecurityAuthorizationIntegrationTest`        |
-| Criação de empresa por Admin Master | `AdministrativeCrudIntegrationTest`                                                       |
-| Escopo de usuários por empresa | `SecurityAuthorizationIntegrationTest`                                                       |
-| CPF/CNPJ e placa            | `CustomerTest`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                        |
+| Requisito crítico                   | Cobertura de teste                                                                             |
+|-------------------------------------|------------------------------------------------------------------------------------------------|
+| CRUD de clientes                    | `AdministrativeCrudIntegrationTest`, `CustomerTest`, `CreateCustomerUseCaseTest`               |
+| CRUD de veículos                    | `AdministrativeCrudIntegrationTest`, `VehicleTest`                                             |
+| CRUD de serviços                    | `AdministrativeCrudIntegrationTest`, `WorkshopServiceTest`                                     |
+| CRUD de peças/insumos               | `AdministrativeCrudIntegrationTest`, `PartTest`                                                |
+| Controle de estoque                 | `PartTest`, `RegisterPartStockMovementUseCaseTest`, `PartStockFlowIntegrationTest`             |
+| Criação da OS                       | `CreateServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                             |
+| Geração de orçamento                | `GenerateServiceOrderBudgetUseCaseTest`, `ServiceOrderTest`, `ServiceOrderFlowIntegrationTest` |
+| Aprovação de orçamento              | `ApproveServiceOrderBudgetUseCaseTest`, `ServiceOrderFlowIntegrationTest`                      |
+| Status da OS                        | `ServiceOrderTest`, `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`   |
+| Acompanhamento pelo cliente         | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
+| Tempo médio de execução             | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
+| JWT e autorização                   | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `SecurityAuthorizationIntegrationTest`        |
+| Criação de empresa por Admin Master | `AdministrativeCrudIntegrationTest`                                                            |
+| Escopo de usuários por empresa      | `SecurityAuthorizationIntegrationTest`                                                         |
+| CPF/CNPJ e placa                    | `CustomerTest`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                        |
 
 ## 9. Cobertura JaCoCo
 
@@ -143,11 +153,13 @@ Resultado revalidado com `mvn clean verify`:
 
 | Métrica    | Resultado | Gate do projeto |
 |------------|----------:|----------------:|
-| Instruções |    96,31% |             90% |
-| Linhas     |    97,25% |             90% |
+| Instruções |    96,02% |             90% |
+| Linhas     |    96,66% |             90% |
 | Branches   |    90,12% |             90% |
 
-O gate interno é mais rígido que a exigência mínima de 80% para os domínios críticos. O JaCoCo exclui a classe principal da aplicação, código gerado pelo OpenAPI e records internos de comandos, queries e outputs sem lógica própria, para medir melhor o código escrito no projeto.
+O gate interno é mais rígido que a exigência mínima de 80% para os domínios críticos. O JaCoCo exclui a classe principal
+da aplicação, código gerado pelo OpenAPI e records internos de comandos, queries e outputs sem lógica própria, para
+medir melhor o código escrito no projeto.
 
 ## 10. Como executar os testes
 
@@ -195,8 +207,8 @@ target/site/allure-maven-plugin/index.html
 
 | Comando                                                              | Resultado                                                           |
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
-| `mvn test`                                                           | 143 testes, 0 falhas, 0 erros e 0 ignorados.                        |
-| `mvn clean verify`                                                   | 143 testes, 0 falhas e JaCoCo aprovado.                             |
+| `mvn test`                                                           | 149 testes, 0 falhas, 0 erros e 0 ignorados.                        |
+| `mvn clean install`                                                  | 149 testes, 0 falhas e JaCoCo aprovado.                             |
 | `mvn dependency-check:check -DautoUpdate=false`                      | 103 dependências analisadas e 0 vulnerabilidades.                   |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 
@@ -226,13 +238,19 @@ Os pontos abaixo são apenas melhorias futuras:
 
 - separar testes de integração em profile próprio se a suíte crescer muito;
 - adicionar REST-assured se houver necessidade de validar a API contra ambiente externo ao Spring Test;
-- adicionar Testcontainers se o projeto passar a exigir compatibilidade mais fiel com PostgreSQL nos testes automatizados;
+- adicionar Testcontainers se o projeto passar a exigir compatibilidade mais fiel com PostgreSQL nos testes
+  automatizados;
 - adicionar relatórios Allure ao pipeline, caso a entrega evolua para CI/CD.
 
-Essas melhorias não bloqueiam a entrega, porque a suíte atual já cobre os fluxos obrigatórios, passa no `mvn verify` e supera o gate mínimo de cobertura.
+Essas melhorias não bloqueiam a entrega, porque a suíte atual já cobre os fluxos obrigatórios, passa no `mvn verify` e
+supera o gate mínimo de cobertura.
 
 ## 14. Conclusão
 
-A estratégia de testes está aderente ao Tech Challenge: há testes unitários para regras críticas, testes com Mockito onde há dependências a isolar, testes de integração REST com Spring Boot e MockMvc, além de um fluxo completo de API que valida a jornada principal da Ordem de Serviço.
+A estratégia de testes está aderente ao Tech Challenge: há testes unitários para regras críticas, testes com Mockito
+onde há dependências a isolar, testes de integração REST com Spring Boot e MockMvc, além de um fluxo completo de API que
+valida a jornada principal da Ordem de Serviço.
 
-Não foi necessário criar novos testes nesta revisão, porque os domínios obrigatórios já estavam cobertos e a cobertura atual supera o mínimo exigido.
+Nesta revisão foram adicionados testes de cobertura para gestão de usuários, vínculo com empresas, criação de empresas
+por Admin Master e branches de domínio/aplicação que já existiam no código. A alteração manteve o gate interno de 90% e
+fez o `mvn clean install` voltar a passar sem reduzir a exigência de cobertura.

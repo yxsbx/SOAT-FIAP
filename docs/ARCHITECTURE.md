@@ -2,7 +2,9 @@
 
 ## Visão geral da documentação
 
-Esta documentação apresenta como o AutoCare Hub foi organizado para atender ao Tech Challenge FIAP. A ideia é facilitar a leitura da arquitetura, mostrar os principais fluxos técnicos e indicar onde a implementação pode ser conferida no repositório.
+Esta documentação apresenta como o AutoCare Hub foi organizado para atender ao Tech Challenge FIAP. A ideia é facilitar
+a leitura da arquitetura, mostrar os principais fluxos técnicos e indicar onde a implementação pode ser conferida no
+repositório.
 
 | Documento                      | Papel na entrega                                                                                     |
 |--------------------------------|------------------------------------------------------------------------------------------------------|
@@ -21,9 +23,11 @@ Esta documentação apresenta como o AutoCare Hub foi organizado para atender ao
 
 ### 1.1 Objetivo do sistema
 
-O AutoCare Hub é um MVP backend para uma oficina mecânica. Ele centraliza clientes, veículos, serviços, peças, estoque, Ordens de Serviço, orçamentos, aprovação, acompanhamento pelo cliente e indicadores básicos da operação.
+O AutoCare Hub é um MVP backend para uma oficina mecânica. Ele centraliza clientes, veículos, serviços, peças, estoque,
+Ordens de Serviço, orçamentos, aprovação, acompanhamento pelo cliente e indicadores básicos da operação.
 
-A Ordem de Serviço é o centro do sistema, porque conecta cliente, veículo, serviços solicitados, peças utilizadas, orçamento, aprovação e andamento do atendimento.
+A Ordem de Serviço é o centro do sistema, porque conecta cliente, veículo, serviços solicitados, peças utilizadas,
+orçamento, aprovação e andamento do atendimento.
 
 ### 1.2 Escopo do MVP
 
@@ -58,7 +62,8 @@ Fora do escopo do MVP:
 - mensageria/Kafka;
 - deploy produtivo em cloud.
 
-Esses itens não são pendências da entrega. Eles apenas não fazem parte da primeira versão proposta para o Tech Challenge.
+Esses itens não são pendências da entrega. Eles apenas não fazem parte da primeira versão proposta para o Tech
+Challenge.
 
 ### 1.3 Visão macro da arquitetura
 
@@ -72,7 +77,8 @@ A solução é composta por:
 - autenticação JWT para rotas protegidas;
 - migrations Flyway para versionamento do schema do banco.
 
-O backend é o sistema principal da entrega. O frontend foi incluído para facilitar a demonstração visual do fluxo, mas os requisitos obrigatórios são comprovados pela API, pelos testes, pelo contrato OpenAPI e pela documentação.
+O backend é o sistema principal da entrega. O frontend foi incluído para facilitar a demonstração visual do fluxo, mas
+os requisitos obrigatórios são comprovados pela API, pelos testes, pelo contrato OpenAPI e pela documentação.
 
 ### 1.4 Principais fluxos
 
@@ -94,13 +100,12 @@ flowchart LR
     Swagger["Swagger UI"]
     Backend["Backend Spring Boot monolítico"]
     Database[("PostgreSQL")]
-
     Admin --> Frontend
     Cliente --> Frontend
     Admin --> Swagger
-    Frontend -->|"HTTP/JSON"| Backend
-    Swagger -->|"Teste da API"| Backend
-    Backend -->|"JPA/JDBC"| Database
+    Frontend -->|" HTTP/JSON "| Backend
+    Swagger -->|" Teste da API "| Backend
+    Backend -->|" JPA/JDBC "| Database
 ```
 
 ## 2. Decisões arquiteturais
@@ -143,7 +148,8 @@ O backend está em `src/main/java/br/com/autocarehub` e segue uma separação em
 | Infraestrutura | Implementar persistência, segurança, configuração e adaptadores técnicos.        | `ServiceOrderRepositoryAdapter`, `SecurityConfig`, `JwtAuthenticationFilter`.                         |
 | Contrato/API   | Descrever endpoints, schemas, status codes e segurança.                          | `docs/openapi/openapi.yaml`, Swagger UI.                                                              |
 
-Os controllers não concentram cálculo de orçamento, regra de estoque ou transição de status. Essas regras ficam nos casos de uso e nos agregados do domínio.
+Os controllers não concentram cálculo de orçamento, regra de estoque ou transição de status. Essas regras ficam nos
+casos de uso e nos agregados do domínio.
 
 ### 3.3 Fluxo técnico da criação da OS
 
@@ -204,7 +210,6 @@ flowchart TB
     Database[("PostgreSQL")]
     OpenAPI["OpenAPI contract"]
     Exceptions["Exception Handler"]
-
     OpenAPI --> Controllers
     Security --> Controllers
     Controllers --> Mappers
@@ -229,15 +234,17 @@ flowchart LR
     Admin["Administrador da oficina"]
     Master["Admin Master"]
     Sistema["AutoCare Hub\nBackend/API"]
-
-    Cliente -->|"Consulta OS e aprova orçamento"| Sistema
-    Atendente -->|"Cadastra cliente, veículo e abre OS"| Sistema
-    Mecanico -->|"Acompanha diagnóstico, execução e finalização"| Sistema
-    Admin -->|"Gerencia cadastros, estoque, usuários e indicadores"| Sistema
-    Master -->|"Cria empresas, admins e usuários globais"| Sistema
+    Cliente -->|" Consulta OS e aprova orçamento "| Sistema
+    Atendente -->|" Cadastra cliente, veículo e abre OS "| Sistema
+    Mecanico -->|" Acompanha diagnóstico, execução e finalização "| Sistema
+    Admin -->|" Gerencia cadastros, estoque, usuários e indicadores "| Sistema
+    Master -->|" Cria empresas, admins e usuários globais "| Sistema
 ```
 
-O MVP não possui integrações externas reais. Pagamento, e-mail, SMS, WhatsApp, fornecedores, ERP, API Gateway, mensageria e cloud produtiva não aparecem no diagrama porque não fazem parte da implementação desta entrega. A separação entre empresas é representada por `companyId`: Admin Master pertence à empresa `AutoCare Hub` do tipo `PLATFORM`, enquanto oficinas e lojas possuem empresas próprias para restringir usuários e operações administrativas.
+O MVP não possui integrações externas reais. Pagamento, e-mail, SMS, WhatsApp, fornecedores, ERP, API Gateway,
+mensageria e cloud produtiva não aparecem no diagrama porque não fazem parte da implementação desta entrega. A separação
+entre empresas é representada por `companyId`: Admin Master pertence à empresa `AutoCare Hub` do tipo `PLATFORM`,
+enquanto oficinas e lojas possuem empresas próprias para restringir usuários e operações administrativas.
 
 ### 4.2 C2 - Contêineres
 
@@ -249,12 +256,11 @@ flowchart TB
     Backend["autocarehub-api\nSpring Boot"]
     Postgres["autocarehub-postgres\nPostgreSQL 16"]
     Compose["Docker Compose"]
-
     Browser --> Frontend
     Browser --> Swagger
-    Frontend -->|"HTTP / JSON"| Backend
-    Swagger -->|"HTTP / JSON"| Backend
-    Backend -->|"JDBC / JPA"| Postgres
+    Frontend -->|" HTTP / JSON "| Backend
+    Swagger -->|" HTTP / JSON "| Backend
+    Backend -->|" JDBC / JPA "| Postgres
     Compose -.-> Frontend
     Compose -.-> Backend
     Compose -.-> Postgres
@@ -286,7 +292,6 @@ flowchart TB
     Persistence["JPA Adapters"]
     Exceptions["RestExceptionHandler"]
     Database[("PostgreSQL")]
-
     Security --> Auth
     Security --> Customers
     Security --> Vehicles
@@ -320,16 +325,15 @@ sequenceDiagram
     participant Part as Part
     participant Repo as Repository Port
     participant DB as PostgreSQL
-
-    API->>Mapper: converte request
-    Mapper->>UC: command/query
-    UC->>Repo: busca cliente, veículo, serviços e peças
-    UC->>SO: cria/carrega OS
-    UC->>SO: adiciona serviços e peças
-    UC->>SO: gera/aprova orçamento ou altera status
-    UC->>Part: valida/movimenta estoque quando aplicável
-    UC->>Repo: salva agregados
-    Repo->>DB: persiste via adapter JPA
+    API ->> Mapper: converte request
+    Mapper ->> UC: command/query
+    UC ->> Repo: busca cliente, veículo, serviços e peças
+    UC ->> SO: cria/carrega OS
+    UC ->> SO: adiciona serviços e peças
+    UC ->> SO: gera/aprova orçamento ou altera status
+    UC ->> Part: valida/movimenta estoque quando aplicável
+    UC ->> Repo: salva agregados
+    Repo ->> DB: persiste via adapter JPA
 ```
 
 | Classe/Componente                            | Responsabilidade                                  | Camada         | Observação                                                        |
@@ -378,6 +382,8 @@ A arquitetura descrita está alinhada com os principais pontos da implementaçã
 
 ## 7. Conclusão
 
-A arquitetura do AutoCare Hub conecta o problema da oficina aos requisitos do Tech Challenge, apresenta a solução em alto nível, detalha a organização interna do backend e documenta o sistema usando HLD, LLD e C4 Model.
+A arquitetura do AutoCare Hub conecta o problema da oficina aos requisitos do Tech Challenge, apresenta a solução em
+alto nível, detalha a organização interna do backend e documenta o sistema usando HLD, LLD e C4 Model.
 
-A documentação mantém o foco no que foi entregue no MVP: backend monolítico, API REST, banco PostgreSQL, autenticação JWT, controle de OS, orçamento, estoque, testes, Docker e documentação da API.
+A documentação mantém o foco no que foi entregue no MVP: backend monolítico, API REST, banco PostgreSQL, autenticação
+JWT, controle de OS, orçamento, estoque, testes, Docker e documentação da API.

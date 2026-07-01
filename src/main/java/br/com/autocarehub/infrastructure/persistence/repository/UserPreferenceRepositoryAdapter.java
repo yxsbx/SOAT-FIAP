@@ -1,12 +1,14 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
-import br.com.autocarehub.application.port.out.UserPreferenceRepository;
-import br.com.autocarehub.infrastructure.persistence.entity.UserPreferenceId;
-import br.com.autocarehub.infrastructure.persistence.entity.UserPreferenceJpaEntity;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
+
+import br.com.autocarehub.application.port.out.UserPreferenceRepository;
+import br.com.autocarehub.infrastructure.persistence.entity.UserPreferenceId;
+import br.com.autocarehub.infrastructure.persistence.entity.UserPreferenceJpaEntity;
 
 @Repository
 public class UserPreferenceRepositoryAdapter implements UserPreferenceRepository {

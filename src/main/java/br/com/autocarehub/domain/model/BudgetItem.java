@@ -1,9 +1,10 @@
 package br.com.autocarehub.domain.model;
 
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
 import java.util.Objects;
 import java.util.UUID;
+
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
 
 public record BudgetItem(UUID referenceId, String description, int quantity, Money unitPrice, Money totalPrice) {
 

@@ -1,11 +1,13 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
+import java.util.List;
+
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Repository;
+
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.domain.model.DemoLead;
 import br.com.autocarehub.infrastructure.persistence.entity.DemoLeadJpaEntity;
-import java.util.List;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class DemoLeadRepositoryAdapter implements DemoLeadRepository {

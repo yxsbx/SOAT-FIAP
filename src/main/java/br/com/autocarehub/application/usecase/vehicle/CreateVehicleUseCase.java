@@ -1,11 +1,12 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.util.UUID;
 
 public class CreateVehicleUseCase {
 
@@ -31,5 +32,6 @@ public class CreateVehicleUseCase {
         return vehicleRepository.save(vehicle);
     }
 
-    public record Command(UUID customerId, String plate, String brand, String model, int year, int mileage) {}
+    public record Command(UUID customerId, String plate, String brand, String model, int year, int mileage) {
+    }
 }

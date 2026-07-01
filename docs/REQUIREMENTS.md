@@ -2,9 +2,13 @@
 
 ## 1. Contexto do problema
 
-Uma oficina mecânica precisa controlar clientes, veículos, serviços solicitados, peças, estoque, orçamentos, aprovação e entrega. Quando esse processo fica em papel, planilhas ou mensagens soltas, a oficina perde histórico e fica difícil saber em que etapa cada atendimento está.
+Uma oficina mecânica precisa controlar clientes, veículos, serviços solicitados, peças, estoque, orçamentos, aprovação e
+entrega. Quando esse processo fica em papel, planilhas ou mensagens soltas, a oficina perde histórico e fica difícil
+saber em que etapa cada atendimento está.
 
-O AutoCare Hub organiza esse fluxo em um backend monolítico. A oficina cadastra clientes, veículos, serviços, peças e Ordens de Serviço, gera o orçamento, registra a aprovação, acompanha os status e consulta indicadores básicos da operação.
+O AutoCare Hub organiza esse fluxo em um backend monolítico. A oficina cadastra clientes, veículos, serviços, peças e
+Ordens de Serviço, gera o orçamento, registra a aprovação, acompanha os status e consulta indicadores básicos da
+operação.
 
 ## 2. Personas e papéis
 
@@ -17,7 +21,10 @@ O AutoCare Hub organiza esse fluxo em um backend monolítico. A oficina cadastra
 | Admin Master             | Administrar a plataforma, empresas e contas globais.      | `profileType=MASTER_ADMIN`, vinculado à empresa `PLATFORM`. |
 | Responsável pelo estoque | Controlar entrada, saída, reserva e baixa de peças.       | `ADMIN` ou `EMPLOYEE` com acesso aos endpoints de peças.    |
 
-Os papéis de negócio aparecem na documentação para explicar a rotina da oficina. No código, a autorização usa `UserRole`, `profileType`, `employeeSubRole`, `companyId` e regras de acesso por cliente quando necessário. Admin Master pode criar usuários em empresa existente ou criar uma nova empresa; administradores de oficina e loja ficam restritos à própria empresa.
+Os papéis de negócio aparecem na documentação para explicar a rotina da oficina. No código, a autorização usa
+`UserRole`, `profileType`, `employeeSubRole`, `companyId` e regras de acesso por cliente quando necessário. Admin Master
+pode criar usuários em empresa existente ou criar uma nova empresa; administradores de oficina e loja ficam restritos à
+própria empresa.
 
 ## 3. Jornada da solução
 
@@ -33,7 +40,9 @@ Os papéis de negócio aparecem na documentação para explicar a rotina da ofic
 10. O cliente consulta o acompanhamento da OS pela API.
 11. O administrador acompanha listagens e tempo médio de execução.
 
-O MVP não implementa pagamento online, envio real de e-mail, SMS, WhatsApp, integração com fornecedores, agenda externa, ERP, mensageria ou deploy cloud produtivo. Esses itens ficaram fora do escopo desta fase e não são pendências da entrega.
+O MVP não implementa pagamento online, envio real de e-mail, SMS, WhatsApp, integração com fornecedores, agenda externa,
+ERP, mensageria ou deploy cloud produtivo. Esses itens ficaram fora do escopo desta fase e não são pendências da
+entrega.
 
 ## 4. Requisitos funcionais
 
@@ -130,6 +139,9 @@ O MVP não implementa pagamento online, envio real de e-mail, SMS, WhatsApp, int
 
 ## 7. Conclusão
 
-Os requisitos funcionais e não funcionais do MVP estão cobertos por código, contrato OpenAPI, testes ou documentação. A matriz de rastreabilidade mostra como cada requisito se conecta a endpoints, componentes, evidências e documentos do projeto.
+Os requisitos funcionais e não funcionais do MVP estão cobertos por código, contrato OpenAPI, testes ou documentação. A
+matriz de rastreabilidade mostra como cada requisito se conecta a endpoints, componentes, evidências e documentos do
+projeto.
 
-Não foram incluídos requisitos de pagamento, WhatsApp, SMS, e-mail real, fornecedores, aplicativo mobile, mensageria ou cloud produtiva porque essas integrações não fazem parte do escopo obrigatório do AutoCare Hub nesta fase.
+Não foram incluídos requisitos de pagamento, WhatsApp, SMS, e-mail real, fornecedores, aplicativo mobile, mensageria ou
+cloud produtiva porque essas integrações não fazem parte do escopo obrigatório do AutoCare Hub nesta fase.

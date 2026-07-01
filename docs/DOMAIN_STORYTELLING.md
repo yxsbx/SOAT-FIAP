@@ -2,9 +2,11 @@
 
 ## 1. Introdução
 
-O Domain Storytelling do AutoCare Hub descreve como cliente, atendente, mecânico, administrador e sistema participam do atendimento de uma oficina mecânica.
+O Domain Storytelling do AutoCare Hub descreve como cliente, atendente, mecânico, administrador e sistema participam do
+atendimento de uma oficina mecânica.
 
-O objetivo deste documento não é detalhar endpoints ou estrutura técnica. A proposta é contar as histórias do domínio: quem participa do processo, quais objetos de trabalho são usados e em que ordem as atividades acontecem.
+O objetivo deste documento não é detalhar endpoints ou estrutura técnica. A proposta é contar as histórias do domínio:
+quem participa do processo, quais objetos de trabalho são usados e em que ordem as atividades acontecem.
 
 ## 2. Escopo das histórias
 
@@ -15,7 +17,8 @@ As histórias documentadas para o MVP são:
 3. Execução, finalização e entrega da Ordem de Serviço.
 4. Gestão de peças e insumos no estoque.
 
-Essas histórias representam os fluxos principais do domínio da oficina. Pagamento, agenda, WhatsApp, SMS, e-mail e integrações externas não fazem parte deste escopo.
+Essas histórias representam os fluxos principais do domínio da oficina. Pagamento, agenda, WhatsApp, SMS, e-mail e
+integrações externas não fazem parte deste escopo.
 
 ## 3. Atores
 
@@ -30,7 +33,8 @@ Essas histórias representam os fluxos principais do domínio da oficina. Pagame
 
 ### 3.1 Mapeamento para usuários do sistema
 
-No Domain Storytelling, `Atendente`, `Mecânico` e `Responsável pelo estoque` são papéis de negócio. No código, o acesso é controlado por `UserRole` e por campos complementares de perfil.
+No Domain Storytelling, `Atendente`, `Mecânico` e `Responsável pelo estoque` são papéis de negócio. No código, o acesso
+é controlado por `UserRole` e por campos complementares de perfil.
 
 | Papel na história        | Representação técnica                                                                                |
 |--------------------------|------------------------------------------------------------------------------------------------------|
@@ -41,7 +45,8 @@ No Domain Storytelling, `Atendente`, `Mecânico` e `Responsável pelo estoque` s
 | Mecânico                 | `role=EMPLOYEE`, `profileType=WORKSHOP_EMPLOYEE`, `employeeSubRole=MECHANIC`                         |
 | Cliente                  | `role=CUSTOMER`, `profileType=CUSTOMER_OWNER`                                                        |
 
-Essa separação evita confundir o papel de negócio com a implementação técnica. A história mostra como o trabalho acontece na oficina; o backend autoriza as ações por perfis e permissões do usuário autenticado.
+Essa separação evita confundir o papel de negócio com a implementação técnica. A história mostra como o trabalho
+acontece na oficina; o backend autoriza as ações por perfis e permissões do usuário autenticado.
 
 ## 4. Objetos de trabalho
 
@@ -108,22 +113,22 @@ sequenceDiagram
     participant Cliente
     participant Atendente
     participant Sistema as Sistema AutoCare Hub
-
-    Cliente->>Atendente: informa CPF/CNPJ
-    Atendente->>Sistema: consulta cliente
-    Sistema-->>Atendente: retorna cadastro ou necessidade de cadastro
-    Atendente->>Sistema: consulta veículo pela placa
-    Sistema-->>Atendente: retorna veículo vinculado ou necessidade de cadastro
-    Atendente->>Sistema: cria Ordem de Serviço
-    Atendente->>Sistema: adiciona serviços e peças
-    Sistema->>Sistema: calcula orçamento quando solicitado
-    Cliente->>Sistema: consulta acompanhamento da OS
-    Sistema-->>Cliente: mostra status e dados da OS
+    Cliente ->> Atendente: informa CPF/CNPJ
+    Atendente ->> Sistema: consulta cliente
+    Sistema -->> Atendente: retorna cadastro ou necessidade de cadastro
+    Atendente ->> Sistema: consulta veículo pela placa
+    Sistema -->> Atendente: retorna veículo vinculado ou necessidade de cadastro
+    Atendente ->> Sistema: cria Ordem de Serviço
+    Atendente ->> Sistema: adiciona serviços e peças
+    Sistema ->> Sistema: calcula orçamento quando solicitado
+    Cliente ->> Sistema: consulta acompanhamento da OS
+    Sistema -->> Cliente: mostra status e dados da OS
 ```
 
 ## 7. História 2 - Aprovação do orçamento pelo cliente
 
-Esta história fica separada porque muda o ator principal. A oficina monta e disponibiliza o orçamento, mas a aprovação representa o aceite do Cliente para seguir com a execução.
+Esta história fica separada porque muda o ator principal. A oficina monta e disponibiliza o orçamento, mas a aprovação
+representa o aceite do Cliente para seguir com a execução.
 
 ### Cenário principal
 
@@ -140,12 +145,11 @@ Esta história fica separada porque muda o ator principal. A oficina monta e dis
 sequenceDiagram
     participant Cliente
     participant Sistema as Sistema AutoCare Hub
-
-    Sistema-->>Cliente: disponibiliza orçamento
-    Cliente->>Sistema: consulta serviços, peças e total
-    Cliente->>Sistema: aprova orçamento
-    Sistema->>Sistema: registra aprovação
-    Sistema-->>Cliente: confirma aprovação
+    Sistema -->> Cliente: disponibiliza orçamento
+    Cliente ->> Sistema: consulta serviços, peças e total
+    Cliente ->> Sistema: aprova orçamento
+    Sistema ->> Sistema: registra aprovação
+    Sistema -->> Cliente: confirma aprovação
 ```
 
 ## 8. História 3 - Execução, finalização e entrega da OS
@@ -172,14 +176,13 @@ sequenceDiagram
     participant Atendente
     participant Sistema as Sistema AutoCare Hub
     participant Cliente
-
-    Mecanico->>Sistema: inicia execução da OS aprovada
-    Sistema->>Sistema: atualiza status para EM_EXECUCAO
-    Mecanico->>Sistema: finaliza serviço
-    Sistema->>Sistema: atualiza status para FINALIZADA
-    Atendente->>Sistema: registra entrega do veículo
-    Sistema->>Sistema: atualiza status para ENTREGUE
-    Cliente->>Sistema: consulta acompanhamento final
+    Mecanico ->> Sistema: inicia execução da OS aprovada
+    Sistema ->> Sistema: atualiza status para EM_EXECUCAO
+    Mecanico ->> Sistema: finaliza serviço
+    Sistema ->> Sistema: atualiza status para FINALIZADA
+    Atendente ->> Sistema: registra entrega do veículo
+    Sistema ->> Sistema: atualiza status para ENTREGUE
+    Cliente ->> Sistema: consulta acompanhamento final
 ```
 
 ## 9. História 4 - Gestão de peças e insumos no estoque
@@ -201,13 +204,12 @@ sequenceDiagram
     participant Administrador
     participant Estoque as Responsável pelo estoque
     participant Sistema as Sistema AutoCare Hub
-
-    Administrador->>Sistema: cadastra peça ou insumo
-    Sistema->>Sistema: valida dados obrigatórios
-    Estoque->>Sistema: registra movimentação
-    Sistema->>Sistema: atualiza quantidade e reserva
-    Sistema->>Sistema: registra StockMovement
-    Sistema-->>Administrador: mostra situação do estoque
+    Administrador ->> Sistema: cadastra peça ou insumo
+    Sistema ->> Sistema: valida dados obrigatórios
+    Estoque ->> Sistema: registra movimentação
+    Sistema ->> Sistema: atualiza quantidade e reserva
+    Sistema ->> Sistema: registra StockMovement
+    Sistema -->> Administrador: mostra situação do estoque
 ```
 
 ## 10. Cenários alternativos
@@ -270,6 +272,9 @@ sequenceDiagram
 
 ## 11. Observação sobre código e negócio
 
-Alguns atores, como Atendente e Mecânico, são papéis de negócio usados para contar a história. No código, as operações administrativas são protegidas por `UserRole`, `profileType`, `employeeSubRole` e permissões, sem uma classe separada para cada papel da oficina.
+Alguns atores, como Atendente e Mecânico, são papéis de negócio usados para contar a história. No código, as operações
+administrativas são protegidas por `UserRole`, `profileType`, `employeeSubRole` e permissões, sem uma classe separada
+para cada papel da oficina.
 
-Essa diferença é esperada no Domain Storytelling: a história representa como o trabalho acontece no negócio, enquanto o código implementa esse trabalho com entidades, use cases e controles de acesso.
+Essa diferença é esperada no Domain Storytelling: a história representa como o trabalho acontece no negócio, enquanto o
+código implementa esse trabalho com entidades, use cases e controles de acesso.

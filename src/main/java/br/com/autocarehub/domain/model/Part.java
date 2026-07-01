@@ -1,12 +1,14 @@
 package br.com.autocarehub.domain.model;
 
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.service.DomainValidation;
-import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
+
 import org.jspecify.annotations.Nullable;
+
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.service.DomainValidation;
+import br.com.autocarehub.domain.valueobject.Money;
 
 public class Part {
 
@@ -356,8 +358,28 @@ public class Part {
         return active;
     }
 
+    public enum ActivationStatus {
+        ACTIVE(true),
+        INACTIVE(false);
+
+        private final boolean active;
+
+        ActivationStatus(boolean active) {
+            this.active = active;
+        }
+
+        public static ActivationStatus fromActive(boolean active) {
+            return active ? ACTIVE : INACTIVE;
+        }
+
+        private boolean active() {
+            return active;
+        }
+    }
+
     public record CatalogData(
-            String name, String description, String sku, String category, @Nullable String subcategory, String brand) {}
+            String name, String description, String sku, String category, @Nullable String subcategory, String brand) {
+    }
 
     public record Pricing(Money costPrice, Money unitPrice) {
 
@@ -375,25 +397,6 @@ public class Part {
 
         public static StockState initial(int stockQuantity, int minimumStock) {
             return new StockState(stockQuantity, 0, minimumStock, DEFAULT_RESERVATION_DAYS, null);
-        }
-    }
-
-    public enum ActivationStatus {
-        ACTIVE(true),
-        INACTIVE(false);
-
-        private final boolean active;
-
-        ActivationStatus(boolean active) {
-            this.active = active;
-        }
-
-        public static ActivationStatus fromActive(boolean active) {
-            return active ? ACTIVE : INACTIVE;
-        }
-
-        private boolean active() {
-            return active;
         }
     }
 }

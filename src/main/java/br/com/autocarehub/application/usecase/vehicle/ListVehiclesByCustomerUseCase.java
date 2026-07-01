@@ -1,11 +1,12 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.domain.model.Vehicle;
-import java.util.List;
-import java.util.UUID;
 
 public class ListVehiclesByCustomerUseCase {
 

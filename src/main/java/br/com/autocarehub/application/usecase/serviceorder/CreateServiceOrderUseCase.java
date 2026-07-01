@@ -1,5 +1,9 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
@@ -16,9 +20,6 @@ import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 
 public class CreateServiceOrderUseCase {
 
@@ -148,11 +149,15 @@ public class CreateServiceOrderUseCase {
         }
     }
 
-    public record CustomerInput(String name, String phone, String email, Address address) {}
+    public record CustomerInput(String name, String phone, String email, Address address) {
+    }
 
-    public record VehicleInput(String plate, String brand, String model, int year, int mileage) {}
+    public record VehicleInput(String plate, String brand, String model, int year, int mileage) {
+    }
 
-    public record ServiceInput(UUID serviceId, int quantity) {}
+    public record ServiceInput(UUID serviceId, int quantity) {
+    }
 
-    public record PartInput(UUID partId, int quantity) {}
+    public record PartInput(UUID partId, int quantity) {
+    }
 }

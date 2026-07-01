@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.user;
 
-import br.com.autocarehub.application.port.out.UserRepository;
-import br.com.autocarehub.domain.model.User;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.domain.model.User;
 
 public class ListUsersUseCase {
 
@@ -12,6 +13,17 @@ public class ListUsersUseCase {
 
     public ListUsersUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    private static boolean matchesSearch(User user, String search) {
+        if (search == null || search.isBlank()) {
+            return true;
+        }
+        String value = search.toLowerCase(Locale.ROOT);
+        return user.fullName().toLowerCase(Locale.ROOT).contains(value)
+                || user.username().toLowerCase(Locale.ROOT).contains(value)
+                || user.profileType().toLowerCase(Locale.ROOT).contains(value)
+                || user.employeeSubRole().toLowerCase(Locale.ROOT).contains(value);
     }
 
     public List<User> execute(Query query) {
@@ -28,16 +40,6 @@ public class ListUsersUseCase {
                 .toList();
     }
 
-    private static boolean matchesSearch(User user, String search) {
-        if (search == null || search.isBlank()) {
-            return true;
-        }
-        String value = search.toLowerCase(Locale.ROOT);
-        return user.fullName().toLowerCase(Locale.ROOT).contains(value)
-                || user.username().toLowerCase(Locale.ROOT).contains(value)
-                || user.profileType().toLowerCase(Locale.ROOT).contains(value)
-                || user.employeeSubRole().toLowerCase(Locale.ROOT).contains(value);
+    public record Query(Boolean active, String role, String profileType, String search) {
     }
-
-    public record Query(Boolean active, String role, String profileType, String search) {}
 }

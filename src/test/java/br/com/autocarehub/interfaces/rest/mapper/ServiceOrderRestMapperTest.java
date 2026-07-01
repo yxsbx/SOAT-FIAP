@@ -2,6 +2,13 @@ package br.com.autocarehub.interfaces.rest.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.model.Part;
@@ -21,11 +28,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListRespon
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatusHistoryItem;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingResponse;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.List;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class ServiceOrderRestMapperTest {
 
@@ -77,12 +79,12 @@ class ServiceOrderRestMapperTest {
         UUID partId = UUID.randomUUID();
         UUID vehicleId = UUID.randomUUID();
         var apiAddress = new br.com.autocarehub.interfaces.rest.generated.model.Address(
-                        "Avenida Paulista", "1000", "Bela Vista", "São Paulo", "SP", "01310-100")
+                "Avenida Paulista", "1000", "Bela Vista", "São Paulo", "SP", "01310-100")
                 .complement("10 andar");
         CreateServiceOrderRequest request = new CreateServiceOrderRequest(
-                        "52998224725",
-                        "Cliente relata vibração ao acelerar",
-                        List.of(new CreateServiceOrderServiceRequest(serviceId, 1)))
+                "52998224725",
+                "Cliente relata vibração ao acelerar",
+                List.of(new CreateServiceOrderServiceRequest(serviceId, 1)))
                 .customer(new CreateServiceOrderCustomerRequest(
                         "Maria Silva", "11999999999", "maria@example.com", apiAddress))
                 .vehicleId(vehicleId)

@@ -2,11 +2,12 @@ package br.com.autocarehub.application.usecase.auth;
 
 import static java.util.Objects.requireNonNull;
 
-import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
-import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
+import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
+import br.com.autocarehub.infrastructure.security.JwtService;
 
 public class LoginUseCase {
 
@@ -26,7 +27,9 @@ public class LoginUseCase {
         return new Output(token.accessToken(), token.tokenType(), token.expiresIn());
     }
 
-    public record Command(String username, String password) {}
+    public record Command(String username, String password) {
+    }
 
-    public record Output(String accessToken, String tokenType, long expiresIn) {}
+    public record Output(String accessToken, String tokenType, long expiresIn) {
+    }
 }

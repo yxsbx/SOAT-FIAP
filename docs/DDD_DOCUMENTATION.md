@@ -2,11 +2,15 @@
 
 ## 1. Introdução
 
-O AutoCare Hub foi modelado a partir do fluxo de atendimento de uma oficina mecânica. A Ordem de Serviço é o centro do processo, porque conecta cliente, veículo, serviços solicitados, peças utilizadas, orçamento, aprovação e acompanhamento do atendimento.
+O AutoCare Hub foi modelado a partir do fluxo de atendimento de uma oficina mecânica. A Ordem de Serviço é o centro do
+processo, porque conecta cliente, veículo, serviços solicitados, peças utilizadas, orçamento, aprovação e acompanhamento
+do atendimento.
 
-A proposta do DDD neste projeto foi aproximar o código da linguagem usada no negócio. Em vez de organizar a solução apenas por tabelas, controllers ou telas, os principais nomes, regras e fluxos partem do domínio da oficina.
+A proposta do DDD neste projeto foi aproximar o código da linguagem usada no negócio. Em vez de organizar a solução
+apenas por tabelas, controllers ou telas, os principais nomes, regras e fluxos partem do domínio da oficina.
 
-O MVP é um backend monolítico em camadas. Mesmo assim, a modelagem separa os conceitos de negócio em contextos, entidades, value objects e agregados para deixar claro onde cada regra pertence.
+O MVP é um backend monolítico em camadas. Mesmo assim, a modelagem separa os conceitos de negócio em contextos,
+entidades, value objects e agregados para deixar claro onde cada regra pertence.
 
 ## 2. Domínio
 
@@ -28,11 +32,14 @@ Esse domínio envolve:
 - entrega do veículo;
 - acompanhamento da OS pelo cliente.
 
-Dentro desse fluxo, a dor principal é controlar o atendimento sem perder o histórico da OS, sem avançar status indevidamente e sem consumir peças sem controle de estoque.
+Dentro desse fluxo, a dor principal é controlar o atendimento sem perder o histórico da OS, sem avançar status
+indevidamente e sem consumir peças sem controle de estoque.
 
 ## 3. Design Estratégico
 
-O ponto mais importante para o negócio da oficina é controlar o ciclo da Ordem de Serviço. É nesse fluxo que a oficina identifica o cliente, entende o veículo, registra os serviços, calcula o orçamento, aguarda aprovação, executa o trabalho e registra a entrega.
+O ponto mais importante para o negócio da oficina é controlar o ciclo da Ordem de Serviço. É nesse fluxo que a oficina
+identifica o cliente, entende o veículo, registra os serviços, calcula o orçamento, aguarda aprovação, executa o
+trabalho e registra a entrega.
 
 O diferencial do MVP está em organizar esse fluxo com regras explícitas:
 
@@ -44,7 +51,8 @@ O diferencial do MVP está em organizar esse fluxo com regras explícitas:
 - o estoque não pode ficar negativo;
 - o cliente consegue acompanhar a OS pela API.
 
-Itens como autenticação JWT, Swagger, Docker e persistência são importantes para entregar a aplicação, mas não são o coração do domínio da oficina. Eles aparecem como suporte técnico, não como subdomínio principal.
+Itens como autenticação JWT, Swagger, Docker e persistência são importantes para entregar a aplicação, mas não são o
+coração do domínio da oficina. Eles aparecem como suporte técnico, não como subdomínio principal.
 
 ## 4. Subdomínios
 
@@ -60,7 +68,8 @@ Ele cobre:
 - vínculo de serviços, peças e insumos à OS;
 - início da execução, finalização e entrega.
 
-Esse é o subdomínio principal porque resolve a dor central do enunciado: acompanhar o atendimento da oficina de ponta a ponta, com orçamento, aprovação e status claros.
+Esse é o subdomínio principal porque resolve a dor central do enunciado: acompanhar o atendimento da oficina de ponta a
+ponta, com orçamento, aprovação e status claros.
 
 ### 4.2 Subdomínios de Suporte
 
@@ -93,7 +102,8 @@ Esses itens são necessários, mas não diferenciam o domínio de oficina.
 
 ## 5. Domain Experts
 
-Como este é um projeto acadêmico, a modelagem foi feita a partir do enunciado do Tech Challenge e dos papéis envolvidos no funcionamento de uma oficina. Não houve entrevista real com uma oficina específica.
+Como este é um projeto acadêmico, a modelagem foi feita a partir do enunciado do Tech Challenge e dos papéis envolvidos
+no funcionamento de uma oficina. Não houve entrevista real com uma oficina específica.
 
 Em um projeto real, os principais Domain Experts seriam:
 
@@ -105,11 +115,13 @@ Em um projeto real, os principais Domain Experts seriam:
 | Responsável pelo estoque   | Entrada, saída, reserva, baixa, estoque mínimo e controle de peças.                                 |
 | Cliente final              | Necessidade de acompanhar a OS e aprovar o orçamento com clareza.                                   |
 
-O atendente conhece a abertura da OS, o mecânico entende diagnóstico e execução, o responsável pelo estoque conhece as regras de peças e o cliente final representa a visão de acompanhamento e aprovação.
+O atendente conhece a abertura da OS, o mecânico entende diagnóstico e execução, o responsável pelo estoque conhece as
+regras de peças e o cliente final representa a visão de acompanhamento e aprovação.
 
 ### 5.1 Papéis de negócio e perfis do sistema
 
-Os papéis citados como Domain Experts representam a visão de negócio. No código, as permissões são controladas pela entidade `User`, pelo enum `UserRole` e pelos campos de perfil.
+Os papéis citados como Domain Experts representam a visão de negócio. No código, as permissões são controladas pela
+entidade `User`, pelo enum `UserRole` e pelos campos de perfil.
 
 | Papel de negócio         | Representação no sistema                                                                             |
 |--------------------------|------------------------------------------------------------------------------------------------------|
@@ -120,11 +132,13 @@ Os papéis citados como Domain Experts representam a visão de negócio. No cód
 | Mecânico                 | `role=EMPLOYEE`, `profileType=WORKSHOP_EMPLOYEE`, `employeeSubRole=MECHANIC`                         |
 | Cliente final            | `role=CUSTOMER`, `profileType=CUSTOMER_OWNER`                                                        |
 
-Essa separação evita confundir papel de negócio com classe de domínio. Atendente e mecânico aparecem na explicação do processo, mas o backend autoriza as ações por perfis e permissões do usuário autenticado.
+Essa separação evita confundir papel de negócio com classe de domínio. Atendente e mecânico aparecem na explicação do
+processo, mas o backend autoriza as ações por perfis e permissões do usuário autenticado.
 
 ## 6. Linguagem Ubíqua
 
-A linguagem ubíqua abaixo conecta os termos do negócio aos nomes técnicos usados no código. Os nomes técnicos foram mantidos em inglês porque são os nomes reais das classes, métodos ou enums do projeto.
+A linguagem ubíqua abaixo conecta os termos do negócio aos nomes técnicos usados no código. Os nomes técnicos foram
+mantidos em inglês porque são os nomes reais das classes, métodos ou enums do projeto.
 
 | Termo de negócio        | Nome técnico no código                       | Definição                                                     | Observação de uso                                                 |
 |-------------------------|----------------------------------------------|---------------------------------------------------------------|-------------------------------------------------------------------|
@@ -165,7 +179,8 @@ No domínio, os status são:
 
 ## 7. Bounded Contexts
 
-Os Bounded Contexts abaixo são divisões conceituais dentro de um monolito em camadas. Eles não representam microserviços.
+Os Bounded Contexts abaixo são divisões conceituais dentro de um monolito em camadas. Eles não representam
+microserviços.
 
 | Bounded Context                 | Responsabilidade                                       | Principais conceitos                                       | Relação com outros contextos                                  |
 |---------------------------------|--------------------------------------------------------|------------------------------------------------------------|---------------------------------------------------------------|
@@ -192,7 +207,8 @@ As entidades possuem identidade própria e ciclo de vida no sistema.
 
 ## 9. Value Objects
 
-Value Objects não são definidos por identidade própria. Eles carregam valor e regra, ajudando a proteger a consistência do domínio.
+Value Objects não são definidos por identidade própria. Eles carregam valor e regra, ajudando a proteger a consistência
+do domínio.
 
 | Value Object | Por que é value object                                                        |
 |--------------|-------------------------------------------------------------------------------|
@@ -206,14 +222,16 @@ Value Objects não são definidos por identidade própria. Eles carregam valor e
 
 ### 10.1 Agregado `ServiceOrder`
 
-`ServiceOrder` é o agregado central do atendimento. Ele controla os itens da OS, o orçamento, a aprovação e as transições de status.
+`ServiceOrder` é o agregado central do atendimento. Ele controla os itens da OS, o orçamento, a aprovação e as
+transições de status.
 
 Invariantes protegidas pelo agregado:
 
 - uma OS precisa ter cliente;
 - uma OS precisa ter veículo;
 - o diagnóstico ou observação inicial é obrigatório;
-- serviços e peças não podem ser alterados depois que a OS entra em estados de orçamento, execução, finalização ou entrega;
+- serviços e peças não podem ser alterados depois que a OS entra em estados de orçamento, execução, finalização ou
+  entrega;
 - o orçamento coloca a OS em `AGUARDANDO_APROVACAO`;
 - o orçamento precisa existir antes da aprovação;
 - a execução exige orçamento aprovado;
@@ -236,11 +254,13 @@ Invariantes protegidas pelo agregado:
 
 ### 10.3 Outros agregados simples
 
-`Customer`, `Vehicle` e `WorkshopService` também possuem identidade e regras próprias, mas têm regras mais diretas. Eles apoiam o fluxo principal da OS.
+`Customer`, `Vehicle` e `WorkshopService` também possuem identidade e regras próprias, mas têm regras mais diretas. Eles
+apoiam o fluxo principal da OS.
 
 ## 11. Repositórios
 
-As portas de repositório ficam em `br.com.autocarehub.application.port.out`. Elas permitem que os casos de uso trabalhem com o domínio sem depender diretamente do JPA.
+As portas de repositório ficam em `br.com.autocarehub.application.port.out`. Elas permitem que os casos de uso trabalhem
+com o domínio sem depender diretamente do JPA.
 
 Repositórios principais:
 
@@ -252,11 +272,13 @@ Repositórios principais:
 - `ServiceOrderRepository`
 - `UserRepository`
 
-As implementações ficam na infraestrutura, em adapters e repositories JPA. Isso preserva a separação entre regra de negócio e tecnologia de persistência.
+As implementações ficam na infraestrutura, em adapters e repositories JPA. Isso preserva a separação entre regra de
+negócio e tecnologia de persistência.
 
 ## 12. Serviços de Domínio e Serviços de Aplicação
 
-No AutoCare Hub, a maior parte das regras de domínio fica nas entidades e value objects. O projeto não força a criação de serviços de domínio quando a regra pertence naturalmente ao agregado.
+No AutoCare Hub, a maior parte das regras de domínio fica nas entidades e value objects. O projeto não força a criação
+de serviços de domínio quando a regra pertence naturalmente ao agregado.
 
 ### Regras de domínio
 
@@ -272,7 +294,8 @@ No AutoCare Hub, a maior parte das regras de domínio fica nas entidades e value
 
 ### Serviços de aplicação
 
-Os use cases orquestram o fluxo entre entidades, repositórios e regras de domínio. Eles não substituem as regras do domínio.
+Os use cases orquestram o fluxo entre entidades, repositórios e regras de domínio. Eles não substituem as regras do
+domínio.
 
 Exemplos:
 
@@ -284,7 +307,8 @@ Exemplos:
 - `GetAverageServiceOrderExecutionTimeUseCase`: calcula a métrica operacional de tempo médio.
 - `RegisterPartStockMovementUseCase`: registra movimentações de estoque.
 
-Controllers REST apenas recebem requisições, validam entrada no contrato da API e delegam para os use cases. Eles não concentram regra de negócio.
+Controllers REST apenas recebem requisições, validam entrada no contrato da API e delegam para os use cases. Eles não
+concentram regra de negócio.
 
 ## 13. Casos de Uso da Aplicação
 

@@ -1,12 +1,14 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
-import br.com.autocarehub.application.port.out.CompanyRepository;
-import br.com.autocarehub.domain.model.Company;
-import br.com.autocarehub.infrastructure.persistence.mapper.CompanyJpaMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
+
+import br.com.autocarehub.application.port.out.CompanyRepository;
+import br.com.autocarehub.domain.model.Company;
+import br.com.autocarehub.infrastructure.persistence.mapper.CompanyJpaMapper;
 
 @Repository
 public class CompanyRepositoryAdapter implements CompanyRepository {

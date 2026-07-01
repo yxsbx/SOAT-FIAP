@@ -23,5 +23,6 @@ public class CreateCustomerUseCase {
         return customerRepository.save(customer);
     }
 
-    public record Command(String name, String document, String phone, String email, Address address) {}
+    public record Command(String name, String document, String phone, String email, Address address) {
+    }
 }

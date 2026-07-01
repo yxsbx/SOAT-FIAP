@@ -1,8 +1,8 @@
 const platformFeeTiers = [
-  { min: 0, max: 10000, rate: 0.1, label: '10%', nextStartsAt: 10000.01, nextRate: 0.08 },
-  { min: 10000.01, max: 15000, rate: 0.08, label: '8%', nextStartsAt: 15000.01, nextRate: 0.07 },
-  { min: 15000.01, max: 20000, rate: 0.07, label: '7%', nextStartsAt: 20000.01, nextRate: 0.05 },
-  { min: 20000.01, max: Infinity, rate: 0.05, label: '5%', nextStartsAt: null, nextRate: null },
+  {min: 0, max: 10000, rate: 0.1, label: '10%', nextStartsAt: 10000.01, nextRate: 0.08},
+  {min: 10000.01, max: 15000, rate: 0.08, label: '8%', nextStartsAt: 15000.01, nextRate: 0.07},
+  {min: 15000.01, max: 20000, rate: 0.07, label: '7%', nextStartsAt: 20000.01, nextRate: 0.05},
+  {min: 20000.01, max: Infinity, rate: 0.05, label: '5%', nextStartsAt: null, nextRate: null},
 ];
 
 export function calculatePlatformFee(grossRevenue) {

@@ -4,7 +4,9 @@
 
 Este documento mostra como o problema de negócio da oficina foi transformado em uma solução técnica no AutoCare Hub.
 
-O refinamento partiu da jornada principal exigida no Tech Challenge, com foco na Ordem de Serviço. A partir desse fluxo, foram definidas as decisões técnicas do MVP: backend monolítico, arquitetura em camadas, domínio protegido, API REST, banco relacional, autenticação JWT, execução local com Docker, testes automatizados e documentação.
+O refinamento partiu da jornada principal exigida no Tech Challenge, com foco na Ordem de Serviço. A partir desse fluxo,
+foram definidas as decisões técnicas do MVP: backend monolítico, arquitetura em camadas, domínio protegido, API REST,
+banco relacional, autenticação JWT, execução local com Docker, testes automatizados e documentação.
 
 ## 2. Jornada técnica refinada
 
@@ -30,7 +32,9 @@ A jornada abaixo representa o fluxo principal implementado no backend:
 18. O cliente consulta o acompanhamento da OS pela API.
 19. O administrador consulta listagens, detalhes e tempo médio de execução.
 
-O MVP não implementa WhatsApp, e-mail, SMS, pagamento online, agenda externa, fornecedores externos, ERP, mensageria ou deploy produtivo em cloud. O fluxo principal fica concentrado no backend, no banco PostgreSQL e no frontend demonstrativo.
+O MVP não implementa WhatsApp, e-mail, SMS, pagamento online, agenda externa, fornecedores externos, ERP, mensageria ou
+deploy produtivo em cloud. O fluxo principal fica concentrado no backend, no banco PostgreSQL e no frontend
+demonstrativo.
 
 ## 3. Requisitos de negócio transformados em decisões técnicas
 
@@ -153,7 +157,8 @@ Integrações reais do MVP:
 - Swagger UI, servido pela própria aplicação para teste manual da API;
 - Docker Compose, usado para orquestrar backend, banco e frontend localmente.
 
-O MVP não depende de integrações externas reais. Não há pagamento online, WhatsApp, e-mail, SMS, fornecedor externo, ERP, API Gateway, Kafka, mensageria ou cloud produtiva no código.
+O MVP não depende de integrações externas reais. Não há pagamento online, WhatsApp, e-mail, SMS, fornecedor externo,
+ERP, API Gateway, Kafka, mensageria ou cloud produtiva no código.
 
 ## 9. Estratégia de implementação
 
@@ -169,7 +174,8 @@ A implementação foi organizada a partir do fluxo central da oficina:
 8. Empacotar e rodar localmente com Docker Compose.
 9. Consolidar arquitetura, DDD, testes, segurança e entrega nos documentos.
 
-Essa estratégia mantém o MVP simples e rastreável: cada requisito obrigatório tem um ponto técnico claro no código ou na documentação.
+Essa estratégia mantém o MVP simples e rastreável: cada requisito obrigatório tem um ponto técnico claro no código ou na
+documentação.
 
 ## 10. Riscos técnicos tratados
 
@@ -222,6 +228,9 @@ Esses pontos não bloqueiam a entrega do Tech Challenge, porque não fazem parte
 
 ## 13. Conclusão
 
-O refinamento técnico está aderente ao escopo da FIAP porque mostra como a jornada da oficina virou uma solução implementada em backend monolítico, com camadas claras, domínio protegido, persistência relacional, autenticação, contrato OpenAPI, execução local e validação automatizada.
+O refinamento técnico está aderente ao escopo da FIAP porque mostra como a jornada da oficina virou uma solução
+implementada em backend monolítico, com camadas claras, domínio protegido, persistência relacional, autenticação,
+contrato OpenAPI, execução local e validação automatizada.
 
-Não foi identificada necessidade de refatoração estrutural no backend nesta revisão. A principal melhoria foi documentar melhor as decisões e a rastreabilidade entre negócio, código e arquitetura.
+Não foi identificada necessidade de refatoração estrutural no backend nesta revisão. A principal melhoria foi documentar
+melhor as decisões e a rastreabilidade entre negócio, código e arquitetura.

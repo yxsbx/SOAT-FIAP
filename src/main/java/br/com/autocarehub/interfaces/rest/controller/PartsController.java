@@ -1,5 +1,13 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.autocarehub.application.usecase.part.CommitPartReservationUseCase;
 import br.com.autocarehub.application.usecase.part.ConfigurePartReservationUseCase;
 import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
@@ -24,12 +32,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.StockMovementRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
 import br.com.autocarehub.interfaces.rest.mapper.PartRestMapper;
-import java.math.BigDecimal;
-import java.util.UUID;
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PartsController implements PartsApi {

@@ -1,12 +1,14 @@
 package br.com.autocarehub.infrastructure.persistence.repository;
 
-import br.com.autocarehub.application.port.out.UserRepository;
-import br.com.autocarehub.domain.model.User;
-import br.com.autocarehub.infrastructure.persistence.mapper.UserJpaMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
+
+import br.com.autocarehub.application.port.out.UserRepository;
+import br.com.autocarehub.domain.model.User;
+import br.com.autocarehub.infrastructure.persistence.mapper.UserJpaMapper;
 
 @Repository
 public class UserRepositoryAdapter implements UserRepository {

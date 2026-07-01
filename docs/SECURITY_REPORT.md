@@ -6,9 +6,13 @@ Relatório de Vulnerabilidades do projeto AutoCare Hub - Tech Challenge FIAP.
 
 ## 2. Objetivo da análise
 
-Este relatório registra a análise de segurança realizada no projeto AutoCare Hub a partir dos scans executados para a entrega do MVP. O documento consolida as vulnerabilidades encontradas, as correções aplicadas, as evidências geradas e os riscos residuais aceitos temporariamente.
+Este relatório registra a análise de segurança realizada no projeto AutoCare Hub a partir dos scans executados para a
+entrega do MVP. O documento consolida as vulnerabilidades encontradas, as correções aplicadas, as evidências geradas e
+os riscos residuais aceitos temporariamente.
 
-A análise considera apenas ferramentas realmente executadas no projeto: OWASP Dependency-Check, npm audit, Docker Scout, OWASP ZAP, Semgrep, Gitleaks e JaCoCo. Os resultados abaixo foram consolidados a partir dos relatórios gerados localmente. O detalhamento de qualidade, cobertura e análise estática fica em `docs/STATIC_ANALYSIS.md`.
+A análise considera apenas ferramentas realmente executadas no projeto: OWASP Dependency-Check, npm audit, Docker Scout,
+OWASP ZAP, Semgrep, Gitleaks e JaCoCo. Os resultados abaixo foram consolidados a partir dos relatórios gerados
+localmente. O detalhamento de qualidade, cobertura e análise estática fica em `docs/STATIC_ANALYSIS.md`.
 
 ## 3. Escopo analisado
 
@@ -27,11 +31,15 @@ A análise considera apenas ferramentas realmente executadas no projeto: OWASP D
 | Cobertura de testes      | Analisada                  | Relatórios JaCoCo em `target/site/jacoco/index.html` e `target/site/jacoco/jacoco.csv`. A cobertura é usada como evidência de qualidade, não como scan de vulnerabilidade. |
 | Análise estática         | Analisada                  | Semgrep executado em arquivos Java, JavaScript, JSON, Dockerfile e regras multilinguagem.                                                                                  |
 
-A análise dinâmica com OWASP ZAP foi usada como evidência complementar contra a API local. Os gates principais da entrega continuam sendo Dependency-Check, npm audit, Docker Scout, Gitleaks, Semgrep, JaCoCo e a validação dos testes automatizados.
+A análise dinâmica com OWASP ZAP foi usada como evidência complementar contra a API local. Os gates principais da
+entrega continuam sendo Dependency-Check, npm audit, Docker Scout, Gitleaks, Semgrep, JaCoCo e a validação dos testes
+automatizados.
 
 ## 3.1 Segurança desde o desenho da solução
 
-O AutoCare Hub trata dados pessoais e operacionais de uma oficina, como CPF/CNPJ de clientes, telefone, e-mail, dados de veículos, credenciais de usuários administrativos, tokens JWT, estoque, orçamentos e Ordens de Serviço. Por isso, os controles de segurança foram considerados nos fluxos principais do MVP, e não apenas no scan final.
+O AutoCare Hub trata dados pessoais e operacionais de uma oficina, como CPF/CNPJ de clientes, telefone, e-mail, dados de
+veículos, credenciais de usuários administrativos, tokens JWT, estoque, orçamentos e Ordens de Serviço. Por isso, os
+controles de segurança foram considerados nos fluxos principais do MVP, e não apenas no scan final.
 
 Controles aplicados no projeto:
 
@@ -53,33 +61,36 @@ Controles aplicados no projeto:
 - Docker Compose com `read_only` e `no-new-privileges`, conforme aplicável;
 - scans de dependências, secrets, imagens Docker e análise estática.
 
-Ficaram fora do escopo do MVP: auditoria produtiva, WAF, rotação automatizada de secrets e observabilidade de segurança em produção. O frontend demonstrativo usa `localStorage` para o JWT, decisão aceita para o escopo acadêmico local. Como mitigação, o projeto evita renderização HTML insegura no frontend e mantém validações e controles de autorização no backend.
+Ficaram fora do escopo do MVP: auditoria produtiva, WAF, rotação automatizada de secrets e observabilidade de segurança
+em produção. O frontend demonstrativo usa `localStorage` para o JWT, decisão aceita para o escopo acadêmico local. Como
+mitigação, o projeto evita renderização HTML insegura no frontend e mantém validações e controles de autorização no
+backend.
 
 ## 3.2 Avaliação de ameaças
 
-| Ameaça                                 | Onde poderia ocorrer                                       | Controle aplicado                                                                                                 | Evidência                                                                                                  |
-|----------------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
-| Acesso administrativo sem autenticação | CRUDs de clientes, veículos, serviços, peças, estoque e OS | Spring Security exige JWT e papel administrativo/funcionário                                                      | `SecurityConfig` e `SecurityAuthorizationIntegrationTest`                                                  |
-| Admin de empresa criando conta fora do escopo | Gestão de usuários da oficina ou loja | Backend força vínculo à própria empresa e bloqueia criação de `MASTER_ADMIN` por admin de empresa | `UsersController` e `SecurityAuthorizationIntegrationTest` |
-| Token ausente ou inválido              | Qualquer endpoint protegido                                | Filtro JWT limpa o contexto e retorna 401 padronizado                                                             | `JwtAuthenticationFilter` e `SecurityConfig`                                                               |
-| Cliente acessando OS de outro cliente  | Detalhe, listagem, tracking e aprovação de orçamento       | `AuthorizationService` valida `customerId` vinculado ao usuário                                                   | `ServiceOrdersController` e testes de autorização                                                          |
-| CPF/CNPJ inválido                      | Cadastro e atualização de cliente                          | `Document.from(...)` normaliza e valida dígitos                                                                   | `Document`, `CustomerTest`, `SensitiveDataValidationIntegrationTest`                                       |
-| Placa inválida                         | Cadastro e atualização de veículo                          | `Plate.from(...)` aceita formatos brasileiro antigo e Mercosul                                                    | `Plate`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                                           |
-| SQL Injection                          | Filtros, consultas por ID/documento/placa e persistência   | Repositories Spring Data/JPA, JPQL estática e `JdbcTemplate` com placeholders                                     | `ServiceOrderJpaRepository`, `StockMovementRepositoryAdapter`                                              |
-| Command Injection                      | Backend de negócio                                         | O backend não executa comandos do sistema operacional no fluxo do MVP                                             | Revisão por busca de `Runtime.getRuntime` e `ProcessBuilder`                                               |
-| XSS em campos textuais                 | Campos renderizados no frontend demonstrativo              | Vue escapa interpolação por padrão; não há uso identificado de `v-html`, `innerHTML`, `eval` ou APIs equivalentes | Busca estática no diretório `frontend/`                                                                    |
-| Exposição de secrets                   | Código, `.env`, relatórios e histórico Git                 | `.gitignore`, `.env.example` sem secrets e Gitleaks sem leaks                                                     | `.gitignore`, `.env.example`, `security-reports/secrets/gitleaks.json`                                     |
-| Dependência vulnerável                 | Maven/npm                                                  | Dependency-Check e npm audit com resultado final limpo                                                            | `security-reports/backend-dependencies/*` e `security-reports/frontend-dependencies/npm-audit-report.json` |
-| Imagem Docker vulnerável               | Runtime da API e frontend                                  | Imagens non-root; riscos médios residuais revisados e aceitos                                                     | Relatórios Docker Scout                                                                                    |
-| Erro interno expondo detalhe técnico   | Responses de erro da API                                   | `RestExceptionHandler` padroniza resposta e não retorna stack trace                                               | `RestExceptionHandler`                                                                                     |
-| Alteração indevida de status da OS     | Endpoint de status                                         | Endpoint exige `ADMIN` ou `EMPLOYEE`; domínio valida transições                                                   | `SecurityConfig`, `ServiceOrder`, testes de fluxo                                                          |
-| Uso indevido de estoque                | Movimentação/reserva/baixa de peças                        | Endpoints de estoque exigem `ADMIN` ou `EMPLOYEE`; domínio valida quantidade e saldo                              | `SecurityConfig`, `Part`, `PartStockFlowIntegrationTest`                                                   |
+| Ameaça                                        | Onde poderia ocorrer                                       | Controle aplicado                                                                                                 | Evidência                                                                                                  |
+|-----------------------------------------------|------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| Acesso administrativo sem autenticação        | CRUDs de clientes, veículos, serviços, peças, estoque e OS | Spring Security exige JWT e papel administrativo/funcionário                                                      | `SecurityConfig` e `SecurityAuthorizationIntegrationTest`                                                  |
+| Admin de empresa criando conta fora do escopo | Gestão de usuários da oficina ou loja                      | Backend força vínculo à própria empresa e bloqueia criação de `MASTER_ADMIN` por admin de empresa                 | `UsersController` e `SecurityAuthorizationIntegrationTest`                                                 |
+| Token ausente ou inválido                     | Qualquer endpoint protegido                                | Filtro JWT limpa o contexto e retorna 401 padronizado                                                             | `JwtAuthenticationFilter` e `SecurityConfig`                                                               |
+| Cliente acessando OS de outro cliente         | Detalhe, listagem, tracking e aprovação de orçamento       | `AuthorizationService` valida `customerId` vinculado ao usuário                                                   | `ServiceOrdersController` e testes de autorização                                                          |
+| CPF/CNPJ inválido                             | Cadastro e atualização de cliente                          | `Document.from(...)` normaliza e valida dígitos                                                                   | `Document`, `CustomerTest`, `SensitiveDataValidationIntegrationTest`                                       |
+| Placa inválida                                | Cadastro e atualização de veículo                          | `Plate.from(...)` aceita formatos brasileiro antigo e Mercosul                                                    | `Plate`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                                           |
+| SQL Injection                                 | Filtros, consultas por ID/documento/placa e persistência   | Repositories Spring Data/JPA, JPQL estática e `JdbcTemplate` com placeholders                                     | `ServiceOrderJpaRepository`, `StockMovementRepositoryAdapter`                                              |
+| Command Injection                             | Backend de negócio                                         | O backend não executa comandos do sistema operacional no fluxo do MVP                                             | Revisão por busca de `Runtime.getRuntime` e `ProcessBuilder`                                               |
+| XSS em campos textuais                        | Campos renderizados no frontend demonstrativo              | Vue escapa interpolação por padrão; não há uso identificado de `v-html`, `innerHTML`, `eval` ou APIs equivalentes | Busca estática no diretório `frontend/`                                                                    |
+| Exposição de secrets                          | Código, `.env`, relatórios e histórico Git                 | `.gitignore`, `.env.example` sem secrets e Gitleaks sem leaks                                                     | `.gitignore`, `.env.example`, `security-reports/secrets/gitleaks.json`                                     |
+| Dependência vulnerável                        | Maven/npm                                                  | Dependency-Check e npm audit com resultado final limpo                                                            | `security-reports/backend-dependencies/*` e `security-reports/frontend-dependencies/npm-audit-report.json` |
+| Imagem Docker vulnerável                      | Runtime da API e frontend                                  | Imagens non-root; riscos médios residuais revisados e aceitos                                                     | Relatórios Docker Scout                                                                                    |
+| Erro interno expondo detalhe técnico          | Responses de erro da API                                   | `RestExceptionHandler` padroniza resposta e não retorna stack trace                                               | `RestExceptionHandler`                                                                                     |
+| Alteração indevida de status da OS            | Endpoint de status                                         | Endpoint exige `ADMIN` ou `EMPLOYEE`; domínio valida transições                                                   | `SecurityConfig`, `ServiceOrder`, testes de fluxo                                                          |
+| Uso indevido de estoque                       | Movimentação/reserva/baixa de peças                        | Endpoints de estoque exigem `ADMIN` ou `EMPLOYEE`; domínio valida quantidade e saldo                              | `SecurityConfig`, `Part`, `PartStockFlowIntegrationTest`                                                   |
 
 ## 4. Data da análise
 
 | Campo                                 | Valor                            |
 |---------------------------------------|----------------------------------|
-| Data de consolidação                  | 29/06/2026                       |
+| Data de consolidação                  | 30/06/2026                       |
 | Horário do relatório Dependency-Check | 2026-06-29T20:51:40Z             |
 | Responsável                           | Yasmin Barcelos Pires - RM370897 |
 | Branch final de entrega               | `main`                           |
@@ -109,11 +120,22 @@ Ficaram fora do escopo do MVP: auditoria produtiva, WAF, rotação automatizada 
 
 ## 7. Resumo executivo
 
-O primeiro scan de dependências backend apontou vulnerabilidades em bibliotecas centrais do runtime, incluindo Spring Boot, Spring Framework, Spring Security, Tomcat, PostgreSQL JDBC, Log4j API, Commons Compress, Commons Lang e Swagger UI. As dependências foram atualizadas e o OWASP Dependency-Check foi executado novamente.
+O primeiro scan de dependências backend apontou vulnerabilidades em bibliotecas centrais do runtime, incluindo Spring
+Boot, Spring Framework, Spring Security, Tomcat, PostgreSQL JDBC, Log4j API, Commons Compress, Commons Lang e Swagger
+UI. As dependências foram atualizadas e o OWASP Dependency-Check foi executado novamente.
 
-O frontend também passou por revisão. O scan inicial do `npm audit` apontou vulnerabilidades altas transitivas em Vite/esbuild. Em 20/06/2026, uma nova execução identificou uma vulnerabilidade moderada transitiva em `js-yaml`, corrigida com atualização do lockfile.
+O frontend também passou por revisão. O scan inicial do `npm audit` apontou vulnerabilidades altas transitivas em
+Vite/esbuild. Em 20/06/2026, uma nova execução identificou uma vulnerabilidade moderada transitiva em `js-yaml`,
+corrigida com atualização do lockfile.
 
-As imagens Docker também foram revisadas. No backend, o Docker Scout encontrou vulnerabilidades associadas ao pacote `/usr/bin/pebble`, presente na imagem base anterior. O runtime foi migrado para `gcr.io/distroless/java21-debian12:nonroot`, eliminando os achados críticos e altos. Na última execução, o backend ficou com 0 críticas, 0 altas e 1 média em `jackson-databind 2.21.4`, transitiva de `jjwt-jackson`; o Scout indica correção em `2.21.5`, mas a disponibilidade dessa versão foi testada com `mvn dependency:get` e o artefato ainda não estava publicado no Maven Central na validação. No frontend, a imagem Nginx/Alpine inicial apresentou 75 CVEs. A troca para uma imagem Nginx unprivileged slim, fixada por digest, reduziu o resultado para 0 críticas, 0 altas e 1 média em BusyBox, sem versão corrigida indicada pelo scanner na data da análise.
+As imagens Docker também foram revisadas. No backend, o Docker Scout encontrou vulnerabilidades associadas ao pacote
+`/usr/bin/pebble`, presente na imagem base anterior. O runtime foi migrado para
+`gcr.io/distroless/java21-debian12:nonroot`, eliminando os achados críticos e altos. Na última execução, o backend ficou
+com 0 críticas, 0 altas e 1 média em `jackson-databind 2.21.4`, transitiva de `jjwt-jackson`; o Scout indica correção em
+`2.21.5`, mas a disponibilidade dessa versão foi testada com `mvn dependency:get` e o artefato ainda não estava
+publicado no Maven Central na validação. No frontend, a imagem Nginx/Alpine inicial apresentou 75 CVEs. A troca para uma
+imagem Nginx unprivileged slim, fixada por digest, reduziu o resultado para 0 críticas, 0 altas e 1 média em BusyBox,
+sem versão corrigida indicada pelo scanner na data da análise.
 
 Resultado final do OWASP Dependency-Check:
 
@@ -126,7 +148,10 @@ Resultado final do OWASP Dependency-Check:
 | Exceções de análise                 |         0 |
 | Status do build do Dependency-Check |   Sucesso |
 
-No estado final da entrega, não há vulnerabilidades críticas ou altas abertas nos scans consolidados. Os riscos residuais documentados são duas CVEs médias em imagens Docker: uma no backend por dependência transitiva sem versão corrigida disponível no Maven Central no momento da validação, e uma no frontend por BusyBox sem versão corrigida indicada pelo Docker Scout.
+No estado final da entrega, não há vulnerabilidades críticas ou altas abertas nos scans consolidados. Os riscos
+residuais documentados são duas CVEs médias em imagens Docker: uma no backend por dependência transitiva sem versão
+corrigida disponível no Maven Central no momento da validação, e uma no frontend por BusyBox sem versão corrigida
+indicada pelo Docker Scout.
 
 ## 8. Resultado geral dos scans
 
@@ -142,20 +167,22 @@ No estado final da entrega, não há vulnerabilidades críticas ou altas abertas
 
 ## 9. Cobertura de testes
 
-O JaCoCo mede domínio, aplicação, controllers REST, segurança, mappers e adapters de persistência. Foram excluídos apenas o bootstrap da aplicação, classes geradas automaticamente pelo OpenAPI e records estruturais de comando, consulta e saída sem lógica própria.
+O JaCoCo mede domínio, aplicação, controllers REST, segurança, mappers e adapters de persistência. Foram excluídos
+apenas o bootstrap da aplicação, classes geradas automaticamente pelo OpenAPI e records estruturais de comando, consulta
+e saída sem lógica própria.
 
 O gate executado por `mvn verify` exige no mínimo 90% de instruções, linhas e branches.
 
-Resultado de qualidade revalidado em 29/06/2026:
+Resultado de qualidade revalidado em 30/06/2026:
 
 | Métrica    | Coberto | Não coberto | Cobertura |
 |------------|--------:|------------:|----------:|
-| Instruções |   9.701 |         372 |    96,31% |
-| Branches   |     447 |          49 |    90,12% |
-| Linhas     |   2.333 |          66 |    97,25% |
-| Métodos    |     641 |          32 |    95,25% |
+| Instruções |  10.656 |         442 |    96,02% |
+| Branches   |     529 |          58 |    90,12% |
+| Linhas     |   2.486 |          86 |    96,66% |
+| Métodos    |     677 |          33 |    95,35% |
 
-Resultado validado com 143 testes automatizados e `mvn verify` concluindo com sucesso.
+Resultado validado com 149 testes automatizados e `mvn clean install` concluindo com sucesso.
 
 ## 10. Vulnerabilidades encontradas e tratadas
 
@@ -370,7 +397,9 @@ Resultado validado com 143 testes automatizados e `mvn verify` concluindo com su
 | Ocorrências no scan final             | 0                                                                                                                                           |
 | Exceções de análise no scan final     | 0                                                                                                                                           |
 
-Observação técnica: o analisador Sonatype OSS Index retornou 401 sem credenciais. Para manter o scan local reproduzível, o plugin foi configurado com `ossindexAnalyzerEnabled=false`. O scan continuou usando NVD, Known Exploited Vulnerabilities e RetireJS.
+Observação técnica: o analisador Sonatype OSS Index retornou 401 sem credenciais. Para manter o scan local reproduzível,
+o plugin foi configurado com `ossindexAnalyzerEnabled=false`. O scan continuou usando NVD, Known Exploited
+Vulnerabilities e RetireJS.
 
 ### 11.2 npm audit - frontend
 
@@ -424,12 +453,13 @@ Observação técnica: o analisador Sonatype OSS Index retornou 401 sem credenci
 
 Aviso revisado:
 
-| Alerta                                                   | Severidade no ZAP | Interpretação no MVP                                                                                   |
-|----------------------------------------------------------|-------------------|--------------------------------------------------------------------------------------------------------|
-| `Timestamp Disclosure - Unix`                            | WARN              | Detectado em respostas 401 de endpoints protegidos. Não expôs dado de negócio nem segredo.             |
+| Alerta                        | Severidade no ZAP | Interpretação no MVP                                                                       |
+|-------------------------------|-------------------|--------------------------------------------------------------------------------------------|
+| `Timestamp Disclosure - Unix` | WARN              | Detectado em respostas 401 de endpoints protegidos. Não expôs dado de negócio nem segredo. |
 
 A execução anterior do ZAP também apontou `Cross-Origin-Resource-Policy Header Missing or Invalid` em `/v3/api-docs`.
-O header `Cross-Origin-Resource-Policy: same-origin` foi adicionado na configuração de segurança e o scan foi reexecutado.
+O header `Cross-Origin-Resource-Policy: same-origin` foi adicionado na configuração de segurança e o scan foi
+reexecutado.
 Na nova evidência, essa regra aparece como PASS.
 
 ## 12. Vulnerabilidades corrigidas
@@ -450,7 +480,8 @@ Na nova evidência, essa regra aparece como PASS.
 | RISK-001 | Média      | BusyBox não possui versão corrigida indicada pelo Docker Scout na base analisada.                                                                        | Imagem slim, usuário não privilegiado, filesystem read-only e `no-new-privileges`.                         | Yasmin Barcelos Pires      | Próxima atualização da imagem base.                                               |
 | RISK-002 | Média      | Docker Scout indicou `jackson-databind 2.21.5`, mas `mvn dependency:get` confirmou que essa versão não estava disponível no Maven Central em 29/06/2026. | Backend distroless/non-root; Dependency-Check Maven limpo; dependência usada de forma transitiva pelo JWT. | Yasmin Barcelos Pires      | Reavaliar quando `jackson-databind 2.21.5` ou versão corrigida estiver publicada. |
 
-Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos residuais registrados são médios e foram aceitos temporariamente por ausência de correção aplicável no momento da análise.
+Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos residuais registrados são médios e foram
+aceitos temporariamente por ausência de correção aplicável no momento da análise.
 
 ## 14. Boas práticas de segurança implementadas
 
@@ -499,7 +530,9 @@ Não há vulnerabilidades críticas ou altas abertas nos scans finais. Os riscos
 
 ## 14.2 Análise de bibliotecas e licenças
 
-A análise principal de bibliotecas foi feita por OWASP Dependency-Check no backend e `npm audit` no frontend. O projeto também foi revisado para remover dependências de teste que não eram usadas pela suíte real, reduzindo a superfície de dependências e a quantidade de artefatos analisados no scan final.
+A análise principal de bibliotecas foi feita por OWASP Dependency-Check no backend e `npm audit` no frontend. O projeto
+também foi revisado para remover dependências de teste que não eram usadas pela suíte real, reduzindo a superfície de
+dependências e a quantidade de artefatos analisados no scan final.
 
 | Grupo                 | Ferramenta/evidência               | Resultado                                                                                             |
 |-----------------------|------------------------------------|-------------------------------------------------------------------------------------------------------|
@@ -508,11 +541,13 @@ A análise principal de bibliotecas foi feita por OWASP Dependency-Check no back
 | Bibliotecas removidas | Revisão manual do `pom.xml`        | Testcontainers e override de `commons-compress` de teste removidos por não serem usados.              |
 | Licenças              | Revisão no escopo acadêmico do MVP | Não foi identificado uso intencional de biblioteca com licença incompatível para a entrega acadêmica. |
 
-Não há plugin de relatório automático de licenças configurado no Maven. A análise formal de licenças ficou como verificação complementar, fora do critério principal do Tech Challenge.
+Não há plugin de relatório automático de licenças configurado no Maven. A análise formal de licenças ficou como
+verificação complementar, fora do critério principal do Tech Challenge.
 
 ## 15. Evidências
 
-Os caminhos abaixo indicam as evidências geradas durante a validação. Nesta entrega, `security-reports/` fica versionado com evidências revisadas; `target/` continua sendo saída local gerada pelos comandos Maven.
+Os caminhos abaixo indicam as evidências geradas durante a validação. Nesta entrega, `security-reports/` fica versionado
+com evidências revisadas; `target/` continua sendo saída local gerada pelos comandos Maven.
 
 | Evidência                       | Caminho                                                              | Descrição                                                              |
 |---------------------------------|----------------------------------------------------------------------|------------------------------------------------------------------------|
@@ -580,8 +615,15 @@ target/site/jacoco/jacoco.csv
 
 ## 18. Conclusão
 
-O projeto AutoCare Hub corrigiu as vulnerabilidades identificadas nas dependências backend, dependências frontend e imagens Docker analisadas. O Dependency-Check e o npm audit ficaram sem vulnerabilidades no resultado final.
+O projeto AutoCare Hub corrigiu as vulnerabilidades identificadas nas dependências backend, dependências frontend e
+imagens Docker analisadas. O Dependency-Check e o npm audit ficaram sem vulnerabilidades no resultado final.
 
-A imagem backend ficou sem vulnerabilidades críticas ou altas e mantém 1 CVE média em `jackson-databind`, aceita temporariamente porque a versão corrigida indicada pelo Docker Scout ainda não estava disponível no Maven Central na validação. A imagem frontend também ficou sem vulnerabilidades críticas ou altas e mantém 1 CVE média em BusyBox, aceita temporariamente porque o Docker Scout não indicou versão corrigida para a base analisada. Esses riscos foram registrados, mitigados com configuração de container mais restritiva e direcionados para revisão na próxima atualização de dependências ou imagens.
+A imagem backend ficou sem vulnerabilidades críticas ou altas e mantém 1 CVE média em `jackson-databind`, aceita
+temporariamente porque a versão corrigida indicada pelo Docker Scout ainda não estava disponível no Maven Central na
+validação. A imagem frontend também ficou sem vulnerabilidades críticas ou altas e mantém 1 CVE média em BusyBox, aceita
+temporariamente porque o Docker Scout não indicou versão corrigida para a base analisada. Esses riscos foram
+registrados, mitigados com configuração de container mais restritiva e direcionados para revisão na próxima atualização
+de dependências ou imagens.
 
-Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, OWASP ZAP, Gitleaks, Semgrep e JaCoCo, o sistema está apto para a entrega do Tech Challenge.
+Considerando o escopo analisado por Dependency-Check, npm audit, Docker Scout, OWASP ZAP, Gitleaks, Semgrep e JaCoCo, o
+sistema está apto para a entrega do Tech Challenge.

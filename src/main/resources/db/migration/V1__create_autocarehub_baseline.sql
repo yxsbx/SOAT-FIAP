@@ -397,7 +397,8 @@ VALUES ('90000000-0000-0000-0000-000000000001', 'AutoCare Hub', 'PLATFORM', TRUE
        ('90000000-0000-0000-0000-000000000011', 'Oficina Central AutoCare', 'WORKSHOP', TRUE, CURRENT_TIMESTAMP),
        ('90000000-0000-0000-0000-000000000012', 'Loja peças Prime', 'PARTS_STORE', TRUE, CURRENT_TIMESTAMP);
 
-INSERT INTO users (id, username, password_hash, role, customer_id, company_id, full_name, profile_type, employee_sub_role,
+INSERT INTO users (id, username, password_hash, role, customer_id, company_id, full_name, profile_type,
+                   employee_sub_role,
                    permissions, company_name, company_type, active, created_at)
 VALUES ('00000000-0000-0000-0000-000000000001', 'admin@autocarehub.com',
         '$2a$10$xAb5kI.uSxQkLo9n6tZTiuf8WbQcehwTGGk99zzc2QtY28sx9WFO.', 'ADMIN', NULL,

@@ -1,5 +1,9 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.usecase.part.CreatePartUseCase;
 import br.com.autocarehub.application.usecase.part.ListPartsUseCase;
 import br.com.autocarehub.application.usecase.part.UpdatePartStockUseCase;
@@ -11,13 +15,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.PartListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.PartResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdatePartStockRequest;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.UUID;
 
 public final class PartRestMapper {
 
-    private PartRestMapper() {}
+    private PartRestMapper() {
+    }
 
     public static CreatePartUseCase.Command toCommand(CreatePartRequest request) {
         return new CreatePartUseCase.Command(
@@ -59,19 +61,19 @@ public final class PartRestMapper {
 
     public static PartResponse toResponse(Part part) {
         return new PartResponse(
-                        part.id(),
-                        part.name(),
-                        part.description(),
-                        part.sku(),
-                        part.category(),
-                        part.brand(),
-                        part.unitPrice().value().doubleValue(),
-                        part.costPrice().value().doubleValue(),
-                        part.stockQuantity(),
-                        part.reservedQuantity(),
-                        part.minimumStock(),
-                        part.stockStatus(),
-                        part.active())
+                part.id(),
+                part.name(),
+                part.description(),
+                part.sku(),
+                part.category(),
+                part.brand(),
+                part.unitPrice().value().doubleValue(),
+                part.costPrice().value().doubleValue(),
+                part.stockQuantity(),
+                part.reservedQuantity(),
+                part.minimumStock(),
+                part.stockStatus(),
+                part.active())
                 .subcategory(part.subcategory())
                 .availableQuantity(part.availableQuantity())
                 .reservationDays(part.reservationDays())

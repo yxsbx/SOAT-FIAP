@@ -3,6 +3,14 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
@@ -12,12 +20,6 @@ import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Money;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class UpdateServiceOrderStatusUseCaseTest {
 
@@ -77,7 +79,7 @@ class UpdateServiceOrderStatusUseCaseTest {
                 new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
 
         assertThatThrownBy(() -> useCase.execute(
-                        new UpdateServiceOrderStatusUseCase.Command(serviceOrder.id(), ServiceOrderStatus.RECEBIDA)))
+                new UpdateServiceOrderStatusUseCase.Command(serviceOrder.id(), ServiceOrderStatus.RECEBIDA)))
                 .isInstanceOf(InvalidServiceOrderStatusTransitionException.class)
                 .hasMessage("Service order cannot return to received status");
     }
@@ -90,7 +92,7 @@ class UpdateServiceOrderStatusUseCaseTest {
                 new UpdateServiceOrderStatusUseCase(serviceOrderRepository, partRepository);
 
         assertThatThrownBy(() -> useCase.execute(
-                        new UpdateServiceOrderStatusUseCase.Command(serviceOrder.id(), ServiceOrderStatus.EM_EXECUCAO)))
+                new UpdateServiceOrderStatusUseCase.Command(serviceOrder.id(), ServiceOrderStatus.EM_EXECUCAO)))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Execution cannot start without budget approval");
     }

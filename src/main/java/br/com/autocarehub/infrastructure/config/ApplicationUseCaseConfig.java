@@ -1,5 +1,10 @@
 package br.com.autocarehub.infrastructure.config;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.application.port.out.PartRepository;
@@ -58,10 +63,6 @@ import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServic
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
 import br.com.autocarehub.infrastructure.security.JwtService;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ApplicationUseCaseConfig {

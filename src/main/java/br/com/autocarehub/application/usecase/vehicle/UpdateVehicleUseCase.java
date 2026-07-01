@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.vehicle;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.VehicleRepository;
 import br.com.autocarehub.domain.model.Vehicle;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.util.UUID;
 
 public class UpdateVehicleUseCase {
 
@@ -28,5 +29,6 @@ public class UpdateVehicleUseCase {
     }
 
     public record Command(
-            UUID vehicleId, String plate, String brand, String model, int year, int mileage, boolean active) {}
+            UUID vehicleId, String plate, String brand, String model, int year, int mileage, boolean active) {
+    }
 }

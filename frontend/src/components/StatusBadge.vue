@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue';
+import {computed} from 'vue';
 
 const props = defineProps({
   value: {
@@ -13,23 +13,23 @@ const props = defineProps({
 });
 
 const statusMap = {
-  WAITING_APPROVAL: { label: 'Aguardando aprovação', tone: 'warning' },
-  IN_PROGRESS: { label: 'Em execução', tone: 'info' },
-  IN_DIAGNOSIS: { label: 'Em diagnóstico', tone: 'info' },
-  DELIVERED: { label: 'Entregue', tone: 'success' },
-  FINISHED: { label: 'Finalizada', tone: 'success' },
-  RECEIVED: { label: 'Recebida', tone: 'neutral' },
-  ACTIVE: { label: 'Ativo', tone: 'success' },
-  INACTIVE: { label: 'Inativo', tone: 'danger' },
-  AVAILABLE: { label: 'Disponível', tone: 'success' },
-  RESERVED: { label: 'Com reserva', tone: 'info' },
-  LOW_STOCK: { label: 'Baixo estoque', tone: 'warning' },
-  OUT_OF_STOCK: { label: 'Sem estoque', tone: 'danger' },
-  DRAFT: { label: 'Rascunho', tone: 'neutral' },
-  SENT: { label: 'Enviado', tone: 'info' },
-  APPROVED: { label: 'Aprovado', tone: 'success' },
-  REFUSED: { label: 'Recusado', tone: 'danger' },
-  EXPIRED: { label: 'Expirado', tone: 'warning' },
+  WAITING_APPROVAL: {label: 'Aguardando aprovação', tone: 'warning'},
+  IN_PROGRESS: {label: 'Em execução', tone: 'info'},
+  IN_DIAGNOSIS: {label: 'Em diagnóstico', tone: 'info'},
+  DELIVERED: {label: 'Entregue', tone: 'success'},
+  FINISHED: {label: 'Finalizada', tone: 'success'},
+  RECEIVED: {label: 'Recebida', tone: 'neutral'},
+  ACTIVE: {label: 'Ativo', tone: 'success'},
+  INACTIVE: {label: 'Inativo', tone: 'danger'},
+  AVAILABLE: {label: 'Disponível', tone: 'success'},
+  RESERVED: {label: 'Com reserva', tone: 'info'},
+  LOW_STOCK: {label: 'Baixo estoque', tone: 'warning'},
+  OUT_OF_STOCK: {label: 'Sem estoque', tone: 'danger'},
+  DRAFT: {label: 'Rascunho', tone: 'neutral'},
+  SENT: {label: 'Enviado', tone: 'info'},
+  APPROVED: {label: 'Aprovado', tone: 'success'},
+  REFUSED: {label: 'Recusado', tone: 'danger'},
+  EXPIRED: {label: 'Expirado', tone: 'warning'},
 };
 
 const normalized = computed(() => {

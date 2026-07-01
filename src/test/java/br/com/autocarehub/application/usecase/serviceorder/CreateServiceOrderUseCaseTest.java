@@ -3,6 +3,14 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.PartRepository;
@@ -20,12 +28,6 @@ import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class CreateServiceOrderUseCaseTest {
 
@@ -111,15 +113,15 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        "52998224725",
-                        new CreateServiceOrderUseCase.CustomerInput(
-                                "Maria Silva", "11999999999", "maria@example.com", address()),
-                        null,
-                        new CreateServiceOrderUseCase.VehicleInput("ABC1D23", "Honda", "Civic", 2020, 35000),
-                        "Cliente relata barulho no motor",
-                        List.of(),
-                        List.of(),
-                        true)))
+                "52998224725",
+                new CreateServiceOrderUseCase.CustomerInput(
+                        "Maria Silva", "11999999999", "maria@example.com", address()),
+                null,
+                new CreateServiceOrderUseCase.VehicleInput("ABC1D23", "Honda", "Civic", 2020, 35000),
+                "Cliente relata barulho no motor",
+                List.of(),
+                List.of(),
+                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Service order must have at least one requested service");
     }
@@ -131,14 +133,14 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        "52998224725",
-                        null,
-                        null,
-                        new CreateServiceOrderUseCase.VehicleInput("ABC1D23", "Honda", "Civic", 2020, 35000),
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
-                        List.of(),
-                        true)))
+                "52998224725",
+                null,
+                null,
+                new CreateServiceOrderUseCase.VehicleInput("ABC1D23", "Honda", "Civic", 2020, 35000),
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                List.of(),
+                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Customer not found and customer data was not provided");
     }
@@ -152,14 +154,14 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        "52998224725",
-                        null,
-                        null,
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
-                        List.of(),
-                        true)))
+                "52998224725",
+                null,
+                null,
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                List.of(),
+                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Vehicle not found and vehicle data was not provided");
     }
@@ -177,14 +179,14 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        otherCustomerVehicle.id(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
-                        List.of(),
-                        true)))
+                customer.document().value(),
+                null,
+                otherCustomerVehicle.id(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                List.of(),
+                true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Vehicle does not belong to customer");
     }
@@ -205,25 +207,25 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        vehicle.id(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(inactiveService.id(), 1)),
-                        List.of(),
-                        false)))
+                customer.document().value(),
+                null,
+                vehicle.id(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(inactiveService.id(), 1)),
+                List.of(),
+                false)))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Workshop service is inactive");
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        vehicle.id(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(activeService.id(), 1)),
-                        List.of(new CreateServiceOrderUseCase.PartInput(inactivePart.id(), 1)),
-                        false)))
+                customer.document().value(),
+                null,
+                vehicle.id(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(activeService.id(), 1)),
+                List.of(new CreateServiceOrderUseCase.PartInput(inactivePart.id(), 1)),
+                false)))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Part is inactive");
     }
@@ -239,36 +241,36 @@ class CreateServiceOrderUseCaseTest {
         CreateServiceOrderUseCase useCase = useCase();
 
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        UUID.randomUUID(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
-                        List.of(),
-                        false)))
+                customer.document().value(),
+                null,
+                UUID.randomUUID(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                List.of(),
+                false)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Vehicle not found");
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        vehicle.id(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(UUID.randomUUID(), 1)),
-                        List.of(),
-                        false)))
+                customer.document().value(),
+                null,
+                vehicle.id(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(UUID.randomUUID(), 1)),
+                List.of(),
+                false)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Workshop service not found");
         assertThatThrownBy(() -> useCase.execute(new CreateServiceOrderUseCase.Command(
-                        customer.document().value(),
-                        null,
-                        vehicle.id(),
-                        null,
-                        "Cliente relata barulho no motor",
-                        List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
-                        List.of(new CreateServiceOrderUseCase.PartInput(UUID.randomUUID(), 1)),
-                        false)))
+                customer.document().value(),
+                null,
+                vehicle.id(),
+                null,
+                "Cliente relata barulho no motor",
+                List.of(new CreateServiceOrderUseCase.ServiceInput(service.id(), 1)),
+                List.of(new CreateServiceOrderUseCase.PartInput(UUID.randomUUID(), 1)),
+                false)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Part not found");
     }

@@ -1,1 +1,544 @@
-<?xml version="1.0" encoding="UTF-8"?><testsuites failures="0" name="dependency-check" tests="103"><testsuite failures="0" errors="0" time="0" id="0" name="C:\Users\ybarc\.m2\repository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar" package="HdrHistogram-2.2.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="HdrHistogram-2.2.2.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="1" name="C:\Users\ybarc\.m2\repository\com\zaxxer\HikariCP\7.0.2\HikariCP-7.0.2.jar" package="HikariCP-7.0.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="HikariCP-7.0.2.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="2" name="C:\Users\ybarc\.m2\repository\net\minidev\accessors-smart\2.6.0\accessors-smart-2.6.0.jar" package="accessors-smart-2.6.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="accessors-smart-2.6.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="3" name="C:\Users\ybarc\.m2\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar" package="android-json-0.0.20131108.vaadin1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="android-json-0.0.20131108.vaadin1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="4" name="C:\Users\ybarc\.m2\repository\org\eclipse\angus\angus-activation\2.0.3\angus-activation-2.0.3.jar" package="angus-activation-2.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="angus-activation-2.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="5" name="C:\Users\ybarc\.m2\repository\org\antlr\antlr4-runtime\4.13.2\antlr4-runtime-4.13.2.jar" package="antlr4-runtime-4.13.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="antlr4-runtime-4.13.2.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="6" name="C:\Users\ybarc\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar" package="apiguardian-api-1.1.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="apiguardian-api-1.1.2.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="7" name="C:\Users\ybarc\.m2\repository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar" package="asm-9.7.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="asm-9.7.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="8" name="C:\Users\ybarc\.m2\repository\org\aspectj\aspectjweaver\1.9.25.1\aspectjweaver-1.9.25.1.jar" package="aspectjweaver-1.9.25.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="aspectjweaver-1.9.25.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="9" name="C:\Users\ybarc\.m2\repository\org\assertj\assertj-core\3.27.7\assertj-core-3.27.7.jar" package="assertj-core-3.27.7.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="assertj-core-3.27.7.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="10" name="C:\Users\ybarc\.m2\repository\org\awaitility\awaitility\4.3.0\awaitility-4.3.0.jar" package="awaitility-4.3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="awaitility-4.3.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="11" name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy\1.18.10\byte-buddy-1.18.10.jar" package="byte-buddy-1.18.10.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="byte-buddy-1.18.10.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="12" name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar\win32-x86-64\attach_hotspot_windows.dll" package="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll"/></testsuite><testsuite failures="0" errors="0" time="0" id="13" name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar\win32-x86\attach_hotspot_windows.dll" package="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll"/></testsuite><testsuite failures="0" errors="0" time="0" id="14" name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar" package="byte-buddy-agent-1.18.10.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="15" name="C:\Users\ybarc\.m2\repository\com\fasterxml\classmate\1.7.3\classmate-1.7.3.jar" package="classmate-1.7.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="classmate-1.7.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="16" name="C:\Users\ybarc\.m2\repository\org\apache\commons\commons-lang3\3.20.0\commons-lang3-3.20.0.jar" package="commons-lang3-3.20.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="commons-lang3-3.20.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="17" name="C:\Users\ybarc\.m2\repository\commons-logging\commons-logging\1.3.6\commons-logging-1.3.6.jar" package="commons-logging-1.3.6.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="commons-logging-1.3.6.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="18" name="C:\Users\ybarc\.m2\repository\org\flywaydb\flyway-core\12.4.0\flyway-core-12.4.0.jar" package="flyway-core-12.4.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="flyway-core-12.4.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="19" name="C:\Users\ybarc\.m2\repository\org\flywaydb\flyway-database-postgresql\12.4.0\flyway-database-postgresql-12.4.0.jar" package="flyway-database-postgresql-12.4.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="flyway-database-postgresql-12.4.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="20" name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar\org\h2\util\data.zip\org\h2\server\web\res\table.js" package="h2-2.4.240.jar: data.zip: table.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="h2-2.4.240.jar: data.zip: table.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="21" name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar\org\h2\util\data.zip\org\h2\server\web\res\tree.js" package="h2-2.4.240.jar: data.zip: tree.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="h2-2.4.240.jar: data.zip: tree.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="22" name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar" package="h2-2.4.240.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="h2-2.4.240.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="23" name="C:\Users\ybarc\.m2\repository\org\hamcrest\hamcrest\3.0\hamcrest-3.0.jar" package="hamcrest-3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="hamcrest-3.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="24" name="C:\Users\ybarc\.m2\repository\org\hibernate\orm\hibernate-core\7.4.1.Final\hibernate-core-7.4.1.Final.jar" package="hibernate-core-7.4.1.Final.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="hibernate-core-7.4.1.Final.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="25" name="C:\Users\ybarc\.m2\repository\org\hibernate\models\hibernate-models\1.1.1\hibernate-models-1.1.1.jar" package="hibernate-models-1.1.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="hibernate-models-1.1.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="26" name="C:\Users\ybarc\.m2\repository\org\hibernate\validator\hibernate-validator\9.1.0.Final\hibernate-validator-9.1.0.Final.jar" package="hibernate-validator-9.1.0.Final.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="hibernate-validator-9.1.0.Final.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="27" name="C:\Users\ybarc\.m2\repository\com\sun\istack\istack-commons-runtime\4.1.2\istack-commons-runtime-4.1.2.jar" package="istack-commons-runtime-4.1.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="istack-commons-runtime-4.1.2.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="28" name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.21\jackson-annotations-2.21.jar" package="jackson-annotations-2.21.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-annotations-2.21.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="29" name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.21.4\jackson-core-2.21.4.jar" package="jackson-core-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-core-2.21.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="30" name="C:\Users\ybarc\.m2\repository\tools\jackson\core\jackson-core\3.1.4\jackson-core-3.1.4.jar" package="jackson-core-3.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-core-3.1.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="31" name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.21.4\jackson-databind-2.21.4.jar" package="jackson-databind-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-databind-2.21.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="32" name="C:\Users\ybarc\.m2\repository\tools\jackson\core\jackson-databind\3.1.4\jackson-databind-3.1.4.jar" package="jackson-databind-3.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-databind-3.1.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="33" name="C:\Users\ybarc\.m2\repository\org\openapitools\jackson-databind-nullable\0.2.10\jackson-databind-nullable-0.2.10.jar" package="jackson-databind-nullable-0.2.10.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-databind-nullable-0.2.10.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="34" name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\dataformat\jackson-dataformat-yaml\2.21.4\jackson-dataformat-yaml-2.21.4.jar" package="jackson-dataformat-yaml-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-dataformat-yaml-2.21.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="35" name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.21.4\jackson-datatype-jsr310-2.21.4.jar" package="jackson-datatype-jsr310-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jackson-datatype-jsr310-2.21.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="36" name="C:\Users\ybarc\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.4\jakarta.activation-api-2.1.4.jar" package="jakarta.activation-api-2.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.activation-api-2.1.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="37" name="C:\Users\ybarc\.m2\repository\jakarta\annotation\jakarta.annotation-api\3.0.0\jakarta.annotation-api-3.0.0.jar" package="jakarta.annotation-api-3.0.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.annotation-api-3.0.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="38" name="C:\Users\ybarc\.m2\repository\jakarta\inject\jakarta.inject-api\2.0.1\jakarta.inject-api-2.0.1.jar" package="jakarta.inject-api-2.0.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.inject-api-2.0.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="39" name="C:\Users\ybarc\.m2\repository\jakarta\persistence\jakarta.persistence-api\3.2.0\jakarta.persistence-api-3.2.0.jar" package="jakarta.persistence-api-3.2.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.persistence-api-3.2.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="40" name="C:\Users\ybarc\.m2\repository\jakarta\transaction\jakarta.transaction-api\2.0.1\jakarta.transaction-api-2.0.1.jar" package="jakarta.transaction-api-2.0.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.transaction-api-2.0.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="41" name="C:\Users\ybarc\.m2\repository\jakarta\validation\jakarta.validation-api\3.1.1\jakarta.validation-api-3.1.1.jar" package="jakarta.validation-api-3.1.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.validation-api-3.1.1.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="42" name="C:\Users\ybarc\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.5\jakarta.xml.bind-api-4.0.5.jar" package="jakarta.xml.bind-api-4.0.5.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jakarta.xml.bind-api-4.0.5.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="43" name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\jaxb-core\4.0.9\jaxb-core-4.0.9.jar" package="jaxb-core-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jaxb-core-4.0.9.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="44" name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\jaxb-runtime\4.0.9\jaxb-runtime-4.0.9.jar" package="jaxb-runtime-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jaxb-runtime-4.0.9.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="45" name="C:\Users\ybarc\.m2\repository\org\jboss\logging\jboss-logging\3.6.3.Final\jboss-logging-3.6.3.Final.jar" package="jboss-logging-3.6.3.Final.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jboss-logging-3.6.3.Final.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="46" name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-api\0.13.0\jjwt-api-0.13.0.jar" package="jjwt-api-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jjwt-api-0.13.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="47" name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-impl\0.13.0\jjwt-impl-0.13.0.jar" package="jjwt-impl-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jjwt-impl-0.13.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="48" name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.13.0\jjwt-jackson-0.13.0.jar" package="jjwt-jackson-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jjwt-jackson-0.13.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="49" name="C:\Users\ybarc\.m2\repository\com\jayway\jsonpath\json-path\2.10.0\json-path-2.10.0.jar" package="json-path-2.10.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="json-path-2.10.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="50" name="C:\Users\ybarc\.m2\repository\net\minidev\json-smart\2.6.0\json-smart-2.6.0.jar" package="json-smart-2.6.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="json-smart-2.6.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="51" name="C:\Users\ybarc\.m2\repository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar" package="jsonassert-1.5.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jsonassert-1.5.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="52" name="C:\Users\ybarc\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar" package="jspecify-1.0.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jspecify-1.0.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="53" name="C:\Users\ybarc\.m2\repository\org\slf4j\jul-to-slf4j\2.0.18\jul-to-slf4j-2.0.18.jar" package="jul-to-slf4j-2.0.18.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="jul-to-slf4j-2.0.18.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="54" name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter\6.0.3\junit-jupiter-6.0.3.jar" package="junit-jupiter-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="junit-jupiter-6.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="55" name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-api\6.0.3\junit-jupiter-api-6.0.3.jar" package="junit-jupiter-api-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="junit-jupiter-api-6.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="56" name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-engine\6.0.3\junit-jupiter-engine-6.0.3.jar" package="junit-jupiter-engine-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="junit-jupiter-engine-6.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="57" name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-params\6.0.3\junit-jupiter-params-6.0.3.jar" package="junit-jupiter-params-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="junit-jupiter-params-6.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="58" name="C:\Users\ybarc\.m2\repository\org\junit\platform\junit-platform-engine\6.0.3\junit-platform-engine-6.0.3.jar" package="junit-platform-engine-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="junit-platform-engine-6.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="59" name="C:\Users\ybarc\.m2\repository\org\apache\logging\log4j\log4j-api\2.25.4\log4j-api-2.25.4.jar" package="log4j-api-2.25.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="log4j-api-2.25.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="60" name="C:\Users\ybarc\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.25.4\log4j-to-slf4j-2.25.4.jar" package="log4j-to-slf4j-2.25.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="log4j-to-slf4j-2.25.4.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="61" name="C:\Users\ybarc\.m2\repository\ch\qos\logback\logback-core\1.5.34\logback-core-1.5.34.jar" package="logback-core-1.5.34.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="logback-core-1.5.34.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="62" name="C:\Users\ybarc\.m2\repository\org\projectlombok\lombok\1.18.46\lombok-1.18.46.jar\lombok\launch\mavenEcjBootstrapAgent.jar" package="lombok-1.18.46.jar: mavenEcjBootstrapAgent.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="lombok-1.18.46.jar: mavenEcjBootstrapAgent.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="63" name="C:\Users\ybarc\.m2\repository\org\projectlombok\lombok\1.18.46\lombok-1.18.46.jar" package="lombok-1.18.46.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="lombok-1.18.46.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="64" name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-commons\1.17.0\micrometer-commons-1.17.0.jar" package="micrometer-commons-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="micrometer-commons-1.17.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="65" name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-core\1.17.0\micrometer-core-1.17.0.jar" package="micrometer-core-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="micrometer-core-1.17.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="66" name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-jakarta9\1.17.0\micrometer-jakarta9-1.17.0.jar" package="micrometer-jakarta9-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="micrometer-jakarta9-1.17.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="67" name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-observation\1.17.0\micrometer-observation-1.17.0.jar" package="micrometer-observation-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="micrometer-observation-1.17.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="68" name="C:\Users\ybarc\.m2\repository\org\mockito\mockito-core\5.23.0\mockito-core-5.23.0.jar" package="mockito-core-5.23.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="mockito-core-5.23.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="69" name="C:\Users\ybarc\.m2\repository\org\mockito\mockito-junit-jupiter\5.23.0\mockito-junit-jupiter-5.23.0.jar" package="mockito-junit-jupiter-5.23.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="mockito-junit-jupiter-5.23.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="70" name="C:\Users\ybarc\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar" package="objenesis-3.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="objenesis-3.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="71" name="C:\Users\ybarc\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar" package="opentest4j-1.3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="opentest4j-1.3.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="72" name="C:\Users\ybarc\.m2\repository\org\postgresql\postgresql\42.7.11\postgresql-42.7.11.jar" package="postgresql-42.7.11.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="postgresql-42.7.11.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="73" name="C:\Users\ybarc\.m2\repository\org\slf4j\slf4j-api\2.0.18\slf4j-api-2.0.18.jar" package="slf4j-api-2.0.18.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="slf4j-api-2.0.18.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="74" name="C:\Users\ybarc\.m2\repository\org\yaml\snakeyaml\2.6\snakeyaml-2.6.jar" package="snakeyaml-2.6.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="snakeyaml-2.6.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="75" name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot\4.1.0\spring-boot-4.1.0.jar" package="spring-boot-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-boot-4.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="76" name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot-data-commons\4.1.0\spring-boot-data-commons-4.1.0.jar" package="spring-boot-data-commons-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-boot-data-commons-4.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="77" name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot-web-server\4.1.0\spring-boot-web-server-4.1.0.jar" package="spring-boot-web-server-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-boot-web-server-4.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="78" name="C:\Users\ybarc\.m2\repository\org\springframework\spring-core\7.0.8\spring-core-7.0.8.jar" package="spring-core-7.0.8.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-core-7.0.8.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="79" name="C:\Users\ybarc\.m2\repository\org\springframework\data\spring-data-commons\4.1.0\spring-data-commons-4.1.0.jar" package="spring-data-commons-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-data-commons-4.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="80" name="C:\Users\ybarc\.m2\repository\org\springframework\data\spring-data-jpa\4.1.0\spring-data-jpa-4.1.0.jar" package="spring-data-jpa-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-data-jpa-4.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="81" name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-core\7.1.0\spring-security-core-7.1.0.jar" package="spring-security-core-7.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-security-core-7.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="82" name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-web\7.1.0\spring-security-web-7.1.0.jar\org\springframework\security\spring-security-webauthn.js" package="spring-security-web-7.1.0.jar: spring-security-webauthn.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-security-web-7.1.0.jar: spring-security-webauthn.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="83" name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-web\7.1.0\spring-security-web-7.1.0.jar" package="spring-security-web-7.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-security-web-7.1.0.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="84" name="C:\Users\ybarc\.m2\repository\org\springframework\spring-web\7.0.8\spring-web-7.0.8.jar" package="spring-web-7.0.8.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="spring-web-7.0.8.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="85" name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-common\3.0.3\springdoc-openapi-starter-common-3.0.3.jar" package="springdoc-openapi-starter-common-3.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="springdoc-openapi-starter-common-3.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="86" name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-api\3.0.3\springdoc-openapi-starter-webmvc-api-3.0.3.jar" package="springdoc-openapi-starter-webmvc-api-3.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="springdoc-openapi-starter-webmvc-api-3.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="87" name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-ui\3.0.3\springdoc-openapi-starter-webmvc-ui-3.0.3.jar" package="springdoc-openapi-starter-webmvc-ui-3.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="springdoc-openapi-starter-webmvc-ui-3.0.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="88" name="C:\Users\ybarc\.m2\repository\io\swagger\core\v3\swagger-core-jakarta\2.2.47\swagger-core-jakarta-2.2.47.jar" package="swagger-core-jakarta-2.2.47.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-core-jakarta-2.2.47.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="89" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\oauth2-redirect.js" package="swagger-ui-5.32.6.jar: oauth2-redirect.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: oauth2-redirect.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="90" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-initializer.js" package="swagger-ui-5.32.6.jar: swagger-initializer.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-initializer.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="91" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-bundle.js" package="swagger-ui-5.32.6.jar: swagger-ui-bundle.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-bundle.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="92" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-es-bundle-core.js" package="swagger-ui-5.32.6.jar: swagger-ui-es-bundle-core.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-es-bundle-core.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="93" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-es-bundle.js" package="swagger-ui-5.32.6.jar: swagger-ui-es-bundle.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-es-bundle.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="94" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-standalone-preset.js" package="swagger-ui-5.32.6.jar: swagger-ui-standalone-preset.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-standalone-preset.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="95" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui.js" package="swagger-ui-5.32.6.jar: swagger-ui.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="96" name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar" package="swagger-ui-5.32.6.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-5.32.6.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="97" name="C:\Users\ybarc\git\SOAT-FIAP\src\main\resources\static\swagger-ui-init.js" package="swagger-ui-init.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="swagger-ui-init.js"/></testsuite><testsuite failures="0" errors="0" time="0" id="98" name="C:\Users\ybarc\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\11.0.22\tomcat-embed-core-11.0.22.jar" package="tomcat-embed-core-11.0.22.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="tomcat-embed-core-11.0.22.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="99" name="C:\Users\ybarc\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\11.0.22\tomcat-embed-el-11.0.22.jar" package="tomcat-embed-el-11.0.22.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="tomcat-embed-el-11.0.22.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="100" name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\txw2\4.0.9\txw2-4.0.9.jar" package="txw2-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="txw2-4.0.9.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="101" name="C:\Users\ybarc\.m2\repository\org\webjars\webjars-locator-lite\1.1.3\webjars-locator-lite-1.1.3.jar" package="webjars-locator-lite-1.1.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="webjars-locator-lite-1.1.3.jar"/></testsuite><testsuite failures="0" errors="0" time="0" id="102" name="C:\Users\ybarc\.m2\repository\org\xmlunit\xmlunit-core\2.11.0\xmlunit-core-2.11.0.jar" package="xmlunit-core-2.11.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969"><testcase classname="dependency-check" name="xmlunit-core-2.11.0.jar"/></testsuite></testsuites>
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites failures="0" name="dependency-check" tests="103">
+    <testsuite failures="0" errors="0" time="0" id="0"
+               name="C:\Users\ybarc\.m2\repository\org\hdrhistogram\HdrHistogram\2.2.2\HdrHistogram-2.2.2.jar"
+               package="HdrHistogram-2.2.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="HdrHistogram-2.2.2.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="1"
+               name="C:\Users\ybarc\.m2\repository\com\zaxxer\HikariCP\7.0.2\HikariCP-7.0.2.jar"
+               package="HikariCP-7.0.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="HikariCP-7.0.2.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="2"
+               name="C:\Users\ybarc\.m2\repository\net\minidev\accessors-smart\2.6.0\accessors-smart-2.6.0.jar"
+               package="accessors-smart-2.6.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="accessors-smart-2.6.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="3"
+               name="C:\Users\ybarc\.m2\repository\com\vaadin\external\google\android-json\0.0.20131108.vaadin1\android-json-0.0.20131108.vaadin1.jar"
+               package="android-json-0.0.20131108.vaadin1.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="android-json-0.0.20131108.vaadin1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="4"
+               name="C:\Users\ybarc\.m2\repository\org\eclipse\angus\angus-activation\2.0.3\angus-activation-2.0.3.jar"
+               package="angus-activation-2.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="angus-activation-2.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="5"
+               name="C:\Users\ybarc\.m2\repository\org\antlr\antlr4-runtime\4.13.2\antlr4-runtime-4.13.2.jar"
+               package="antlr4-runtime-4.13.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="antlr4-runtime-4.13.2.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="6"
+               name="C:\Users\ybarc\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar"
+               package="apiguardian-api-1.1.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="apiguardian-api-1.1.2.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="7"
+               name="C:\Users\ybarc\.m2\repository\org\ow2\asm\asm\9.7.1\asm-9.7.1.jar" package="asm-9.7.1.jar"
+               skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="asm-9.7.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="8"
+               name="C:\Users\ybarc\.m2\repository\org\aspectj\aspectjweaver\1.9.25.1\aspectjweaver-1.9.25.1.jar"
+               package="aspectjweaver-1.9.25.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="aspectjweaver-1.9.25.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="9"
+               name="C:\Users\ybarc\.m2\repository\org\assertj\assertj-core\3.27.7\assertj-core-3.27.7.jar"
+               package="assertj-core-3.27.7.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="assertj-core-3.27.7.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="10"
+               name="C:\Users\ybarc\.m2\repository\org\awaitility\awaitility\4.3.0\awaitility-4.3.0.jar"
+               package="awaitility-4.3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="awaitility-4.3.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="11"
+               name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy\1.18.10\byte-buddy-1.18.10.jar"
+               package="byte-buddy-1.18.10.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="byte-buddy-1.18.10.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="12"
+               name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar\win32-x86-64\attach_hotspot_windows.dll"
+               package="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="13"
+               name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar\win32-x86\attach_hotspot_windows.dll"
+               package="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar: attach_hotspot_windows.dll"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="14"
+               name="C:\Users\ybarc\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.10\byte-buddy-agent-1.18.10.jar"
+               package="byte-buddy-agent-1.18.10.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="byte-buddy-agent-1.18.10.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="15"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\classmate\1.7.3\classmate-1.7.3.jar"
+               package="classmate-1.7.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="classmate-1.7.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="16"
+               name="C:\Users\ybarc\.m2\repository\org\apache\commons\commons-lang3\3.20.0\commons-lang3-3.20.0.jar"
+               package="commons-lang3-3.20.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="commons-lang3-3.20.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="17"
+               name="C:\Users\ybarc\.m2\repository\commons-logging\commons-logging\1.3.6\commons-logging-1.3.6.jar"
+               package="commons-logging-1.3.6.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="commons-logging-1.3.6.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="18"
+               name="C:\Users\ybarc\.m2\repository\org\flywaydb\flyway-core\12.4.0\flyway-core-12.4.0.jar"
+               package="flyway-core-12.4.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="flyway-core-12.4.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="19"
+               name="C:\Users\ybarc\.m2\repository\org\flywaydb\flyway-database-postgresql\12.4.0\flyway-database-postgresql-12.4.0.jar"
+               package="flyway-database-postgresql-12.4.0.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="flyway-database-postgresql-12.4.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="20"
+               name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar\org\h2\util\data.zip\org\h2\server\web\res\table.js"
+               package="h2-2.4.240.jar: data.zip: table.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="h2-2.4.240.jar: data.zip: table.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="21"
+               name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar\org\h2\util\data.zip\org\h2\server\web\res\tree.js"
+               package="h2-2.4.240.jar: data.zip: tree.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="h2-2.4.240.jar: data.zip: tree.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="22"
+               name="C:\Users\ybarc\.m2\repository\com\h2database\h2\2.4.240\h2-2.4.240.jar" package="h2-2.4.240.jar"
+               skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="h2-2.4.240.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="23"
+               name="C:\Users\ybarc\.m2\repository\org\hamcrest\hamcrest\3.0\hamcrest-3.0.jar"
+               package="hamcrest-3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="hamcrest-3.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="24"
+               name="C:\Users\ybarc\.m2\repository\org\hibernate\orm\hibernate-core\7.4.1.Final\hibernate-core-7.4.1.Final.jar"
+               package="hibernate-core-7.4.1.Final.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="hibernate-core-7.4.1.Final.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="25"
+               name="C:\Users\ybarc\.m2\repository\org\hibernate\models\hibernate-models\1.1.1\hibernate-models-1.1.1.jar"
+               package="hibernate-models-1.1.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="hibernate-models-1.1.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="26"
+               name="C:\Users\ybarc\.m2\repository\org\hibernate\validator\hibernate-validator\9.1.0.Final\hibernate-validator-9.1.0.Final.jar"
+               package="hibernate-validator-9.1.0.Final.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="hibernate-validator-9.1.0.Final.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="27"
+               name="C:\Users\ybarc\.m2\repository\com\sun\istack\istack-commons-runtime\4.1.2\istack-commons-runtime-4.1.2.jar"
+               package="istack-commons-runtime-4.1.2.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="istack-commons-runtime-4.1.2.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="28"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.21\jackson-annotations-2.21.jar"
+               package="jackson-annotations-2.21.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-annotations-2.21.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="29"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.21.4\jackson-core-2.21.4.jar"
+               package="jackson-core-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-core-2.21.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="30"
+               name="C:\Users\ybarc\.m2\repository\tools\jackson\core\jackson-core\3.1.4\jackson-core-3.1.4.jar"
+               package="jackson-core-3.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-core-3.1.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="31"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.21.4\jackson-databind-2.21.4.jar"
+               package="jackson-databind-2.21.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-databind-2.21.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="32"
+               name="C:\Users\ybarc\.m2\repository\tools\jackson\core\jackson-databind\3.1.4\jackson-databind-3.1.4.jar"
+               package="jackson-databind-3.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-databind-3.1.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="33"
+               name="C:\Users\ybarc\.m2\repository\org\openapitools\jackson-databind-nullable\0.2.10\jackson-databind-nullable-0.2.10.jar"
+               package="jackson-databind-nullable-0.2.10.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-databind-nullable-0.2.10.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="34"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\dataformat\jackson-dataformat-yaml\2.21.4\jackson-dataformat-yaml-2.21.4.jar"
+               package="jackson-dataformat-yaml-2.21.4.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-dataformat-yaml-2.21.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="35"
+               name="C:\Users\ybarc\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.21.4\jackson-datatype-jsr310-2.21.4.jar"
+               package="jackson-datatype-jsr310-2.21.4.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jackson-datatype-jsr310-2.21.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="36"
+               name="C:\Users\ybarc\.m2\repository\jakarta\activation\jakarta.activation-api\2.1.4\jakarta.activation-api-2.1.4.jar"
+               package="jakarta.activation-api-2.1.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.activation-api-2.1.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="37"
+               name="C:\Users\ybarc\.m2\repository\jakarta\annotation\jakarta.annotation-api\3.0.0\jakarta.annotation-api-3.0.0.jar"
+               package="jakarta.annotation-api-3.0.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.annotation-api-3.0.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="38"
+               name="C:\Users\ybarc\.m2\repository\jakarta\inject\jakarta.inject-api\2.0.1\jakarta.inject-api-2.0.1.jar"
+               package="jakarta.inject-api-2.0.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.inject-api-2.0.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="39"
+               name="C:\Users\ybarc\.m2\repository\jakarta\persistence\jakarta.persistence-api\3.2.0\jakarta.persistence-api-3.2.0.jar"
+               package="jakarta.persistence-api-3.2.0.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.persistence-api-3.2.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="40"
+               name="C:\Users\ybarc\.m2\repository\jakarta\transaction\jakarta.transaction-api\2.0.1\jakarta.transaction-api-2.0.1.jar"
+               package="jakarta.transaction-api-2.0.1.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.transaction-api-2.0.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="41"
+               name="C:\Users\ybarc\.m2\repository\jakarta\validation\jakarta.validation-api\3.1.1\jakarta.validation-api-3.1.1.jar"
+               package="jakarta.validation-api-3.1.1.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.validation-api-3.1.1.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="42"
+               name="C:\Users\ybarc\.m2\repository\jakarta\xml\bind\jakarta.xml.bind-api\4.0.5\jakarta.xml.bind-api-4.0.5.jar"
+               package="jakarta.xml.bind-api-4.0.5.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jakarta.xml.bind-api-4.0.5.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="43"
+               name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\jaxb-core\4.0.9\jaxb-core-4.0.9.jar"
+               package="jaxb-core-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jaxb-core-4.0.9.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="44"
+               name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\jaxb-runtime\4.0.9\jaxb-runtime-4.0.9.jar"
+               package="jaxb-runtime-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jaxb-runtime-4.0.9.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="45"
+               name="C:\Users\ybarc\.m2\repository\org\jboss\logging\jboss-logging\3.6.3.Final\jboss-logging-3.6.3.Final.jar"
+               package="jboss-logging-3.6.3.Final.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jboss-logging-3.6.3.Final.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="46"
+               name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-api\0.13.0\jjwt-api-0.13.0.jar"
+               package="jjwt-api-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jjwt-api-0.13.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="47"
+               name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-impl\0.13.0\jjwt-impl-0.13.0.jar"
+               package="jjwt-impl-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jjwt-impl-0.13.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="48"
+               name="C:\Users\ybarc\.m2\repository\io\jsonwebtoken\jjwt-jackson\0.13.0\jjwt-jackson-0.13.0.jar"
+               package="jjwt-jackson-0.13.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jjwt-jackson-0.13.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="49"
+               name="C:\Users\ybarc\.m2\repository\com\jayway\jsonpath\json-path\2.10.0\json-path-2.10.0.jar"
+               package="json-path-2.10.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="json-path-2.10.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="50"
+               name="C:\Users\ybarc\.m2\repository\net\minidev\json-smart\2.6.0\json-smart-2.6.0.jar"
+               package="json-smart-2.6.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="json-smart-2.6.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="51"
+               name="C:\Users\ybarc\.m2\repository\org\skyscreamer\jsonassert\1.5.3\jsonassert-1.5.3.jar"
+               package="jsonassert-1.5.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jsonassert-1.5.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="52"
+               name="C:\Users\ybarc\.m2\repository\org\jspecify\jspecify\1.0.0\jspecify-1.0.0.jar"
+               package="jspecify-1.0.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jspecify-1.0.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="53"
+               name="C:\Users\ybarc\.m2\repository\org\slf4j\jul-to-slf4j\2.0.18\jul-to-slf4j-2.0.18.jar"
+               package="jul-to-slf4j-2.0.18.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="jul-to-slf4j-2.0.18.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="54"
+               name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter\6.0.3\junit-jupiter-6.0.3.jar"
+               package="junit-jupiter-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="junit-jupiter-6.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="55"
+               name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-api\6.0.3\junit-jupiter-api-6.0.3.jar"
+               package="junit-jupiter-api-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="junit-jupiter-api-6.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="56"
+               name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-engine\6.0.3\junit-jupiter-engine-6.0.3.jar"
+               package="junit-jupiter-engine-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="junit-jupiter-engine-6.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="57"
+               name="C:\Users\ybarc\.m2\repository\org\junit\jupiter\junit-jupiter-params\6.0.3\junit-jupiter-params-6.0.3.jar"
+               package="junit-jupiter-params-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="junit-jupiter-params-6.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="58"
+               name="C:\Users\ybarc\.m2\repository\org\junit\platform\junit-platform-engine\6.0.3\junit-platform-engine-6.0.3.jar"
+               package="junit-platform-engine-6.0.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="junit-platform-engine-6.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="59"
+               name="C:\Users\ybarc\.m2\repository\org\apache\logging\log4j\log4j-api\2.25.4\log4j-api-2.25.4.jar"
+               package="log4j-api-2.25.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="log4j-api-2.25.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="60"
+               name="C:\Users\ybarc\.m2\repository\org\apache\logging\log4j\log4j-to-slf4j\2.25.4\log4j-to-slf4j-2.25.4.jar"
+               package="log4j-to-slf4j-2.25.4.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="log4j-to-slf4j-2.25.4.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="61"
+               name="C:\Users\ybarc\.m2\repository\ch\qos\logback\logback-core\1.5.34\logback-core-1.5.34.jar"
+               package="logback-core-1.5.34.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="logback-core-1.5.34.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="62"
+               name="C:\Users\ybarc\.m2\repository\org\projectlombok\lombok\1.18.46\lombok-1.18.46.jar\lombok\launch\mavenEcjBootstrapAgent.jar"
+               package="lombok-1.18.46.jar: mavenEcjBootstrapAgent.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="lombok-1.18.46.jar: mavenEcjBootstrapAgent.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="63"
+               name="C:\Users\ybarc\.m2\repository\org\projectlombok\lombok\1.18.46\lombok-1.18.46.jar"
+               package="lombok-1.18.46.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="lombok-1.18.46.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="64"
+               name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-commons\1.17.0\micrometer-commons-1.17.0.jar"
+               package="micrometer-commons-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="micrometer-commons-1.17.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="65"
+               name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-core\1.17.0\micrometer-core-1.17.0.jar"
+               package="micrometer-core-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="micrometer-core-1.17.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="66"
+               name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-jakarta9\1.17.0\micrometer-jakarta9-1.17.0.jar"
+               package="micrometer-jakarta9-1.17.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="micrometer-jakarta9-1.17.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="67"
+               name="C:\Users\ybarc\.m2\repository\io\micrometer\micrometer-observation\1.17.0\micrometer-observation-1.17.0.jar"
+               package="micrometer-observation-1.17.0.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="micrometer-observation-1.17.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="68"
+               name="C:\Users\ybarc\.m2\repository\org\mockito\mockito-core\5.23.0\mockito-core-5.23.0.jar"
+               package="mockito-core-5.23.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="mockito-core-5.23.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="69"
+               name="C:\Users\ybarc\.m2\repository\org\mockito\mockito-junit-jupiter\5.23.0\mockito-junit-jupiter-5.23.0.jar"
+               package="mockito-junit-jupiter-5.23.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="mockito-junit-jupiter-5.23.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="70"
+               name="C:\Users\ybarc\.m2\repository\org\objenesis\objenesis\3.3\objenesis-3.3.jar"
+               package="objenesis-3.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="objenesis-3.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="71"
+               name="C:\Users\ybarc\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar"
+               package="opentest4j-1.3.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="opentest4j-1.3.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="72"
+               name="C:\Users\ybarc\.m2\repository\org\postgresql\postgresql\42.7.11\postgresql-42.7.11.jar"
+               package="postgresql-42.7.11.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="postgresql-42.7.11.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="73"
+               name="C:\Users\ybarc\.m2\repository\org\slf4j\slf4j-api\2.0.18\slf4j-api-2.0.18.jar"
+               package="slf4j-api-2.0.18.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="slf4j-api-2.0.18.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="74"
+               name="C:\Users\ybarc\.m2\repository\org\yaml\snakeyaml\2.6\snakeyaml-2.6.jar" package="snakeyaml-2.6.jar"
+               skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="snakeyaml-2.6.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="75"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot\4.1.0\spring-boot-4.1.0.jar"
+               package="spring-boot-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-boot-4.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="76"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot-data-commons\4.1.0\spring-boot-data-commons-4.1.0.jar"
+               package="spring-boot-data-commons-4.1.0.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-boot-data-commons-4.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="77"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\boot\spring-boot-web-server\4.1.0\spring-boot-web-server-4.1.0.jar"
+               package="spring-boot-web-server-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-boot-web-server-4.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="78"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\spring-core\7.0.8\spring-core-7.0.8.jar"
+               package="spring-core-7.0.8.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-core-7.0.8.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="79"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\data\spring-data-commons\4.1.0\spring-data-commons-4.1.0.jar"
+               package="spring-data-commons-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-data-commons-4.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="80"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\data\spring-data-jpa\4.1.0\spring-data-jpa-4.1.0.jar"
+               package="spring-data-jpa-4.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-data-jpa-4.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="81"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-core\7.1.0\spring-security-core-7.1.0.jar"
+               package="spring-security-core-7.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-security-core-7.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="82"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-web\7.1.0\spring-security-web-7.1.0.jar\org\springframework\security\spring-security-webauthn.js"
+               package="spring-security-web-7.1.0.jar: spring-security-webauthn.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-security-web-7.1.0.jar: spring-security-webauthn.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="83"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\security\spring-security-web\7.1.0\spring-security-web-7.1.0.jar"
+               package="spring-security-web-7.1.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-security-web-7.1.0.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="84"
+               name="C:\Users\ybarc\.m2\repository\org\springframework\spring-web\7.0.8\spring-web-7.0.8.jar"
+               package="spring-web-7.0.8.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="spring-web-7.0.8.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="85"
+               name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-common\3.0.3\springdoc-openapi-starter-common-3.0.3.jar"
+               package="springdoc-openapi-starter-common-3.0.3.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="springdoc-openapi-starter-common-3.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="86"
+               name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-api\3.0.3\springdoc-openapi-starter-webmvc-api-3.0.3.jar"
+               package="springdoc-openapi-starter-webmvc-api-3.0.3.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="springdoc-openapi-starter-webmvc-api-3.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="87"
+               name="C:\Users\ybarc\.m2\repository\org\springdoc\springdoc-openapi-starter-webmvc-ui\3.0.3\springdoc-openapi-starter-webmvc-ui-3.0.3.jar"
+               package="springdoc-openapi-starter-webmvc-ui-3.0.3.jar" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="springdoc-openapi-starter-webmvc-ui-3.0.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="88"
+               name="C:\Users\ybarc\.m2\repository\io\swagger\core\v3\swagger-core-jakarta\2.2.47\swagger-core-jakarta-2.2.47.jar"
+               package="swagger-core-jakarta-2.2.47.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-core-jakarta-2.2.47.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="89"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\oauth2-redirect.js"
+               package="swagger-ui-5.32.6.jar: oauth2-redirect.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: oauth2-redirect.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="90"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-initializer.js"
+               package="swagger-ui-5.32.6.jar: swagger-initializer.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-initializer.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="91"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-bundle.js"
+               package="swagger-ui-5.32.6.jar: swagger-ui-bundle.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-bundle.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="92"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-es-bundle-core.js"
+               package="swagger-ui-5.32.6.jar: swagger-ui-es-bundle-core.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-es-bundle-core.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="93"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-es-bundle.js"
+               package="swagger-ui-5.32.6.jar: swagger-ui-es-bundle.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-es-bundle.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="94"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui-standalone-preset.js"
+               package="swagger-ui-5.32.6.jar: swagger-ui-standalone-preset.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui-standalone-preset.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="95"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar\META-INF\resources\webjars\swagger-ui\5.32.6\swagger-ui.js"
+               package="swagger-ui-5.32.6.jar: swagger-ui.js" skipped="0" tests="1"
+               timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar: swagger-ui.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="96"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\swagger-ui\5.32.6\swagger-ui-5.32.6.jar"
+               package="swagger-ui-5.32.6.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-5.32.6.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="97"
+               name="C:\Users\ybarc\git\SOAT-FIAP\src\main\resources\static\swagger-ui-init.js"
+               package="swagger-ui-init.js" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="swagger-ui-init.js"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="98"
+               name="C:\Users\ybarc\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\11.0.22\tomcat-embed-core-11.0.22.jar"
+               package="tomcat-embed-core-11.0.22.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="tomcat-embed-core-11.0.22.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="99"
+               name="C:\Users\ybarc\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\11.0.22\tomcat-embed-el-11.0.22.jar"
+               package="tomcat-embed-el-11.0.22.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="tomcat-embed-el-11.0.22.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="100"
+               name="C:\Users\ybarc\.m2\repository\org\glassfish\jaxb\txw2\4.0.9\txw2-4.0.9.jar"
+               package="txw2-4.0.9.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="txw2-4.0.9.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="101"
+               name="C:\Users\ybarc\.m2\repository\org\webjars\webjars-locator-lite\1.1.3\webjars-locator-lite-1.1.3.jar"
+               package="webjars-locator-lite-1.1.3.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="webjars-locator-lite-1.1.3.jar"/>
+    </testsuite>
+    <testsuite failures="0" errors="0" time="0" id="102"
+               name="C:\Users\ybarc\.m2\repository\org\xmlunit\xmlunit-core\2.11.0\xmlunit-core-2.11.0.jar"
+               package="xmlunit-core-2.11.0.jar" skipped="0" tests="1" timestamp="2026-06-29T17:51:40.9971969">
+        <testcase classname="dependency-check" name="xmlunit-core-2.11.0.jar"/>
+    </testsuite>
+</testsuites>

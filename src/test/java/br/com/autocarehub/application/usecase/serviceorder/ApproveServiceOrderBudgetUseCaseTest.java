@@ -3,6 +3,14 @@ package br.com.autocarehub.application.usecase.serviceorder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
@@ -11,12 +19,6 @@ import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.WorkshopService;
 import br.com.autocarehub.domain.valueobject.Money;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class ApproveServiceOrderBudgetUseCaseTest {
 
@@ -87,7 +89,7 @@ class ApproveServiceOrderBudgetUseCaseTest {
         serviceOrderRepository.save(serviceOrder);
 
         assertThatThrownBy(() -> new ApproveServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
-                        .execute(serviceOrder.id()))
+                .execute(serviceOrder.id()))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Budget can only be approved while waiting approval");
     }

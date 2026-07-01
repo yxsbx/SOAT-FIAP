@@ -1,5 +1,14 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBudgetUseCase;
@@ -23,13 +32,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateServiceOrderStatusRequest;
 import br.com.autocarehub.interfaces.rest.mapper.ServiceOrderRestMapper;
-import java.time.OffsetDateTime;
-import java.util.UUID;
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ServiceOrdersController implements ServiceOrdersApi {
@@ -154,9 +156,9 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     @Override
     @PreAuthorize(
             """
-            hasAnyRole('ADMIN','EMPLOYEE') or
-            @authorizationService.canTrackServiceOrders(#serviceOrderId, #customerDocument)
-            """)
+                    hasAnyRole('ADMIN','EMPLOYEE') or
+                    @authorizationService.canTrackServiceOrders(#serviceOrderId, #customerDocument)
+                    """)
     public ResponseEntity<ServiceOrderTrackingListResponse> trackServiceOrders(
             @Nullable UUID serviceOrderId, @Nullable String customerDocument, @Nullable String plate) {
         return ResponseEntity.ok(ServiceOrderRestMapper.toTrackingListResponse(trackServiceOrderUseCase.execute(

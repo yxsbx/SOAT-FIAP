@@ -17,7 +17,8 @@
 
 Repositório privado: <https://github.com/yxsbx/SOAT-FIAP>
 
-A branch final de entrega é `main`. O acesso de leitura ao repositório privado foi concedido ao usuário avaliador informado pela FIAP.
+A branch final de entrega é `main`. O acesso de leitura ao repositório privado foi concedido ao usuário avaliador
+informado pela FIAP.
 
 ## 4. Link da documentação
 
@@ -37,7 +38,8 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 
 ## 5. Relatório com análise de vulnerabilidades encontradas no sistema
 
-Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes completos, comandos executados e evidências estão registrados em `docs/SECURITY_REPORT.md`.
+Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes completos, comandos executados e evidências
+estão registrados em `docs/SECURITY_REPORT.md`.
 
 ### 5.1 Escopo analisado
 
@@ -61,7 +63,10 @@ Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes compl
 | Análise estática      |       0 |    0 |     0 | Semgrep sem achados               |
 | Secrets               |       0 |    0 |     0 | Gitleaks sem leaks                |
 
-Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Permanecem duas CVEs médias aceitas como risco residual: uma em `jackson-databind` transitivo na imagem backend, porque a versão corrigida indicada pelo Docker Scout ainda não estava publicada no Maven Central na validação, e uma em BusyBox na imagem frontend, porque o scanner não indicou versão corrigida disponível.
+Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Permanecem duas CVEs médias aceitas como risco
+residual: uma em `jackson-databind` transitivo na imagem backend, porque a versão corrigida indicada pelo Docker Scout
+ainda não estava publicada no Maven Central na validação, e uma em BusyBox na imagem frontend, porque o scanner não
+indicou versão corrigida disponível.
 
 ### 5.3 Vulnerabilidades encontradas e tratamento
 
@@ -97,14 +102,25 @@ Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Perma
 
 ### 5.5 Risco residual aceito
 
-As vulnerabilidades mantidas após os scans finais são duas CVEs médias aceitas temporariamente. A primeira está em `jackson-databind 2.21.4`, dependência transitiva usada na imagem backend; o Docker Scout indica correção em `2.21.5`, mas essa versão ainda não estava disponível no Maven Central na validação. A segunda está no BusyBox da imagem frontend; o Docker Scout informou que não havia versão corrigida disponível na base analisada.
+As vulnerabilidades mantidas após os scans finais são duas CVEs médias aceitas temporariamente. A primeira está em
+`jackson-databind 2.21.4`, dependência transitiva usada na imagem backend; o Docker Scout indica correção em `2.21.5`,
+mas essa versão ainda não estava disponível no Maven Central na validação. A segunda está no BusyBox da imagem frontend;
+o Docker Scout informou que não havia versão corrigida disponível na base analisada.
 
-Como mitigação, os containers permanecem configurados com usuário não privilegiado, filesystem read-only quando aplicável e sem novos privilégios.
+Como mitigação, os containers permanecem configurados com usuário não privilegiado, filesystem read-only quando
+aplicável e sem novos privilégios.
 
 ## 6. Conclusão
 
-O AutoCare Hub entrega um MVP backend alinhado ao desafio proposto, cobrindo o ciclo principal de atendimento de uma oficina mecânica: cadastro de clientes e veículos, criação de Ordem de Serviço, composição com serviços e peças, geração e aprovação de orçamento, controle de status, estoque e consulta pelo cliente.
+O AutoCare Hub entrega um MVP backend alinhado ao desafio proposto, cobrindo o ciclo principal de atendimento de uma
+oficina mecânica: cadastro de clientes e veículos, criação de Ordem de Serviço, composição com serviços e peças, geração
+e aprovação de orçamento, controle de status, estoque e consulta pelo cliente.
 
-A gestão administrativa diferencia Admin Master, admins de oficina/loja, funcionários e cliente final. As contas de oficinas e lojas são vinculadas por `companyId`, mas os IDs são gerados pelo backend. Na interface, o Admin Master seleciona a empresa pelo nome ou cadastra uma nova empresa informando nome e tipo.
+A gestão administrativa diferencia Admin Master, admins de oficina/loja, funcionários e cliente final. As contas de
+oficinas e lojas são vinculadas por `companyId`, mas os IDs são gerados pelo backend. Na interface, o Admin Master
+seleciona a empresa pelo nome ou cadastra uma nova empresa informando nome e tipo.
 
-A entrega também inclui documentação DDD, Event Storming, contrato OpenAPI, testes automatizados, execução local com Docker e relatório de vulnerabilidades. As vulnerabilidades críticas e altas encontradas nos scans iniciais foram corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica e mitigação documentada.
+A entrega também inclui documentação DDD, Event Storming, contrato OpenAPI, testes automatizados, execução local com
+Docker e relatório de vulnerabilidades. As vulnerabilidades críticas e altas encontradas nos scans iniciais foram
+corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica e
+mitigação documentada.

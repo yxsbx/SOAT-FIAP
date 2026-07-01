@@ -10,7 +10,7 @@ servers:
   - url: http://localhost:8080
     description: Ambiente local
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 tags:
   - name: Auth
     description: Autenticação e emissão de token JWT
@@ -35,7 +35,7 @@ paths:
         - Auth
       summary: Autentica um usuário
       operationId: login
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
@@ -1588,7 +1588,7 @@ paths:
       description: >
         Endpoint publico usado pela pagina de parceiros para registrar oficinas ou lojas interessadas em demonstração.
       operationId: registerDemoLead
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
@@ -1729,7 +1729,7 @@ components:
             error: Unauthorized
             message: Missing or invalid credentials
             path: /api/v1/customers
-            details: []
+            details: [ ]
     Forbidden:
       description: Usuário autenticado sem permissão para acessar o recurso
       content:
@@ -1742,7 +1742,7 @@ components:
             error: Forbidden
             message: Access denied
             path: /api/v1/customers
-            details: []
+            details: [ ]
     NotFound:
       description: Recurso nao encontrado
       content:
@@ -1755,7 +1755,7 @@ components:
             error: Not Found
             message: Resource not found
             path: /api/v1/customers/00000000-0000-0000-0000-000000000000
-            details: []
+            details: [ ]
     Conflict:
       description: Conflito com estado atual do recurso, como duplicidade de documento, placa, usuário ou SKU
       content:
@@ -1768,7 +1768,7 @@ components:
             error: Conflict
             message: Resource already exists
             path: /api/v1/customers
-            details: []
+            details: [ ]
     InternalServerError:
       description: Erro interno inesperado
       content:
@@ -1781,7 +1781,7 @@ components:
             error: Internal Server Error
             message: Unexpected error
             path: /api/v1/service-orders
-            details: []
+            details: [ ]
   schemas:
     LoginRequest:
       type: object

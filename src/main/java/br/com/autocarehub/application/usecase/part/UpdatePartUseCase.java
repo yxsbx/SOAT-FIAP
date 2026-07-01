@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.part;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.valueobject.Money;
-import java.util.UUID;
 
 public class UpdatePartUseCase {
 
@@ -55,5 +56,6 @@ public class UpdatePartUseCase {
             Money unitPrice,
             int stockQuantity,
             int minimumStock,
-            boolean active) {}
+            boolean active) {
+    }
 }

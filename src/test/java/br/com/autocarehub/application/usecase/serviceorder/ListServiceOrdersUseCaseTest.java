@@ -2,17 +2,19 @@ package br.com.autocarehub.application.usecase.serviceorder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import br.com.autocarehub.application.port.out.ServiceOrderRepository;
-import br.com.autocarehub.domain.enums.ServiceOrderStatus;
-import br.com.autocarehub.domain.model.ServiceOrder;
-import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
+
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.domain.enums.ServiceOrderStatus;
+import br.com.autocarehub.domain.model.ServiceOrder;
+import br.com.autocarehub.domain.valueobject.Money;
 
 class ListServiceOrdersUseCaseTest {
 

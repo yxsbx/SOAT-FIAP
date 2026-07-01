@@ -2,6 +2,18 @@ package br.com.autocarehub.infrastructure.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.domain.enums.UserRole;
@@ -10,16 +22,6 @@ import br.com.autocarehub.domain.model.ServiceOrder;
 import br.com.autocarehub.domain.model.User;
 import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 class AuthorizationServiceTest {
 

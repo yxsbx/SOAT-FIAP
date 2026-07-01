@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.serviceorder;
 
-import br.com.autocarehub.application.port.out.ServiceOrderRepository;
-import br.com.autocarehub.domain.model.ServiceOrder;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+
+import br.com.autocarehub.application.port.out.ServiceOrderRepository;
+import br.com.autocarehub.domain.model.ServiceOrder;
 
 public class GetAverageServiceOrderExecutionTimeUseCase {
 
@@ -27,5 +28,6 @@ public class GetAverageServiceOrderExecutionTimeUseCase {
                 .toMinutes();
     }
 
-    public record Output(long completedOrders, double averageExecutionTimeInMinutes) {}
+    public record Output(long completedOrders, double averageExecutionTimeInMinutes) {
+    }
 }

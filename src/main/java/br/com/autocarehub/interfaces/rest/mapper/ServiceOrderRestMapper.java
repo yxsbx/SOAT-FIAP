@@ -1,5 +1,13 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
+
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
@@ -27,16 +35,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingLi
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderTrackingStatus;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateServiceOrderStatusRequest;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import org.jspecify.annotations.Nullable;
 
 public final class ServiceOrderRestMapper {
 
-    private ServiceOrderRestMapper() {}
+    private ServiceOrderRestMapper() {
+    }
 
     public static CreateServiceOrderUseCase.Command toCommand(CreateServiceOrderRequest request) {
         String customerDocument = request.getCustomerDocument();
@@ -52,8 +55,8 @@ public final class ServiceOrderRestMapper {
                 request.getParts() == null
                         ? List.of()
                         : request.getParts().stream()
-                                .map(ServiceOrderRestMapper::toPartInput)
-                                .toList(),
+                        .map(ServiceOrderRestMapper::toPartInput)
+                        .toList(),
                 request.getGenerateBudget() == null || Boolean.TRUE.equals(request.getGenerateBudget()));
     }
 
@@ -91,22 +94,22 @@ public final class ServiceOrderRestMapper {
 
     public static ServiceOrderResponse toResponse(ServiceOrder serviceOrder) {
         return new ServiceOrderResponse(
-                        serviceOrder.id(),
-                        serviceOrder.customerId(),
-                        serviceOrder.vehicleId(),
-                        br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus.fromValue(
-                                serviceOrder.status().externalCode()),
-                        serviceOrder.diagnosticNotes(),
-                        serviceOrder.services().stream()
-                                .map(ServiceOrderRestMapper::toServiceItem)
-                                .toList(),
-                        serviceOrder.parts().stream()
-                                .map(ServiceOrderRestMapper::toPartItem)
-                                .toList(),
-                        serviceOrder.servicesTotal().value().doubleValue(),
-                        serviceOrder.partsTotal().value().doubleValue(),
-                        serviceOrder.totalAmount().value().doubleValue(),
-                        RestMapperSupport.toOffsetDateTime(serviceOrder.createdAt()))
+                serviceOrder.id(),
+                serviceOrder.customerId(),
+                serviceOrder.vehicleId(),
+                br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus.fromValue(
+                        serviceOrder.status().externalCode()),
+                serviceOrder.diagnosticNotes(),
+                serviceOrder.services().stream()
+                        .map(ServiceOrderRestMapper::toServiceItem)
+                        .toList(),
+                serviceOrder.parts().stream()
+                        .map(ServiceOrderRestMapper::toPartItem)
+                        .toList(),
+                serviceOrder.servicesTotal().value().doubleValue(),
+                serviceOrder.partsTotal().value().doubleValue(),
+                serviceOrder.totalAmount().value().doubleValue(),
+                RestMapperSupport.toOffsetDateTime(serviceOrder.createdAt()))
                 .budgetGeneratedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.budgetGeneratedAt()))
                 .approvedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.approvedAt()))
                 .startedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.startedAt()))
@@ -173,11 +176,11 @@ public final class ServiceOrderRestMapper {
         boolean generated = serviceOrder.budgetGeneratedAt() != null;
         boolean approved = serviceOrder.approvedAt() != null;
         return new ServiceOrderBudgetTrackingResponse(
-                        generated,
-                        approved,
-                        serviceOrder.servicesTotal().value().doubleValue(),
-                        serviceOrder.partsTotal().value().doubleValue(),
-                        serviceOrder.totalAmount().value().doubleValue())
+                generated,
+                approved,
+                serviceOrder.servicesTotal().value().doubleValue(),
+                serviceOrder.partsTotal().value().doubleValue(),
+                serviceOrder.totalAmount().value().doubleValue())
                 .generatedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.budgetGeneratedAt()))
                 .approvedAt(RestMapperSupport.toOffsetDateTime(serviceOrder.approvedAt()));
     }

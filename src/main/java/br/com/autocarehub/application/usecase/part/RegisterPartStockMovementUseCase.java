@@ -1,11 +1,12 @@
 package br.com.autocarehub.application.usecase.part;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.PartRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
 import br.com.autocarehub.domain.model.Part;
 import br.com.autocarehub.domain.valueobject.Money;
-import java.util.UUID;
 
 public class RegisterPartStockMovementUseCase {
 
@@ -48,5 +49,6 @@ public class RegisterPartStockMovementUseCase {
     }
 
     public record Command(
-            UUID partId, MovementType type, int quantity, Money unitCost, Money unitPrice, String reason) {}
+            UUID partId, MovementType type, int quantity, Money unitCost, Money unitPrice, String reason) {
+    }
 }

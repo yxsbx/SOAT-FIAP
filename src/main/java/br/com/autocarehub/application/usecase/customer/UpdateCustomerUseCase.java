@@ -1,10 +1,11 @@
 package br.com.autocarehub.application.usecase.customer;
 
+import java.util.UUID;
+
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.valueobject.Address;
-import java.util.UUID;
 
 public class UpdateCustomerUseCase {
 
@@ -29,5 +30,6 @@ public class UpdateCustomerUseCase {
         return customerRepository.save(customer);
     }
 
-    public record Command(UUID customerId, String name, String phone, String email, Address address, boolean active) {}
+    public record Command(UUID customerId, String name, String phone, String email, Address address, boolean active) {
+    }
 }

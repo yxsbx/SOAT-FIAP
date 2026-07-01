@@ -1,5 +1,12 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
+import java.util.UUID;
+
+import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
+
 import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.DeleteCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.FindCustomerUseCase;
@@ -12,11 +19,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.mapper.CustomerRestMapper;
-import java.util.UUID;
-import org.jspecify.annotations.Nullable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CustomersController implements CustomersApi {

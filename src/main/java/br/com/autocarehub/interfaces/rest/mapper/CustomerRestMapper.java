@@ -1,5 +1,8 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.usecase.customer.CreateCustomerUseCase;
 import br.com.autocarehub.application.usecase.customer.ListCustomersUseCase;
 import br.com.autocarehub.application.usecase.customer.UpdateCustomerUseCase;
@@ -8,8 +11,6 @@ import br.com.autocarehub.interfaces.rest.generated.model.CreateCustomerRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CustomerResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateCustomerRequest;
-import java.util.List;
-import java.util.UUID;
 
 public final class CustomerRestMapper {
 
@@ -18,7 +19,8 @@ public final class CustomerRestMapper {
     private static final int DEFAULT_VISIBLE_END_DIGITS = 2;
     private static final int MIN_MASKABLE_DOCUMENT_LENGTH = 5;
 
-    private CustomerRestMapper() {}
+    private CustomerRestMapper() {
+    }
 
     public static CreateCustomerUseCase.Command toCommand(CreateCustomerRequest request) {
         return new CreateCustomerUseCase.Command(
@@ -110,12 +112,12 @@ public final class CustomerRestMapper {
             return null;
         }
         return new br.com.autocarehub.interfaces.rest.generated.model.Address(
-                        address.street(),
-                        address.number(),
-                        address.neighborhood(),
-                        address.city(),
-                        address.state(),
-                        address.zipCode())
+                address.street(),
+                address.number(),
+                address.neighborhood(),
+                address.city(),
+                address.state(),
+                address.zipCode())
                 .complement(address.complement());
     }
 }

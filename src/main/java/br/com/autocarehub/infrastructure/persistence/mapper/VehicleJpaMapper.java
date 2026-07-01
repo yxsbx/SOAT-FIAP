@@ -6,7 +6,8 @@ import br.com.autocarehub.infrastructure.persistence.entity.VehicleJpaEntity;
 
 public final class VehicleJpaMapper {
 
-    private VehicleJpaMapper() {}
+    private VehicleJpaMapper() {
+    }
 
     public static VehicleJpaEntity toEntity(Vehicle vehicle) {
         VehicleJpaEntity entity = new VehicleJpaEntity();

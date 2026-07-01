@@ -3,11 +3,13 @@ package br.com.autocarehub.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import br.com.autocarehub.domain.exception.DomainException;
-import br.com.autocarehub.domain.valueobject.Money;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 import org.junit.jupiter.api.Test;
+
+import br.com.autocarehub.domain.exception.DomainException;
+import br.com.autocarehub.domain.valueobject.Money;
 
 class PartTest {
 
@@ -189,14 +191,14 @@ class PartTest {
     @Test
     void shouldRejectAdditionalInvalidPartStates() {
         assertThatThrownBy(() -> restore(
-                        UUID.randomUUID(),
-                        catalog("Oil filter", "Oil filter", "OIL-004", "Bosch"),
-                        Money.of("25.00"),
-                        Money.of("50.00"),
-                        2,
-                        3,
-                        1,
-                        null))
+                UUID.randomUUID(),
+                catalog("Oil filter", "Oil filter", "OIL-004", "Bosch"),
+                Money.of("25.00"),
+                Money.of("50.00"),
+                2,
+                3,
+                1,
+                null))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Reserved stock cannot be greater than stock");
 

@@ -70,7 +70,8 @@ ajudar na apresentação visual. O foco da entrega é a API REST em Spring Boot.
 controle de estoque, criação da Ordem de Serviço, geração de orçamento, aprovação pelo cliente, acompanhamento da OS e
 controle dos status."
 
-"No README eu deixei o índice da entrega. Aqui eu aponto para os documentos que comprovam os requisitos: documento final,
+"No README eu deixei o índice da entrega. Aqui eu aponto para os documentos que comprovam os requisitos: documento
+final,
 arquitetura, DDD, Event Storming, Domain Storytelling, requisitos, testes, análise estática, segurança, OpenAPI."
 
 **Comprova**
@@ -116,10 +117,10 @@ cloud produtivo, estão documentadas como limitações reais do MVP."
 2. Mostrar HLD/LLD e C4 no mesmo documento.
 3. Mostrar árvore `src/main/java/br/com/autocarehub`.
 4. Abrir rapidamente:
-   - `src/main/java/br/com/autocarehub/domain/model/ServiceOrder.java`
-   - `src/main/java/br/com/autocarehub/application/usecase/serviceorder/CreateServiceOrderUseCase.java`
-   - `src/main/java/br/com/autocarehub/interfaces/rest/controller/ServiceOrdersController.java`
-   - `src/main/java/br/com/autocarehub/infrastructure/security/SecurityConfig.java`
+    - `src/main/java/br/com/autocarehub/domain/model/ServiceOrder.java`
+    - `src/main/java/br/com/autocarehub/application/usecase/serviceorder/CreateServiceOrderUseCase.java`
+    - `src/main/java/br/com/autocarehub/interfaces/rest/controller/ServiceOrdersController.java`
+    - `src/main/java/br/com/autocarehub/infrastructure/security/SecurityConfig.java`
 
 **Falar**
 
@@ -152,11 +153,11 @@ sistema, os containers e os componentes principais."
 3. Mostrar `Papéis de negócio`.
 4. Mostrar entidades, value objects e agregados.
 5. Abrir no código:
-   - `ServiceOrder.java`
-   - `Part.java`
-   - `Document.java`
-   - `Plate.java`
-   - `ServiceOrderStatus.java`
+    - `ServiceOrder.java`
+    - `Part.java`
+    - `Document.java`
+    - `Plate.java`
+    - `ServiceOrderStatus.java`
 
 **Falar**
 
@@ -172,7 +173,8 @@ necessariamente uma classe separada para cada papel. O backend representa autori
 administrador, funcionário, cliente, admin master, admin de oficina, admin de loja de peças e funcionários. Então a
 documentação separa papel de negócio de perfil técnico."
 
-"Para o escopo por empresa, o backend usa `companyId`, mas isso é técnico. Na tela, eu não digito ID: seleciono a empresa
+"Para o escopo por empresa, o backend usa `companyId`, mas isso é técnico. Na tela, eu não digito ID: seleciono a
+empresa
 pelo nome ou cadastro uma nova empresa informando nome e tipo. O ID da empresa e o ID do usuário são gerados
 automaticamente pelo backend. O Admin Master fica vinculado à empresa AutoCare Hub, do tipo `PLATFORM`. Já o admin de
 oficina ou loja não escolhe empresa: o backend usa a empresa do usuário logado."
@@ -417,15 +419,15 @@ estoque, e a aprovação confirma o fluxo de uso. Isso evita prometer peça que 
 4. Clicar em `Execute`.
 5. Copiar o `id` da OS retornada.
 6. Mostrar no retorno:
-   - `customerId`
-   - `vehicleId`
-   - `status`
-   - `services`
-   - `parts`
-   - `servicesTotal`
-   - `partsTotal`
-   - `totalAmount`
-   - `budgetGeneratedAt`
+    - `customerId`
+    - `vehicleId`
+    - `status`
+    - `services`
+    - `parts`
+    - `servicesTotal`
+    - `partsTotal`
+    - `totalAmount`
+    - `budgetGeneratedAt`
 7. Abrir `CreateServiceOrderUseCase.java`.
 8. Abrir `ServiceOrder.java`.
 
@@ -488,13 +490,14 @@ automática de orçamento."
 ```
 
 9. Abrir:
-   - `ApproveServiceOrderBudgetUseCase.java`
-   - `UpdateServiceOrderStatusUseCase.java`
-   - `ServiceOrderStatus.java`
+    - `ApproveServiceOrderBudgetUseCase.java`
+    - `UpdateServiceOrderStatusUseCase.java`
+    - `ServiceOrderStatus.java`
 
 **Falar**
 
-"A aprovação do orçamento registra o aceite do cliente e libera a continuidade do atendimento. Aqui é importante explicar
+"A aprovação do orçamento registra o aceite do cliente e libera a continuidade do atendimento. Aqui é importante
+explicar
 com cuidado a atualização de status."
 
 "O sistema tem mudanças automáticas e mudanças controladas. Quando o orçamento é gerado, a OS muda automaticamente para
@@ -502,7 +505,8 @@ com cuidado a atualização de status."
 execução em si é uma transição administrativa, porque na vida real a oficina precisa indicar quando começou a executar o
 serviço."
 
-"Então eu não digo que tudo muda sozinho sem ação. O correto é: alguns status mudam automaticamente por regra de negócio,
+"Então eu não digo que tudo muda sozinho sem ação. O correto é: alguns status mudam automaticamente por regra de
+negócio,
 como geração de orçamento; outros mudam por endpoint administrativo, mas sempre validados pelo domínio. A API não deixa
 ir para qualquer status em qualquer ordem."
 
@@ -603,13 +607,13 @@ evidência real deste projeto."
 3. Mostrar `Avaliação de ameaças`.
 4. Mostrar `OWASP Top 10`.
 6. Abrir evidências:
-   - `security-reports/backend-dependencies/dependency-check-report.html`
-   - `security-reports/frontend-dependencies/npm-audit-report.json`
-   - `security-reports/docker/docker-scout-cves.txt`
-   - `security-reports/docker/docker-scout-frontend-cves.txt`
-   - `security-reports/dast/zap-api-report.html`
-   - `security-reports/static-analysis/semgrep.json`
-   - `security-reports/secrets/gitleaks.json`
+    - `security-reports/backend-dependencies/dependency-check-report.html`
+    - `security-reports/frontend-dependencies/npm-audit-report.json`
+    - `security-reports/docker/docker-scout-cves.txt`
+    - `security-reports/docker/docker-scout-frontend-cves.txt`
+    - `security-reports/dast/zap-api-report.html`
+    - `security-reports/static-analysis/semgrep.json`
+    - `security-reports/secrets/gitleaks.json`
 
 **Falar**
 

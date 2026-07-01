@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
-import { login as loginRequest } from '@/services/api';
+import {defineStore} from 'pinia';
+import {login as loginRequest} from '@/services/api';
 
 function parseJwt(token) {
   try {

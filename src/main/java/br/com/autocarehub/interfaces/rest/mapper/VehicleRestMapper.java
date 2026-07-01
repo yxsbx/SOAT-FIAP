@@ -1,5 +1,8 @@
 package br.com.autocarehub.interfaces.rest.mapper;
 
+import java.util.List;
+import java.util.UUID;
+
 import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
 import br.com.autocarehub.application.usecase.vehicle.ListVehiclesUseCase;
 import br.com.autocarehub.application.usecase.vehicle.UpdateVehicleUseCase;
@@ -8,12 +11,11 @@ import br.com.autocarehub.interfaces.rest.generated.model.CreateVehicleRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.UpdateVehicleRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.VehicleResponse;
-import java.util.List;
-import java.util.UUID;
 
 public final class VehicleRestMapper {
 
-    private VehicleRestMapper() {}
+    private VehicleRestMapper() {
+    }
 
     public static CreateVehicleUseCase.Command toCommand(CreateVehicleRequest request) {
         return new CreateVehicleUseCase.Command(

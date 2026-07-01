@@ -3,6 +3,12 @@ package br.com.autocarehub.domain.model;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+
 import br.com.autocarehub.domain.enums.ServiceOrderStatus;
 import br.com.autocarehub.domain.enums.StockMovementType;
 import br.com.autocarehub.domain.exception.DomainException;
@@ -11,10 +17,6 @@ import br.com.autocarehub.domain.valueobject.Address;
 import br.com.autocarehub.domain.valueobject.Document;
 import br.com.autocarehub.domain.valueobject.Money;
 import br.com.autocarehub.domain.valueobject.Plate;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.UUID;
-import org.junit.jupiter.api.Test;
 
 class DomainAdditionalCoverageTest {
 
@@ -80,13 +82,13 @@ class DomainAdditionalCoverageTest {
         assertThat(StockMovementType.values()).contains(StockMovementType.SALE);
 
         assertThatThrownBy(() -> new StockMovement(
-                        partId,
-                        StockMovementType.SALE,
-                        0,
-                        Money.of("10.00"),
-                        Money.of("15.00"),
-                        "Venda",
-                        LocalDateTime.now()))
+                partId,
+                StockMovementType.SALE,
+                0,
+                Money.of("10.00"),
+                Money.of("15.00"),
+                "Venda",
+                LocalDateTime.now()))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Quantity must be greater than zero");
     }
@@ -144,18 +146,18 @@ class DomainAdditionalCoverageTest {
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Quantity must be greater than zero");
         assertThatThrownBy(() -> Part.create(
-                        new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-NEG", "Filtros", null, "Bosch"),
-                        new Part.Pricing(Money.of("1.00"), Money.zero()),
-                        1,
-                        1))
+                new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-NEG", "Filtros", null, "Bosch"),
+                new Part.Pricing(Money.of("1.00"), Money.zero()),
+                1,
+                1))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Unit price must be greater than zero");
         assertThatThrownBy(() -> Part.restore(
-                        UUID.randomUUID(),
-                        new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-RES", "Filtros", null, "Bosch"),
-                        new Part.Pricing(Money.of("1.00"), Money.of("10.00")),
-                        new Part.StockState(1, 2, 1, 3, null),
-                        Part.ActivationStatus.ACTIVE))
+                UUID.randomUUID(),
+                new Part.CatalogData("Filtro", "Filtro de oleo", "SKU-RES", "Filtros", null, "Bosch"),
+                new Part.Pricing(Money.of("1.00"), Money.of("10.00")),
+                new Part.StockState(1, 2, 1, 3, null),
+                Part.ActivationStatus.ACTIVE))
                 .isInstanceOf(DomainException.class)
                 .hasMessage("Reserved stock cannot be greater than stock");
     }
