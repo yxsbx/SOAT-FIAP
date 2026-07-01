@@ -1,0 +1,54 @@
+<h2>:mag: Vulnerabilities of <code>soat-fiap-app:latest</code></h2>
+
+<details open="true"><summary>:package: Image Reference</strong> <code>soat-fiap-app:latest</code></summary>
+<table>
+<tr><td>digest</td><td><code>sha256:9886f6e222e9573d3677d58e74f977e5671c348db173ac7d2ef69cffebea35ed</code></td><tr><tr><td>vulnerabilities</td><td><img alt="critical: 0" src="https://img.shields.io/badge/critical-0-lightgrey"/> <img alt="high: 0" src="https://img.shields.io/badge/high-0-lightgrey"/> <img alt="medium: 1" src="https://img.shields.io/badge/medium-1-fbb552"/> <img alt="low: 0" src="https://img.shields.io/badge/low-0-lightgrey"/> <!-- unspecified: 0 --></td></tr>
+<tr><td>platform</td><td>linux/amd64</td></tr>
+<tr><td>size</td><td>123 MB</td></tr>
+<tr><td>packages</td><td>164</td></tr>
+</table>
+</details></table>
+</details>
+
+<table>
+<tr><td valign="top">
+<details><summary><img alt="critical: 0" src="https://img.shields.io/badge/C-0-lightgrey"/> <img alt="high: 0" src="https://img.shields.io/badge/H-0-lightgrey"/> <img alt="medium: 1" src="https://img.shields.io/badge/M-1-fbb552"/> <img alt="low: 0" src="https://img.shields.io/badge/L-0-lightgrey"/> <!-- unspecified: 0 --><strong>com.fasterxml.jackson.core/jackson-databind</strong> <code>2.21.4</code> (maven)</summary>
+
+<small><code>pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.21.4</code></small><br/>
+<a href="https://scout.docker.com/v/CVE-2026-54515?s=github&n=jackson-databind&ns=com.fasterxml.jackson.core&t=maven&vr=%3E%3D2.19.0%2C%3C2.21.5"><img alt="medium 5.3: CVE--2026--54515" src="https://img.shields.io/badge/CVE--2026--54515-lightgrey?label=medium%205.3&labelColor=fbb552"/></a> <i>Improperly Controlled Modification of Dynamically-Determined Object Attributes</i>
+
+<table>
+<tr><td>Affected range</td><td><code>>=2.19.0<br/><2.21.5</code></td></tr>
+<tr><td>Fixed version</td><td><code>2.21.5</code></td></tr>
+<tr><td>CVSS Score</td><td><code>5.3</code></td></tr>
+<tr><td>CVSS Vector</td><td><code>CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:N</code></td></tr>
+<tr><td>EPSS Score</td><td><code>0.350%</code></td></tr>
+<tr><td>EPSS Percentile</td><td><code>27th percentile</code></td></tr>
+</table>
+
+<details><summary>Description</summary>
+<blockquote>
+
+## Summary
+In `BeanDeserializerBase.createContextual()`, per-property `@<!-- -->JsonIgnoreProperties` exclusions are applied by `_handleByNameInclusion()`, producing a `contextual` deserializer whose `BeanPropertyMap` has the ignored properties removed. The subsequent per-property case-insensitivity block (triggered by `@<!-- -->JsonFormat(ACCEPT_CASE_INSENSITIVE_PROPERTIES)`) rebuilds from `this._beanProperties` (the original, unfiltered map) instead of `contextual._beanProperties`, then overwrites the filtered map — restoring every property `_handleByNameInclusion` had just removed. The ignored property becomes writable again.
+
+## Impact
+An application that both enables case-insensitive matching and relies on per-property `@<!-- -->JsonIgnoreProperties` to keep a field unwritable can have that field set from untrusted JSON (mass-assignment-style write).
+
+## Affected / Patched
+Fixed in 2.18.9, 2.21.5 and 3.1.4.
+
+## Severity / CWE
+Maintainer: minor. Reporter: Moderate. CWE-915.
+
+## Upstream fix
+FasterXML/jackson-databind#5962 (PR #5964, `0e1b0b2`), milestone 3.1.4. Released 2026-06-04.
+
+## Credits
+Omkhar Arasaratnam (@<!-- -->omkhar) - finder.
+
+</blockquote>
+</details>
+</details></td></tr>
+</table>
+

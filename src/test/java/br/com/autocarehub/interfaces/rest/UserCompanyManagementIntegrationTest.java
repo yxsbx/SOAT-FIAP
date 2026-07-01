@@ -110,6 +110,47 @@ class UserCompanyManagementIntegrationTest {
     }
 
     @Test
+    void shouldAcceptMinimalCustomerOwnerPayloadWithoutOptionalCompanyFields() throws Exception {
+        String token = login("admin@autocarehub.com");
+        String suffix = UUID.randomUUID().toString().substring(0, 8);
+        Map<String, Object> createPayload = new LinkedHashMap<>();
+        createPayload.put("username", "cliente.minimo." + suffix + "@example.com");
+        createPayload.put("password", "autocare123");
+        createPayload.put("role", "CUSTOMER");
+        createPayload.put("fullName", "Cliente Mínimo");
+        createPayload.put("profileType", "CUSTOMER_OWNER");
+        createPayload.put("active", true);
+
+        String response = mockMvc.perform(post("/api/v1/users")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(createPayload)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.role").value("CUSTOMER"))
+                .andExpect(jsonPath("$.companyName").value(""))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String userId = objectMapper.readTree(response).get("id").asText();
+        Map<String, Object> updatePayload = new LinkedHashMap<>();
+        updatePayload.put("username", "cliente.minimo.atualizado." + suffix + "@example.com");
+        updatePayload.put("role", "CUSTOMER");
+        updatePayload.put("fullName", "Cliente Mínimo Atualizado");
+        updatePayload.put("profileType", "CUSTOMER_OWNER");
+        updatePayload.put("active", false);
+
+        mockMvc.perform(put("/api/v1/users/{userId}", userId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(updatePayload)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Cliente Mínimo Atualizado"))
+                .andExpect(jsonPath("$.companyName").value(""))
+                .andExpect(jsonPath("$.permissions").isArray());
+    }
+
+    @Test
     void shouldRejectInvalidCompanyBindingsAndDuplicateCompanyCreation() throws Exception {
         String token = login("admin@autocarehub.com");
         String suffix = UUID.randomUUID().toString().substring(0, 8);
