@@ -174,16 +174,11 @@ Acompanhe a inicialização dos serviços:
 
 ```powershell
 docker compose logs -f
-docker compose logs -f app
+docker compose logs -f backend
 docker compose logs -f frontend
 ```
 
-No `docker-compose.yml`, o backend Spring Boot usa o serviço `app` e o frontend usa o serviço `frontend`.
-Se algum roteiro mencionar `backend`, use `app` neste repositório:
-
-```powershell
-docker compose logs -f app
-```
+No `docker-compose.yml`, o backend Spring Boot usa o serviço `backend` e o frontend usa o serviço `frontend`.
 
 URLs locais:
 

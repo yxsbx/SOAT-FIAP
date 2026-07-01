@@ -348,8 +348,8 @@ const forms = reactive({
     category: '',
     subcategory: '',
     brand: '',
-    costPrice: 0,
-    unitPrice: 0,
+    costPrice: '0,00',
+    unitPrice: '0,00',
     stockQuantity: 0,
     minimumStock: 1,
     active: true,
@@ -463,6 +463,7 @@ const forms = reactive({
     workshopName: '',
     vehicleId: '',
     problemDescription: '',
+    discountPercent: 0,
     items: [],
   },
 });
@@ -1928,6 +1929,27 @@ function money(value) {
   return Number(value || 0).toFixed(2);
 }
 
+function customerQuoteSubtotal() {
+  return forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0);
+}
+
+function customerQuoteDiscountAmount() {
+  const percent = Math.min(100, Math.max(0, Number(forms.customerQuote.discountPercent || 0)));
+  return customerQuoteSubtotal() * (percent / 100);
+}
+
+function customerQuoteTotal() {
+  return Math.max(0, customerQuoteSubtotal() - customerQuoteDiscountAmount());
+}
+
+function formatDecimalInput(value) {
+  return money(value).replace('.', ',');
+}
+
+function normalizeDecimalInput(value) {
+  return String(value || '0').replace(',', '.');
+}
+
 function normalize(value) {
   return String(value || '')
     .normalize('NFD')
@@ -2522,8 +2544,8 @@ function createPart() {
         category: forms.part.category,
         subcategory: forms.part.subcategory,
         brand: forms.part.brand,
-        costPrice: Number(forms.part.costPrice),
-        unitPrice: Number(forms.part.unitPrice),
+        costPrice: Number(normalizeDecimalInput(forms.part.costPrice)),
+        unitPrice: Number(normalizeDecimalInput(forms.part.unitPrice)),
         stockQuantity: Number(forms.part.stockQuantity),
         minimumStock: Number(forms.part.minimumStock),
         active: forms.part.active !== false,
@@ -2543,8 +2565,8 @@ function createPart() {
         category: '',
         subcategory: '',
         brand: '',
-        costPrice: 0,
-        unitPrice: 0,
+        costPrice: '0,00',
+        unitPrice: '0,00',
         stockQuantity: 0,
         minimumStock: 1,
         active: true,
@@ -2565,8 +2587,8 @@ function resetPartForm() {
     category: '',
     subcategory: '',
     brand: '',
-    costPrice: 0,
-    unitPrice: 0,
+    costPrice: '0,00',
+    unitPrice: '0,00',
     stockQuantity: 0,
     minimumStock: 1,
     active: true,
@@ -2588,8 +2610,8 @@ function editPart(part) {
     category: part.category,
     subcategory: part.subcategory || '',
     brand: part.brand,
-    costPrice: Number(part.costPrice || 0),
-    unitPrice: Number(part.unitPrice || 0),
+    costPrice: formatDecimalInput(part.costPrice),
+    unitPrice: formatDecimalInput(part.unitPrice),
     stockQuantity: Number(part.stockQuantity || 0),
     minimumStock: Number(part.minimumStock || 0),
     active: part.active !== false,
@@ -2907,6 +2929,7 @@ function sendCustomerQuoteRequest() {
     workshopName: '',
     vehicleId: '',
     problemDescription: '',
+    discountPercent: 0,
     items: [],
   };
 }
@@ -5134,26 +5157,29 @@ onMounted(async () => {
                 v-model="forms.customerQuote.problemDescription"
                 placeholder="Descreva o problema do veículo ou observações da compra"
               ></textarea>
-              <div class="quote-items">
-                <button
+              <label class="form-field">
+                <span>Desconto negociado (%)</span>
+                <input v-model.number="forms.customerQuote.discountPercent" max="100" min="0" step="0.01" type="number" />
+              </label>
+              <div class="quote-items quote-items--receipt">
+                <article
                   v-for="(item, index) in forms.customerQuote.items"
                   :key="`${item.partId}-${index}`"
-                  type="button"
-                  @click="removeCustomerQuoteItem(index)"
+                  class="quote-receipt-item"
                 >
-                  <strong>{{ item.quantity }}x {{ item.name }}</strong>
-                  <span>{{ item.storeName || 'Loja a definir' }} · R$ {{ money(item.estimatedPrice) }}</span>
-                </button>
+                  <strong>{{ item.name }}</strong>
+                  <span>{{ item.storeName || 'Loja a definir' }}</span>
+                  <span>{{ item.quantity }} x R$ {{ money(item.estimatedPrice) }}</span>
+                  <b>R$ {{ money(item.quantity * item.estimatedPrice) }}</b>
+                  <button class="icon-action danger" type="button" @click="removeCustomerQuoteItem(index)">
+                    Remover
+                  </button>
+                </article>
               </div>
-              <article class="selected-record">
-                <strong
-                >R$
-                  {{
-                    money(
-                      forms.customerQuote.items.reduce((total, item) => total + item.quantity * item.estimatedPrice, 0)
-                    )
-                  }}</strong
-                >
+              <article class="selected-record quote-total-card">
+                <span>Subtotal<strong>R$ {{ money(customerQuoteSubtotal()) }}</strong></span>
+                <span>Desconto<strong>R$ {{ money(customerQuoteDiscountAmount()) }}</strong></span>
+                <span>Total final<strong>R$ {{ money(customerQuoteTotal()) }}</strong></span>
                 <span>Simulação de compra. O parceiro pode responder com outro valor.</span>
               </article>
               <button class="primary-button" type="submit">
@@ -5671,6 +5697,9 @@ onMounted(async () => {
                     />
                     <input v-model="forms.orderWizard.customer.phone" placeholder="Telefone" required />
                     <input v-model="forms.orderWizard.customer.email" placeholder="E-mail" required type="email" />
+                    <small class="form-hint"
+                    >O cliente poderá acompanhar a OS usando este e-mail e a senha inicial admin.</small
+                    >
                     <input v-model="forms.orderWizard.customer.address.street" placeholder="Rua" required />
                     <input v-model="forms.orderWizard.customer.address.number" placeholder="Número" required />
                     <input v-model="forms.orderWizard.customer.address.neighborhood" placeholder="Bairro" required />
@@ -6035,6 +6064,7 @@ onMounted(async () => {
             <label class="form-field">
               <span>E-mail</span>
               <input v-model="forms.customer.email" placeholder="email@exemplo.com" required type="email" />
+              <small>Ao cadastrar um novo cliente, o backend cria login inicial com este e-mail e senha admin.</small>
             </label>
             <label class="form-field">
               <span>Rua</span>
@@ -6221,11 +6251,23 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Valor de custo</span>
-              <input v-model.number="forms.part.costPrice" min="0" required step="0.01" type="number" />
+              <input
+                v-model="forms.part.costPrice"
+                inputmode="decimal"
+                placeholder="0,00"
+                required
+                @blur="forms.part.costPrice = formatDecimalInput(normalizeDecimalInput(forms.part.costPrice))"
+              />
             </label>
             <label class="form-field">
               <span>Valor de venda</span>
-              <input v-model.number="forms.part.unitPrice" min="0" required step="0.01" type="number" />
+              <input
+                v-model="forms.part.unitPrice"
+                inputmode="decimal"
+                placeholder="0,00"
+                required
+                @blur="forms.part.unitPrice = formatDecimalInput(normalizeDecimalInput(forms.part.unitPrice))"
+              />
             </label>
             <label class="form-field">
               <span>Quantidade em estoque</span>
