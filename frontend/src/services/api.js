@@ -119,6 +119,7 @@ export const resources = {
       body: JSON.stringify(payload),
     }),
   vehicles: (params) => apiRequest(`/api/v1/vehicles${toQueryString(params)}`),
+  vehicle: (vehicleId) => apiRequest(`/api/v1/vehicles/${vehicleId}`),
   updateVehicle: (vehicleId, payload) =>
     apiRequest(`/api/v1/vehicles/${vehicleId}`, {
       method: 'PUT',

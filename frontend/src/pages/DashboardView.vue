@@ -351,6 +351,7 @@ const forms = reactive({
     costPrice: '0,00',
     unitPrice: '0,00',
     stockQuantity: 0,
+    originalStockQuantity: 0,
     minimumStock: 1,
     active: true,
     reservationDays: 3,
@@ -1926,7 +1927,60 @@ function listItems(payload) {
 }
 
 function money(value) {
-  return Number(value || 0).toFixed(2);
+  return Number(value || 0).toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function mergeById(currentItems, incomingItems) {
+  const itemsById = new Map();
+  currentItems.filter(Boolean).forEach((item) => itemsById.set(item.id, item));
+  incomingItems.filter(Boolean).forEach((item) => itemsById.set(item.id, item));
+  return Array.from(itemsById.values());
+}
+
+async function enrichServiceOrderRelations() {
+  const knownVehicleIds = new Set(data.vehicles.map((vehicle) => vehicle.id));
+  const missingVehicleIds = [
+    ...new Set(
+      data.serviceOrders
+        .map((order) => order.vehicleId)
+        .filter((vehicleId) => vehicleId && !knownVehicleIds.has(vehicleId))
+    ),
+  ];
+
+  if (missingVehicleIds.length) {
+    const vehicleResults = await Promise.allSettled(missingVehicleIds.map((vehicleId) => resources.vehicle(vehicleId)));
+    data.vehicles = mergeById(
+      data.vehicles,
+      vehicleResults
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => result.value)
+    );
+  }
+
+  const knownCustomerIds = new Set(data.customers.map((customer) => customer.id));
+  const vehicleCustomerIds = data.vehicles.map((vehicle) => vehicle.customerId);
+  const orderCustomerIds = data.serviceOrders.map((order) => order.customerId);
+  const currentCustomerIds = auth.customerId ? [auth.customerId] : [];
+  const missingCustomerIds = [
+    ...new Set([...orderCustomerIds, ...vehicleCustomerIds, ...currentCustomerIds].filter(Boolean)),
+  ].filter((customerId) => !knownCustomerIds.has(customerId));
+
+  if (!missingCustomerIds.length) {
+    return;
+  }
+
+  const customerResults = await Promise.allSettled(
+    missingCustomerIds.map((customerId) => resources.customer(customerId))
+  );
+  data.customers = mergeById(
+    data.customers,
+    customerResults
+      .filter((result) => result.status === 'fulfilled')
+      .map((result) => result.value)
+  );
 }
 
 function customerQuoteSubtotal() {
@@ -2190,6 +2244,7 @@ async function loadDashboard(options = {}) {
       currentUser.value = user.status === 'fulfilled' ? user.value : currentUser.value;
       data.parts = parts.status === 'fulfilled' ? listItems(parts.value) : [];
       data.users = partners.status === 'fulfilled' ? listItems(partners.value) : [];
+      await enrichServiceOrderRelations();
       if (currentUser.value) {
         forms.account.fullName = currentUser.value.fullName;
         accountInitial.value = currentUser.value.fullName || '';
@@ -2252,6 +2307,7 @@ async function loadDashboard(options = {}) {
     data.averageExecutionTime = average.status === 'fulfilled' ? average.value : null;
     data.demoLeads = demoLeads.status === 'fulfilled' ? demoLeads.value || [] : [];
     data.companies = companies.status === 'fulfilled' && companies.value ? listItems(companies.value) : [];
+    await enrichServiceOrderRelations();
     ensureStoreQuotes();
 
     const failed = requests.filter((request) => {
@@ -2537,6 +2593,8 @@ function createPart() {
   const wasEditing = Boolean(forms.part.id);
   return runAction(
     async () => {
+      const targetStockQuantity = Number(forms.part.stockQuantity);
+      const currentStockQuantity = Number(forms.part.originalStockQuantity || 0);
       const payload = {
         name: forms.part.name,
         description: forms.part.description,
@@ -2546,12 +2604,15 @@ function createPart() {
         brand: forms.part.brand,
         costPrice: Number(normalizeDecimalInput(forms.part.costPrice)),
         unitPrice: Number(normalizeDecimalInput(forms.part.unitPrice)),
-        stockQuantity: Number(forms.part.stockQuantity),
+        stockQuantity: wasEditing ? currentStockQuantity : targetStockQuantity,
         minimumStock: Number(forms.part.minimumStock),
         active: forms.part.active !== false,
       };
       if (forms.part.id) {
         await resources.updatePart(forms.part.id, payload);
+        if (targetStockQuantity !== currentStockQuantity) {
+          await resources.updatePartStock(forms.part.id, targetStockQuantity);
+        }
         await resources.configurePartReservation(forms.part.id, forms.part.reservationDays);
       } else {
         const part = await resources.createPart(payload);
@@ -2568,6 +2629,7 @@ function createPart() {
         costPrice: '0,00',
         unitPrice: '0,00',
         stockQuantity: 0,
+        originalStockQuantity: 0,
         minimumStock: 1,
         active: true,
         reservationDays: 3,
@@ -2590,6 +2652,7 @@ function resetPartForm() {
     costPrice: '0,00',
     unitPrice: '0,00',
     stockQuantity: 0,
+    originalStockQuantity: 0,
     minimumStock: 1,
     active: true,
     reservationDays: 3,
@@ -2613,6 +2676,7 @@ function editPart(part) {
     costPrice: formatDecimalInput(part.costPrice),
     unitPrice: formatDecimalInput(part.unitPrice),
     stockQuantity: Number(part.stockQuantity || 0),
+    originalStockQuantity: Number(part.stockQuantity || 0),
     minimumStock: Number(part.minimumStock || 0),
     active: part.active !== false,
     reservationDays: Number(part.reservationDays || 3),
