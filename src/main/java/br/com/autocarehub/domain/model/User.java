@@ -40,7 +40,7 @@ public record User(
         companyName = normalizeOptional(companyName, "");
         companyType = normalizeOptional(companyType, "");
         employeeSubRole = normalizeOptional(employeeSubRole, "");
-        permissions = List.copyOf(permissions);
+        permissions = permissions == null ? List.of() : List.copyOf(permissions);
         Objects.requireNonNull(createdAt, "createdAt is required");
     }
 
