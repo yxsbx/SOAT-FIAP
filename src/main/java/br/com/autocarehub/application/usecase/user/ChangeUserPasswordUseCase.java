@@ -4,19 +4,19 @@ import static java.util.Objects.requireNonNull;
 
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.User;
 import java.util.UUID;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class ChangeUserPasswordUseCase {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHasher passwordHasher;
 
-    public ChangeUserPasswordUseCase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public ChangeUserPasswordUseCase(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHasher = passwordHasher;
     }
 
     public void execute(Command command) {
@@ -24,13 +24,13 @@ public class ChangeUserPasswordUseCase {
                 .findById(command.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (command.currentPasswordRequired()
-                && !passwordEncoder.matches(command.currentPassword(), current.passwordHash())) {
+                && !passwordHasher.matches(command.currentPassword(), current.passwordHash())) {
             throw new ApplicationException("Current password is invalid");
         }
         User updated = new User(
                 current.id(),
                 current.username(),
-                requireNonNull(passwordEncoder.encode(command.newPassword())),
+                requireNonNull(passwordHasher.hash(command.newPassword())),
                 current.role(),
                 current.customerId(),
                 current.companyId(),

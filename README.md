@@ -1,440 +1,768 @@
 # AutoCare Hub
 
-AutoCare Hub é um MVP acadêmico desenvolvido para o Tech Challenge FIAP. A entrega principal é uma API REST em
-Java/Spring Boot para gestão de uma oficina mecânica, cobrindo clientes, veículos, serviços, peças, estoque, Ordens de
-Serviço, orçamento, aprovação, acompanhamento pelo cliente, segurança JWT, Swagger/OpenAPI, Docker, testes automatizados
-e relatório de vulnerabilidades.
+## Tech Challenge FIAP - Fase 2
 
-O repositório também inclui um frontend demonstrativo em Vue/Vite, localizado em `frontend/`, usado para apoiar a
-apresentação visual do MVP. A branch final de entrega é `main`.
+AutoCare Hub e uma solucao academica para gestao de oficina mecanica. O projeto centraliza o cadastro de clientes,
+veiculos, servicos, pecas, estoque e Ordens de Servico, permitindo que a oficina registre uma OS, gere orcamento,
+aprove o atendimento e acompanhe o fluxo operacional pela API.
 
-## Sumário da entrega
+Na Fase 1, o projeto entregou um MVP backend em Java/Spring Boot com API REST, autenticacao JWT, persistencia em
+PostgreSQL, migracoes Flyway, Swagger/OpenAPI, Docker, testes automatizados, cobertura JaCoCo e evidencias de
+seguranca. O feedback da fase indicou que a documentacao da API ja estava detalhada no OpenAPI/Swagger, mas que o
+README precisava trazer exemplos mais diretos de uso.
 
-A pasta `docs/` concentra a documentação usada na avaliação.
+Na Fase 2, o projeto evolui para qualidade, escalabilidade, resiliencia, automacao e deploy. O objetivo e preparar a
+aplicacao para Clean Architecture ou Arquitetura Hexagonal, revisar Docker, adicionar Kubernetes, Terraform, CI/CD,
+deploy automatizado, escalabilidade automatica e documentacao atualizada.
 
-| Documento                     | Onde abrir                                                                                       | O que comprova                                                                                        |
-|-------------------------------|--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| Documento final de entrega    | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)                                           | Dados da entrega, links, escopo, segurança, testes, vulnerabilidades e conclusão.                     |
-| PDF final gerado              | `output/pdf/Entrega Final - Yasmin Barcelos.pdf`                                                 | Versão em PDF do documento final para envio.                                                          |
-| DDD                           | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)                                           | Domínio, linguagem ubíqua, subdomínios, bounded contexts, entidades, value objects e agregados.       |
-| Domain Storytelling           | [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md)                                       | Histórias do domínio por ator, objetos de trabalho, atividades e cenários alternativos.               |
-| Levantamento de requisitos    | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md)                                                     | Personas, jornada da solução, requisitos funcionais, requisitos não funcionais e rastreabilidade.     |
-| Arquitetura                   | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)                                                     | Arquitetura em camadas, HLD, LLD, C4 Model, decisões técnicas e relação com requisitos.               |
-| Refinamento técnico           | [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)                                     | Jornada técnica da OS, decisões de implementação, validações, riscos tratados e aderência do backend. |
-| Event Storming                | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)                                                 | Comandos, eventos, políticas, pontos de atenção e fluxos de OS e estoque.                             |
-| Swagger/OpenAPI               | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) e `http://localhost:8080/swagger-ui.html` | Contrato REST versionado e interface local para testar a API.                                         |
-| Relatório de vulnerabilidades | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)                                               | Scans executados, vulnerabilidades encontradas, correções aplicadas e riscos aceitos.                 |
-| Análise estática e qualidade  | [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)                                               | Ferramentas de qualidade, cobertura, lint, análise estática e evidências locais.                      |
-| Estratégia de testes          | [docs/TESTING.md](docs/TESTING.md)                                                               | Testes unitários, integração REST, fluxo completo de API, comandos e cobertura JaCoCo.                |
-| Frontend demonstrativo        | [frontend/README.md](frontend/README.md)                                                         | Como executar e entender o frontend usado na demonstração.                                            |
+O repositorio tambem inclui um frontend demonstrativo em Vue/Vite em [frontend/](frontend/). Ele nao substitui a API,
+mas torna o produto mais visual e palpavel, mostrando como pessoas e empresas poderiam consumir os fluxos do backend.
 
-## Dados da entrega
+## Objetivos da Fase 2
 
-| Campo                           | Valor                                                 |
-|---------------------------------|-------------------------------------------------------|
-| Projeto                         | AutoCare Hub                                          |
-| Responsável                     | Yasmin Barcelos Pires                                 |
-| RM                              | RM370897                                              |
-| Discord                         | `yxsbx`                                               |
-| Repositório                     | <https://github.com/yxsbx/SOAT-FIAP>                  |
-| Branch final                    | `main`                                                |
-| Acesso de avaliação             | Usuário `soat-architecture` com acesso Read concedido |
-| Data consolidada nos documentos | 30/06/2026                                            |
+- Refatorar pontos do codigo com Clean Code.
+- Consolidar Clean Architecture ou Arquitetura Hexagonal.
+- Melhorar testes unitarios, integracao e fluxo de API.
+- Revisar Dockerfile e Docker Compose.
+- Criar manifestos Kubernetes.
+- Criar scripts Terraform.
+- Evoluir CI/CD para build, testes, imagem Docker e deploy.
+- Preparar escalabilidade automatica, incluindo HPA no Kubernetes.
+- Automatizar deploy da aplicacao e aplicacao dos manifests.
+- Ajustar APIs conforme roteiro da Fase 2, sem quebrar o contrato existente sem necessidade.
 
-## Escopo do MVP
+## Funcionalidades principais
 
-O Tech Challenge solicita um MVP backend para uma oficina mecânica. O AutoCare Hub entrega:
+### Funcionalidades da Fase 1
 
-- cadastro de clientes;
-- cadastro de veículos;
-- cadastro de serviços;
-- cadastro de peças e insumos;
-- controle de estoque;
-- criação de Ordem de Serviço;
-- geração e aprovação de orçamento;
-- mudança de status da Ordem de Serviço;
-- acompanhamento da OS pelo cliente via API;
-- autenticação e autorização com JWT;
-- Swagger/OpenAPI;
-- Docker e execução local reproduzível;
-- testes automatizados;
-- cobertura JaCoCo;
-- análise estática;
-- relatório de vulnerabilidades.
+- Clientes.
+- Veiculos.
+- Servicos.
+- Pecas e insumos.
+- Controle de estoque.
+- Criacao de Ordem de Servico.
+- Geracao e aprovacao de orcamento.
+- Acompanhamento da Ordem de Servico.
+- Autenticacao e autorizacao com JWT.
+- Swagger/OpenAPI.
 
-Ficam fora do MVP: pagamento online, envio real de e-mail/SMS/WhatsApp, integração com fornecedores, ERP, mensageria,
-app mobile real e deploy produtivo em cloud.
+### Evolucoes da Fase 2
 
-## Visão técnica resumida
+- Abertura de OS retornando identificador unico: ja existe no fluxo `POST /api/v1/service-orders`.
+- Consulta de status da OS: ja existe via `GET /api/v1/service-orders/{serviceOrderId}` e tracking.
+- Endpoint de aprovacao de orcamento: ja existe em `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`.
+- Endpoint de aprovacao/recusa de orcamento por notificacao externa em `POST /api/v1/service-orders/{serviceOrderId}/budget/decision`.
+- Listagem de OS ordenada por prioridade/status e data.
+- Exclusao logica da listagem principal de OS finalizadas e entregues.
+- Atualizacao de status via ferramenta externa, como email, em `POST /api/v1/service-orders/{serviceOrderId}/status/external`.
+- Preparacao para Kubernetes, Terraform e CI/CD de deploy.
 
-Backend:
+## Arquitetura da aplicacao
 
-- Java 21;
-- Spring Boot;
-- Spring Web MVC;
-- Spring Security;
-- Spring Data JPA;
-- PostgreSQL 16;
-- Flyway;
-- Maven;
-- JJWT;
-- Springdoc Swagger UI;
-- JaCoCo;
-- OWASP Dependency-Check;
-- JUnit 5, Mockito, MockMvc e H2.
+O backend atual e um monolito Spring Boot organizado com Arquitetura Hexagonal/Clean Architecture: `domain` concentra
+modelos e regras, `application` orquestra casos de uso e portas, `infrastructure` implementa adaptadores de persistencia
+e seguranca, e `interfaces` adapta o contrato REST/OpenAPI para a aplicacao.
 
-Frontend demonstrativo:
+Na refatoracao da Fase 2, regras de gestao de usuarios foram removidas do `UsersController` e movidas para casos de uso
+e politica de aplicacao. A criacao e troca de senhas tambem passaram a depender da porta `PasswordHasher`, implementada
+por um adaptador BCrypt em `infrastructure/security`, evitando dependencia direta de Spring Security nos casos de uso.
 
-- Vue 3;
-- Vite;
-- Pinia;
-- Vue Router;
-- Lucide Vue;
-- ESLint.
+Arquitetura atual:
 
-Infraestrutura:
+- Backend monolitico Java/Spring Boot.
+- Banco de dados PostgreSQL.
+- Migracoes com Flyway.
+- API REST documentada por Swagger/OpenAPI.
+- Autenticacao JWT.
+- Frontend demonstrativo Vue/Vite.
+- Dockerfile e Docker Compose para execucao local.
+- Pipeline GitHub Actions de qualidade, testes, build frontend e build Docker.
 
-- Docker;
-- Docker Compose;
-- Nginx para servir o frontend em container.
+Arquitetura consolidada na Fase 2:
 
-## Arquitetura em uma página
+- Clean Architecture/Hexagonal Architecture dentro do monolito.
+- Dominio independente de frameworks sempre que possivel.
+- Camada de aplicacao com casos de uso e portas.
+- Infraestrutura com adaptadores de banco, seguranca e integracoes externas.
+- Interfaces REST e futuras entradas externas desacopladas da regra de negocio.
+- Kubernetes para deploy, Services, ConfigMaps, Secrets e HPA.
+- Terraform para provisionamento da infraestrutura.
+- CI/CD com build, testes, imagem Docker e deploy automatizado.
 
-O backend é um monolito em camadas:
+Desenho da arquitetura:
+
+[docs/PHASE2_ARCHITECTURE.md](docs/PHASE2_ARCHITECTURE.md)
+
+Documentacao detalhada:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
+- [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)
+- [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)
+
+## Estrutura de pastas
 
 ```text
-src/main/java/br/com/autocarehub
-|-- domain
-|   |-- enums
-|   |-- exception
-|   |-- model
-|   |-- service
-|   `-- valueobject
-|-- application
-|   |-- port
-|   `-- usecase
-|-- infrastructure
-|   |-- config
-|   |-- persistence
-|   `-- security
-`-- interfaces
-    `-- rest
-        |-- controller
-        |-- exception
-        `-- mapper
+.
+|-- src/
+|   |-- main/java/                  # Backend Spring Boot
+|   |-- main/resources/             # Configuracao, Flyway e assets estaticos
+|   `-- test/java/                  # Testes unitarios e de integracao
+|-- docs/
+|   |-- openapi/                    # Contrato OpenAPI
+|   |-- ARCHITECTURE.md
+|   |-- DDD_DOCUMENTATION.md
+|   |-- EVENT_STORMING.md
+|   |-- SECURITY_REPORT.md
+|   |-- STATIC_ANALYSIS.md
+|   `-- TESTING.md
+|-- frontend/                       # Frontend demonstrativo Vue/Vite
+|-- security-reports/               # Evidencias de seguranca versionadas
+|-- scripts/                        # Scripts auxiliares de validacao
+|-- .github/workflows/quality.yml   # Pipeline atual de qualidade
+|-- k8s/                            # Manifests Kubernetes da Fase 2
+|-- infra/                          # Terraform da Fase 2
+|-- Dockerfile
+|-- docker-compose.yml
+|-- pom.xml
+`-- README.md
 ```
 
-Detalhamento completo:
+## Tecnologias utilizadas
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): HLD, LLD, C4 e decisões arquiteturais;
-- [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md): RFs, RNFs e matriz de rastreabilidade;
-- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md): domínio, linguagem ubíqua e agregados;
-- [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md): consolidação final da entrega.
-
-## Execução com Docker
-
-Pré-requisitos:
-
-- Docker;
+- Java 21.
+- Spring Boot.
+- Spring Web MVC.
+- Spring Security.
+- Spring Data JPA.
+- Maven.
+- PostgreSQL 16.
+- Flyway.
+- Docker.
 - Docker Compose.
+- Swagger/OpenAPI com Springdoc.
+- JWT com JJWT.
+- JUnit 5, Mockito, MockMvc e H2.
+- JaCoCo.
+- OWASP Dependency-Check.
+- Spotless.
+- Vue 3, Vite, Pinia, Vue Router e Lucide Vue no frontend demonstrativo.
+- ESLint no frontend.
+- GitHub Actions para pipeline de qualidade.
+- Kubernetes.
+- Terraform.
+- CI/CD de deploy com GitHub Actions.
 
-Crie o `.env` a partir do exemplo.
+## Pre-requisitos
 
-Linux, macOS ou Git Bash:
+- Java 21.
+- Maven.
+- Docker.
+- Docker Compose.
+- Node.js 22 ou versao compativel com o frontend.
+- npm.
+- kubectl.
+- Terraform.
+- GitHub Actions como ferramenta atual de CI/CD.
+
+## Variaveis de ambiente
+
+Copie os arquivos de exemplo antes de rodar localmente:
 
 ```bash
 cp .env.example .env
+cp frontend/.env.example frontend/.env
 ```
 
-PowerShell:
+No PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
+Copy-Item frontend/.env.example frontend/.env
 ```
 
-Preencha pelo menos:
+Nao versione o `.env` real. Ele deve conter valores locais ou de ambiente seguro.
 
-```text
-POSTGRES_PASSWORD=[PREENCHER - senha local do PostgreSQL]
-JWT_SECRET=[PREENCHER - segredo local com pelo menos 32 bytes]
-```
+Variaveis principais do backend:
 
-Para demonstrar o projeto rodando do zero, pare containers antigos, remova volumes locais do banco e suba tudo
-novamente:
+| Variavel | Objetivo |
+| -------- | -------- |
+| `POSTGRES_DB` | Nome do banco local. |
+| `POSTGRES_USER` | Usuario do PostgreSQL. |
+| `POSTGRES_PASSWORD` | Senha local do PostgreSQL. |
+| `POSTGRES_PORT` | Porta exposta do PostgreSQL. |
+| `APP_PORT` | Porta da API no Docker Compose. |
+| `FRONTEND_PORT` | Porta do frontend no Docker Compose. |
+| `JWT_SECRET` | Segredo usado para assinar tokens JWT. |
+| `JWT_EXPIRATION_MINUTES` | Tempo de expiracao do token. |
+| `APP_CORS_ALLOWED_ORIGINS` | Origens liberadas no CORS. |
+| `DB_URL` | URL JDBC usada ao rodar o backend fora do container. |
+| `DB_USERNAME` | Usuario do banco ao rodar com Maven. |
+| `DB_PASSWORD` | Senha do banco ao rodar com Maven. |
 
-```powershell
+Variaveis principais do frontend:
+
+| Variavel | Objetivo |
+| -------- | -------- |
+| `VITE_API_BASE_URL` | URL da API. Pode ficar vazia para usar o proxy do Vite/Nginx. |
+| `VITE_DEMO_PASSWORD` | Senha demonstrativa opcional para a interface. |
+
+## Como rodar localmente com Docker
+
+Use estes comandos para reiniciar o ambiente:
+
+```bash
 docker compose down
 docker compose down --remove-orphans
-docker compose down -v
 docker compose up -d --build
+docker compose logs -f
 docker compose ps
 ```
 
-Acompanhe a inicialização dos serviços:
+Use `down -v` apenas quando quiser remover os volumes locais, incluindo os dados locais do PostgreSQL:
 
-```powershell
-docker compose logs -f
-docker compose logs -f backend
-docker compose logs -f frontend
+```bash
+docker compose down -v
+docker compose up -d --build
 ```
 
-No `docker-compose.yml`, o backend Spring Boot usa o serviço `backend` e o frontend usa o serviço `frontend`.
+Sequencia completa para recriar tudo do zero:
+
+```bash
+docker compose down
+docker compose down -v
+docker compose down --remove-orphans
+docker compose up -d --build
+docker compose logs -f
+docker compose ps
+```
 
 URLs locais:
 
-```text
-Frontend: http://localhost:5173
-API: http://localhost:8080
-Swagger: http://localhost:8080/swagger-ui.html
-PostgreSQL: localhost:5432
-```
+| Recurso | URL |
+| ------- | --- |
+| Frontend | <http://localhost:5173> |
+| API | <http://localhost:8080> |
+| Swagger UI | <http://localhost:8080/swagger-ui.html> |
+| PostgreSQL | `localhost:5432` |
 
-Parar os serviços sem apagar dados:
+## Como rodar backend localmente
 
-```powershell
-docker compose down
-```
+Suba apenas o PostgreSQL pelo Docker Compose:
 
-Remover o volume local do banco para recriar a base do zero:
-
-```powershell
-docker compose down -v
-```
-
-Opcional, com cuidado:
-
-```powershell
-docker volume prune
-```
-
-Esse comando remove volumes Docker não usados por outros projetos. Use apenas se souber que não precisa desses volumes.
-
-## Execução em desenvolvimento
-
-Backend com PostgreSQL pelo Docker Compose:
-
-```powershell
+```bash
 docker compose up -d postgres
 mvn spring-boot:run
 ```
 
-Frontend com hot reload:
+O backend usa as variaveis `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET` e demais configuracoes do `.env` ou do
+ambiente local.
 
-```powershell
+## Como rodar frontend localmente
+
+```bash
 cd frontend
-npm ci
+npm install
 npm run dev
 ```
 
-## Usuários de demonstração
+O frontend le `VITE_API_BASE_URL` de `frontend/.env`. Deixe vazio para usar o proxy configurado no Vite/Nginx, ou defina
+a URL da API quando necessario.
 
-Os usuários seed são carregados por:
+## Swagger/OpenAPI
 
-```text
-src/main/resources/db/migration/V1__create_autocarehub_baseline.sql
-```
+- Swagger UI local: <http://localhost:8080/swagger-ui.html>
+- Contrato OpenAPI: [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml)
+- Collection: [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json)
 
-A senha universal dos usuários seed abaixo é exclusiva do ambiente local acadêmico:
-
-```text
-autocare123
-```
-
-| Usuário                               | Perfil                       | Senha         |
-|---------------------------------------|------------------------------|---------------|
-| `admin@autocarehub.com`               | Admin técnico inicial        | `autocare123` |
-| `master@autocarehub.com`              | Admin Master da plataforma   | `autocare123` |
-| `oficina.admin@autocarehub.com`       | Admin de oficina             | `autocare123` |
-| `loja.admin@autocarehub.com`          | Admin de loja de peças       | `autocare123` |
-| `oficina.funcionario@autocarehub.com` | Funcionário de oficina       | `autocare123` |
-| `loja.funcionario@autocarehub.com`    | Funcionário de loja de peças | `autocare123` |
-| `cliente@autocarehub.com`             | Cliente final demo           | `autocare123` |
-
-Regras de criação de contas:
-
-- `MASTER_ADMIN` pode criar e editar qualquer perfil.
-- Admin Master fica vinculado à empresa base `AutoCare Hub`, cadastrada como tipo `PLATFORM`.
-- Admin Master pode criar admin de oficina, admin de loja e funcionários usando uma empresa existente ou marcando a
-  opção de criar uma nova empresa no cadastro.
-- Ao criar uma nova empresa ou usuário, o ID é gerado automaticamente pelo backend; na interface, o usuário seleciona ou
-  informa o nome da empresa.
-- A nova empresa recebe um `companyId` próprio na resposta e passa a ser usada como escopo dos usuários vinculados a
-  ela.
-- Admin de oficina cria apenas funcionários vinculados à própria oficina.
-- Admin de loja de peças cria apenas funcionários vinculados à própria loja.
-- Admin de oficina ou loja não escolhe outra empresa no formulário; o backend força o `companyId` da empresa do usuário
-  autenticado.
-- Funcionário sem subfunção e funcionário sem especificação são tratados como `UNSPECIFIED`.
-- E-mails de login são únicos; duplicidade retorna erro de negócio.
-
-Exemplo de login:
-
-```powershell
-curl -X POST http://localhost:8080/api/v1/auth/login `
-  -H "Content-Type: application/json" `
-  -d "{"username":"admin@autocarehub.com","password":"autocare123"}"
-```
-
-## Swagger e endpoints
-
-Swagger local:
-
-```text
-http://localhost:8080/swagger-ui.html
-```
-
-Contrato OpenAPI versionado:
-
-```text
-docs/openapi/openapi.yaml
-```
-
-Autenticação no Swagger:
+Para autenticar no Swagger:
 
 1. Execute `POST /api/v1/auth/login`.
 2. Copie o token retornado.
 3. Clique em `Authorize`.
 4. Informe `Bearer <token>`.
 
-Principais grupos de endpoints:
+## Fluxo rapido da API
 
-| Grupo               | Rotas principais                                                                                                     |
-|---------------------|----------------------------------------------------------------------------------------------------------------------|
-| Autenticação        | `POST /api/v1/auth/login`                                                                                            |
-| Clientes            | `/api/v1/customers`                                                                                                  |
-| Veículos            | `/api/v1/vehicles`                                                                                                   |
-| Serviços            | `/api/v1/workshop-services`                                                                                          |
-| Peças e estoque     | `/api/v1/parts`                                                                                                      |
-| Ordens de Serviço   | `/api/v1/service-orders`                                                                                             |
-| Orçamento           | `/api/v1/service-orders/{serviceOrderId}/budget/generate` e `/api/v1/service-orders/{serviceOrderId}/budget/approve` |
-| Tracking do cliente | `/api/v1/service-orders/tracking`                                                                                    |
-| Métricas da OS      | `/api/v1/service-orders/metrics/average-execution-time`                                                              |
-| Usuários            | `/api/v1/users` e `/api/v1/users/me`                                                                                 |
+Os exemplos abaixo sao minimos e usam dados seed quando possivel. Para detalhes completos de schemas, consulte o
+OpenAPI.
 
-## Validação rápida
+### 1. Login e token JWT
 
-Com o ambiente Docker ativo:
+- Objetivo: autenticar usuario e obter token.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/auth/login`.
+- Bearer token: nao.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/validate-delivery.ps1
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin@autocarehub.com","password":"autocare123"}'
 ```
 
-Esse script valida frontend, OpenAPI, login JWT e leitura dos dados seed.
+Guarde o token retornado:
 
-Validação completa backend:
+```bash
+TOKEN="[TOKEN_RETORNADO]"
+```
 
-```powershell
-mvn spotless:check
-mvn test
+### 2. Criar cliente
+
+- Objetivo: cadastrar cliente.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/customers`.
+- Bearer token: sim.
+
+```bash
+curl -X POST http://localhost:8080/api/v1/customers \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Yasmin Barcelos",
+    "document": "52998224725",
+    "phone": "11987654321",
+    "email": "yasmin.cliente@example.com",
+    "address": {
+      "street": "Avenida Paulista",
+      "number": "1000",
+      "neighborhood": "Bela Vista",
+      "city": "Sao Paulo",
+      "state": "SP",
+      "zipCode": "01310-100"
+    }
+  }'
+```
+
+### 3. Listar clientes
+
+- Objetivo: consultar clientes cadastrados.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/customers?page=0&size=10`.
+- Bearer token: sim.
+
+```bash
+curl http://localhost:8080/api/v1/customers?page=0\&size=10 \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 4. Criar veiculo
+
+- Objetivo: cadastrar veiculo vinculado a cliente existente.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/vehicles`.
+- Bearer token: sim.
+
+```bash
+curl -X POST http://localhost:8080/api/v1/vehicles \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerId": "10000000-0000-0000-0000-000000000001",
+    "plate": "TST1A23",
+    "brand": "Honda",
+    "model": "Civic Touring",
+    "year": 2021,
+    "mileage": 42000
+  }'
+```
+
+### 5. Listar veiculos
+
+- Objetivo: consultar veiculos.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/vehicles?page=0&size=10&active=true`.
+- Bearer token: sim.
+
+```bash
+curl "http://localhost:8080/api/v1/vehicles?page=0&size=10&active=true" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 6. Listar servicos
+
+- Objetivo: consultar catalogo de servicos.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/workshop-services?page=0&size=10`.
+- Bearer token: sim.
+
+```bash
+curl "http://localhost:8080/api/v1/workshop-services?page=0&size=10" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 7. Listar pecas
+
+- Objetivo: consultar pecas e insumos.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/parts?page=0&size=10&active=true`.
+- Bearer token: sim.
+
+```bash
+curl "http://localhost:8080/api/v1/parts?page=0&size=10&active=true" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 8. Abrir Ordem de Servico
+
+- Objetivo: criar OS e receber identificador unico na resposta.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/service-orders`.
+- Bearer token: sim.
+
+```bash
+curl -X POST http://localhost:8080/api/v1/service-orders \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "customerDocument": "12345678909",
+    "vehicleId": "20000000-0000-0000-0000-000000000001",
+    "diagnosticNotes": "Cliente relata ruido ao frear e vibracao no pedal.",
+    "services": [
+      {
+        "serviceId": "30000000-0000-0000-0000-000000000004",
+        "quantity": 1
+      }
+    ],
+    "parts": [
+      {
+        "partId": "40000000-0000-0000-0000-000000000005",
+        "quantity": 1
+      }
+    ],
+    "generateBudget": true
+  }'
+```
+
+### 9. Gerar orcamento
+
+- Objetivo: gerar orcamento para OS existente.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/generate`.
+- Bearer token: sim.
+
+```bash
+SERVICE_ORDER_ID="[ID_DA_OS]"
+
+curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budget/generate" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 10. Aprovar orcamento
+
+- Objetivo: aprovar orcamento gerado.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/approve`.
+- Bearer token: sim.
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budget/approve" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 11. Aprovar ou recusar orcamento por notificacao externa
+
+- Objetivo: permitir que uma ferramenta externa, como email, registre aprovacao ou recusa.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/decision`.
+- Bearer token: sim.
+- Body:
+
+```json
+{
+  "decision": "REJECTED",
+  "source": "email",
+  "reason": "Cliente recusou o orcamento por email."
+}
+```
+
+### 12. Consultar status da OS
+
+- Objetivo: consultar andamento pelo identificador da OS.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/service-orders/{serviceOrderId}`.
+- Bearer token: sim.
+
+```bash
+curl "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Tambem existe tracking por id da OS, CPF/CNPJ ou placa:
+
+```bash
+curl "http://localhost:8080/api/v1/service-orders/tracking?serviceOrderId=$SERVICE_ORDER_ID" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+### 13. Listar OS por filtros atuais
+
+- Objetivo: listar Ordens de Servico.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/service-orders?page=0&size=10&status=IN_PROGRESS`.
+- Bearer token: sim.
+
+```bash
+curl "http://localhost:8080/api/v1/service-orders?page=0&size=10&status=IN_PROGRESS" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+Listagem ordenada por prioridade/status e data:
+
+- Objetivo: atender requisito da Fase 2.
+- Metodo: `GET`.
+- Endpoint: `/api/v1/service-orders?page=0&size=10`.
+- Status: implementado. A fila principal retorna `IN_PROGRESS`, `WAITING_APPROVAL`, `IN_DIAGNOSIS` e `RECEIVED`, nessa ordem de prioridade; dentro do mesmo status, retorna as OS mais antigas primeiro.
+
+### 14. Atualizar status por ferramenta externa
+
+- Objetivo: simular ferramenta externa, como email, notificando nova etapa da OS.
+- Metodo: `POST`.
+- Endpoint: `/api/v1/service-orders/{serviceOrderId}/status/external`.
+- Bearer token: sim.
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/status/external" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "FINISHED",
+    "source": "email",
+    "message": "Mecânico informou finalização pelo fluxo externo."
+  }'
+```
+
+## Endpoints principais
+
+| Metodo | Endpoint | Protegido por JWT | Objetivo |
+| ------ | -------- | ----------------- | -------- |
+| `POST` | `/api/v1/auth/login` | Nao | Autenticar usuario e emitir JWT. |
+| `POST` | `/api/v1/customers` | Sim | Criar cliente. |
+| `GET` | `/api/v1/customers` | Sim | Listar clientes. |
+| `GET` | `/api/v1/customers/{customerId}` | Sim | Buscar cliente por id. |
+| `PUT` | `/api/v1/customers/{customerId}` | Sim | Atualizar cliente. |
+| `DELETE` | `/api/v1/customers/{customerId}` | Sim | Remover logicamente cliente. |
+| `POST` | `/api/v1/vehicles` | Sim | Criar veiculo. |
+| `GET` | `/api/v1/vehicles` | Sim | Listar veiculos. |
+| `PUT` | `/api/v1/vehicles/{vehicleId}` | Sim | Atualizar quilometragem/status; placa, marca, modelo e ano permanecem imutaveis. |
+| `GET` | `/api/v1/customers/{customerId}/vehicles` | Sim | Listar veiculos de um cliente. |
+| `POST` | `/api/v1/workshop-services` | Sim | Criar servico da oficina. |
+| `GET` | `/api/v1/workshop-services` | Sim | Listar servicos. |
+| `POST` | `/api/v1/parts` | Sim | Criar peca ou insumo. |
+| `GET` | `/api/v1/parts` | Sim | Listar pecas e insumos. |
+| `PATCH` | `/api/v1/parts/{partId}/stock` | Sim | Atualizar estoque. |
+| `POST` | `/api/v1/parts/{partId}/stock-movement` | Sim | Registrar movimento de estoque. |
+| `POST` | `/api/v1/service-orders` | Sim | Abrir Ordem de Servico e retornar identificador unico. |
+| `GET` | `/api/v1/service-orders` | Sim | Listar Ordens de Servico com filtros atuais. |
+| `GET` | `/api/v1/service-orders/{serviceOrderId}` | Sim | Consultar OS e status. |
+| `GET` | `/api/v1/service-orders/tracking` | Sim | Acompanhar progresso da OS. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/services` | Sim | Adicionar servico a OS. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/parts` | Sim | Adicionar peca a OS. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orcamento. |
+| `PATCH` | `/api/v1/service-orders/{serviceOrderId}/status` | Sim | Atualizar status da OS. |
+| `GET` | `/api/v1/service-orders/metrics/average-execution-time` | Sim | Consultar tempo medio de execucao. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Sim | Aprovar ou recusar orcamento por notificacao externa. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Sim | Atualizar status por ferramenta externa simulada. |
+| `GET` | `/api/v1/service-orders` | Sim | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
+
+## Testes
+
+Executar testes:
+
+```bash
+mvn clean test
+```
+
+Executar verificacao completa:
+
+```bash
 mvn clean verify
 ```
 
-Validação frontend:
-
-```powershell
-cd frontend
-npm run lint
-npm run build
-npm audit --audit-level=low
-cd ..
-```
-
-Scan de dependências backend:
-
-```powershell
-mvn dependency-check:check -DautoUpdate=false
-```
-
-## Evidências de qualidade
-
-Resultado de qualidade revalidado em 30/06/2026:
-
-| Área                   | Resultado                                          |
-|------------------------|----------------------------------------------------|
-| Testes Maven           | 149 testes, 0 falhas, 0 erros e 0 ignorados        |
-| Cobertura JaCoCo       | 96,02% instruções, 96,66% linhas e 90,12% branches |
-| Gate de cobertura      | 90% instruções, 90% linhas e 90% branches          |
-| Frontend lint          | 0 erros e 0 warnings                               |
-| Frontend build         | Aprovado                                           |
-| npm audit              | 0 vulnerabilidades                                 |
-| OWASP Dependency-Check | 103 dependências e 0 vulnerabilidades              |
-| Docker Scout backend   | 0 críticas, 0 altas e 1 média residual aceita      |
-| Docker Scout frontend  | 0 críticas, 0 altas e 1 média residual aceita      |
-| OWASP ZAP              | 0 falhas e 1 aviso baixo revisado                  |
-| Gitleaks               | 0 leaks em 36 commits                              |
-| Semgrep                | 0 achados em 200 arquivos com 187 regras           |
-
-O resultado fica acima da cobertura mínima de 80% exigida para a entrega. No JaCoCo, branches representam caminhos
-condicionais do código, como `if`, `else`, validações, exceções e transições de status. Por isso, o gate interno também
-exige 90% nessa métrica.
-
-Relatórios e evidências:
+Relatorio JaCoCo local:
 
 ```text
-docs/SECURITY_REPORT.md
-docs/STATIC_ANALYSIS.md
-docs/TESTING.md
 target/site/jacoco/index.html
-target/site/jacoco/jacoco.csv
-security-reports/backend-dependencies/dependency-check-report.html
-security-reports/backend-dependencies/dependency-check-report.json
-security-reports/frontend-dependencies/npm-audit-report.json
-security-reports/docker/docker-scout-cves.txt
-security-reports/docker/docker-scout-frontend-cves.txt
-security-reports/dast/zap-api-report.html
-security-reports/dast/zap-api-report.json
-security-reports/secrets/gitleaks.json
-security-reports/static-analysis/semgrep.json
 ```
 
-Os arquivos em `security-reports/` ficam versionados como evidência revisada da entrega. A pasta `target/` continua fora
-do versionamento e permanece como saída local das ferramentas Maven.
+Cobertura minima configurada no projeto:
 
-O resumo oficial dos resultados está em:
+- 90% de instrucoes.
+- 90% de linhas.
+- 90% de branches.
+
+Documentacao complementar de testes:
+
+- [docs/TESTING.md](docs/TESTING.md)
+- [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)
+
+## Seguranca
+
+O projeto possui:
+
+- Autenticacao e autorizacao com JWT.
+- Validacao de CPF/CNPJ.
+- Validacao de placa.
+- Configuracao de CORS por variavel de ambiente.
+- Uso de `.env.example` para evitar versionamento de secrets reais.
+- Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
+- OWASP Dependency-Check no backend.
+- `npm audit` no frontend.
+- Evidencias complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega da Fase 1.
+
+Documentos:
+
+- [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
+- [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)
+
+## Docker
+
+Arquivos atuais:
+
+- [Dockerfile](Dockerfile)
+- [docker-compose.yml](docker-compose.yml)
+- [frontend/Dockerfile](frontend/Dockerfile)
+
+Comandos principais:
+
+```bash
+docker compose config --quiet
+docker compose build
+docker compose up -d --build
+docker compose logs -f
+docker compose down
+```
+
+Revisao Docker da Fase 2:
+
+- Revisar imagens e multi-stage builds.
+- Confirmar variaveis por ambiente.
+- Confirmar healthchecks quando necessario.
+- Preparar publicacao de imagem para o pipeline de deploy.
+
+## Kubernetes
+
+Status: implementado para demonstracao local/acadêmica.
+
+Local previsto:
 
 ```text
-docs/SECURITY_REPORT.md
+k8s/
 ```
 
-## CI
+Itens previstos:
 
-O workflow [.github/workflows/quality.yml](.github/workflows/quality.yml) executa em pushes e pull requests para `main`:
+- Deployments.
+- Services.
+- ConfigMaps.
+- Secrets.
+- HPA.
+- Manifests para backend, frontend e banco ou servico gerenciado.
 
-- Spotless;
-- testes e cobertura Maven;
-- lint sem warnings;
-- build frontend;
-- `npm audit`;
-- validação do Docker Compose;
-- build das imagens Docker.
+Comandos previstos:
 
-## Limitações conhecidas
+```bash
+kubectl apply -f k8s/
+kubectl get pods
+kubectl get services
+kubectl get hpa
+```
 
-As limitações completas estão registradas em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md). Resumo:
+## Terraform
 
-- não há pagamento online;
-- não há envio real de e-mail, SMS ou WhatsApp;
-- histórico de status da OS é simplificado para o MVP;
-- multiempresa/multitenancy está simplificado;
-- Swagger fica público no ambiente local acadêmico;
-- OWASP ZAP foi executado como análise dinâmica complementar da API e teve apenas 1 aviso baixo revisado;
-- a imagem backend mantém 1 CVE média em `jackson-databind` transitivo, aceita temporariamente porque a versão corrigida
-  indicada pelo Docker Scout ainda não estava disponível no Maven Central;
-- a imagem frontend mantém 1 CVE média de BusyBox, aceita temporariamente porque o Docker Scout não indicou versão
-  corrigida disponível.
+Status: implementado para demonstracao local/acadêmica.
 
-Essas limitações não impedem a execução do fluxo principal exigido no Tech Challenge.
+Local previsto:
 
-## Evoluções técnicas
+```text
+infra/
+```
 
-O detalhamento está em [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md)
-e [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md). Principais evoluções futuras:
+Itens previstos:
 
-- ampliar cenários extremos e fluxos de regressão;
-- criar auditoria de ações sensíveis;
-- melhorar histórico detalhado de status da OS;
-- integrar notificações reais para cliente;
-- restringir Swagger por ambiente/perfil;
-- evoluir multiempresa/multitenancy;
-- automatizar scans de segurança em pipeline;
-- reexecutar scans de segurança em cada ciclo de entrega.
+- Scripts de provisionamento.
+- Recursos de rede, cluster e dependencias conforme ambiente escolhido.
+- Variaveis por ambiente.
+- Outputs relevantes para deploy.
+
+Comandos previstos:
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+## CI/CD
+
+Pipeline atual:
+
+- [.github/workflows/quality.yml](.github/workflows/quality.yml)
+
+Etapas atuais:
+
+- Spotless no backend.
+- `mvn verify`.
+- `npm ci`.
+- Lint frontend.
+- Build frontend.
+- `npm audit`.
+- Validacao do Docker Compose.
+- Build das imagens Docker.
+
+Etapas previstas para a Fase 2:
+
+- Build da imagem Docker e publicacao em registry.
+- Deploy no Kubernetes.
+- Aplicacao de migracoes do banco.
+- Aplicacao dos manifests.
+- Execucao de smoke tests pos-deploy.
+
+Status do deploy automatizado: implementado em `.github/workflows/deploy.yml`, com aplicacao real quando o secret `KUBE_CONFIG` estiver configurado.
+
+## Documentacao complementar
+
+| Documento | Link |
+| --------- | ---- |
+| DDD | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) |
+| Event Storming | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md) |
+| Domain Storytelling | [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md) |
+| Requisitos | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) |
+| Arquitetura | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
+| Refinamento tecnico | [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md) |
+| OpenAPI | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) |
+| Collection Postman | [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json) |
+| Testes | [docs/TESTING.md](docs/TESTING.md) |
+| Analise estatica | [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md) |
+| Seguranca | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md) |
+| Guia de scan de seguranca | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md) |
+| Documento de entrega | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) |
+| Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
+| Desenho da arquitetura | [docs/PHASE2_ARCHITECTURE.md](docs/PHASE2_ARCHITECTURE.md) |
+| Roteiro do video | [docs/PHASE2_VIDEO_SCRIPT.md](docs/PHASE2_VIDEO_SCRIPT.md) |
+| Video | [INSERIR LINK DO VIDEO] |
+| Collection da API | [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json) |
+
+## Entrega da Fase 2
+
+Checklist de preparacao:
+
+- [ ] Codigo refatorado.
+- [ ] Dockerfile revisado.
+- [ ] `docker-compose.yml` revisado.
+- [x] `/k8s` criado.
+- [x] `/infra` criado.
+- [x] Pipeline CI/CD de deploy criada.
+- [x] README atualizado como documento principal.
+- [x] Swagger/OpenAPI disponivel em [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml).
+- [x] Collection da API adicionada ou linkada.
+- [ ] Video de ate 15 minutos.
+- [ ] PDF com link do repositorio, desenho da arquitetura e link do video.
+- [ ] Acesso ao usuario `soat-architecture` confirmado para a entrega da Fase 2.
+
+## Historico das fases
+
+- Fase 1: MVP backend da oficina com API REST, JWT, Swagger/OpenAPI, Docker, testes, cobertura e relatorios de
+  seguranca.
+- Fase 2: evolucao para qualidade, arquitetura, escalabilidade, infraestrutura como codigo, Kubernetes, CI/CD e deploy
+  automatizado.

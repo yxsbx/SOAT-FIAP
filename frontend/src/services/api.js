@@ -1,4 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const DEBUG_HTTP = import.meta.env.DEV;
 
 function toQueryString(params = {}) {
   const searchParams = new URLSearchParams();
@@ -15,19 +16,31 @@ function toQueryString(params = {}) {
 
 export async function apiRequest(path, options = {}) {
   const token = localStorage.getItem('autocare.token');
+  const method = options.method || 'GET';
   const headers = {
     Accept: 'application/json',
-    ...(options.body ? {'Content-Type': 'application/json'} : {}),
-    ...(token ? {Authorization: `Bearer ${token}`} : {}),
+    ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch (error) {
+    if (DEBUG_HTTP) {
+      console.error('[AutoCare API] Falha de rede ou CORS', { method, path, error });
+    }
+    throw new Error('Não foi possível conectar à API. Verifique se o backend está em execução.');
+  }
 
   if (response.status === 204) {
+    if (DEBUG_HTTP) {
+      console.debug('[AutoCare API]', { method, path, status: response.status });
+    }
     return null;
   }
 
@@ -36,21 +49,22 @@ export async function apiRequest(path, options = {}) {
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
-    data = text ? {message: text} : null;
+    data = text ? { message: text } : null;
   }
 
   if (!response.ok) {
-    const message = data?.message || data?.error || `Erro HTTP ${response.status}`;
+    const detailText = Array.isArray(data?.details) && data.details.length ? ` (${data.details.join('; ')})` : '';
+    const message = `${data?.message || data?.error || `Erro HTTP ${response.status}`}${detailText}`;
     const error = new Error(message);
     error.status = response.status;
     error.path = path;
     error.details = data;
-    if (import.meta.env.DEV) {
+    if (DEBUG_HTTP) {
       console.error('[AutoCare API]', {
-        method: options.method || 'GET',
+        method,
         path,
         status: response.status,
-        requestBody: options.body ? JSON.parse(options.body) : null,
+        requestBody: options.body ? safeParseJson(options.body) : null,
         responseBody: data,
       });
     }
@@ -60,10 +74,18 @@ export async function apiRequest(path, options = {}) {
   return data;
 }
 
+function safeParseJson(value) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
 export function login(username, password) {
   return apiRequest('/api/v1/auth/login', {
     method: 'POST',
-    body: JSON.stringify({username, password}),
+    body: JSON.stringify({ username, password }),
   });
 }
 
@@ -109,7 +131,7 @@ export const resources = {
   resetUserPassword: (userId, newPassword) =>
     apiRequest(`/api/v1/users/${userId}/password`, {
       method: 'PATCH',
-      body: JSON.stringify({newPassword}),
+      body: JSON.stringify({ newPassword }),
     }),
   customers: (params) => apiRequest(`/api/v1/customers${toQueryString(params)}`),
   customer: (customerId) => apiRequest(`/api/v1/customers/${customerId}`),
@@ -132,7 +154,7 @@ export const resources = {
       body: JSON.stringify(payload),
     }),
   parts: (params) => apiRequest(`/api/v1/parts${toQueryString(params)}`),
-  lowStockParts: (params = {}) => apiRequest(`/api/v1/parts${toQueryString({...params, lowStock: true})}`),
+  lowStockParts: (params = {}) => apiRequest(`/api/v1/parts${toQueryString({ ...params, lowStock: true })}`),
   serviceOrders: (params) => apiRequest(`/api/v1/service-orders${toQueryString(params)}`),
   averageExecutionTime: () => apiRequest('/api/v1/service-orders/metrics/average-execution-time'),
   customerServiceOrders: (customerId) => apiRequest(`/api/v1/customers/${customerId}/service-orders`),
@@ -160,7 +182,7 @@ export const resources = {
   updatePartStock: (partId, stockQuantity) =>
     apiRequest(`/api/v1/parts/${partId}/stock`, {
       method: 'PATCH',
-      body: JSON.stringify({stockQuantity: Number(stockQuantity)}),
+      body: JSON.stringify({ stockQuantity: Number(stockQuantity) }),
     }),
   registerStockMovement: (partId, payload) =>
     apiRequest(`/api/v1/parts/${partId}/stock-movement`, {
@@ -170,17 +192,17 @@ export const resources = {
   configurePartReservation: (partId, reservationDays) =>
     apiRequest(`/api/v1/parts/${partId}/reservation`, {
       method: 'PATCH',
-      body: JSON.stringify({reservationDays: Number(reservationDays)}),
+      body: JSON.stringify({ reservationDays: Number(reservationDays) }),
     }),
   reservePart: (partId, quantity) =>
     apiRequest(`/api/v1/parts/${partId}/reserve`, {
       method: 'PATCH',
-      body: JSON.stringify({quantity: Number(quantity)}),
+      body: JSON.stringify({ quantity: Number(quantity) }),
     }),
   releasePartReservation: (partId, quantity) =>
     apiRequest(`/api/v1/parts/${partId}/release-reservation`, {
       method: 'PATCH',
-      body: JSON.stringify({quantity: Number(quantity)}),
+      body: JSON.stringify({ quantity: Number(quantity) }),
     }),
   commitPartReservation: (partId, payload) =>
     apiRequest(`/api/v1/parts/${partId}/commit-reservation`, {
@@ -218,6 +240,6 @@ export const resources = {
   updateOrderStatus: (serviceOrderId, status) =>
     apiRequest(`/api/v1/service-orders/${serviceOrderId}/status`, {
       method: 'PATCH',
-      body: JSON.stringify({status}),
+      body: JSON.stringify({ status }),
     }),
 };

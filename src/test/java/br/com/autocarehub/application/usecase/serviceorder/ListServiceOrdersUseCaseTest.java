@@ -61,19 +61,44 @@ class ListServiceOrdersUseCaseTest {
     }
 
     @Test
-    void shouldReturnAllOrdersWhenNoFiltersAreProvided() {
+    void shouldReturnOpenOrdersSortedByOperationalPriorityAndOldestFirstWhenNoFiltersAreProvided() {
         ServiceOrder first =
                 serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.RECEBIDA, daysAgo(1));
         ServiceOrder second =
                 serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(2));
+        ServiceOrder third =
+                serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.AGUARDANDO_APROVACAO, daysAgo(5));
+        ServiceOrder finished =
+                serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.FINALIZADA, daysAgo(10));
+        ServiceOrder delivered =
+                serviceOrder(UUID.randomUUID(), UUID.randomUUID(), ServiceOrderStatus.ENTREGUE, daysAgo(11));
         repository.save(first);
         repository.save(second);
+        repository.save(third);
+        repository.save(finished);
+        repository.save(delivered);
         ListServiceOrdersUseCase useCase = new ListServiceOrdersUseCase(repository);
 
         List<ServiceOrder> result = useCase.execute(new ListServiceOrdersUseCase.Query(null, null, null, null, null));
 
-        assertThat(useCase.execute()).extracting(ServiceOrder::id).containsExactly(first.id(), second.id());
-        assertThat(result).extracting(ServiceOrder::id).containsExactly(first.id(), second.id());
+        assertThat(useCase.execute()).extracting(ServiceOrder::id).containsExactly(third.id(), second.id(), first.id());
+        assertThat(result).extracting(ServiceOrder::id).containsExactly(third.id(), second.id(), first.id());
+    }
+
+    @Test
+    void shouldDefineOperationalStatusPriority() {
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.EM_EXECUCAO))
+                .isZero();
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.AGUARDANDO_APROVACAO))
+                .isEqualTo(1);
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.EM_DIAGNOSTICO))
+                .isEqualTo(2);
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.RECEBIDA))
+                .isEqualTo(3);
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.FINALIZADA))
+                .isEqualTo(4);
+        assertThat(ListServiceOrdersUseCase.statusPriority(ServiceOrderStatus.ENTREGUE))
+                .isEqualTo(4);
     }
 
     @Test

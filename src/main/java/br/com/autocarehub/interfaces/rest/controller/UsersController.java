@@ -1,13 +1,15 @@
 package br.com.autocarehub.interfaces.rest.controller;
 
-import br.com.autocarehub.application.exception.ApplicationException;
-import br.com.autocarehub.application.port.out.CompanyRepository;
 import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
-import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
+import br.com.autocarehub.application.usecase.user.CreateManagedUserUseCase;
 import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
 import br.com.autocarehub.application.usecase.user.GetUserUseCase;
+import br.com.autocarehub.application.usecase.user.ListManageableCompaniesUseCase;
+import br.com.autocarehub.application.usecase.user.ListManageableUsersUseCase;
+import br.com.autocarehub.application.usecase.user.ListPartnerUsersUseCase;
 import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
 import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.UpdateManagedUserUseCase;
 import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
 import br.com.autocarehub.domain.model.Company;
 import br.com.autocarehub.domain.model.User;
@@ -60,33 +62,39 @@ public class UsersController {
                     """;
 
     private final GetUserUseCase getUserUseCase;
-    private final ListUsersUseCase listUsersUseCase;
-    private final CreateUserUseCase createUserUseCase;
+    private final ListManageableUsersUseCase listManageableUsersUseCase;
+    private final ListPartnerUsersUseCase listPartnerUsersUseCase;
+    private final ListManageableCompaniesUseCase listManageableCompaniesUseCase;
+    private final CreateManagedUserUseCase createManagedUserUseCase;
+    private final UpdateManagedUserUseCase updateManagedUserUseCase;
     private final UpdateUserUseCase updateUserUseCase;
     private final ChangeUserPasswordUseCase changeUserPasswordUseCase;
     private final GetUserPreferenceUseCase getUserPreferenceUseCase;
     private final SaveUserPreferenceUseCase saveUserPreferenceUseCase;
-    private final CompanyRepository companyRepository;
     private final ObjectMapper objectMapper;
 
     public UsersController(
             GetUserUseCase getUserUseCase,
-            ListUsersUseCase listUsersUseCase,
-            CreateUserUseCase createUserUseCase,
+            ListManageableUsersUseCase listManageableUsersUseCase,
+            ListPartnerUsersUseCase listPartnerUsersUseCase,
+            ListManageableCompaniesUseCase listManageableCompaniesUseCase,
+            CreateManagedUserUseCase createManagedUserUseCase,
+            UpdateManagedUserUseCase updateManagedUserUseCase,
             UpdateUserUseCase updateUserUseCase,
             ChangeUserPasswordUseCase changeUserPasswordUseCase,
             GetUserPreferenceUseCase getUserPreferenceUseCase,
             SaveUserPreferenceUseCase saveUserPreferenceUseCase,
-            CompanyRepository companyRepository,
             ObjectMapper objectMapper) {
         this.getUserUseCase = getUserUseCase;
-        this.listUsersUseCase = listUsersUseCase;
-        this.createUserUseCase = createUserUseCase;
+        this.listManageableUsersUseCase = listManageableUsersUseCase;
+        this.listPartnerUsersUseCase = listPartnerUsersUseCase;
+        this.listManageableCompaniesUseCase = listManageableCompaniesUseCase;
+        this.createManagedUserUseCase = createManagedUserUseCase;
+        this.updateManagedUserUseCase = updateManagedUserUseCase;
         this.updateUserUseCase = updateUserUseCase;
         this.changeUserPasswordUseCase = changeUserPasswordUseCase;
         this.getUserPreferenceUseCase = getUserPreferenceUseCase;
         this.saveUserPreferenceUseCase = saveUserPreferenceUseCase;
-        this.companyRepository = companyRepository;
         this.objectMapper = objectMapper;
     }
 
@@ -168,23 +176,20 @@ public class UsersController {
             @RequestParam(required = false) String role,
             @RequestParam(required = false) String profileType,
             @RequestParam(required = false) String search) {
-        User requester = getUserUseCase.execute(authenticatedUser.id());
-        List<UserResponse> items =
-                listUsersUseCase.execute(new ListUsersUseCase.Query(active, role, profileType, search)).stream()
-                        .filter(user -> canManageUser(requester, user))
-                        .map(UsersController::toResponse)
-                        .toList();
+        List<UserResponse> items = listManageableUsersUseCase
+                .execute(new ListManageableUsersUseCase.Query(
+                        authenticatedUser.id(), new ListUsersUseCase.Query(active, role, profileType, search)))
+                .stream()
+                .map(UsersController::toResponse)
+                .toList();
         return ResponseEntity.ok(new UserListResponse(items));
     }
 
     @GetMapping("/partners")
     public ResponseEntity<UserListResponse> listPartners() {
-        List<UserResponse> items =
-                listUsersUseCase.execute(new ListUsersUseCase.Query(true, "ADMIN", null, null)).stream()
-                        .filter(user -> "WORKSHOP_ADMIN".equals(user.profileType())
-                                || "PARTS_STORE_ADMIN".equals(user.profileType()))
-                        .map(UsersController::toResponse)
-                        .toList();
+        List<UserResponse> items = listPartnerUsersUseCase.execute().stream()
+                .map(UsersController::toResponse)
+                .toList();
         return ResponseEntity.ok(new UserListResponse(items));
     }
 
@@ -192,9 +197,7 @@ public class UsersController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CompanyListResponse> listCompanies(
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-        User requester = getUserUseCase.execute(authenticatedUser.id());
-        List<CompanyResponse> items = companyRepository.findAll().stream()
-                .filter(company -> isMasterAdmin(requester) || company.id().equals(requester.companyId()))
+        List<CompanyResponse> items = listManageableCompaniesUseCase.execute(authenticatedUser.id()).stream()
                 .map(UsersController::toCompanyResponse)
                 .toList();
         return ResponseEntity.ok(new CompanyListResponse(items));
@@ -205,21 +208,21 @@ public class UsersController {
     public ResponseEntity<UserResponse> createUser(
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
             @Valid @RequestBody CreateUserRequest request) {
-        User requester = getUserUseCase.execute(authenticatedUser.id());
-        UserCommandData data = normalizeUserCommand(requester, request.toCommandData(), null);
-        User user = createUserUseCase.execute(new CreateUserUseCase.Command(
-                data.username(),
+        User user = createManagedUserUseCase.execute(new CreateManagedUserUseCase.Command(
+                authenticatedUser.id(),
                 request.password(),
-                data.role(),
-                data.customerId(),
-                data.companyId(),
-                data.fullName(),
-                data.profileType(),
-                data.companyName(),
-                data.companyType(),
-                data.employeeSubRole(),
-                data.permissions(),
-                data.active()));
+                request.username(),
+                request.role(),
+                request.customerId(),
+                request.companyId(),
+                request.fullName(),
+                request.profileType(),
+                request.companyName(),
+                request.companyType(),
+                Boolean.TRUE.equals(request.createCompany()),
+                request.employeeSubRole(),
+                request.permissions(),
+                request.active()));
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
     }
 
@@ -229,22 +232,21 @@ public class UsersController {
             @AuthenticationPrincipal AuthenticatedUser authenticatedUser,
             @PathVariable UUID userId,
             @Valid @RequestBody UpdateUserRequest request) {
-        User requester = getUserUseCase.execute(authenticatedUser.id());
-        User current = getUserUseCase.execute(userId);
-        UserCommandData data = normalizeUserCommand(requester, request.toCommandData(), current);
-        User user = updateUserUseCase.execute(new UpdateUserUseCase.Command(
+        User user = updateManagedUserUseCase.execute(new UpdateManagedUserUseCase.Command(
+                authenticatedUser.id(),
                 userId,
-                data.username(),
-                data.role(),
-                data.customerId(),
-                data.companyId(),
-                data.fullName(),
-                data.profileType(),
-                data.companyName(),
-                data.companyType(),
-                data.employeeSubRole(),
-                data.permissions(),
-                data.active()));
+                request.username(),
+                request.role(),
+                request.customerId(),
+                request.companyId(),
+                request.fullName(),
+                request.profileType(),
+                request.companyName(),
+                request.companyType(),
+                Boolean.TRUE.equals(request.createCompany()),
+                request.employeeSubRole(),
+                request.permissions(),
+                request.active()));
         return ResponseEntity.ok(toResponse(user));
     }
 
@@ -276,131 +278,6 @@ public class UsersController {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Invalid preference payload", e);
         }
-    }
-
-    private UserCommandData normalizeUserCommand(User requester, UserCommandData data, @Nullable User current) {
-        if (current != null && !canManageUser(requester, current)) {
-            throw new ApplicationException("User is outside the current company scope");
-        }
-        UserCommandData normalized = normalizeRoleProfile(data);
-        if (isMasterAdmin(requester)) {
-            return withResolvedCompany(normalized);
-        }
-        if ("MASTER_ADMIN".equals(normalized.profileType())) {
-            throw new ApplicationException("Only master admin can create or update master admin users");
-        }
-        String expectedProfile =
-                "PARTS_STORE".equals(requester.companyType()) ? "PARTS_STORE_EMPLOYEE" : "WORKSHOP_EMPLOYEE";
-        String expectedCompanyType = "PARTS_STORE".equals(requester.companyType()) ? "PARTS_STORE" : "WORKSHOP";
-        UserCommandData scoped = new UserCommandData(
-                normalized.username(),
-                "EMPLOYEE",
-                normalized.customerId(),
-                requester.companyId(),
-                normalized.fullName(),
-                expectedProfile,
-                requester.companyName(),
-                expectedCompanyType,
-                false,
-                normalizeEmployeeSubRole(normalized.employeeSubRole()),
-                normalized.permissions(),
-                normalized.active());
-        if (current != null
-                && !canManageUser(
-                        requester,
-                        new User(
-                                current.id(),
-                                scoped.username(),
-                                current.passwordHash(),
-                                current.role(),
-                                scoped.customerId(),
-                                scoped.companyId(),
-                                scoped.fullName(),
-                                scoped.profileType(),
-                                scoped.companyName(),
-                                scoped.companyType(),
-                                scoped.employeeSubRole(),
-                                scoped.permissions(),
-                                scoped.active(),
-                                current.createdAt()))) {
-            throw new ApplicationException("User is outside the current company scope");
-        }
-        return scoped;
-    }
-
-    private UserCommandData withResolvedCompany(UserCommandData data) {
-        if ("MASTER_ADMIN".equals(data.profileType())) {
-            Company platform = companyRepository
-                    .findByName("AutoCare Hub")
-                    .orElseGet(() -> companyRepository.save(Company.create("AutoCare Hub", "PLATFORM")));
-            return data.withCompany(platform);
-        }
-        if ("CUSTOMER_OWNER".equals(data.profileType())) {
-            return data.withoutCompany();
-        }
-        if (data.companyId() != null && !data.createCompany()) {
-            Company company = companyRepository
-                    .findById(data.companyId())
-                    .orElseThrow(() -> new ApplicationException("Company not found"));
-            if (!company.type().equals(data.companyType())) {
-                throw new ApplicationException("Company type does not match user profile");
-            }
-            return data.withCompany(company);
-        }
-        if (data.companyName().isBlank()) {
-            throw new ApplicationException("Company name is required");
-        }
-        if (!data.createCompany()) {
-            Company company = companyRepository
-                    .findByName(data.companyName())
-                    .orElseThrow(() -> new ApplicationException("Company not found"));
-            if (!company.type().equals(data.companyType())) {
-                throw new ApplicationException("Company type does not match user profile");
-            }
-            return data.withCompany(company);
-        }
-        companyRepository.findByName(data.companyName()).ifPresent(company -> {
-            throw new ApplicationException("Company already exists");
-        });
-        return data.withCompany(companyRepository.save(Company.create(data.companyName(), data.companyType())));
-    }
-
-    private UserCommandData normalizeRoleProfile(UserCommandData data) {
-        return switch (data.profileType()) {
-            case "MASTER_ADMIN" -> data.withRole("ADMIN").withoutCompany().withoutEmployeeSubRole();
-            case "WORKSHOP_ADMIN" ->
-                data.withRole("ADMIN").withCompanyType("WORKSHOP").withoutEmployeeSubRole();
-            case "PARTS_STORE_ADMIN" ->
-                data.withRole("ADMIN").withCompanyType("PARTS_STORE").withoutEmployeeSubRole();
-            case "WORKSHOP_EMPLOYEE" ->
-                data.withRole("EMPLOYEE")
-                        .withCompanyType("WORKSHOP")
-                        .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
-            case "PARTS_STORE_EMPLOYEE" ->
-                data.withRole("EMPLOYEE")
-                        .withCompanyType("PARTS_STORE")
-                        .withEmployeeSubRole(normalizeEmployeeSubRole(data.employeeSubRole()));
-            case "CUSTOMER_OWNER" -> data.withRole("CUSTOMER").withoutCompany().withoutEmployeeSubRole();
-            default -> throw new ApplicationException("Invalid user profile type");
-        };
-    }
-
-    private boolean canManageUser(User requester, User target) {
-        if (isMasterAdmin(requester)) {
-            return true;
-        }
-        if ("MASTER_ADMIN".equals(target.profileType())) {
-            return false;
-        }
-        return requester.companyId() != null && requester.companyId().equals(target.companyId());
-    }
-
-    private boolean isMasterAdmin(User user) {
-        return "MASTER_ADMIN".equals(user.profileType());
-    }
-
-    private String normalizeEmployeeSubRole(String value) {
-        return value.isBlank() ? "UNSPECIFIED" : value;
     }
 
     public record UserResponse(
@@ -436,24 +313,7 @@ public class UsersController {
             @Nullable Boolean createCompany,
             @Size(max = 40) String employeeSubRole,
             @Size(max = 20) List<@Pattern(regexp = "^[A-Z_]{3,40}$") String> permissions,
-            boolean active) {
-
-        UserCommandData toCommandData() {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    companyType,
-                    Boolean.TRUE.equals(createCompany),
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-    }
+            boolean active) {}
 
     public record UpdateUserRequest(
             @Email @NotBlank String username,
@@ -467,135 +327,7 @@ public class UsersController {
             @Nullable Boolean createCompany,
             @Size(max = 40) String employeeSubRole,
             @Size(max = 20) List<@Pattern(regexp = "^[A-Z_]{3,40}$") String> permissions,
-            boolean active) {
-
-        UserCommandData toCommandData() {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    companyType,
-                    Boolean.TRUE.equals(createCompany),
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-    }
-
-    private record UserCommandData(
-            String username,
-            String role,
-            @Nullable UUID customerId,
-            @Nullable UUID companyId,
-            String fullName,
-            String profileType,
-            String companyName,
-            String companyType,
-            boolean createCompany,
-            String employeeSubRole,
-            List<String> permissions,
-            boolean active) {
-
-        UserCommandData withRole(String nextRole) {
-            return new UserCommandData(
-                    username,
-                    nextRole,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    companyType,
-                    createCompany,
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-
-        UserCommandData withCompanyType(String nextCompanyType) {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    nextCompanyType,
-                    createCompany,
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-
-        UserCommandData withEmployeeSubRole(String nextEmployeeSubRole) {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    companyType,
-                    createCompany,
-                    nextEmployeeSubRole,
-                    permissions,
-                    active);
-        }
-
-        UserCommandData withoutCompany() {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    null,
-                    fullName,
-                    profileType,
-                    "",
-                    "",
-                    false,
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-
-        UserCommandData withoutEmployeeSubRole() {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    companyId,
-                    fullName,
-                    profileType,
-                    companyName,
-                    companyType,
-                    createCompany,
-                    "",
-                    permissions,
-                    active);
-        }
-
-        UserCommandData withCompany(Company company) {
-            return new UserCommandData(
-                    username,
-                    role,
-                    customerId,
-                    company.id(),
-                    fullName,
-                    profileType,
-                    company.name(),
-                    company.type(),
-                    false,
-                    employeeSubRole,
-                    permissions,
-                    active);
-        }
-    }
+            boolean active) {}
 
     public record UpdateCurrentUserRequest(@NotBlank @Size(max = 120) String fullName) {}
 

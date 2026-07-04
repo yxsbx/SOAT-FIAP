@@ -92,6 +92,46 @@ class ApproveServiceOrderBudgetUseCaseTest {
                 .hasMessage("Budget can only be approved while waiting approval");
     }
 
+    @Test
+    void shouldApplyExternalBudgetApprovalDecision() {
+        Part part = partRepository.save(part());
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+        serviceOrder.addService(
+                new WorkshopService("Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60), 1);
+        serviceOrder.addPart(part, 2);
+        serviceOrderRepository.save(serviceOrder);
+        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(serviceOrder.id());
+
+        ServiceOrder updated = new DecideServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
+                .execute(new DecideServiceOrderBudgetUseCase.Command(
+                        serviceOrder.id(), DecideServiceOrderBudgetUseCase.Decision.APPROVED, "email", null));
+
+        assertThat(updated.approvedAt()).isNotNull();
+        assertThat(partRepository.findById(part.id()).orElseThrow().stockQuantity())
+                .isEqualTo(8);
+    }
+
+    @Test
+    void shouldApplyExternalBudgetRejectionDecisionAndReleaseReservedParts() {
+        Part part = partRepository.save(part());
+        ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
+        serviceOrder.addService(
+                new WorkshopService("Troca de oleo", "Substituição de oleo e filtro", Money.of("100.00"), 60), 1);
+        serviceOrder.addPart(part, 2);
+        serviceOrderRepository.save(serviceOrder);
+        new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository).execute(serviceOrder.id());
+
+        ServiceOrder updated = new DecideServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
+                .execute(new DecideServiceOrderBudgetUseCase.Command(
+                        serviceOrder.id(), DecideServiceOrderBudgetUseCase.Decision.REJECTED, "email", "Revisar"));
+
+        Part updatedPart = partRepository.findById(part.id()).orElseThrow();
+        assertThat(updated.status()).isEqualTo(ServiceOrderStatus.EM_DIAGNOSTICO);
+        assertThat(updated.approvedAt()).isNull();
+        assertThat(updatedPart.stockQuantity()).isEqualTo(10);
+        assertThat(updatedPart.reservedQuantity()).isZero();
+    }
+
     private static class InMemoryServiceOrderRepository implements ServiceOrderRepository {
 
         private final Map<UUID, ServiceOrder> serviceOrders = new LinkedHashMap<>();

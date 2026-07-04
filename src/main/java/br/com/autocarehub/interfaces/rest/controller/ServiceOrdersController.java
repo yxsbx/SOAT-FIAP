@@ -4,6 +4,7 @@ import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrder
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.DecideServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
@@ -17,6 +18,8 @@ import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartReq
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.AverageExecutionTimeResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ExternalBudgetDecisionRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ExternalStatusUpdateRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderStatus;
@@ -41,6 +44,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     private final AddPartToServiceOrderUseCase addPartToServiceOrderUseCase;
     private final GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase;
     private final ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase;
+    private final DecideServiceOrderBudgetUseCase decideServiceOrderBudgetUseCase;
     private final UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase;
     private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
     private final GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase;
@@ -54,6 +58,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
             AddPartToServiceOrderUseCase addPartToServiceOrderUseCase,
             GenerateServiceOrderBudgetUseCase generateServiceOrderBudgetUseCase,
             ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase,
+            DecideServiceOrderBudgetUseCase decideServiceOrderBudgetUseCase,
             UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase,
             ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase,
             GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase,
@@ -65,6 +70,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
         this.addPartToServiceOrderUseCase = addPartToServiceOrderUseCase;
         this.generateServiceOrderBudgetUseCase = generateServiceOrderBudgetUseCase;
         this.approveServiceOrderBudgetUseCase = approveServiceOrderBudgetUseCase;
+        this.decideServiceOrderBudgetUseCase = decideServiceOrderBudgetUseCase;
         this.updateServiceOrderStatusUseCase = updateServiceOrderStatusUseCase;
         this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
         this.getAverageServiceOrderExecutionTimeUseCase = getAverageServiceOrderExecutionTimeUseCase;
@@ -92,6 +98,14 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudget(UUID serviceOrderId) {
         return ResponseEntity.ok(
                 ServiceOrderRestMapper.toResponse(approveServiceOrderBudgetUseCase.execute(serviceOrderId)));
+    }
+
+    @Override
+    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
+    public ResponseEntity<ServiceOrderResponse> decideServiceOrderBudget(
+            UUID serviceOrderId, ExternalBudgetDecisionRequest externalBudgetDecisionRequest) {
+        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(decideServiceOrderBudgetUseCase.execute(
+                ServiceOrderRestMapper.toCommand(serviceOrderId, externalBudgetDecisionRequest))));
     }
 
     @Override
@@ -148,6 +162,14 @@ public class ServiceOrdersController implements ServiceOrdersApi {
             UUID serviceOrderId, UpdateServiceOrderStatusRequest updateServiceOrderStatusRequest) {
         ServiceOrder serviceOrder = updateServiceOrderStatusUseCase.execute(
                 ServiceOrderRestMapper.toCommand(serviceOrderId, updateServiceOrderStatusRequest));
+        return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
+    }
+
+    @Override
+    public ResponseEntity<ServiceOrderResponse> updateServiceOrderStatusFromExternalTool(
+            UUID serviceOrderId, ExternalStatusUpdateRequest externalStatusUpdateRequest) {
+        ServiceOrder serviceOrder = updateServiceOrderStatusUseCase.execute(
+                ServiceOrderRestMapper.toCommand(serviceOrderId, externalStatusUpdateRequest));
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));
     }
 

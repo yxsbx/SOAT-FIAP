@@ -3,21 +3,21 @@ package br.com.autocarehub.application.usecase.user;
 import static java.util.Objects.requireNonNull;
 
 import br.com.autocarehub.application.exception.ApplicationException;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class CreateUserUseCase {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordHasher passwordHasher;
 
-    public CreateUserUseCase(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CreateUserUseCase(UserRepository userRepository, PasswordHasher passwordHasher) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHasher = passwordHasher;
     }
 
     public User execute(Command command) {
@@ -27,7 +27,7 @@ public class CreateUserUseCase {
         User user = new User(
                 UUID.randomUUID(),
                 command.username(),
-                requireNonNull(passwordEncoder.encode(command.password())),
+                requireNonNull(passwordHasher.hash(command.password())),
                 UserRole.valueOf(command.role()),
                 command.customerId(),
                 command.companyId(),

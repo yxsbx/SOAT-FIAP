@@ -121,6 +121,16 @@ public class ServiceOrder {
         this.approvedAt = LocalDateTime.now();
     }
 
+    public void rejectBudget() {
+        requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Budget can only be rejected while waiting approval");
+        if (budgetGeneratedAt == null) {
+            throw new DomainException("Budget must be generated before rejection");
+        }
+        this.budgetGeneratedAt = null;
+        this.approvedAt = null;
+        this.status = ServiceOrderStatus.EM_DIAGNOSTICO;
+    }
+
     public void startExecution() {
         requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Execution can only start after budget generation");
         if (approvedAt == null) {

@@ -44,6 +44,7 @@ demonstrativo.
 | Identificar cliente por CPF/CNPJ | Value object `Document`.                            | Evita duplicar validação de documento em vários pontos da aplicação.        | `domain/valueobject/Document.java`.                                 |
 | Gerenciar veículos               | CRUD REST e entidade `Vehicle`.                     | O veículo precisa estar vinculado ao cliente da OS.                         | `VehiclesController`, `Vehicle`, `CreateServiceOrderUseCase`.       |
 | Validar placa                    | Value object `Plate`.                               | Centraliza validação de placa antiga e Mercosul.                            | `domain/valueobject/Plate.java`.                                    |
+| Preservar identidade do veículo  | Update bloqueia placa, marca, modelo e ano.         | Evita que correções cadastrais sobrescrevam histórico de OS de outro veículo. | `UpdateVehicleUseCase`, `docs/openapi/openapi.yaml`.                 |
 | Gerenciar serviços               | CRUD REST e entidade `WorkshopService`.             | Serviços compõem o orçamento da OS.                                         | `WorkshopServicesController`, `WorkshopService`.                    |
 | Gerenciar peças e insumos        | CRUD REST e agregado `Part`.                        | Peças impactam estoque, orçamento e execução do serviço.                    | `PartsController`, `Part`, use cases de estoque.                    |
 | Criar Ordem de Serviço           | Use case + agregado `ServiceOrder`.                 | A OS concentra status, itens, orçamento e datas importantes do atendimento. | `CreateServiceOrderUseCase`, `ServiceOrder`.                        |
@@ -76,6 +77,7 @@ demonstrativo.
 |---------------------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
 | Como representar CPF/CNPJ?                              | Criar `Document` como value object.                                                        | Documento é uma regra sensível e aparece em cliente, tracking e criação de OS. |
 | Como validar placa?                                     | Criar `Plate` como value object.                                                           | Placa precisa ser validada de forma consistente em veículo e acompanhamento.   |
+| Como corrigir dados errados de veículo existente?        | Bloquear alteração de placa, marca, modelo e ano; permitir inativar e criar novo veículo.   | Esses dados identificam o veículo e não devem reescrever histórico operacional. |
 | Como controlar status da OS?                            | Criar métodos de transição em `ServiceOrder`.                                              | Evita que controller ou use case alterem status livremente.                    |
 | Quando gerar orçamento?                                 | Na criação da OS, quando solicitado, ou no endpoint específico de geração.                 | O MVP precisa permitir geração automática e também geração explícita.          |
 | Quando reservar estoque?                                | Na geração do orçamento, quando a OS contém peças.                                         | A reserva evita prometer uma peça sem disponibilidade.                         |
@@ -85,7 +87,7 @@ demonstrativo.
 | Como calcular tempo médio?                              | Criar use case de consulta para a métrica.                                                 | A regra depende de várias OS e não pertence a uma única entidade isolada.      |
 | Como documentar a API?                                  | Versionar o OpenAPI em `docs/openapi/openapi.yaml`.                                        | O contrato documenta endpoints e apoia geração de interfaces.                  |
 | Como rodar localmente com banco?                        | Usar Docker Compose com backend, PostgreSQL e frontend.                                    | Facilita avaliação local sem instalação manual do banco.                       |
-| Como proteger senha?                                    | Usar BCrypt via `PasswordEncoder`.                                                         | Senhas não ficam em texto puro.                                                |
+| Como proteger senha?                                    | Usar a porta `PasswordHasher` com adaptador BCrypt em infraestrutura.                       | Casos de uso nao dependem diretamente do Spring Security e senhas nao ficam em texto puro. |
 
 ## 5. Spikes e validações técnicas
 
@@ -106,10 +108,10 @@ As validações foram feitas no próprio projeto, sem necessidade de POCs separa
 
 ## 6. Arquitetura da solução
 
-O AutoCare Hub usa um backend monolítico em camadas:
+O AutoCare Hub usa um backend monolítico com Arquitetura Hexagonal/Clean Architecture:
 
 - `interfaces`: controllers REST, mappers REST, exceptions HTTP e adaptação do contrato OpenAPI;
-- `application`: use cases, comandos, consultas e portas de repositório;
+- `application`: use cases, politicas de aplicacao, comandos, consultas e portas de repositório/seguranca;
 - `domain`: entidades, agregados, value objects, enums e exceções de domínio;
 - `infrastructure`: JPA, adapters de persistência, segurança JWT, configuração e integração com bibliotecas.
 

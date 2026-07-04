@@ -7,6 +7,7 @@ import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.exception.ResourceNotFoundException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
 import br.com.autocarehub.application.port.out.UserPreferenceRepository;
@@ -76,7 +77,6 @@ import java.util.Optional;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 class ApplicationUseCaseAdditionalCoverageTest {
 
@@ -154,9 +154,9 @@ class ApplicationUseCaseAdditionalCoverageTest {
 
         Vehicle updated = new UpdateVehicleUseCase(vehicleRepository)
                 .execute(new UpdateVehicleUseCase.Command(
-                        vehicle.id(), "DEF2G34", "Toyota", "Corolla", 2021, 36000, false));
+                        vehicle.id(), "ABC1D23", "Honda", "Civic", 2020, 36000, false));
 
-        assertThat(updated.plate()).isEqualTo(new Plate("DEF2G34"));
+        assertThat(updated.plate()).isEqualTo(new Plate("ABC1D23"));
         assertThat(updated.active()).isFalse();
         assertThat(new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(false)))
                 .containsExactly(updated);
@@ -164,6 +164,12 @@ class ApplicationUseCaseAdditionalCoverageTest {
                 .containsExactly(updated);
         assertThat(new ListVehiclesUseCase(vehicleRepository).execute(new ListVehiclesUseCase.Query(true)))
                 .isEmpty();
+
+        assertThatThrownBy(() -> new UpdateVehicleUseCase(vehicleRepository)
+                        .execute(new UpdateVehicleUseCase.Command(
+                                vehicle.id(), "ABC1D23", "Toyota", "Civic", 2020, 37000, true)))
+                .isInstanceOf(DomainException.class)
+                .hasMessage("Vehicle identity data cannot be changed; deactivate it and create a new vehicle");
 
         new DeleteVehicleUseCase(vehicleRepository).execute(vehicle.id());
 
@@ -294,7 +300,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
     @Test
     void shouldCoverUserUseCases() {
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
-        InMemoryPasswordEncoder passwordEncoder = new InMemoryPasswordEncoder();
+        InMemoryPasswordHasher passwordHasher = new InMemoryPasswordHasher();
         InMemoryUserPreferenceRepository preferenceRepository = new InMemoryUserPreferenceRepository();
         User admin = userRepository.save(user("admin", "Admin User", UserRole.ADMIN, true));
         User employee = userRepository.save(user("employee", "Employee User", UserRole.EMPLOYEE, false));
@@ -328,7 +334,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                         .execute(new ListUsersUseCase.Query(null, null, null, "missing")))
                 .isEmpty();
 
-        User created = new CreateUserUseCase(userRepository, passwordEncoder)
+        User created = new CreateUserUseCase(userRepository, passwordHasher)
                 .execute(new CreateUserUseCase.Command(
                         "consultor",
                         "plain",
@@ -397,7 +403,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThat(nullIdentity.username()).isEqualTo("consultor2");
         assertThat(nullIdentity.role()).isEqualTo(UserRole.ADMIN);
 
-        new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
+        new ChangeUserPasswordUseCase(userRepository, passwordHasher)
                 .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "plain", "new-secret", true));
         assertThat(userRepository.findById(updated.id()).orElseThrow().passwordHash())
                 .isEqualTo("encoded:new-secret");
@@ -411,7 +417,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThat(new GetUserPreferenceUseCase(preferenceRepository).execute(admin.id(), "home", "{}"))
                 .isEqualTo("{\"page\":\"orders\"}");
 
-        assertThatThrownBy(() -> new CreateUserUseCase(userRepository, passwordEncoder)
+        assertThatThrownBy(() -> new CreateUserUseCase(userRepository, passwordHasher)
                         .execute(new CreateUserUseCase.Command(
                                 "admin",
                                 "plain",
@@ -459,7 +465,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
                                 true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
-        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
+        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordHasher)
                         .execute(new ChangeUserPasswordUseCase.Command(updated.id(), "wrong", "new-secret", true)))
                 .isInstanceOf(ApplicationException.class)
                 .hasMessage("Current password is invalid");
@@ -504,7 +510,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         InMemoryServiceOrderRepository serviceOrderRepository = new InMemoryServiceOrderRepository();
         InMemoryStockMovementRepository movementRepository = new InMemoryStockMovementRepository();
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
-        InMemoryPasswordEncoder passwordEncoder = new InMemoryPasswordEncoder();
+        InMemoryPasswordHasher passwordHasher = new InMemoryPasswordHasher();
 
         assertThatThrownBy(() -> new UpdateCustomerUseCase(customerRepository)
                         .execute(new UpdateCustomerUseCase.Command(
@@ -597,7 +603,7 @@ class ApplicationUseCaseAdditionalCoverageTest {
         assertThatThrownBy(() -> new GetUserUseCase(userRepository).execute(missingId))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
-        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordEncoder)
+        assertThatThrownBy(() -> new ChangeUserPasswordUseCase(userRepository, passwordHasher)
                         .execute(new ChangeUserPasswordUseCase.Command(missingId, "old", "new", true)))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
@@ -794,18 +800,18 @@ class ApplicationUseCaseAdditionalCoverageTest {
         }
     }
 
-    private static class InMemoryPasswordEncoder implements PasswordEncoder {
+    private static class InMemoryPasswordHasher implements PasswordHasher {
 
         @Override
-        public String encode(@Nullable CharSequence rawPassword) {
-            return "encoded:" + rawPassword;
+        public String hash(String plainTextPassword) {
+            return "encoded:" + plainTextPassword;
         }
 
         @Override
-        public boolean matches(@Nullable CharSequence rawPassword, @Nullable String encodedPassword) {
-            return encodedPassword != null
-                    && (encodedPassword.equals("encoded:" + rawPassword)
-                            || encodedPassword.equals("{encoded}" + rawPassword));
+        public boolean matches(String plainTextPassword, @Nullable String passwordHash) {
+            return passwordHash != null
+                    && (passwordHash.equals("encoded:" + plainTextPassword)
+                            || passwordHash.equals("{encoded}" + plainTextPassword));
         }
     }
 }

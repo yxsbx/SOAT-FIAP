@@ -2,6 +2,7 @@ package br.com.autocarehub.application.usecase.customer;
 
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.enums.UserRole;
 import br.com.autocarehub.domain.model.Customer;
@@ -12,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class CreateCustomerUseCase {
 
@@ -20,7 +20,7 @@ public class CreateCustomerUseCase {
 
     private final CustomerRepository customerRepository;
     private final @Nullable UserRepository userRepository;
-    private final @Nullable PasswordEncoder passwordEncoder;
+    private final @Nullable PasswordHasher passwordHasher;
 
     public CreateCustomerUseCase(CustomerRepository customerRepository) {
         this(customerRepository, null, null);
@@ -29,10 +29,10 @@ public class CreateCustomerUseCase {
     public CreateCustomerUseCase(
             CustomerRepository customerRepository,
             @Nullable UserRepository userRepository,
-            @Nullable PasswordEncoder passwordEncoder) {
+            @Nullable PasswordHasher passwordHasher) {
         this.customerRepository = customerRepository;
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+        this.passwordHasher = passwordHasher;
     }
 
     public Customer execute(Command command) {
@@ -47,11 +47,11 @@ public class CreateCustomerUseCase {
         }
         Customer customer = new Customer(command.name(), document, command.phone(), command.email(), command.address());
         Customer savedCustomer = customerRepository.save(customer);
-        if (userRepository != null && passwordEncoder != null) {
+        if (userRepository != null && passwordHasher != null) {
             userRepository.save(new User(
                     UUID.randomUUID(),
                     savedCustomer.email(),
-                    passwordEncoder.encode(INITIAL_CUSTOMER_PASSWORD),
+                    passwordHasher.hash(INITIAL_CUSTOMER_PASSWORD),
                     UserRole.CUSTOMER,
                     savedCustomer.id(),
                     null,

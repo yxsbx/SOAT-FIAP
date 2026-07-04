@@ -1,6 +1,6 @@
-# Documento de Entrega - Tech Challenge FIAP
+# Documento de Entrega - Tech Challenge FIAP - Fase 2
 
-**Data do documento:** 29/06/2026
+**Data do documento:** 04/07/2026
 **Projeto:** AutoCare Hub
 
 ## 1. Nome do grupo
@@ -35,6 +35,30 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 | Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/TESTING.md>             |
 | Análise estática e qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/STATIC_ANALYSIS.md>     |
 | Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>     |
+| Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_ARCHITECTURE.md> |
+| Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_VIDEO_SCRIPT.md> |
+| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>                         |
+| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>                       |
+| Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/deploy.yml> |
+
+## 4.1 Links finais da Fase 2
+
+| Item | Link |
+|------|------|
+| Desenho da arquitetura | `docs/PHASE2_ARCHITECTURE.md` |
+| Vídeo demonstrativo | [INSERIR LINK DO VIDEO DA FASE 2] |
+| PDF final no portal | [INSERIR NOME/LINK DO PDF FINAL GERADO] |
+| Collection Postman | `docs/postman/autocarehub-phase2.postman_collection.json` |
+
+## 4.2 Recursos escolhidos para a Fase 2
+
+- Backend monolítico Spring Boot organizado em domínio, aplicação, portas, infraestrutura e interfaces.
+- PostgreSQL como banco relacional.
+- Docker e Docker Compose para execução local.
+- Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.
+- Terraform com provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap e Secret.
+- GitHub Actions para qualidade, build de imagens e deploy Kubernetes quando `KUBE_CONFIG` estiver configurado.
+- Swagger/OpenAPI como contrato principal da API.
 
 ## 5. Relatório com análise de vulnerabilidades encontradas no sistema
 
@@ -110,7 +134,22 @@ o Docker Scout informou que não havia versão corrigida disponível na base ana
 Como mitigação, os containers permanecem configurados com usuário não privilegiado, filesystem read-only quando
 aplicável e sem novos privilégios.
 
-## 6. Conclusão
+## 6. Evolução da Fase 2
+
+A Fase 2 evolui o MVP da Fase 1 com:
+
+- endpoint de decisão externa de orçamento em `POST /api/v1/service-orders/{serviceOrderId}/budget/decision`;
+- endpoint de atualização externa de status em `POST /api/v1/service-orders/{serviceOrderId}/status/external`;
+- listagem operacional de OS ordenada por status e data, ocultando OS finalizadas e entregues;
+- manifests Kubernetes em `k8s/`;
+- estrutura Terraform em `infra/`;
+- pipeline de deploy em `.github/workflows/deploy.yml`;
+- README principal atualizado com exemplos rápidos de API;
+- guia de scans de segurança em `docs/SECURITY_SCAN_GUIDE.md`;
+- desenho textual/Mermaid da arquitetura em `docs/PHASE2_ARCHITECTURE.md`;
+- roteiro do vídeo em `docs/PHASE2_VIDEO_SCRIPT.md`.
+
+## 7. Conclusão
 
 O AutoCare Hub entrega um MVP backend alinhado ao desafio proposto, cobrindo o ciclo principal de atendimento de uma
 oficina mecânica: cadastro de clientes e veículos, criação de Ordem de Serviço, composição com serviços e peças, geração
@@ -124,3 +163,7 @@ A entrega também inclui documentação DDD, Event Storming, contrato OpenAPI, t
 Docker e relatório de vulnerabilidades. As vulnerabilidades críticas e altas encontradas nos scans iniciais foram
 corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica e
 mitigação documentada.
+
+Para a Fase 2, a entrega passa a demonstrar arquitetura evoluída, automação, infraestrutura como código, Kubernetes,
+HPA, CI/CD e documentação de apoio. Permanecem como dados a preencher manualmente antes do envio final: link do vídeo,
+PDF final exportado e collection Postman se ela for usada além do Swagger/OpenAPI.

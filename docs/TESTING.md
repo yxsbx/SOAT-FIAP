@@ -18,7 +18,8 @@ A suíte cobre:
 - autenticação e autorização JWT;
 - controllers REST com `MockMvc`;
 - validações de CPF/CNPJ e placa;
-- fluxo principal da OS, incluindo criação, orçamento, aprovação, status, finalização, entrega e acompanhamento;
+- fluxo principal da OS, incluindo criação, orçamento, aprovação, recusa externa, status, finalização, entrega e acompanhamento;
+- listagem operacional de OS ordenada por prioridade/status e data, ocultando finalizadas e entregues;
 - geração de relatório JaCoCo e gate de cobertura.
 
 O build padrão não usa REST-assured, Cucumber nem Testcontainers. Os testes de integração usam Spring Boot Test,
@@ -67,7 +68,7 @@ Principais classes:
 | Veículo           | `VehicleTest`                                                                                                                                                                                               |
 | Serviços          | `WorkshopServiceTest`                                                                                                                                                                                       |
 | Peças e estoque   | `PartTest`, `RegisterPartStockMovementUseCaseTest`                                                                                                                                                          |
-| Ordem de Serviço  | `ServiceOrderTest`, `CreateServiceOrderUseCaseTest`, `GenerateServiceOrderBudgetUseCaseTest`, `ApproveServiceOrderBudgetUseCaseTest`, `UpdateServiceOrderStatusUseCaseTest`, `TrackServiceOrderUseCaseTest` |
+| Ordem de Serviço  | `ServiceOrderTest`, `CreateServiceOrderUseCaseTest`, `GenerateServiceOrderBudgetUseCaseTest`, `ApproveServiceOrderBudgetUseCaseTest`, `UpdateServiceOrderStatusUseCaseTest`, `TrackServiceOrderUseCaseTest`, `ListServiceOrdersUseCaseTest` |
 | Segurança         | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `AuthorizationServiceTest`                                                                                                                                 |
 | Mappers e suporte | `UserJpaMapperTest`, `CustomerRestMapperTest`, `ServiceOrderRestMapperTest`, `RestMapperSupportTest`                                                                                                        |
 
@@ -75,9 +76,12 @@ Exemplos de comportamentos cobertos:
 
 - documento inválido é rejeitado;
 - placa inválida é rejeitada;
+- alteração de placa, marca, modelo ou ano de veículo existente é rejeitada;
 - OS nasce com status inicial correto;
 - orçamento soma serviços e peças;
-- aprovação exige orçamento válido;
+- aprovação e recusa externa exigem orçamento válido;
+- recusa externa libera reservas e retorna a OS para diagnóstico;
+- fila operacional de OS exclui finalizadas/entregues e ordena por prioridade e data;
 - execução e entrega respeitam transições de status;
 - estoque não pode ficar negativo;
 - reserva não pode exceder disponibilidade;
@@ -95,7 +99,7 @@ Principais classes:
 | `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa.       |
 | `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ e placa inválidos.                                                     |
 | `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                                                  |
-| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API.                                                                     |
+| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API, decisão externa de orçamento e atualização externa de status.       |
 | `UserCompanyManagementIntegrationTest`   | Criação de usuários por perfil, vínculo com empresas e restrições de escopo.                       |
 
 Esses testes validam controller, DTO, mapper, segurança, use case, persistência e migrations no mesmo fluxo.
@@ -132,13 +136,15 @@ em memória e chamadas HTTP simuladas.
 | Requisito crítico                   | Cobertura de teste                                                                             |
 |-------------------------------------|------------------------------------------------------------------------------------------------|
 | CRUD de clientes                    | `AdministrativeCrudIntegrationTest`, `CustomerTest`, `CreateCustomerUseCaseTest`               |
-| CRUD de veículos                    | `AdministrativeCrudIntegrationTest`, `VehicleTest`                                             |
+| CRUD de veículos                    | `AdministrativeCrudIntegrationTest`, `VehicleTest`; update preserva placa, marca, modelo e ano |
 | CRUD de serviços                    | `AdministrativeCrudIntegrationTest`, `WorkshopServiceTest`                                     |
 | CRUD de peças/insumos               | `AdministrativeCrudIntegrationTest`, `PartTest`                                                |
 | Controle de estoque                 | `PartTest`, `RegisterPartStockMovementUseCaseTest`, `PartStockFlowIntegrationTest`             |
 | Criação da OS                       | `CreateServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                             |
 | Geração de orçamento                | `GenerateServiceOrderBudgetUseCaseTest`, `ServiceOrderTest`, `ServiceOrderFlowIntegrationTest` |
-| Aprovação de orçamento              | `ApproveServiceOrderBudgetUseCaseTest`, `ServiceOrderFlowIntegrationTest`                      |
+| Aprovação/recusa de orçamento       | `ApproveServiceOrderBudgetUseCaseTest`, `ServiceOrderFlowIntegrationTest`                      |
+| Listagem ordenada de OS             | `ListServiceOrdersUseCaseTest`                                                                  |
+| Atualização externa de status       | `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`                        |
 | Status da OS                        | `ServiceOrderTest`, `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`   |
 | Acompanhamento pelo cliente         | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
 | Tempo médio de execução             | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
@@ -207,8 +213,8 @@ target/site/allure-maven-plugin/index.html
 
 | Comando                                                              | Resultado                                                           |
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
-| `mvn test`                                                           | 149 testes, 0 falhas, 0 erros e 0 ignorados.                        |
-| `mvn clean install`                                                  | 149 testes, 0 falhas e JaCoCo aprovado.                             |
+| `mvn test`                                                           | 160 testes, 0 falhas, 0 erros e 0 ignorados.                        |
+| `mvn clean verify`                                                   | 160 testes, 0 falhas, 0 erros, 0 ignorados e JaCoCo aprovado.       |
 | `mvn dependency-check:check -DautoUpdate=false`                      | 103 dependências analisadas e 0 vulnerabilidades.                   |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import br.com.autocarehub.application.exception.ApplicationException;
 import br.com.autocarehub.application.port.out.CustomerRepository;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.UserRepository;
 import br.com.autocarehub.domain.model.Customer;
 import br.com.autocarehub.domain.model.User;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 class CreateCustomerUseCaseTest {
 
@@ -52,8 +52,7 @@ class CreateCustomerUseCaseTest {
     @Test
     void shouldCreateCustomerLoginWhenUserRepositoryIsConfigured() {
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
-        CreateCustomerUseCase useCase =
-                new CreateCustomerUseCase(repository, userRepository, new TestPasswordEncoder());
+        CreateCustomerUseCase useCase = new CreateCustomerUseCase(repository, userRepository, new TestPasswordHasher());
 
         Customer customer = useCase.execute(new CreateCustomerUseCase.Command(
                 "Maria Silva", "52998224725", "11999999999", "maria@example.com", address()));
@@ -83,8 +82,7 @@ class CreateCustomerUseCaseTest {
                 List.of(),
                 true,
                 java.time.LocalDateTime.now()));
-        CreateCustomerUseCase useCase =
-                new CreateCustomerUseCase(repository, userRepository, new TestPasswordEncoder());
+        CreateCustomerUseCase useCase = new CreateCustomerUseCase(repository, userRepository, new TestPasswordHasher());
 
         assertThatThrownBy(() -> useCase.execute(new CreateCustomerUseCase.Command(
                         "Maria Silva", "52998224725", "11999999999", "maria@example.com", address())))
@@ -149,16 +147,16 @@ class CreateCustomerUseCaseTest {
         }
     }
 
-    private static class TestPasswordEncoder implements PasswordEncoder {
+    private static class TestPasswordHasher implements PasswordHasher {
 
         @Override
-        public String encode(CharSequence rawPassword) {
-            return "encoded:" + rawPassword;
+        public String hash(String plainTextPassword) {
+            return "encoded:" + plainTextPassword;
         }
 
         @Override
-        public boolean matches(CharSequence rawPassword, String encodedPassword) {
-            return encodedPassword.equals("encoded:" + rawPassword);
+        public boolean matches(String plainTextPassword, String passwordHash) {
+            return passwordHash.equals("encoded:" + plainTextPassword);
         }
     }
 }

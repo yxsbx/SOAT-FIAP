@@ -46,6 +46,33 @@ class ServiceOrderFlowIntegrationTest {
         getAverageExecutionTime(token, completedOrdersBefore + 1);
     }
 
+    @Test
+    void shouldReceiveExternalBudgetDecisionAndExternalStatusUpdate() throws Exception {
+        String token = login();
+        UUID serviceOrderId = createSeedServiceOrderWithBudget(token);
+
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", serviceOrderId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of(
+                                "decision", "REJECTED",
+                                "source", "email",
+                                "reason", "Cliente pediu revisão do orçamento"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_DIAGNOSIS"))
+                .andExpect(jsonPath("$.approvedAt").doesNotExist());
+
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", serviceOrderId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of(
+                                "status", "WAITING_APPROVAL",
+                                "source", "email",
+                                "message", "Orçamento revisado por ferramenta externa"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("WAITING_APPROVAL"));
+    }
+
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -172,6 +199,33 @@ class ServiceOrderFlowIntegrationTest {
                                 false))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value("RECEIVED"))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        return uuid(response);
+    }
+
+    private UUID createSeedServiceOrderWithBudget(String token) throws Exception {
+        String response = mockMvc.perform(post("/api/v1/service-orders")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of(
+                                "customerDocument",
+                                "12345678909",
+                                "vehicleId",
+                                "20000000-0000-0000-0000-000000000001",
+                                "diagnosticNotes",
+                                "Cliente solicita revisão de freios",
+                                "services",
+                                java.util.List.of(
+                                        Map.of("serviceId", "30000000-0000-0000-0000-000000000004", "quantity", 1)),
+                                "parts",
+                                java.util.List.of(
+                                        Map.of("partId", "40000000-0000-0000-0000-000000000005", "quantity", 1)),
+                                "generateBudget",
+                                true))))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("WAITING_APPROVAL"))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();

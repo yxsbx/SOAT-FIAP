@@ -1,8 +1,10 @@
 package br.com.autocarehub.infrastructure.config;
 
+import br.com.autocarehub.application.port.out.CompanyRepository;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
 import br.com.autocarehub.application.port.out.PartRepository;
+import br.com.autocarehub.application.port.out.PasswordHasher;
 import br.com.autocarehub.application.port.out.ServiceOrderRepository;
 import br.com.autocarehub.application.port.out.StockMovementRepository;
 import br.com.autocarehub.application.port.out.UserPreferenceRepository;
@@ -32,6 +34,7 @@ import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrder
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ApproveServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.DecideServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.FindServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GenerateServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
@@ -40,11 +43,16 @@ import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseC
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.application.usecase.user.ChangeUserPasswordUseCase;
+import br.com.autocarehub.application.usecase.user.CreateManagedUserUseCase;
 import br.com.autocarehub.application.usecase.user.CreateUserUseCase;
 import br.com.autocarehub.application.usecase.user.GetUserPreferenceUseCase;
 import br.com.autocarehub.application.usecase.user.GetUserUseCase;
+import br.com.autocarehub.application.usecase.user.ListManageableCompaniesUseCase;
+import br.com.autocarehub.application.usecase.user.ListManageableUsersUseCase;
+import br.com.autocarehub.application.usecase.user.ListPartnerUsersUseCase;
 import br.com.autocarehub.application.usecase.user.ListUsersUseCase;
 import br.com.autocarehub.application.usecase.user.SaveUserPreferenceUseCase;
+import br.com.autocarehub.application.usecase.user.UpdateManagedUserUseCase;
 import br.com.autocarehub.application.usecase.user.UpdateUserUseCase;
 import br.com.autocarehub.application.usecase.vehicle.CreateVehicleUseCase;
 import br.com.autocarehub.application.usecase.vehicle.DeleteVehicleUseCase;
@@ -61,7 +69,6 @@ import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class ApplicationUseCaseConfig {
@@ -92,8 +99,31 @@ public class ApplicationUseCaseConfig {
     }
 
     @Bean
-    CreateUserUseCase createUserUseCase(UserRepository repository, PasswordEncoder passwordEncoder) {
-        return new CreateUserUseCase(repository, passwordEncoder);
+    ListManageableUsersUseCase listManageableUsersUseCase(
+            UserRepository userRepository, CompanyRepository companyRepository, ListUsersUseCase listUsersUseCase) {
+        return new ListManageableUsersUseCase(userRepository, companyRepository, listUsersUseCase);
+    }
+
+    @Bean
+    ListPartnerUsersUseCase listPartnerUsersUseCase(ListUsersUseCase listUsersUseCase) {
+        return new ListPartnerUsersUseCase(listUsersUseCase);
+    }
+
+    @Bean
+    ListManageableCompaniesUseCase listManageableCompaniesUseCase(
+            UserRepository userRepository, CompanyRepository companyRepository) {
+        return new ListManageableCompaniesUseCase(userRepository, companyRepository);
+    }
+
+    @Bean
+    CreateUserUseCase createUserUseCase(UserRepository repository, PasswordHasher passwordHasher) {
+        return new CreateUserUseCase(repository, passwordHasher);
+    }
+
+    @Bean
+    CreateManagedUserUseCase createManagedUserUseCase(
+            UserRepository userRepository, CompanyRepository companyRepository, CreateUserUseCase createUserUseCase) {
+        return new CreateManagedUserUseCase(userRepository, companyRepository, createUserUseCase);
     }
 
     @Bean
@@ -102,8 +132,14 @@ public class ApplicationUseCaseConfig {
     }
 
     @Bean
-    ChangeUserPasswordUseCase changeUserPasswordUseCase(UserRepository repository, PasswordEncoder passwordEncoder) {
-        return new ChangeUserPasswordUseCase(repository, passwordEncoder);
+    UpdateManagedUserUseCase updateManagedUserUseCase(
+            UserRepository userRepository, CompanyRepository companyRepository, UpdateUserUseCase updateUserUseCase) {
+        return new UpdateManagedUserUseCase(userRepository, companyRepository, updateUserUseCase);
+    }
+
+    @Bean
+    ChangeUserPasswordUseCase changeUserPasswordUseCase(UserRepository repository, PasswordHasher passwordHasher) {
+        return new ChangeUserPasswordUseCase(repository, passwordHasher);
     }
 
     @Bean
@@ -118,8 +154,8 @@ public class ApplicationUseCaseConfig {
 
     @Bean
     CreateCustomerUseCase createCustomerUseCase(
-            CustomerRepository repository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return new CreateCustomerUseCase(repository, userRepository, passwordEncoder);
+            CustomerRepository repository, UserRepository userRepository, PasswordHasher passwordHasher) {
+        return new CreateCustomerUseCase(repository, userRepository, passwordHasher);
     }
 
     @Bean
@@ -303,6 +339,12 @@ public class ApplicationUseCaseConfig {
     ApproveServiceOrderBudgetUseCase approveServiceOrderBudgetUseCase(
             ServiceOrderRepository repository, PartRepository partRepository) {
         return new ApproveServiceOrderBudgetUseCase(repository, partRepository);
+    }
+
+    @Bean
+    DecideServiceOrderBudgetUseCase decideServiceOrderBudgetUseCase(
+            ServiceOrderRepository repository, PartRepository partRepository) {
+        return new DecideServiceOrderBudgetUseCase(repository, partRepository);
     }
 
     @Bean

@@ -3,6 +3,7 @@ package br.com.autocarehub.interfaces.rest.mapper;
 import br.com.autocarehub.application.usecase.serviceorder.AddPartToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.AddServiceToServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.CreateServiceOrderUseCase;
+import br.com.autocarehub.application.usecase.serviceorder.DecideServiceOrderBudgetUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.GetAverageServiceOrderExecutionTimeUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
@@ -17,6 +18,8 @@ import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderPart
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderServiceRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.CreateServiceOrderVehicleRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ExternalBudgetDecisionRequest;
+import br.com.autocarehub.interfaces.rest.generated.model.ExternalStatusUpdateRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderBudgetTrackingResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderListResponse;
 import br.com.autocarehub.interfaces.rest.generated.model.ServiceOrderPartItem;
@@ -70,6 +73,23 @@ public final class ServiceOrderRestMapper {
 
     public static UpdateServiceOrderStatusUseCase.Command toCommand(
             UUID serviceOrderId, UpdateServiceOrderStatusRequest request) {
+        return new UpdateServiceOrderStatusUseCase.Command(
+                serviceOrderId,
+                ServiceOrderStatus.fromExternalCode(request.getStatus().getValue()));
+    }
+
+    public static DecideServiceOrderBudgetUseCase.Command toCommand(
+            UUID serviceOrderId, ExternalBudgetDecisionRequest request) {
+        return new DecideServiceOrderBudgetUseCase.Command(
+                serviceOrderId,
+                DecideServiceOrderBudgetUseCase.Decision.valueOf(
+                        request.getDecision().getValue()),
+                request.getSource(),
+                request.getReason());
+    }
+
+    public static UpdateServiceOrderStatusUseCase.Command toCommand(
+            UUID serviceOrderId, ExternalStatusUpdateRequest request) {
         return new UpdateServiceOrderStatusUseCase.Command(
                 serviceOrderId,
                 ServiceOrderStatus.fromExternalCode(request.getStatus().getValue()));

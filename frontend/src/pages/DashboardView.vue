@@ -6187,19 +6187,26 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required />
+              <input v-model="forms.vehicle.plate" :disabled="Boolean(forms.vehicle.id)" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
+              <input v-model="forms.vehicle.brand" :disabled="Boolean(forms.vehicle.id)" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
+              <input v-model="forms.vehicle.model" :disabled="Boolean(forms.vehicle.id)" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number" />
+              <input
+                v-model.number="forms.vehicle.year"
+                :disabled="Boolean(forms.vehicle.id)"
+                min="1900"
+                placeholder="Ano"
+                required
+                type="number"
+              />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
@@ -6588,19 +6595,19 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required />
+              <input v-model="modalDraft.vehicle.plate" disabled placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required />
+              <input v-model="modalDraft.vehicle.brand" disabled placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required />
+              <input v-model="modalDraft.vehicle.model" disabled placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number" />
+              <input v-model.number="modalDraft.vehicle.year" disabled min="1900" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>

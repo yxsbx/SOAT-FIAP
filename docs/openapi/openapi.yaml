@@ -332,6 +332,10 @@ paths:
       tags:
         - Vehicles
       summary: Atualiza um veículo
+      description: >
+        Atualiza quilometragem e status ativo do veículo. Para preservar histórico de OS, placa, marca, modelo e ano
+        devem permanecer iguais aos dados já cadastrados; se esses dados estiverem incorretos, inative o veículo e crie
+        um novo cadastro.
       operationId: updateVehicle
       parameters:
         - $ref: '#/components/parameters/VehicleIdPathParam'
@@ -1148,6 +1152,49 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/service-orders/{serviceOrderId}/budget/decision:
+    post:
+      tags:
+        - Service Orders
+      summary: Recebe decisão externa de aprovação ou recusa do orçamento
+      description: >
+        Endpoint demonstrável para simular uma notificação externa, como email, aprovando ou recusando o orçamento.
+        Quando aprovado, confirma a reserva de peças. Quando recusado, libera reservas e retorna a OS para diagnóstico.
+      operationId: decideServiceOrderBudget
+      parameters:
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalBudgetDecisionRequest'
+            examples:
+              aprovarPorEmail:
+                summary: Aprovação simulada por email
+                value:
+                  decision: APPROVED
+                  source: email
+                  reason: Cliente aprovou o orçamento pelo link de notificação.
+              recusarPorEmail:
+                summary: Recusa simulada por email
+                value:
+                  decision: REJECTED
+                  source: email
+                  reason: Cliente recusou o orçamento e solicitou revisão.
+      responses:
+        '200':
+          description: Decisão registrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/status:
     patch:
       tags:
@@ -1182,6 +1229,43 @@ paths:
       responses:
         '200':
           description: Status atualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceOrderResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/service-orders/{serviceOrderId}/status/external:
+    post:
+      tags:
+        - Service Orders
+      summary: Recebe atualização externa de status da ordem de serviço
+      description: >
+        Endpoint demonstrável para simular uma ferramenta externa, como email, notificando mudança de status da OS.
+        A transição usa as mesmas regras de negócio do fluxo principal.
+      operationId: updateServiceOrderStatusFromExternalTool
+      parameters:
+        - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExternalStatusUpdateRequest'
+            examples:
+              emailFinalizacao:
+                summary: Finalização recebida por ferramenta externa
+                value:
+                  status: FINISHED
+                  source: email
+                  message: Mecânico informou finalização pelo fluxo externo.
+      responses:
+        '200':
+          description: Status atualizado pela notificação externa
           content:
             application/json:
               schema:
@@ -1993,6 +2077,9 @@ components:
           type: integer
           minimum: 0
     UpdateVehicleRequest:
+      description: >
+        Payload completo mantido por compatibilidade com o formulário administrativo. Em atualização, `plate`, `brand`,
+        `model` e `year` devem repetir os dados atuais do veículo; somente `mileage` e `active` são mutáveis.
       allOf:
         - $ref: '#/components/schemas/CreateVehicleRequest'
         - type: object
@@ -2440,6 +2527,43 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/ServiceOrderStatus'
+    ExternalBudgetDecisionRequest:
+      type: object
+      required:
+        - decision
+        - source
+      properties:
+        decision:
+          type: string
+          enum:
+            - APPROVED
+            - REJECTED
+        source:
+          type: string
+          minLength: 2
+          maxLength: 60
+          example: email
+        reason:
+          type: string
+          maxLength: 500
+          example: Cliente respondeu a notificação externa.
+    ExternalStatusUpdateRequest:
+      type: object
+      required:
+        - status
+        - source
+      properties:
+        status:
+          $ref: '#/components/schemas/ServiceOrderStatus'
+        source:
+          type: string
+          minLength: 2
+          maxLength: 60
+          example: email
+        message:
+          type: string
+          maxLength: 500
+          example: Atualização recebida pela ferramenta externa.
     ServiceOrderServiceItem:
       type: object
       required:

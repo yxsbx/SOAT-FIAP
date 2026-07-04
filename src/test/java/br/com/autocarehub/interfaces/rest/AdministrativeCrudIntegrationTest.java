@@ -135,7 +135,7 @@ class AdministrativeCrudIntegrationTest {
                 "brand",
                 "Fiat",
                 "model",
-                "Argo Trekking",
+                "Argo",
                 "year",
                 2022,
                 "mileage",
@@ -147,7 +147,30 @@ class AdministrativeCrudIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(updateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.model").value("Argo Trekking"));
+                .andExpect(jsonPath("$.mileage").value(20000));
+
+        Map<String, Object> invalidIdentityUpdateRequest = Map.of(
+                "customerId",
+                customerId,
+                "plate",
+                "CRD1A23",
+                "brand",
+                "Fiat",
+                "model",
+                "Argo Trekking",
+                "year",
+                2022,
+                "mileage",
+                21000,
+                "active",
+                true);
+        mockMvc.perform(put("/api/v1/vehicles/{vehicleId}", vehicleId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(invalidIdentityUpdateRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("Vehicle identity data cannot be changed; deactivate it and create a new vehicle"));
 
         mockMvc.perform(delete("/api/v1/vehicles/{vehicleId}", vehicleId).header("Authorization", bearer(token)))
                 .andExpect(status().isNoContent());
