@@ -59,6 +59,11 @@ class SecurityAuthorizationIntegrationTest {
     }
 
     @Test
+    void shouldExposeHealthcheckWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/actuator/health")).andExpect(status().isOk());
+    }
+
+    @Test
     void shouldAllowAdministrativeApiAccessWithValidAdminJwt() throws Exception {
         String token = login("admin@autocarehub.com");
 

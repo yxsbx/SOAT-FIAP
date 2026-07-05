@@ -87,7 +87,9 @@ public class SecurityConfig {
                                 "/swagger-ui-init.js",
                                 "/swagger-ui-static.html",
                                 "/webjars/**",
-                                "/openapi.yaml")
+                                "/openapi.yaml",
+                                "/actuator/health",
+                                "/actuator/health/**")
                         .permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/demo-leads")
                         .permitAll()

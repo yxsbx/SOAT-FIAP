@@ -210,24 +210,27 @@ Variaveis principais do frontend:
 
 ## Como rodar localmente com Docker
 
-Use estes comandos para reiniciar o ambiente:
+Crie o arquivo local de ambiente a partir do template seguro:
+
+```bash
+cp .env.example .env
+```
+
+Edite o `.env` local e troque pelo menos `POSTGRES_PASSWORD` e `JWT_SECRET`. O arquivo `.env` real não deve ser
+versionado.
+
+Sequência recomendada para subir do zero:
 
 ```bash
 docker compose down
+docker compose down -v
 docker compose down --remove-orphans
 docker compose up -d --build
-docker compose logs -f
 docker compose ps
+docker compose logs -f
 ```
 
-Use `down -v` apenas quando quiser remover os volumes locais, incluindo os dados locais do PostgreSQL:
-
-```bash
-docker compose down -v
-docker compose up -d --build
-```
-
-Sequencia completa para recriar tudo do zero:
+Comandos úteis de limpeza e acompanhamento:
 
 ```bash
 docker compose down
@@ -235,6 +238,8 @@ docker compose down -v
 docker compose down --remove-orphans
 docker compose up -d --build
 docker compose logs -f
+docker compose logs -f backend
+docker compose logs -f frontend
 docker compose ps
 ```
 
@@ -245,7 +250,19 @@ URLs locais:
 | Frontend | <http://localhost:5173> |
 | API | <http://localhost:8080> |
 | Swagger UI | <http://localhost:8080/swagger-ui.html> |
+| Healthcheck backend | <http://localhost:8080/actuator/health> |
 | PostgreSQL | `localhost:5432` |
+
+O `docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
+executa as migrations Flyway no startup e expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
+`/v3/api-docs`, `/swagger-ui` e `/openapi.yaml` para o backend, então a aplicação web funciona em
+`http://localhost:5173` sem configurar uma URL absoluta de API.
+
+Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `.env.example`:
+
+```text
+http://localhost:5173,http://127.0.0.1:5173
+```
 
 ## Como rodar backend localmente
 
@@ -645,62 +662,114 @@ Revisao Docker da Fase 2:
 
 Status: implementado para demonstracao local/acadêmica.
 
-Local previsto:
+Local:
 
 ```text
 k8s/
 ```
 
-Itens previstos:
+Manifestos principais:
 
-- Deployments.
-- Services.
-- ConfigMaps.
-- Secrets.
-- HPA.
-- Manifests para backend, frontend e banco ou servico gerenciado.
+- `00-namespace.yaml`: namespace `autocarehub`.
+- `01-configmap.yaml`: variaveis nao sensiveis.
+- `02-secret.yaml`: placeholders seguros para senha do banco e segredo JWT.
+- `03-postgres-pvc.yaml`, `04-postgres-deployment.yaml`, `05-postgres-service.yaml`: PostgreSQL demonstrativo no cluster.
+- `06-backend-deployment.yaml`, `07-backend-service.yaml`, `08-backend-hpa.yaml`: API Spring Boot, Service interno `backend` e HPA por CPU/memoria.
+- `09-frontend-deployment.yaml`, `10-frontend-service.yaml`, `11-frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU.
 
-Comandos previstos:
+Antes de aplicar, substitua os placeholders em `k8s/02-secret.yaml` por valores seguros do ambiente. Nao versione secrets reais.
+
+Validacao local dos manifests:
+
+```bash
+kubectl apply --dry-run=client -f k8s/
+```
+
+Comandos principais:
 
 ```bash
 kubectl apply -f k8s/
-kubectl get pods
-kubectl get services
-kubectl get hpa
+kubectl get pods -n autocarehub
+kubectl get svc -n autocarehub
+kubectl get hpa -n autocarehub
+kubectl logs -n autocarehub deploy/autocarehub-api
+kubectl delete -f k8s/
 ```
+
+Acesso local para demonstracao:
+
+```bash
+kubectl port-forward -n autocarehub svc/backend 8080:8080
+kubectl port-forward -n autocarehub svc/autocarehub-web 5173:8080
+```
+
+Limitacoes: o PostgreSQL em Kubernetes e demonstrativo para a Fase 2; ambientes produtivos devem avaliar banco gerenciado,
+backup e replicacao. O HPA depende do Metrics Server instalado no cluster. As imagens precisam estar publicadas no registry
+ou carregadas no runtime local do cluster.
 
 ## Terraform
 
 Status: implementado para demonstracao local/acadêmica.
 
-Local previsto:
+Local:
 
 ```text
 infra/
 ```
 
-Itens previstos:
+Decisao de ambiente: o projeto nao assume AWS, Azure, GCP ou outro provedor cloud. A infraestrutura da Fase 2 foi
+modelada para um cluster Kubernetes local/acadêmico ja existente, como `kind`, `minikube` ou cluster disponibilizado para
+avaliacao.
 
-- Scripts de provisionamento.
-- Recursos de rede, cluster e dependencias conforme ambiente escolhido.
-- Variaveis por ambiente.
-- Outputs relevantes para deploy.
+Arquivos:
 
-Comandos previstos:
+- `infra/main.tf`: provider Kubernetes e recursos base.
+- `infra/variables.tf`: variaveis parametrizaveis.
+- `infra/outputs.tf`: outputs uteis para conferencia e deploy.
+- `infra/terraform.tfvars.example`: exemplo seguro com placeholders.
+- `infra/README.md`: instrucoes detalhadas.
+
+Recursos provisionados:
+
+- Namespace `autocarehub`.
+- ConfigMap `autocarehub-config`.
+- Secret `autocarehub-secret`, com valores recebidos por variaveis locais/CI.
+- PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo.
+
+Comandos:
 
 ```bash
+cd infra
 terraform init
+terraform fmt
+terraform validate
 terraform plan
 terraform apply
+terraform destroy
 ```
+
+Variaveis sensiveis devem ser informadas fora do repositorio, por exemplo:
+
+```bash
+export TF_VAR_postgres_password="substituir-localmente"
+export TF_VAR_jwt_secret="segredo-com-pelo-menos-32-bytes"
+```
+
+Depois do `terraform apply`, aplique apenas os workloads Kubernetes que nao sao gerenciados pelo Terraform, conforme
+detalhado em [infra/README.md](infra/README.md). Nao aplique `k8s/02-secret.yaml` por cima do Secret criado pelo
+Terraform, porque o manifesto Kubernetes usa placeholders.
+
+Limitacoes: o Terraform nao cria o cluster Kubernetes e nao cria banco gerenciado em cloud. Ele provisiona a base
+necessaria no cluster configurado no kubeconfig local.
 
 ## CI/CD
 
-Pipeline atual:
+Pipelines atuais:
 
 - [.github/workflows/quality.yml](.github/workflows/quality.yml)
+- [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
 
-Etapas atuais:
+`quality.yml` executa:
 
 - Spotless no backend.
 - `mvn verify`.
@@ -711,15 +780,33 @@ Etapas atuais:
 - Validacao do Docker Compose.
 - Build das imagens Docker.
 
-Etapas previstas para a Fase 2:
+`deploy.yml` executa:
 
-- Build da imagem Docker e publicacao em registry.
-- Deploy no Kubernetes.
-- Aplicacao de migracoes do banco.
-- Aplicacao dos manifests.
-- Execucao de smoke tests pos-deploy.
+- Build e testes do backend com `mvn -B verify`.
+- Instalação, lint e build do frontend.
+- Validação estrutural dos YAMLs de `k8s/`.
+- `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
+- Build das imagens Docker do backend e frontend.
+- Publicação das imagens no GitHub Container Registry quando a execução estiver em `main`.
+- Deploy real no Kubernetes somente quando os secrets necessários estiverem configurados.
+- Aplicação de namespace, ConfigMap e PVC.
+- Criação/atualização do Secret Kubernetes a partir dos GitHub Actions Secrets, sem usar placeholders.
+- Aplicação do PostgreSQL, backend, frontend, Services e HPAs.
+- Verificação de rollout e listagem de pods, services e HPAs.
 
-Status do deploy automatizado: implementado em `.github/workflows/deploy.yml`, com aplicacao real quando o secret `KUBE_CONFIG` estiver configurado.
+Secrets necessários para deploy real:
+
+| Secret | Uso |
+| ------ | --- |
+| `KUBE_CONFIG` | Kubeconfig em base64 para acesso ao cluster. |
+| `POSTGRES_PASSWORD` | Senha do PostgreSQL usada no Secret Kubernetes. |
+| `JWT_SECRET` | Segredo JWT com pelo menos 32 bytes. |
+
+Se qualquer secret obrigatório estiver ausente, a pipeline mantém build, testes, validações e build de imagens, mas registra
+que o deploy real foi pulado. Esse comportamento é intencional para permitir execução acadêmica sem expor credenciais.
+
+O deploy do banco é demonstrável pelo manifesto do PostgreSQL em Kubernetes e pelas migrations Flyway executadas no
+startup do backend. A pipeline aplica o PVC e o Deployment do PostgreSQL antes dos workloads da aplicação.
 
 ## Documentacao complementar
 

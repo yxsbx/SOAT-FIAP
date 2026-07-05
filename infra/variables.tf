@@ -28,6 +28,36 @@ variable "postgres_user" {
   default     = "autocarehub"
 }
 
+variable "postgres_service_name" {
+  description = "Nome do Service Kubernetes usado pelo backend para acessar o PostgreSQL."
+  type        = string
+  default     = "autocarehub-postgres"
+}
+
+variable "postgres_pvc_name" {
+  description = "Nome do PVC usado pelo PostgreSQL demonstrativo."
+  type        = string
+  default     = "autocarehub-postgres-data"
+}
+
+variable "postgres_storage_size" {
+  description = "Tamanho solicitado para o volume persistente do PostgreSQL."
+  type        = string
+  default     = "1Gi"
+}
+
+variable "postgres_storage_class_name" {
+  description = "StorageClass do PVC. Use null para deixar o cluster escolher a classe padrao."
+  type        = string
+  default     = null
+}
+
+variable "postgres_data_directory" {
+  description = "Diretorio de dados usado pelo container PostgreSQL."
+  type        = string
+  default     = "/var/lib/postgresql/data/pgdata"
+}
+
 variable "postgres_password" {
   description = "Senha do PostgreSQL. Informe via TF_VAR_postgres_password ou terraform.tfvars local."
   type        = string
@@ -46,6 +76,12 @@ variable "jwt_expiration_minutes" {
   default     = 60
 }
 
+variable "backend_port" {
+  description = "Porta HTTP interna do backend."
+  type        = number
+  default     = 8080
+}
+
 variable "spring_profile" {
   description = "Perfil Spring usado no cluster academico."
   type        = string
@@ -55,12 +91,17 @@ variable "spring_profile" {
 variable "cors_allowed_origins" {
   description = "Origens liberadas no CORS."
   type        = string
-  default     = "http://localhost:5173,http://127.0.0.1:5173,http://autocarehub-web"
+  default     = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080"
 }
 
-variable "java_opts" {
+variable "springdoc_api_docs_enabled" {
+  description = "Habilita o endpoint OpenAPI no ambiente academico."
+  type        = bool
+  default     = true
+}
+
+variable "java_tool_options" {
   description = "Opcoes de JVM para o backend."
   type        = string
   default     = "-Xms256m -Xmx512m"
 }
-

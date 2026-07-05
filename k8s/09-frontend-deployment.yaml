@@ -18,17 +18,18 @@ spec:
           image: ghcr.io/yxsbx/autocarehub-web:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8080
+            - name: http
+              containerPort: 8080
           readinessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: http
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: http
             initialDelaySeconds: 30
             periodSeconds: 20
           resources:
@@ -38,38 +39,3 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: autocarehub-web
-  namespace: autocarehub
-spec:
-  type: ClusterIP
-  selector:
-    app: autocarehub-web
-  ports:
-    - name: http
-      port: 8080
-      targetPort: 8080
----
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: autocarehub-web
-  namespace: autocarehub
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: autocarehub-web
-  minReplicas: 2
-  maxReplicas: 4
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
-
