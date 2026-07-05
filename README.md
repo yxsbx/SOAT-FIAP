@@ -64,8 +64,9 @@ modelos e regras, `application` orquestra casos de uso e portas, `infrastructure
 e seguranca, e `interfaces` adapta o contrato REST/OpenAPI para a aplicacao.
 
 Na refatoracao da Fase 2, regras de gestao de usuarios foram removidas do `UsersController` e movidas para casos de uso
-e politica de aplicacao. A criacao e troca de senhas tambem passaram a depender da porta `PasswordHasher`, implementada
-por um adaptador BCrypt em `infrastructure/security`, evitando dependencia direta de Spring Security nos casos de uso.
+e politica de aplicacao. A autenticacao e o hash de senhas tambem passaram a depender das portas
+`AuthenticationGateway` e `PasswordHasher`, implementadas por adaptadores em `infrastructure/security`, evitando
+dependencia direta de Spring Security nos casos de uso.
 
 Arquitetura atual:
 
@@ -464,7 +465,7 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
 - Objetivo: permitir que uma ferramenta externa, como email, registre aprovacao ou recusa.
 - Metodo: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/decision`.
-- Bearer token: sim.
+- Bearer token: sim. Cliente dono da OS, administrador ou colaborador da oficina.
 - Body:
 
 ```json
@@ -518,7 +519,7 @@ Listagem ordenada por prioridade/status e data:
 - Objetivo: simular ferramenta externa, como email, notificando nova etapa da OS.
 - Metodo: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/status/external`.
-- Bearer token: sim.
+- Bearer token: sim. Administrador ou colaborador da oficina.
 
 ```bash
 curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/status/external" \

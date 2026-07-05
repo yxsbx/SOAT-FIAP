@@ -58,7 +58,18 @@ juntas.
 Não há Maven Failsafe nem profiles separados para integração/E2E. Para este MVP, `mvn verify` continua sendo o comando
 principal, porque executa a suíte completa e o gate de cobertura sem exigir comandos diferentes.
 
-## 5. Testes unitários
+## 5. Ajustes de warnings no ambiente de teste
+
+A configuração de testes foi ajustada para evitar warnings que poderiam esconder regressões reais:
+
+- H2 fixado em versão compatível com a versão verificada pelo Flyway usada no projeto;
+- Mockito carregado como `javaagent` no Surefire, evitando auto-attach dinâmico no JDK;
+- `spring.jpa.open-in-view=false` também no profile de teste;
+- relatório JaCoCo movido para `verify`, evitando bloqueio de arquivo no Windows durante `mvn clean test`;
+- modelo OpenAPI gerado pós-processado para remover `@Valid` diretamente de `List`, mantendo validação nos itens da
+  lista e nos objetos aninhados.
+
+## 6. Testes unitários
 
 Principais classes:
 
@@ -69,7 +80,7 @@ Principais classes:
 | Serviços          | `WorkshopServiceTest`                                                                                                                                                                                       |
 | Peças e estoque   | `PartTest`, `RegisterPartStockMovementUseCaseTest`                                                                                                                                                          |
 | Ordem de Serviço  | `ServiceOrderTest`, `CreateServiceOrderUseCaseTest`, `GenerateServiceOrderBudgetUseCaseTest`, `ApproveServiceOrderBudgetUseCaseTest`, `UpdateServiceOrderStatusUseCaseTest`, `TrackServiceOrderUseCaseTest`, `ListServiceOrdersUseCaseTest` |
-| Segurança         | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `AuthorizationServiceTest`                                                                                                                                 |
+| Segurança         | `LoginUseCaseTest`, `JwtServiceTest`, `JwtAuthenticationFilterTest`, `AuthorizationServiceTest`                                                                                                             |
 | Mappers e suporte | `UserJpaMapperTest`, `CustomerRestMapperTest`, `ServiceOrderRestMapperTest`, `RestMapperSupportTest`                                                                                                        |
 
 Exemplos de comportamentos cobertos:
@@ -85,9 +96,10 @@ Exemplos de comportamentos cobertos:
 - execução e entrega respeitam transições de status;
 - estoque não pode ficar negativo;
 - reserva não pode exceder disponibilidade;
+- login administrativo delega autenticação por porta de aplicação;
 - JWT inválido ou inconsistente é rejeitado.
 
-## 6. Testes de integração
+## 7. Testes de integração
 
 Os testes REST usam `@SpringBootTest`, `@AutoConfigureMockMvc`, H2 em memória e migrations Flyway.
 
@@ -97,14 +109,14 @@ Principais classes:
 |------------------------------------------|----------------------------------------------------------------------------------------------------|
 | `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças, usuários e criação/vínculo de empresa. |
 | `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa.       |
-| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ e placa inválidos.                                                     |
+| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ, placa e payload de OS inválidos.                                      |
 | `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                                                  |
-| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API, decisão externa de orçamento e atualização externa de status.       |
+| `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API, consulta de status, tracking, entrega e decisão externa de orçamento. |
 | `UserCompanyManagementIntegrationTest`   | Criação de usuários por perfil, vínculo com empresas e restrições de escopo.                       |
 
 Esses testes validam controller, DTO, mapper, segurança, use case, persistência e migrations no mesmo fluxo.
 
-## 7. Teste de fluxo completo da API
+## 8. Teste de fluxo completo da API
 
 O projeto não usa um runner E2E externo. A validação ponta a ponta do MVP é feita por teste de integração de API com
 MockMvc.
@@ -131,7 +143,7 @@ O fluxo principal coberto em `ServiceOrderFlowIntegrationTest` valida:
 Para o escopo acadêmico, esse teste funciona como teste de sistema da API, porque exercita a aplicação Spring com banco
 em memória e chamadas HTTP simuladas.
 
-## 8. Cenários críticos cobertos
+## 9. Cenários críticos cobertos
 
 | Requisito crítico                   | Cobertura de teste                                                                             |
 |-------------------------------------|------------------------------------------------------------------------------------------------|
@@ -149,25 +161,27 @@ em memória e chamadas HTTP simuladas.
 | Acompanhamento pelo cliente         | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
 | Tempo médio de execução             | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
 | JWT e autorização                   | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `SecurityAuthorizationIntegrationTest`        |
+| Login administrativo                | `LoginUseCaseTest`, `SecurityAuthorizationIntegrationTest`                                    |
 | Criação de empresa por Admin Master | `AdministrativeCrudIntegrationTest`                                                            |
 | Escopo de usuários por empresa      | `SecurityAuthorizationIntegrationTest`                                                         |
 | CPF/CNPJ e placa                    | `CustomerTest`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                        |
+| Payload inválido                    | `SensitiveDataValidationIntegrationTest`                                                       |
 
-## 9. Cobertura JaCoCo
+## 10. Cobertura JaCoCo
 
 Resultado revalidado com `mvn clean verify`:
 
 | Métrica    | Resultado | Gate do projeto |
 |------------|----------:|----------------:|
-| Instruções |    96,02% |             90% |
-| Linhas     |    96,66% |             90% |
-| Branches   |    90,12% |             90% |
+| Instruções |    96,55% |             90% |
+| Linhas     |    97,48% |             90% |
+| Branches   |    91,00% |             90% |
 
 O gate interno é mais rígido que a exigência mínima de 80% para os domínios críticos. O JaCoCo exclui a classe principal
 da aplicação, código gerado pelo OpenAPI e records internos de comandos, queries e outputs sem lógica própria, para
 medir melhor o código escrito no projeto.
 
-## 10. Como executar os testes
+## 11. Como executar os testes
 
 Execução rápida da suíte:
 
@@ -207,14 +221,14 @@ Saída esperada do relatório opcional:
 target/site/allure-maven-plugin/index.html
 ```
 
-## 11. Evidências
+## 12. Evidências
 
 Última execução registrada nesta revisão:
 
 | Comando                                                              | Resultado                                                           |
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
-| `mvn test`                                                           | 160 testes, 0 falhas, 0 erros e 0 ignorados.                        |
-| `mvn clean verify`                                                   | 160 testes, 0 falhas, 0 erros, 0 ignorados e JaCoCo aprovado.       |
+| `mvn clean test`                                                      | 163 testes, 0 falhas, 0 erros e 0 ignorados.                        |
+| `mvn clean verify`                                                    | 163 testes, 0 falhas, 0 erros, 0 ignorados e JaCoCo aprovado.       |
 | `mvn dependency-check:check -DautoUpdate=false`                      | 103 dependências analisadas e 0 vulnerabilidades.                   |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 
@@ -222,7 +236,7 @@ Não há `target/failsafe-reports/`, porque o projeto não usa Maven Failsafe.
 
 O Allure fica isolado em profile opcional para não alterar o caminho padrão de build, testes e scans.
 
-## 12. Pontos fora do gate obrigatório
+## 13. Pontos fora do gate obrigatório
 
 Os itens abaixo não fazem parte do gate obrigatório desta entrega:
 
@@ -236,7 +250,7 @@ Os itens abaixo não fazem parte do gate obrigatório desta entrega:
 
 Esses itens podem ser adicionados em ciclos futuros, mas não são pendências do Tech Challenge.
 
-## 13. Pendências identificadas
+## 14. Pendências identificadas
 
 Não há pendência obrigatória aberta na estratégia de testes.
 
@@ -251,12 +265,12 @@ Os pontos abaixo são apenas melhorias futuras:
 Essas melhorias não bloqueiam a entrega, porque a suíte atual já cobre os fluxos obrigatórios, passa no `mvn verify` e
 supera o gate mínimo de cobertura.
 
-## 14. Conclusão
+## 15. Conclusão
 
 A estratégia de testes está aderente ao Tech Challenge: há testes unitários para regras críticas, testes com Mockito
 onde há dependências a isolar, testes de integração REST com Spring Boot e MockMvc, além de um fluxo completo de API que
 valida a jornada principal da Ordem de Serviço.
 
-Nesta revisão foram adicionados testes de cobertura para gestão de usuários, vínculo com empresas, criação de empresas
-por Admin Master e branches de domínio/aplicação que já existiam no código. A alteração manteve o gate interno de 90% e
-fez o `mvn clean install` voltar a passar sem reduzir a exigência de cobertura.
+Nesta revisão foram adicionados e ajustados testes para autenticação por porta de aplicação, consulta de status da OS,
+tracking do cliente, entrega da OS e rejeição de payload inválido na abertura de Ordem de Serviço. A alteração manteve o
+gate interno de 90% e fez o `mvn clean verify` passar sem reduzir a exigência de cobertura.

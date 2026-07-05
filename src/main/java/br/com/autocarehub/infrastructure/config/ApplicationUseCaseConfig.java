@@ -1,5 +1,6 @@
 package br.com.autocarehub.infrastructure.config;
 
+import br.com.autocarehub.application.port.out.AuthenticationGateway;
 import br.com.autocarehub.application.port.out.CompanyRepository;
 import br.com.autocarehub.application.port.out.CustomerRepository;
 import br.com.autocarehub.application.port.out.DemoLeadRepository;
@@ -65,17 +66,15 @@ import br.com.autocarehub.application.usecase.workshopservice.DeleteWorkshopServ
 import br.com.autocarehub.application.usecase.workshopservice.FindWorkshopServiceUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.ListWorkshopServicesUseCase;
 import br.com.autocarehub.application.usecase.workshopservice.UpdateWorkshopServiceUseCase;
-import br.com.autocarehub.infrastructure.security.JwtService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
 public class ApplicationUseCaseConfig {
 
     @Bean
-    LoginUseCase loginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
-        return new LoginUseCase(authenticationManager, jwtService);
+    LoginUseCase loginUseCase(AuthenticationGateway authenticationGateway) {
+        return new LoginUseCase(authenticationGateway);
     }
 
     @Bean

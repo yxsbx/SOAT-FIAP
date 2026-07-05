@@ -108,6 +108,30 @@ class SensitiveDataValidationIntegrationTest {
                 .andExpect(jsonPath("$.path").value("/api/v1/vehicles"));
     }
 
+    @Test
+    void shouldRejectServiceOrderWithoutRequestedServices() throws Exception {
+        String token = login();
+
+        mockMvc.perform(post("/api/v1/service-orders")
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of(
+                                "customerDocument",
+                                "12345678909",
+                                "vehicleId",
+                                "20000000-0000-0000-0000-000000000001",
+                                "diagnosticNotes",
+                                "Cliente solicita revisão sem informar serviços",
+                                "services",
+                                java.util.List.of(),
+                                "generateBudget",
+                                false))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Invalid request body"))
+                .andExpect(jsonPath("$.path").value("/api/v1/service-orders"));
+    }
+
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

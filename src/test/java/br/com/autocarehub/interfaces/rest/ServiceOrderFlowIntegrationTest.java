@@ -37,12 +37,18 @@ class ServiceOrderFlowIntegrationTest {
         UUID serviceId = createWorkshopService(token);
         UUID serviceOrderId = createServiceOrder(token, vehicleId, serviceId);
 
+        getServiceOrderStatus(token, serviceOrderId, "RECEIVED");
+        trackServiceOrder(token, serviceOrderId, "RECEBIDA");
         addServiceToServiceOrder(token, serviceOrderId, serviceId);
         addPartToServiceOrder(token, serviceOrderId, partId);
         generateBudget(token, serviceOrderId);
+        getServiceOrderStatus(token, serviceOrderId, "WAITING_APPROVAL");
         approveBudget(token, serviceOrderId);
         updateStatus(token, serviceOrderId);
         finishServiceOrder(token, serviceOrderId);
+        deliverServiceOrder(token, serviceOrderId);
+        getServiceOrderStatus(token, serviceOrderId, "DELIVERED");
+        trackServiceOrder(token, serviceOrderId, "ENTREGUE");
         getAverageExecutionTime(token, completedOrdersBefore + 1);
     }
 
@@ -267,6 +273,23 @@ class ServiceOrderFlowIntegrationTest {
                 .andExpect(jsonPath("$.approvedAt").isNotEmpty());
     }
 
+    private void getServiceOrderStatus(String token, UUID serviceOrderId, String expectedStatus) throws Exception {
+        mockMvc.perform(get("/api/v1/service-orders/{serviceOrderId}", serviceOrderId)
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(serviceOrderId.toString()))
+                .andExpect(jsonPath("$.status").value(expectedStatus));
+    }
+
+    private void trackServiceOrder(String token, UUID serviceOrderId, String expectedStatus) throws Exception {
+        mockMvc.perform(get("/api/v1/service-orders/tracking")
+                        .param("serviceOrderId", serviceOrderId.toString())
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items[0].id").value(serviceOrderId.toString()))
+                .andExpect(jsonPath("$.items[0].status").value(expectedStatus));
+    }
+
     private void updateStatus(String token, UUID serviceOrderId) throws Exception {
         mockMvc.perform(patch("/api/v1/service-orders/{serviceOrderId}/status", serviceOrderId)
                         .header("Authorization", bearer(token))
@@ -283,6 +306,15 @@ class ServiceOrderFlowIntegrationTest {
                         .content(json(Map.of("status", "FINISHED"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("FINISHED"));
+    }
+
+    private void deliverServiceOrder(String token, UUID serviceOrderId) throws Exception {
+        mockMvc.perform(patch("/api/v1/service-orders/{serviceOrderId}/status", serviceOrderId)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("status", "DELIVERED"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("DELIVERED"));
     }
 
     private int getCompletedOrders(String token) throws Exception {

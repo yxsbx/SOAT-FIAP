@@ -1,28 +1,18 @@
 package br.com.autocarehub.application.usecase.auth;
 
-import static java.util.Objects.requireNonNull;
-
-import br.com.autocarehub.infrastructure.security.AuthenticatedUser;
-import br.com.autocarehub.infrastructure.security.JwtService;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import br.com.autocarehub.application.port.out.AuthenticationGateway;
 
 public class LoginUseCase {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final AuthenticationGateway authenticationGateway;
 
-    public LoginUseCase(AuthenticationManager authenticationManager, JwtService jwtService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
+    public LoginUseCase(AuthenticationGateway authenticationGateway) {
+        this.authenticationGateway = authenticationGateway;
     }
 
     public Output execute(Command command) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(command.username(), command.password()));
-        JwtService.IssuedToken token =
-                jwtService.generateToken((AuthenticatedUser) requireNonNull(authentication.getPrincipal()));
+        AuthenticationGateway.IssuedAccessToken token =
+                authenticationGateway.authenticate(command.username(), command.password());
         return new Output(token.accessToken(), token.tokenType(), token.expiresIn());
     }
 

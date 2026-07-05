@@ -87,7 +87,7 @@ demonstrativo.
 | Como calcular tempo médio?                              | Criar use case de consulta para a métrica.                                                 | A regra depende de várias OS e não pertence a uma única entidade isolada.      |
 | Como documentar a API?                                  | Versionar o OpenAPI em `docs/openapi/openapi.yaml`.                                        | O contrato documenta endpoints e apoia geração de interfaces.                  |
 | Como rodar localmente com banco?                        | Usar Docker Compose com backend, PostgreSQL e frontend.                                    | Facilita avaliação local sem instalação manual do banco.                       |
-| Como proteger senha?                                    | Usar a porta `PasswordHasher` com adaptador BCrypt em infraestrutura.                       | Casos de uso nao dependem diretamente do Spring Security e senhas nao ficam em texto puro. |
+| Como proteger login e senha?                            | Usar as portas `AuthenticationGateway` e `PasswordHasher` com adaptadores Spring Security/BCrypt. | Casos de uso nao dependem diretamente do Spring Security e senhas nao ficam em texto puro. |
 
 ## 5. Spikes e validações técnicas
 
@@ -111,7 +111,7 @@ As validações foram feitas no próprio projeto, sem necessidade de POCs separa
 O AutoCare Hub usa um backend monolítico com Arquitetura Hexagonal/Clean Architecture:
 
 - `interfaces`: controllers REST, mappers REST, exceptions HTTP e adaptação do contrato OpenAPI;
-- `application`: use cases, politicas de aplicacao, comandos, consultas e portas de repositório/seguranca;
+- `application`: use cases, politicas de aplicacao, comandos, consultas e portas de repositório/autenticacao/seguranca;
 - `domain`: entidades, agregados, value objects, enums e exceções de domínio;
 - `infrastructure`: JPA, adapters de persistência, segurança JWT, configuração e integração com bibliotecas.
 

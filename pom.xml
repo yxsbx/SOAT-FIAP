@@ -25,6 +25,8 @@
         <allure.version>2.35.3</allure.version>
         <allure.report.version>2.43.0</allure.report.version>
         <allure-maven.version>2.15.2</allure-maven.version>
+        <h2.version>2.3.232</h2.version>
+        <mockito.version>5.23.0</mockito.version>
         <lombok.version>1.18.46</lombok.version>
         <spotless.version>2.44.4</spotless.version>
         <maven-compiler.version>3.14.0</maven-compiler.version>
@@ -134,6 +136,9 @@
                 <version>${maven-compiler.version}</version>
                 <configuration>
                     <release>${maven.compiler.release}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:-deprecation</arg>
+                    </compilerArgs>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -146,6 +151,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>@{argLine} -Xshare:off -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar</argLine>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
@@ -190,6 +202,41 @@
                                 <openApiNullable>false</openApiNullable>
                                 <sourceFolder>src/main/java</sourceFolder>
                             </configOptions>
+                            <additionalProperties>
+                                <skipOperationExample>true</skipOperationExample>
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>normalize-generated-validation-annotations</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <replaceregexp
+                                        file="${project.build.directory}/generated-sources/openapi/src/main/java/br/com/autocarehub/interfaces/rest/generated/model/CreateServiceOrderRequest.java"
+                                        match="@NotNull @Valid @Size\(min = 1\)"
+                                        replace="@NotNull @Size(min = 1)"
+                                        byline="true"/>
+                                <replaceregexp
+                                        file="${project.build.directory}/generated-sources/openapi/src/main/java/br/com/autocarehub/interfaces/rest/generated/model/CreateServiceOrderRequest.java"
+                                        match="  @Valid&#10;  private List&lt;@Valid"
+                                        replace="  private List&lt;@Valid"
+                                        flags="g"/>
+                                <replaceregexp
+                                        file="${project.build.directory}/generated-sources/openapi/src/main/java/br/com/autocarehub/interfaces/rest/generated/model/CreateServiceOrderRequest.java"
+                                        match="  @Valid &#10;  @Schema\(name = &quot;parts&quot;"
+                                        replace="  @Schema(name = &quot;parts&quot;"
+                                        flags="g"/>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -216,7 +263,7 @@
                     </execution>
                     <execution>
                         <id>report</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>

@@ -47,7 +47,7 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 |------|------|
 | Desenho da arquitetura | `docs/PHASE2_ARCHITECTURE.md` |
 | Vídeo demonstrativo | [INSERIR LINK DO VIDEO DA FASE 2] |
-| PDF final no portal | [INSERIR NOME/LINK DO PDF FINAL GERADO] |
+| PDF final no portal | `docs/DELIVERY_DOCUMENT.pdf` |
 | Collection Postman | `docs/postman/autocarehub-phase2.postman_collection.json` |
 
 ## 4.2 Recursos escolhidos para a Fase 2

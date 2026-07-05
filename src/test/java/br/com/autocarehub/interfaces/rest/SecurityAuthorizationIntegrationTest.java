@@ -149,6 +149,24 @@ class SecurityAuthorizationIntegrationTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    void shouldAllowCustomerToDecideOnlyOwnBudgetFromExternalNotification() throws Exception {
+        String token = login("cliente@autocarehub.com");
+
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", CUSTOMER_ORDER_ID)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("decision", "APPROVED", "source", "email"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.approvedAt").isNotEmpty());
+
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", OTHER_CUSTOMER_ORDER_ID)
+                        .header("Authorization", bearer(token))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("decision", "REJECTED", "source", "email"))))
+                .andExpect(status().isForbidden());
+    }
+
     private String login(String username) throws Exception {
         String response = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)

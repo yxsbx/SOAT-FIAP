@@ -1,0 +1,288 @@
+%PDF-1.4
+%AutoCare Hub
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [ 3 0 R 5 0 R 7 0 R ] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1739 >>
+stream
+BT
+/F2 14 Tf
+50 750 Td
+/F2 11 Tf
+(AutoCare Hub - Tech Challenge FIAP - Fase 2) Tj
+0 -16 Td
+/F2 11 Tf
+(Documento final de entrega) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F1 9 Tf
+(Projeto: AutoCare Hub) Tj
+0 -16 Td
+/F1 9 Tf
+(Participante: Yasmin Barcelos Pires - RM370897 - Discord yxsbx) Tj
+0 -16 Td
+/F1 9 Tf
+(Repositorio privado: https://github.com/yxsbx/SOAT-FIAP) Tj
+0 -16 Td
+/F1 9 Tf
+(Branch de entrega: main) Tj
+0 -16 Td
+/F1 9 Tf
+(Acesso ao avaliador: usuario informado pela FIAP com leitura concedida.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Resumo da solucao) Tj
+0 -16 Td
+/F1 9 Tf
+(Backend monolitico para gestao de oficina mecanica, com clientes, veiculos,) Tj
+0 -16 Td
+/F1 9 Tf
+(ordens de servico, servicos, pecas, estoque, orcamento, aprovacao e status da OS.) Tj
+0 -16 Td
+/F1 9 Tf
+(A Fase 2 evolui a solucao com arquitetura em camadas, automacao, infraestrutura) Tj
+0 -16 Td
+/F1 9 Tf
+(como codigo, Kubernetes, CI/CD, testes e documentacao de entrega.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Evolucoes implementadas na Fase 2) Tj
+0 -16 Td
+/F1 9 Tf
+(- Decisao externa de orcamento: POST /api/v1/service-orders/{id}/budget/decision) Tj
+0 -16 Td
+/F1 9 Tf
+(- Atualizacao externa de status: POST /api/v1/service-orders/{id}/status/external) Tj
+0 -16 Td
+/F1 9 Tf
+(- Listagem operacional de OS ordenada por prioridade/status e data.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Ocultacao de OS finalizadas e entregues na fila operacional.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Manifests Kubernetes em k8s/.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Estrutura Terraform em infra/.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Pipeline GitHub Actions em .github/workflows/deploy.yml.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Collection Postman em docs/postman/autocarehub-phase2.postman_collection.json.) Tj
+ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 6 0 R >>
+endobj
+6 0 obj
+<< /Length 1771 >>
+stream
+BT
+/F2 14 Tf
+50 750 Td
+/F2 11 Tf
+(Documentacao principal) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F1 9 Tf
+(- README.md: entrada principal do projeto e fluxo rapido da API.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/openapi/openapi.yaml: contrato OpenAPI.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/DDD_DOCUMENTATION.md: documentacao DDD.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/EVENT_STORMING.md: Event Storming.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/PHASE2_ARCHITECTURE.md: desenho textual e Mermaid da arquitetura.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/TESTING.md: estrategia e evidencias de testes.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/SECURITY_REPORT.md: relatorio de vulnerabilidades.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/SECURITY_SCAN_GUIDE.md: guia de execucao dos scans.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docs/PHASE2_VIDEO_SCRIPT.md: roteiro do video demonstrativo.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Recursos escolhidos) Tj
+0 -16 Td
+/F1 9 Tf
+(- Java, Spring Boot e Maven para o backend.) Tj
+0 -16 Td
+/F1 9 Tf
+(- PostgreSQL e Flyway para persistencia e migracoes.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Docker e Docker Compose para execucao local.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Terraform com provider Kubernetes para provisionamento academico/local.) Tj
+0 -16 Td
+/F1 9 Tf
+(- GitHub Actions para build, testes, imagens e deploy Kubernetes.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Vue/Vite no frontend demonstrativo.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Seguranca e scans) Tj
+0 -16 Td
+/F1 9 Tf
+(- JWT e autorizacao por perfil.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Validacao de CPF/CNPJ e placa.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Secrets fora do codigo e uso de placeholders seguros.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Relatorios em docs/SECURITY_REPORT.md e docs/SECURITY_SCAN_GUIDE.md.) Tj
+ET
+
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 1759 >>
+stream
+BT
+/F2 14 Tf
+50 750 Td
+/F2 11 Tf
+(Evidencias de validacao) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F1 9 Tf
+(- mvn clean verify: 160 testes, 0 falhas, 0 erros, JaCoCo aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- mvn -q spotless:check: aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- docker compose config --quiet: aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- npm run lint: aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- npm run build: aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- git diff --check: aprovado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- kubectl version --client: cliente disponivel.) Tj
+0 -16 Td
+/F1 9 Tf
+(- terraform version: nao executado neste ambiente porque Terraform nao esta instalado.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Links finais) Tj
+0 -16 Td
+/F1 9 Tf
+(- Desenho da arquitetura: docs/PHASE2_ARCHITECTURE.md) Tj
+0 -16 Td
+/F1 9 Tf
+(- Collection Postman: docs/postman/autocarehub-phase2.postman_collection.json) Tj
+0 -16 Td
+/F1 9 Tf
+(- PDF final: docs/DELIVERY_DOCUMENT.pdf) Tj
+0 -16 Td
+/F1 9 Tf
+(- Video demonstrativo: [INSERIR LINK DO VIDEO DA FASE 2]) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Pendencias antes do envio no portal) Tj
+0 -16 Td
+/F1 9 Tf
+(- Gravar e publicar o video demonstrativo de ate 15 minutos.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Substituir o placeholder do link do video em README.md e docs/DELIVERY_DOCUMENT.md.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Configurar secrets reais da plataforma de CI/CD se o deploy real for demonstrado.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Validar Terraform em maquina com terraform instalado.) Tj
+0 -16 Td
+/F1 9 Tf
+() Tj
+0 -16 Td
+/F2 11 Tf
+(Conclusao) Tj
+0 -16 Td
+/F1 9 Tf
+(O AutoCare Hub esta documentado e preparado para a entrega academica da Fase 2,) Tj
+0 -16 Td
+/F1 9 Tf
+(com os artefatos exigidos versionados e os dados externos mantidos como placeholders claros.) Tj
+ET
+
+endstream
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000023 00000 n 
+0000000072 00000 n 
+0000000143 00000 n 
+0000000382 00000 n 
+0000002173 00000 n 
+0000002412 00000 n 
+0000004235 00000 n 
+0000004474 00000 n 
+trailer
+<< /Size 9 /Root 1 0 R >>
+startxref
+6285
+%%EOF

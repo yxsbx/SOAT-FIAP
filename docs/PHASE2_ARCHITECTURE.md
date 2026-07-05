@@ -91,8 +91,11 @@ flowchart LR
 - `CreateManagedUserUseCase`, `UpdateManagedUserUseCase`, `ListManageableUsersUseCase`,
   `ListManageableCompaniesUseCase` e `ListPartnerUsersUseCase` concentram regras de escopo, perfil e empresa.
 - `UserManagementPolicy` centraliza a politica de administracao de usuarios por perfil e empresa.
+- `AuthenticationGateway` e uma porta de saida da aplicacao; `SpringSecurityAuthenticationGateway` adapta
+  `AuthenticationManager` e `JwtService`.
 - `PasswordHasher` e uma porta de saida da aplicacao; `BCryptPasswordHasher` e o adaptador de infraestrutura baseado em
   Spring Security/BCrypt.
+- `application` e `domain` nao importam Spring nem classes de `infrastructure`.
 - Endpoints, Flyway, Swagger/OpenAPI e Docker permanecem sem mudanca de contrato por causa da refatoracao.
 
 ## Decisao de ambiente

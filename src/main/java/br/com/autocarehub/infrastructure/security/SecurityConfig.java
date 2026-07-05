@@ -157,8 +157,13 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/service-orders/*")
                         .authenticated()
                         .requestMatchers(
-                                org.springframework.http.HttpMethod.POST, "/api/v1/service-orders/*/budget/approve")
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/v1/service-orders/*/budget/approve",
+                                "/api/v1/service-orders/*/budget/decision")
                         .authenticated()
+                        .requestMatchers(
+                                org.springframework.http.HttpMethod.POST, "/api/v1/service-orders/*/status/external")
+                        .hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/v1/**")
                         .hasAnyRole("ADMIN", "EMPLOYEE")
                         .anyRequest()
