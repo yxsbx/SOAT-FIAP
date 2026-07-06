@@ -64,7 +64,7 @@ class UserManagementPolicyTest {
                         command("parts@store.com", "PARTS_STORE_ADMIN", "", "PARTS_STORE", false, workshop.id()),
                         null))
                 .isInstanceOf(ApplicationException.class)
-                .hasMessage("Company type does not match user profile");
+                .hasMessage("Company type dões not match user profile");
         assertThatThrownBy(() -> policy.normalize(
                         requester,
                         command("parts@store.com", "PARTS_STORE_ADMIN", "", "PARTS_STORE", false, null),

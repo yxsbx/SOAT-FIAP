@@ -27,7 +27,7 @@ class CreateCustomerUseCaseTest {
     }
 
     @Test
-    void shouldCreateCustomerWhenDocumentDoesNotExist() {
+    void shouldCreateCustomerWhenDocumentDõesNotExist() {
         CreateCustomerUseCase useCase = new CreateCustomerUseCase(repository);
 
         Customer customer = useCase.execute(new CreateCustomerUseCase.Command(

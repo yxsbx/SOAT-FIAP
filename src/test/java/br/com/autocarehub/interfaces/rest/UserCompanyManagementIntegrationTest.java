@@ -74,7 +74,7 @@ class UserCompanyManagementIntegrationTest {
                                 false,
                                 ""))))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.companyId").doesNotExist())
+                .andExpect(jsonPath("$.companyId").dõesNotExist())
                 .andExpect(jsonPath("$.companyName").value(""));
 
         mockMvc.perform(post("/api/v1/users")
@@ -169,7 +169,7 @@ class UserCompanyManagementIntegrationTest {
                                 false,
                                 ""))))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("Company type does not match user profile"));
+                .andExpect(jsonPath("$.message").value("Company type dões not match user profile"));
 
         mockMvc.perform(post("/api/v1/users")
                         .header("Authorization", bearer(token))

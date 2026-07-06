@@ -38,21 +38,21 @@ demonstrativo.
 
 ## 3. Requisitos de negócio transformados em decisões técnicas
 
-| Requisito de negócio             | Decisão técnica                                     | Justificativa                                                               | Evidência no projeto                                                |
-|----------------------------------|-----------------------------------------------------|-----------------------------------------------------------------------------|---------------------------------------------------------------------|
-| Gerenciar clientes               | CRUD REST e entidade `Customer`.                    | Clientes são a base para veículos e Ordens de Serviço.                      | `CustomersController`, `Customer`, `CustomerRepository`.            |
-| Identificar cliente por CPF/CNPJ | Value object `Document`.                            | Evita duplicar validação de documento em vários pontos da aplicação.        | `domain/valueobject/Document.java`.                                 |
-| Gerenciar veículos               | CRUD REST e entidade `Vehicle`.                     | O veículo precisa estar vinculado ao cliente da OS.                         | `VehiclesController`, `Vehicle`, `CreateServiceOrderUseCase`.       |
-| Validar placa                    | Value object `Plate`.                               | Centraliza validação de placa antiga e Mercosul.                            | `domain/valueobject/Plate.java`.                                    |
-| Preservar identidade do veículo  | Update bloqueia placa, marca, modelo e ano.         | Evita que correções cadastrais sobrescrevam histórico de OS de outro veículo. | `UpdateVehicleUseCase`, `docs/openapi/openapi.yaml`.                 |
-| Gerenciar serviços               | CRUD REST e entidade `WorkshopService`.             | Serviços compõem o orçamento da OS.                                         | `WorkshopServicesController`, `WorkshopService`.                    |
-| Gerenciar peças e insumos        | CRUD REST e agregado `Part`.                        | Peças impactam estoque, orçamento e execução do serviço.                    | `PartsController`, `Part`, use cases de estoque.                    |
-| Criar Ordem de Serviço           | Use case + agregado `ServiceOrder`.                 | A OS concentra status, itens, orçamento e datas importantes do atendimento. | `CreateServiceOrderUseCase`, `ServiceOrder`.                        |
-| Gerar orçamento                  | Regra em `ServiceOrder` e orquestração em use case. | O total depende dos itens da OS e deve ser calculado de forma consistente.  | `ServiceOrder.generateBudget`, `GenerateServiceOrderBudgetUseCase`. |
-| Aprovar orçamento                | Regra em `ServiceOrder` e orquestração em use case. | A aprovação muda a fase da OS e libera a continuidade do fluxo.             | `ApproveServiceOrderBudgetUseCase`.                                 |
-| Acompanhar OS                    | Endpoint de tracking.                               | Cliente acompanha a OS sem acessar APIs administrativas.                    | `TrackServiceOrderUseCase`, `/api/v1/service-orders/tracking`.      |
-| Monitorar tempo médio            | Use case de métrica.                                | O indicador usa OS com início e fim de execução registrados.                | `GetAverageServiceOrderExecutionTimeUseCase`.                       |
-| Proteger APIs administrativas    | JWT e Spring Security.                              | Operações internas exigem autenticação e autorização.                       | `SecurityConfig`, `JwtAuthenticationFilter`, `JwtService`.          |
+| Requisito de negócio             | Decisão técnica                                     | Justificativa                                                                 | Evidência no projeto                                                |
+|----------------------------------|-----------------------------------------------------|-------------------------------------------------------------------------------|---------------------------------------------------------------------|
+| Gerenciar clientes               | CRUD REST e entidade `Customer`.                    | Clientes são a base para veículos e Ordens de Serviço.                        | `CustomersController`, `Customer`, `CustomerRepository`.            |
+| Identificar cliente por CPF/CNPJ | Value object `Document`.                            | Evita duplicar validação de documento em vários pontos da aplicação.          | `domain/valueobject/Document.java`.                                 |
+| Gerenciar veículos               | CRUD REST e entidade `Vehicle`.                     | O veículo precisa estar vinculado ao cliente da OS.                           | `VehiclesController`, `Vehicle`, `CreateServiceOrderUseCase`.       |
+| Validar placa                    | Value object `Plate`.                               | Centraliza validação de placa antiga e Mercosul.                              | `domain/valueobject/Plate.java`.                                    |
+| Preservar identidade do veículo  | Update bloqueia placa, marca, modelo e ano.         | Evita que correções cadastrais sobrescrevam histórico de OS de outro veículo. | `UpdateVehicleUseCase`, `docs/openapi/openapi.yaml`.                |
+| Gerenciar serviços               | CRUD REST e entidade `WorkshopService`.             | Serviços compõem o orçamento da OS.                                           | `WorkshopServicesController`, `WorkshopService`.                    |
+| Gerenciar peças e insumos        | CRUD REST e agregado `Part`.                        | Peças impactam estoque, orçamento e execução do serviço.                      | `PartsController`, `Part`, use cases de estoque.                    |
+| Criar Ordem de Serviço           | Use case + agregado `ServiceOrder`.                 | A OS concentra status, itens, orçamento e datas importantes do atendimento.   | `CreateServiceOrderUseCase`, `ServiceOrder`.                        |
+| Gerar orçamento                  | Regra em `ServiceOrder` e orquestração em use case. | O total depende dos itens da OS e deve ser calculado de forma consistente.    | `ServiceOrder.generateBudget`, `GenerateServiceOrderBudgetUseCase`. |
+| Aprovar orçamento                | Regra em `ServiceOrder` e orquestração em use case. | A aprovação muda a fase da OS e libera a continuidade do fluxo.               | `ApproveServiceOrderBudgetUseCase`.                                 |
+| Acompanhar OS                    | Endpoint de tracking.                               | Cliente acompanha a OS sem acessar APIs administrativas.                      | `TrackServiceOrderUseCase`, `/api/v1/service-orders/tracking`.      |
+| Monitorar tempo médio            | Use case de métrica.                                | O indicador usa OS com início e fim de execução registrados.                  | `GetAverageServiceOrderExecutionTimeUseCase`.                       |
+| Proteger APIs administrativas    | JWT e Spring Security.                              | Operações internas exigem autenticação e autorização.                         | `SecurityConfig`, `JwtAuthenticationFilter`, `JwtService`.          |
 
 ### Requisitos técnicos da solução
 
@@ -73,21 +73,21 @@ demonstrativo.
 
 ## 4. Dúvidas técnicas e decisões tomadas
 
-| Dúvida técnica                                          | Decisão                                                                                    | Motivo                                                                         |
-|---------------------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| Como representar CPF/CNPJ?                              | Criar `Document` como value object.                                                        | Documento é uma regra sensível e aparece em cliente, tracking e criação de OS. |
-| Como validar placa?                                     | Criar `Plate` como value object.                                                           | Placa precisa ser validada de forma consistente em veículo e acompanhamento.   |
-| Como corrigir dados errados de veículo existente?        | Bloquear alteração de placa, marca, modelo e ano; permitir inativar e criar novo veículo.   | Esses dados identificam o veículo e não devem reescrever histórico operacional. |
-| Como controlar status da OS?                            | Criar métodos de transição em `ServiceOrder`.                                              | Evita que controller ou use case alterem status livremente.                    |
-| Quando gerar orçamento?                                 | Na criação da OS, quando solicitado, ou no endpoint específico de geração.                 | O MVP precisa permitir geração automática e também geração explícita.          |
-| Quando reservar estoque?                                | Na geração do orçamento, quando a OS contém peças.                                         | A reserva evita prometer uma peça sem disponibilidade.                         |
-| Quando baixar estoque?                                  | Após aprovação ou confirmação da reserva, conforme regra implementada no fluxo de estoque. | A baixa representa consumo ou compromisso efetivo da peça.                     |
-| Como impedir estoque negativo?                          | Concentrar regras em `Part`.                                                               | O agregado protege disponibilidade, reserva e baixa.                           |
-| Como separar API administrativa da consulta do cliente? | JWT para rotas administrativas e endpoint específico de tracking.                          | Cliente acompanha OS sem permissão administrativa.                             |
-| Como calcular tempo médio?                              | Criar use case de consulta para a métrica.                                                 | A regra depende de várias OS e não pertence a uma única entidade isolada.      |
-| Como documentar a API?                                  | Versionar o OpenAPI em `docs/openapi/openapi.yaml`.                                        | O contrato documenta endpoints e apoia geração de interfaces.                  |
-| Como rodar localmente com banco?                        | Usar Docker Compose com backend, PostgreSQL e frontend.                                    | Facilita avaliação local sem instalação manual do banco.                       |
-| Como proteger login e senha?                            | Usar as portas `AuthenticationGateway` e `PasswordHasher` com adaptadores Spring Security/BCrypt. | Casos de uso nao dependem diretamente do Spring Security e senhas nao ficam em texto puro. |
+| Dúvida técnica                                          | Decisão                                                                                           | Motivo                                                                                     |
+|---------------------------------------------------------|---------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| Como representar CPF/CNPJ?                              | Criar `Document` como value object.                                                               | Documento é uma regra sensível e aparece em cliente, tracking e criação de OS.             |
+| Como validar placa?                                     | Criar `Plate` como value object.                                                                  | Placa precisa ser validada de forma consistente em veículo e acompanhamento.               |
+| Como corrigir dados errados de veículo existente?       | Bloquear alteração de placa, marca, modelo e ano; permitir inativar e criar novo veículo.         | Esses dados identificam o veículo e não devem reescrever histórico operacional.            |
+| Como controlar status da OS?                            | Criar métodos de transição em `ServiceOrder`.                                                     | Evita que controller ou use case alterem status livremente.                                |
+| Quando gerar orçamento?                                 | Na criação da OS, quando solicitado, ou no endpoint específico de geração.                        | O MVP precisa permitir geração automática e também geração explícita.                      |
+| Quando reservar estoque?                                | Na geração do orçamento, quando a OS contém peças.                                                | A reserva evita prometer uma peça sem disponibilidade.                                     |
+| Quando baixar estoque?                                  | Após aprovação ou confirmação da reserva, conforme regra implementada no fluxo de estoque.        | A baixa representa consumo ou compromisso efetivo da peça.                                 |
+| Como impedir estoque negativo?                          | Concentrar regras em `Part`.                                                                      | O agregado protege disponibilidade, reserva e baixa.                                       |
+| Como separar API administrativa da consulta do cliente? | JWT para rotas administrativas e endpoint específico de tracking.                                 | Cliente acompanha OS sem permissão administrativa.                                         |
+| Como calcular tempo médio?                              | Criar use case de consulta para a métrica.                                                        | A regra depende de várias OS e não pertence a uma única entidade isolada.                  |
+| Como documentar a API?                                  | Versionar o OpenAPI em `docs/openapi/openapi.yaml`.                                               | O contrato documenta endpoints e apoia geração de interfaces.                              |
+| Como rodar localmente com banco?                        | Usar Docker Compose com backend, PostgreSQL e frontend.                                           | Facilita avaliação local sem instalação manual do banco.                                   |
+| Como proteger login e senha?                            | Usar as portas `AuthenticationGateway` e `PasswordHasher` com adaptadores Spring Security/BCrypt. | Casos de uso não dependem diretamente do Spring Security e senhas não ficam em texto puro. |
 
 ## 5. Spikes e validações técnicas
 
@@ -111,7 +111,7 @@ As validações foram feitas no próprio projeto, sem necessidade de POCs separa
 O AutoCare Hub usa um backend monolítico com Arquitetura Hexagonal/Clean Architecture:
 
 - `interfaces`: controllers REST, mappers REST, exceptions HTTP e adaptação do contrato OpenAPI;
-- `application`: use cases, politicas de aplicacao, comandos, consultas e portas de repositório/autenticacao/seguranca;
+- `application`: use cases, políticas de aplicação, comandos, consultas e portas de repositório/autenticação/segurança;
 - `domain`: entidades, agregados, value objects, enums e exceções de domínio;
 - `infrastructure`: JPA, adapters de persistência, segurança JWT, configuração e integração com bibliotecas.
 

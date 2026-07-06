@@ -101,7 +101,7 @@ final class UserManagementPolicy {
                     .findById(command.companyId())
                     .orElseThrow(() -> new ApplicationException("Company not found"));
             if (!company.type().equals(command.companyType())) {
-                throw new ApplicationException("Company type does not match user profile");
+                throw new ApplicationException("Company type dões not match user profile");
             }
             return command.withCompany(company);
         }
@@ -113,7 +113,7 @@ final class UserManagementPolicy {
                     .findByName(command.companyName())
                     .orElseThrow(() -> new ApplicationException("Company not found"));
             if (!company.type().equals(command.companyType())) {
-                throw new ApplicationException("Company type does not match user profile");
+                throw new ApplicationException("Company type dões not match user profile");
             }
             return command.withCompany(company);
         }

@@ -1,8 +1,8 @@
 # Desenho de arquitetura - Fase 2
 
-O AutoCare Hub permanece como monolito modular com Arquitetura Hexagonal/Clean Architecture. A evolucao da Fase 2
-adiciona automacao, infraestrutura como codigo, Kubernetes e escalabilidade horizontal sem transformar o sistema em
-microsservicos.
+O AutoCare Hub permanece como monolito modular com Arquitetura Hexagonal/Clean Architecture. A evolução da Fase 2
+adiciona automação, infraestrutura como código, Kubernetes e escalabilidade horizontal sem transformar o sistema em
+microsserviços.
 
 ## Diagrama
 
@@ -15,9 +15,9 @@ flowchart LR
 
     subgraph App["Monolito AutoCare Hub"]
         Controllers["Interfaces REST"]
-        UseCases["Aplicacao / Casos de uso"]
-        Domain["Dominio"]
-        Ports["Portas de saida"]
+        UseCases["Aplicação / Casos de uso"]
+        Domain["Domínio"]
+        Ports["Portas de saída"]
         Adapters["Adaptadores de infraestrutura"]
         Controllers --> UseCases
         UseCases --> Domain
@@ -28,7 +28,7 @@ flowchart LR
     Api --> Controllers
     Adapters --> Db["PostgreSQL"]
 
-    subgraph Docker["Execucao local"]
+    subgraph Docker["Execução local"]
         Compose["docker-compose.yml"]
         BackendImage["Imagem backend"]
         FrontendImage["Imagem frontend"]
@@ -75,30 +75,30 @@ flowchart LR
 
 ## Componentes
 
-- Frontend: demonstracao visual em Vue/Vite.
+- Frontend: demonstração visual em Vue/Vite.
 - Backend: API REST Spring Boot com Clean Architecture/Hexagonal dentro de um monolito.
-- Dominio: entidades, value objects, status e regras de negocio.
-- Aplicacao: casos de uso, politicas de aplicacao e portas de saida.
-- Infraestrutura: JPA, repositories, seguranca JWT, BCrypt e configuracoes.
-- Docker: execucao local reproduzivel.
+- Domínio: entidades, value objects, status e regras de negocio.
+- Aplicação: casos de uso, políticas de aplicação e portas de saída.
+- Infraestrutura: JPA, repositories, segurança JWT, BCrypt e configurações.
+- Docker: execução local reproduzível.
 - Kubernetes: Deployments, Services, ConfigMaps, Secrets e HPA.
 - Terraform: provisionamento base do namespace, ConfigMap e Secret em cluster local/acadêmico.
 - CI/CD: qualidade, testes, build de imagens e deploy opcional no cluster.
 
-## Refatoracao de aplicacao
+## Refatoração de aplicação
 
-- `UsersController` atua como adaptador REST e delega gestao de usuarios para casos de uso especificos.
+- `UsersController` atua como adaptador REST e delega gestão de usuários para casos de uso específicos.
 - `CreateManagedUserUseCase`, `UpdateManagedUserUseCase`, `ListManageableUsersUseCase`,
   `ListManageableCompaniesUseCase` e `ListPartnerUsersUseCase` concentram regras de escopo, perfil e empresa.
-- `UserManagementPolicy` centraliza a politica de administracao de usuarios por perfil e empresa.
-- `AuthenticationGateway` e uma porta de saida da aplicacao; `SpringSecurityAuthenticationGateway` adapta
+- `UserManagementPolicy` centraliza a política de administração de usuários por perfil e empresa.
+- `AuthenticationGateway` e uma porta de saída da aplicação; `SpringSecurityAuthenticationGateway` adapta
   `AuthenticationManager` e `JwtService`.
-- `PasswordHasher` e uma porta de saida da aplicacao; `BCryptPasswordHasher` e o adaptador de infraestrutura baseado em
+- `PasswordHasher` e uma porta de saída da aplicação; `BCryptPasswordHasher` e o adaptador de infraestrutura baseado em
   Spring Security/BCrypt.
-- `application` e `domain` nao importam Spring nem classes de `infrastructure`.
-- Endpoints, Flyway, Swagger/OpenAPI e Docker permanecem sem mudanca de contrato por causa da refatoracao.
+- `application` e `domain` não importam Spring nem classes de `infrastructure`.
+- Endpoints, Flyway, Swagger/OpenAPI e Docker permanecem sem mudança de contrato por causa da refatoração.
 
-## Decisao de ambiente
+## Decisão de ambiente
 
-Nao foi assumida uma cloud especifica. A Fase 2 esta preparada para demonstracao local/acadêmica com Kubernetes e
+Não foi assumida uma cloud especifica. A Fase 2 esta preparada para demonstração local/acadêmica com Kubernetes e
 Terraform, mantendo placeholders onde credenciais ou ambiente real precisam ser definidos.

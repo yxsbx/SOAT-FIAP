@@ -24,31 +24,31 @@ informado pela FIAP.
 
 A documentação oficial da entrega está versionada no próprio repositório, nos arquivos abaixo:
 
-| Documento                     | Local                                                                      |
-|-------------------------------|----------------------------------------------------------------------------|
-| Levantamento de requisitos    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/REQUIREMENTS.md>        |
-| Arquitetura, HLD, LLD e C4    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/ARCHITECTURE.md>        |
-| Documentação DDD              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DDD_DOCUMENTATION.md>   |
-| Domain Storytelling           | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DOMAIN_STORYTELLING.md> |
-| Event Storming                | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/EVENT_STORMING.md>      |
-| Contrato OpenAPI              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/openapi/openapi.yaml>   |
-| Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/TESTING.md>             |
-| Análise estática e qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/STATIC_ANALYSIS.md>     |
-| Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>     |
-| Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_ARCHITECTURE.md> |
-| Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_VIDEO_SCRIPT.md> |
-| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>                         |
-| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>                       |
+| Documento                     | Local                                                                       |
+|-------------------------------|-----------------------------------------------------------------------------|
+| Levantamento de requisitos    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/REQUIREMENTS.md>         |
+| Arquitetura, HLD, LLD e C4    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/ARCHITECTURE.md>         |
+| Documentação DDD              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DDD_DOCUMENTATION.md>    |
+| Domain Storytelling           | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/DOMAIN_STORYTELLING.md>  |
+| Event Storming                | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/EVENT_STORMING.md>       |
+| Contrato OpenAPI              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/openapi/openapi.yaml>    |
+| Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/TESTING.md>              |
+| Análise estática e qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/STATIC_ANALYSIS.md>      |
+| Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/SECURITY_REPORT.md>      |
+| Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_ARCHITECTURE.md>  |
+| Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/PHASE2_VIDEO_SCRIPT.md>  |
+| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>                          |
+| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>                        |
 | Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/deploy.yml> |
 
 ## 4.1 Links finais da Fase 2
 
-| Item | Link |
-|------|------|
-| Desenho da arquitetura | `docs/PHASE2_ARCHITECTURE.md` |
-| Vídeo demonstrativo | [INSERIR LINK DO VIDEO DA FASE 2] |
-| PDF final no portal | `docs/DELIVERY_DOCUMENT.pdf` |
-| Collection Postman | `docs/postman/autocarehub-phase2.postman_collection.json` |
+| Item                   | Link                                                      |
+|------------------------|-----------------------------------------------------------|
+| Desenho da arquitetura | `docs/PHASE2_ARCHITECTURE.md`                             |
+| Vídeo demonstrativo    | [INSERIR LINK DO VIDEO DA FASE 2]                         |
+| PDF final no portal    | `docs/DELIVERY_DOCUMENT.pdf`                              |
+| Collection Postman     | `docs/postman/autocarehub-phase2.postman_collection.json` |
 
 ## 4.2 Recursos escolhidos para a Fase 2
 

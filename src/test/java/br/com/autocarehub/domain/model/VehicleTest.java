@@ -49,7 +49,7 @@ class VehicleTest {
     }
 
     @Test
-    void shouldUpdateMileageOnlyWhenItDoesNotDecrease() {
+    void shouldUpdateMileageOnlyWhenItDõesNotDecrease() {
         Vehicle vehicle = vehicle();
 
         vehicle.updateMileage(35000);

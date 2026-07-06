@@ -89,7 +89,7 @@ paths:
                     number: '1000'
                     complement: Sala 10
                     neighborhood: Bela Vista
-                    city: Sao Paulo
+                    city: São Paulo
                     state: SP
                     zipCode: 01310-100
               pessoaJuridica:
@@ -103,7 +103,7 @@ paths:
                     street: Rua Vergueiro
                     number: '1500'
                     neighborhood: Vila Mariana
-                    city: Sao Paulo
+                    city: São Paulo
                     state: SP
                     zipCode: 04101-000
       responses:
@@ -183,7 +183,7 @@ paths:
                     street: Rua das Oficinas
                     number: '120'
                     neighborhood: Centro
-                    city: Sao Paulo
+                    city: São Paulo
                     state: SP
                     zipCode: 01001-000
                   active: true
@@ -400,7 +400,7 @@ paths:
                 summary: Serviço de diagnóstico para catálogo da oficina
                 value:
                   name: Diagnostico eletrico avancado
-                  description: Verificacao de alternador, bateria, chicote e modulos eletronicos.
+                  description: Verificação de alternador, bateria, chicote e modulos eletronicos.
                   basePrice: 250.00
                   estimatedTimeInMinutes: 120
       responses:
@@ -473,7 +473,7 @@ paths:
                 summary: Atualiza serviço mantendo ativo
                 value:
                   name: Diagnostico eletrico avancado
-                  description: Verificacao de alternador, bateria, chicote, fusivel e modulos eletronicos.
+                  description: Verificação de alternador, bateria, chicote, fusivel e modulos eletronicos.
                   basePrice: 280.00
                   estimatedTimeInMinutes: 150
                   active: true
@@ -524,7 +524,7 @@ paths:
                   description: Sensor lambda universal para diagnostico de mistura ar-combustivel.
                   sku: MOT-SEN-OXI01
                   category: Motor
-                  subcategory: Injecao
+                  subcategory: Injeção
                   brand: Bosch
                   unitPrice: 320.00
                   costPrice: 210.00
@@ -608,7 +608,7 @@ paths:
                   description: Sensor lambda universal para diagnostico de mistura ar-combustivel.
                   sku: MOT-SEN-OXI01
                   category: Motor
-                  subcategory: Injecao
+                  subcategory: Injeção
                   brand: Bosch
                   unitPrice: 340.00
                   costPrice: 220.00
@@ -696,8 +696,8 @@ paths:
                   quantity: 10
                   unitCost: 210.00
                   unitPrice: 320.00
-                  reason: Compra de reposicao de estoque
-              saidaInterna:
+                  reason: Compra de reposição de estoque
+              saídaInterna:
                 summary: Saída manual de estoque
                 value:
                   type: EXIT
@@ -831,7 +831,7 @@ paths:
                 summary: Converte reserva em baixa de estoque
                 value:
                   quantity: 1
-                  reason: Peca utilizada na execucao da OS
+                  reason: Peca utilizada na execução da OS
       responses:
         '200':
           description: Reserva baixada do estoque
@@ -864,7 +864,7 @@ paths:
                 value:
                   customerDocument: '12345678909'
                   vehicleId: 20000000-0000-0000-0000-000000000001
-                  diagnosticNotes: Cliente relata ruido ao frear e vibracao no pedal.
+                  diagnosticNotes: Cliente relata ruido ao frear e vibração no pedal.
                   services:
                     - serviceId: 30000000-0000-0000-0000-000000000004
                       quantity: 1
@@ -888,7 +888,7 @@ paths:
                       number: '1000'
                       complement: Sala 10
                       neighborhood: Bela Vista
-                      city: Sao Paulo
+                      city: São Paulo
                       state: SP
                       zipCode: 01310-100
                   vehicle:
@@ -897,7 +897,7 @@ paths:
                     model: Civic Touring
                     year: 2021
                     mileage: 42000
-                  diagnosticNotes: Cliente solicita revisao preventiva antes de viagem.
+                  diagnosticNotes: Cliente solicita revisão preventiva antes de viagem.
                   services:
                     - serviceId: 30000000-0000-0000-0000-000000000003
                       quantity: 1
@@ -1214,7 +1214,7 @@ paths:
                 summary: Muda de Recebida para Em diagnóstico
                 value:
                   status: IN_DIAGNOSIS
-              iniciarExecucao:
+              iniciarExecução:
                 summary: Muda para Em execução após aprovação do orçamento
                 value:
                   status: IN_PROGRESS
@@ -1257,7 +1257,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ExternalStatusUpdateRequest'
             examples:
-              emailFinalizacao:
+              emailFinalização:
                 summary: Finalização recebida por ferramenta externa
                 value:
                   status: FINISHED
@@ -1828,7 +1828,7 @@ components:
             path: /api/v1/customers
             details: [ ]
     NotFound:
-      description: Recurso nao encontrado
+      description: Recurso não encontrado
       content:
         application/json:
           schema:
@@ -2385,7 +2385,7 @@ components:
           maxLength: 18
           pattern: "^\\d{11}$|^\\d{14}$|^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$|^\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}$"
           example: '12345678909'
-          description: CPF ou CNPJ do cliente com ou sem formatação. Se o cliente nao existir, informe tambem customer.
+          description: CPF ou CNPJ do cliente com ou sem formatação. Se o cliente não existir, informe tambem customer.
         customer:
           $ref: '#/components/schemas/CreateServiceOrderCustomerRequest'
         vehicleId:

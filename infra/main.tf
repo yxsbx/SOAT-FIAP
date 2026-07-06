@@ -17,6 +17,11 @@ provider "kubernetes" {
 resource "kubernetes_namespace" "autocarehub" {
   metadata {
     name = var.namespace
+
+    labels = {
+      app        = "autocarehub"
+      managed-by = "terraform"
+    }
   }
 }
 
@@ -24,6 +29,11 @@ resource "kubernetes_config_map" "autocarehub" {
   metadata {
     name      = "autocarehub-config"
     namespace = kubernetes_namespace.autocarehub.metadata[0].name
+
+    labels = {
+      app        = "autocarehub"
+      managed-by = "terraform"
+    }
   }
 
   data = {
@@ -45,6 +55,11 @@ resource "kubernetes_secret" "autocarehub" {
   metadata {
     name      = "autocarehub-secret"
     namespace = kubernetes_namespace.autocarehub.metadata[0].name
+
+    labels = {
+      app        = "autocarehub"
+      managed-by = "terraform"
+    }
   }
 
   data = {
@@ -60,6 +75,12 @@ resource "kubernetes_persistent_volume_claim" "postgres_data" {
   metadata {
     name      = var.postgres_pvc_name
     namespace = kubernetes_namespace.autocarehub.metadata[0].name
+
+    labels = {
+      app        = "autocarehub"
+      component  = "database"
+      managed-by = "terraform"
+    }
   }
 
   spec {

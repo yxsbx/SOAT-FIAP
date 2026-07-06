@@ -94,7 +94,7 @@ class GenerateServiceOrderBudgetUseCaseTest {
     }
 
     @Test
-    void shouldRejectBudgetGenerationWhenServiceOrderDoesNotExist() {
+    void shouldRejectBudgetGenerationWhenServiceOrderDõesNotExist() {
         assertThatThrownBy(() -> new GenerateServiceOrderBudgetUseCase(serviceOrderRepository, partRepository)
                         .execute(UUID.randomUUID()))
                 .isInstanceOf(ResourceNotFoundException.class)

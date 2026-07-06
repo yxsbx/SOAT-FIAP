@@ -2,34 +2,34 @@
 
 Estrutura Terraform da Fase 2 para provisionamento academico/local de recursos base no Kubernetes.
 
-## Decisao de ambiente
+## Decisão de ambiente
 
-Este projeto nao assume uma cloud especifica. Para evitar inventar AWS, Azure ou GCP sem evidencia no repositorio, a
+Este projeto não assume uma cloud especifica. Para evitar inventar AWS, Azure ou GCP sem evidencia no repositorio, a
 infraestrutura foi modelada para um cluster Kubernetes local ou academico ja existente, como `kind`, `minikube` ou um
-cluster disponibilizado para demonstracao.
+cluster disponibilizado para demonstração.
 
 O Terraform cria:
 
 - namespace `autocarehub`;
-- ConfigMap com variaveis nao sensiveis;
-- Secret com valores sensiveis recebidos por variaveis.
+- ConfigMap com variáveis não sensíveis;
+- Secret com valores sensíveis recebidos por variáveis;
 - PVC do PostgreSQL demonstrativo.
 
-Os workloads da aplicacao ficam em [../k8s](../k8s) e podem ser aplicados depois do provisionamento base. Esta estrutura
-nao cria cluster Kubernetes e nao assume cloud especifica.
+Os workloads da aplicação ficam em [../k8s](../k8s) e podem ser aplicados depois do provisionamento base. Esta estrutura
+não cria cluster Kubernetes e não assume cloud especifica.
 
 ## Arquivos
 
-| Arquivo | Funcao |
+| Arquivo | Função |
 | ------- | ------ |
 | `main.tf` | Provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
-| `variables.tf` | Variaveis parametrizaveis do ambiente local/acadêmico. |
+| `variables.tf` | Variáveis parametrizáveis do ambiente local/acadêmico. |
 | `outputs.tf` | Outputs uteis para conferencia e proximo passo de deploy. |
 | `terraform.tfvars.example` | Exemplo com placeholders seguros. |
 
-## Variaveis sensiveis
+## Variáveis sensíveis
 
-Nao versione `terraform.tfvars` com valores reais. Use variaveis de ambiente:
+Não versione `terraform.tfvars` com valores reais. Use variáveis de ambiente:
 
 ```bash
 export TF_VAR_postgres_password="substituir-localmente"
@@ -51,6 +51,9 @@ cp terraform.tfvars.example terraform.tfvars
 
 O arquivo `terraform.tfvars` real deve ficar fora do versionamento.
 
+As variáveis possuem validações básicas para evitar namespace inválido, porta fora da faixa permitida, tamanho de
+storage sem unidade reconhecida, senha fraca do PostgreSQL e segredo JWT menor que 32 caracteres.
+
 ## Comandos
 
 ```bash
@@ -62,7 +65,7 @@ terraform apply
 terraform destroy
 ```
 
-Depois de aplicar a infraestrutura base, aplique apenas os workloads que nao sao gerenciados pelo Terraform:
+Depois de aplicar a infraestrutura base, aplique apenas os workloads que não são gerenciados pelo Terraform:
 
 ```bash
 kubectl apply -f ../k8s/04-postgres-deployment.yaml \
@@ -79,19 +82,19 @@ kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
 
-Se preferir nao usar Terraform, use diretamente o fluxo Kubernetes completo documentado em [../k8s/README.md](../k8s/README.md):
+Se preferir não usar Terraform, use diretamente o fluxo Kubernetes completo documentado em [../k8s/README.md](../k8s/README.md):
 
 ```bash
 kubectl apply -f ../k8s/
 ```
 
-Nao misture os dois modos aplicando `../k8s/02-secret.yaml` depois do Terraform, pois esse arquivo contem placeholders.
+Não misture os dois modos aplicando `../k8s/02-secret.yaml` depois do Terraform, pois esse arquivo contem placeholders.
 
-## Limitacoes
+## Limitações
 
-- Nao cria cluster Kubernetes.
-- Nao cria banco gerenciado em cloud.
-- Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC e variaveis de conexao.
+- Não cria cluster Kubernetes.
+- Não cria banco gerenciado em cloud.
+- Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC e variáveis de conexao.
 - Usa o contexto Kubernetes configurado localmente.
 - Secrets reais devem ser fornecidos apenas por ambiente seguro ou pela plataforma de CI/CD.
 - O HPA dos workloads depende de Metrics Server instalado no cluster.

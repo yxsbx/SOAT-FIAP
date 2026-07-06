@@ -1,6 +1,6 @@
-# Guia de scans de seguranca
+# Guia de scans de segurança
 
-Este guia lista os comandos usados para revalidar a seguranca do AutoCare Hub na Fase 2. Registre resultados reais em
+Este guia lista os comandos usados para revalidar a segurança do AutoCare Hub na Fase 2. Registre resultados reais em
 [SECURITY_REPORT.md](SECURITY_REPORT.md) apenas depois de executar as ferramentas.
 
 ## Pre-requisitos
@@ -8,7 +8,7 @@ Este guia lista os comandos usados para revalidar a seguranca do AutoCare Hub na
 - Java 21 e Maven.
 - Node.js/npm para o frontend.
 - Docker, se for executar scans de imagem.
-- Gitleaks, Trivy ou ferramenta equivalente, quando disponivel localmente.
+- Gitleaks, Trivy ou ferramenta equivalente, quando disponível localmente.
 
 ## Backend
 
@@ -16,7 +16,7 @@ Este guia lista os comandos usados para revalidar a seguranca do AutoCare Hub na
 mvn dependency-check:check
 ```
 
-Relatorios esperados:
+Relatórios esperados:
 
 ```text
 target/dependency-check/dependency-check-report.html
@@ -33,7 +33,7 @@ cd ..
 
 ## Imagens Docker
 
-Com Trivy, quando disponivel:
+Com Trivy, quando disponível:
 
 ```bash
 docker build -t autocarehub-api:local .
@@ -44,15 +44,15 @@ trivy image autocarehub-web:local
 
 ## Secrets
 
-Com Gitleaks, quando disponivel:
+Com Gitleaks, quando disponível:
 
 ```bash
 gitleaks detect --source . --report-format json --report-path security-reports/secrets/gitleaks.json
 ```
 
-## API dinamica
+## API dinâmica
 
-Com OWASP ZAP, quando disponivel e com a API local rodando:
+Com OWASP ZAP, quando disponível e com a API local rodando:
 
 ```bash
 docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
@@ -60,13 +60,13 @@ docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
   -f openapi
 ```
 
-## Pontos obrigatorios de revisao
+## Pontos obrigatorios de revisão
 
-- JWT configurado por variavel de ambiente.
+- JWT configurado por variável de ambiente.
 - `.env` real fora do versionamento.
 - CORS sem wildcard em ambiente real.
 - Secrets em `k8s/02-secret.yaml` apenas como placeholders.
 - Sem senhas reais em workflows.
-- Validacoes de CPF/CNPJ, placa e payloads mantidas.
-- Autorizacao por perfil e escopo de cliente/empresa preservada.
+- Validações de CPF/CNPJ, placa e payloads mantidas.
+- Autorização por perfil e escopo de cliente/empresa preservada.
 

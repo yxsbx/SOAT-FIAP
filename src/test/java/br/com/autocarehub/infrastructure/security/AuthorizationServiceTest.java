@@ -79,7 +79,7 @@ class AuthorizationServiceTest {
     }
 
     @Test
-    void shouldRejectServiceOrderAccessWithoutCustomerOrWhenOrderDoesNotBelongToCustomer() {
+    void shouldRejectServiceOrderAccessWithoutCustomerOrWhenOrderDõesNotBelongToCustomer() {
         ServiceOrder serviceOrder = serviceOrderRepository.save(
                 new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata falha elétrica"));
         AuthorizationService authorizationService =

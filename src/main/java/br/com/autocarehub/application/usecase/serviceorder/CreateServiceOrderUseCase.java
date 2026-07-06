@@ -45,7 +45,7 @@ public class CreateServiceOrderUseCase {
         Customer customer = findOrCreateCustomer(command);
         Vehicle vehicle = findOrCreateVehicle(command, customer.id());
         if (!vehicle.customerId().equals(customer.id())) {
-            throw new ApplicationException("Vehicle does not belong to customer");
+            throw new ApplicationException("Vehicle dões not belong to customer");
         }
 
         if (command.services() == null || command.services().isEmpty()) {

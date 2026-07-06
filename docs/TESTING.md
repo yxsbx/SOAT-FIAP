@@ -73,15 +73,15 @@ A configuração de testes foi ajustada para evitar warnings que poderiam escond
 
 Principais classes:
 
-| Área              | Testes                                                                                                                                                                                                      |
-|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Cliente           | `CustomerTest`, `CreateCustomerUseCaseTest`                                                                                                                                                                 |
-| Veículo           | `VehicleTest`                                                                                                                                                                                               |
-| Serviços          | `WorkshopServiceTest`                                                                                                                                                                                       |
-| Peças e estoque   | `PartTest`, `RegisterPartStockMovementUseCaseTest`                                                                                                                                                          |
+| Área              | Testes                                                                                                                                                                                                                                      |
+|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Cliente           | `CustomerTest`, `CreateCustomerUseCaseTest`                                                                                                                                                                                                 |
+| Veículo           | `VehicleTest`                                                                                                                                                                                                                               |
+| Serviços          | `WorkshopServiceTest`                                                                                                                                                                                                                       |
+| Peças e estoque   | `PartTest`, `RegisterPartStockMovementUseCaseTest`                                                                                                                                                                                          |
 | Ordem de Serviço  | `ServiceOrderTest`, `CreateServiceOrderUseCaseTest`, `GenerateServiceOrderBudgetUseCaseTest`, `ApproveServiceOrderBudgetUseCaseTest`, `UpdateServiceOrderStatusUseCaseTest`, `TrackServiceOrderUseCaseTest`, `ListServiceOrdersUseCaseTest` |
-| Segurança         | `LoginUseCaseTest`, `JwtServiceTest`, `JwtAuthenticationFilterTest`, `AuthorizationServiceTest`                                                                                                             |
-| Mappers e suporte | `UserJpaMapperTest`, `CustomerRestMapperTest`, `ServiceOrderRestMapperTest`, `RestMapperSupportTest`                                                                                                        |
+| Segurança         | `LoginUseCaseTest`, `JwtServiceTest`, `JwtAuthenticationFilterTest`, `AuthorizationServiceTest`                                                                                                                                             |
+| Mappers e suporte | `UserJpaMapperTest`, `CustomerRestMapperTest`, `ServiceOrderRestMapperTest`, `RestMapperSupportTest`                                                                                                                                        |
 
 Exemplos de comportamentos cobertos:
 
@@ -105,14 +105,14 @@ Os testes REST usam `@SpringBootTest`, `@AutoConfigureMockMvc`, H2 em memória e
 
 Principais classes:
 
-| Teste                                    | Cobertura principal                                                                                |
-|------------------------------------------|----------------------------------------------------------------------------------------------------|
-| `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças, usuários e criação/vínculo de empresa. |
-| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa.       |
-| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ, placa e payload de OS inválidos.                                      |
-| `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                                                  |
+| Teste                                    | Cobertura principal                                                                                  |
+|------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `AdministrativeCrudIntegrationTest`      | CRUD administrativo de clientes, veículos, serviços, peças, usuários e criação/vínculo de empresa.   |
+| `SecurityAuthorizationIntegrationTest`   | Login, endpoints protegidos, token válido, acessos negados e escopo de usuários por empresa.         |
+| `SensitiveDataValidationIntegrationTest` | Rejeição HTTP para CPF/CNPJ, placa e payload de OS inválidos.                                        |
+| `PartStockFlowIntegrationTest`           | Movimentação de estoque pela API.                                                                    |
 | `ServiceOrderFlowIntegrationTest`        | Fluxo completo da OS pela API, consulta de status, tracking, entrega e decisão externa de orçamento. |
-| `UserCompanyManagementIntegrationTest`   | Criação de usuários por perfil, vínculo com empresas e restrições de escopo.                       |
+| `UserCompanyManagementIntegrationTest`   | Criação de usuários por perfil, vínculo com empresas e restrições de escopo.                         |
 
 Esses testes validam controller, DTO, mapper, segurança, use case, persistência e migrations no mesmo fluxo.
 
@@ -155,13 +155,13 @@ em memória e chamadas HTTP simuladas.
 | Criação da OS                       | `CreateServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                             |
 | Geração de orçamento                | `GenerateServiceOrderBudgetUseCaseTest`, `ServiceOrderTest`, `ServiceOrderFlowIntegrationTest` |
 | Aprovação/recusa de orçamento       | `ApproveServiceOrderBudgetUseCaseTest`, `ServiceOrderFlowIntegrationTest`                      |
-| Listagem ordenada de OS             | `ListServiceOrdersUseCaseTest`                                                                  |
-| Atualização externa de status       | `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`                        |
+| Listagem ordenada de OS             | `ListServiceOrdersUseCaseTest`                                                                 |
+| Atualização externa de status       | `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`                       |
 | Status da OS                        | `ServiceOrderTest`, `UpdateServiceOrderStatusUseCaseTest`, `ServiceOrderFlowIntegrationTest`   |
 | Acompanhamento pelo cliente         | `TrackServiceOrderUseCaseTest`, `ServiceOrderFlowIntegrationTest`                              |
 | Tempo médio de execução             | `ApplicationUseCaseAdditionalCoverageTest`, `ServiceOrderFlowIntegrationTest`                  |
 | JWT e autorização                   | `JwtServiceTest`, `JwtAuthenticationFilterTest`, `SecurityAuthorizationIntegrationTest`        |
-| Login administrativo                | `LoginUseCaseTest`, `SecurityAuthorizationIntegrationTest`                                    |
+| Login administrativo                | `LoginUseCaseTest`, `SecurityAuthorizationIntegrationTest`                                     |
 | Criação de empresa por Admin Master | `AdministrativeCrudIntegrationTest`                                                            |
 | Escopo de usuários por empresa      | `SecurityAuthorizationIntegrationTest`                                                         |
 | CPF/CNPJ e placa                    | `CustomerTest`, `VehicleTest`, `SensitiveDataValidationIntegrationTest`                        |
@@ -227,8 +227,8 @@ target/site/allure-maven-plugin/index.html
 
 | Comando                                                              | Resultado                                                           |
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
-| `mvn clean test`                                                      | 163 testes, 0 falhas, 0 erros e 0 ignorados.                        |
-| `mvn clean verify`                                                    | 163 testes, 0 falhas, 0 erros, 0 ignorados e JaCoCo aprovado.       |
+| `mvn clean test`                                                     | 163 testes, 0 falhas, 0 erros e 0 ignorados.                        |
+| `mvn clean verify`                                                   | 163 testes, 0 falhas, 0 erros, 0 ignorados e JaCoCo aprovado.       |
 | `mvn dependency-check:check -DautoUpdate=false`                      | 103 dependências analisadas e 0 vulnerabilidades.                   |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 

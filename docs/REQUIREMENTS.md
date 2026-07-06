@@ -135,7 +135,7 @@ entrega.
 | RNF-014   | Scans de segurança                                     | Não se aplica                                                  | `docs/SECURITY_REPORT.md`                                              | Security Report                     |
 | RNF-015   | `.env.example`, `.gitignore`                           | Variáveis locais                                               | Arquivos revisados                                                     | Security Report                     |
 | RNF-016   | Flyway                                                 | `src/main/resources/db/migration`                              | Logs de migration nos testes                                           | Architecture                        |
-| RNF-017   | `AuthenticationGateway`, `PasswordHasher`, adaptadores de segurança | Login/usuários                                      | Spring Security/JWT e BCrypt via portas de aplicacao                  | Security Report                     |
+| RNF-017   | `AuthenticationGateway`, `PasswordHasher`, adaptadores de segurança | Login/usuários                                      | Spring Security/JWT e BCrypt via portas de aplicação                  | Security Report                     |
 | RNF-018   | `RestExceptionHandler`                                 | Erros da API                                                   | Responses padronizados                                                 | OpenAPI                             |
 
 ## 7. Conclusão

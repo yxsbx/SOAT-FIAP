@@ -125,7 +125,7 @@ class CreateServiceOrderUseCaseTest {
     }
 
     @Test
-    void shouldRejectServiceOrderWhenCustomerDoesNotExistAndCustomerDataWasNotProvided() {
+    void shouldRejectServiceOrderWhenCustomerDõesNotExistAndCustomerDataWasNotProvided() {
         WorkshopService service = workshopServiceRepository.save(
                 new WorkshopService("Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
         CreateServiceOrderUseCase useCase = useCase();
@@ -144,7 +144,7 @@ class CreateServiceOrderUseCaseTest {
     }
 
     @Test
-    void shouldRejectServiceOrderWhenVehicleDoesNotExistAndVehicleDataWasNotProvided() {
+    void shouldRejectServiceOrderWhenVehicleDõesNotExistAndVehicleDataWasNotProvided() {
         WorkshopService service = workshopServiceRepository.save(
                 new WorkshopService("Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
         customerRepository.save(
@@ -165,7 +165,7 @@ class CreateServiceOrderUseCaseTest {
     }
 
     @Test
-    void shouldRejectServiceOrderWhenVehicleDoesNotBelongToCustomer() {
+    void shouldRejectServiceOrderWhenVehicleDõesNotBelongToCustomer() {
         WorkshopService service = workshopServiceRepository.save(
                 new WorkshopService("Troca de oleo", "Substituição de oleo do motor", Money.of("120.00"), 60));
         Customer customer = customerRepository.save(
@@ -186,7 +186,7 @@ class CreateServiceOrderUseCaseTest {
                         List.of(),
                         true)))
                 .isInstanceOf(ApplicationException.class)
-                .hasMessage("Vehicle does not belong to customer");
+                .hasMessage("Vehicle dões not belong to customer");
     }
 
     @Test

@@ -10,6 +10,7 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/autocarehub-api
   FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/autocarehub-web
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
   build-test-and-image:
@@ -85,17 +86,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build backend image
-        run: docker build -t "${BACKEND_IMAGE}:${GITHUB_SHA}" -t "${BACKEND_IMAGE}:latest" .
+        run: docker build -t "${BACKEND_IMAGE}:${IMAGE_TAG}" -t "${BACKEND_IMAGE}:latest" .
 
       - name: Build frontend image
-        run: docker build -t "${FRONTEND_IMAGE}:${GITHUB_SHA}" -t "${FRONTEND_IMAGE}:latest" ./frontend
+        run: docker build -t "${FRONTEND_IMAGE}:${IMAGE_TAG}" -t "${FRONTEND_IMAGE}:latest" ./frontend
 
       - name: Push images
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         run: |
-          docker push "${BACKEND_IMAGE}:${GITHUB_SHA}"
+          docker push "${BACKEND_IMAGE}:${IMAGE_TAG}"
           docker push "${BACKEND_IMAGE}:latest"
-          docker push "${FRONTEND_IMAGE}:${GITHUB_SHA}"
+          docker push "${FRONTEND_IMAGE}:${IMAGE_TAG}"
           docker push "${FRONTEND_IMAGE}:latest"
 
   deploy-kubernetes:
@@ -147,12 +148,19 @@ jobs:
             -f k8s/10-frontend-service.yaml \
             -f k8s/11-frontend-hpa.yaml
 
+      - name: Use images built by this workflow
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        run: |
+          kubectl -n autocarehub set image deployment/autocarehub-api api="${BACKEND_IMAGE}:${IMAGE_TAG}"
+          kubectl -n autocarehub set image deployment/autocarehub-web web="${FRONTEND_IMAGE}:${IMAGE_TAG}"
+
       - name: Show rollout state
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
         run: |
           kubectl rollout status deployment/autocarehub-postgres -n autocarehub --timeout=180s
           kubectl rollout status deployment/autocarehub-api -n autocarehub --timeout=180s
           kubectl rollout status deployment/autocarehub-web -n autocarehub --timeout=180s
+          kubectl get deploy -n autocarehub -o wide
           kubectl get pods -n autocarehub
           kubectl get svc -n autocarehub
           kubectl get hpa -n autocarehub
@@ -160,5 +168,5 @@ jobs:
       - name: Explain skipped deploy
         if: env.KUBE_CONFIG == '' || env.POSTGRES_PASSWORD == '' || env.JWT_SECRET == ''
         run: |
-          echo "Deploy real nao executado."
+          echo "Deploy real não executado."
           echo "Configure KUBE_CONFIG, POSTGRES_PASSWORD e JWT_SECRET nos GitHub Actions Secrets para aplicar os manifests no Kubernetes."

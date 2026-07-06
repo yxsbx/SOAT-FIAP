@@ -70,7 +70,7 @@
       }
     },
     {
-      "name": "Decisao externa do orcamento",
+      "name": "Decisão externa do orcamento",
       "request": {
         "method": "POST",
         "header": [
@@ -86,12 +86,12 @@
         "url": "{{baseUrl}}/api/v1/service-orders/{{serviceOrderId}}/budget/decision",
         "body": {
           "mode": "raw",
-          "raw": "{\"decision\":\"APPROVED\",\"source\":\"email\",\"reason\":\"Cliente aprovou por notificacao externa.\"}"
+          "raw": "{\"decision\":\"APPROVED\",\"source\":\"email\",\"reason\":\"Cliente aprovou por notificação externa.\"}"
         }
       }
     },
     {
-      "name": "Atualizacao externa de status",
+      "name": "Atualização externa de status",
       "request": {
         "method": "POST",
         "header": [
@@ -107,7 +107,7 @@
         "url": "{{baseUrl}}/api/v1/service-orders/{{serviceOrderId}}/status/external",
         "body": {
           "mode": "raw",
-          "raw": "{\"status\":\"IN_PROGRESS\",\"source\":\"email\",\"message\":\"Atualizacao externa demonstravel.\"}"
+          "raw": "{\"status\":\"IN_PROGRESS\",\"source\":\"email\",\"message\":\"Atualização externa demonstrável.\"}"
         }
       }
     },

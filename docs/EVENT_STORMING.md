@@ -94,7 +94,7 @@ Os eventos foram escritos no passado, como recomendado na técnica de Event Stor
 - `OrcamentoDisponibilizado`
 - `OrcamentoAprovado`
 - `DiagnosticoIniciado`
-- `ExecucaoIniciada`
+- `ExecuçãoIniciada`
 - `OrdemServicoFinalizada`
 - `VeiculoEntregue`
 - `OrdemServicoConsultadaPeloCliente`
@@ -127,7 +127,7 @@ Os eventos foram escritos no passado, como recomendado na técnica de Event Stor
 9. `OrcamentoGerado`
 10. `OrcamentoDisponibilizado`
 11. `OrcamentoAprovado`
-12. `ExecucaoIniciada`
+12. `ExecuçãoIniciada`
 13. `OrdemServicoFinalizada`
 14. `VeiculoEntregue`
 15. `OrdemServicoConsultadaPeloCliente`
@@ -169,7 +169,7 @@ Os eventos foram escritos no passado, como recomendado na técnica de Event Stor
 | `OrdemServicoCriada`     | Inicia formalmente o atendimento da oficina.                               |
 | `OrcamentoGerado`        | Fecha a composição de serviços e peças e coloca a OS na fase de aprovação. |
 | `OrcamentoAprovado`      | Libera a OS para seguir para execução.                                     |
-| `ExecucaoIniciada`       | Indica que a oficina começou o trabalho técnico.                           |
+| `ExecuçãoIniciada`       | Indica que a oficina começou o trabalho técnico.                           |
 | `OrdemServicoFinalizada` | Marca a conclusão técnica do serviço.                                      |
 | `VeiculoEntregue`        | Encerra o atendimento para o cliente.                                      |
 | `EstoqueBaixado`         | Confirma o consumo ou a saída efetiva de peça/insumo.                      |
@@ -187,7 +187,7 @@ Os eventos foram escritos no passado, como recomendado na técnica de Event Stor
 | `GerarOrcamento`          | `OrcamentoGerado`                   | `GenerateServiceOrderBudgetUseCase`                              |
 | `AprovarOrcamento`        | `OrcamentoAprovado`                 | `ApproveServiceOrderBudgetUseCase`                               |
 | `IniciarDiagnostico`      | `DiagnosticoIniciado`               | `ServiceOrder.startDiagnosis`, `UpdateServiceOrderStatusUseCase` |
-| `IniciarExecucao`         | `ExecucaoIniciada`                  | `ServiceOrder.startExecution`, `UpdateServiceOrderStatusUseCase` |
+| `IniciarExecução`         | `ExecuçãoIniciada`                  | `ServiceOrder.startExecution`, `UpdateServiceOrderStatusUseCase` |
 | `FinalizarOrdemServico`   | `OrdemServicoFinalizada`            | `ServiceOrder.finish`                                            |
 | `EntregarVeiculo`         | `VeiculoEntregue`                   | `ServiceOrder.deliver`                                           |
 | `CadastrarPeca`           | `PecaCadastrada`                    | `CreatePartUseCase`                                              |
@@ -305,7 +305,7 @@ documentação, não como microserviços separados.
 
 | Contexto delimitado             | Eventos principais                                                                                           | Agregados relacionados   |
 |---------------------------------|--------------------------------------------------------------------------------------------------------------|--------------------------|
-| Atendimento de Oficina          | `OrdemServicoCriada`, `DiagnosticoIniciado`, `ExecucaoIniciada`, `OrdemServicoFinalizada`, `VeiculoEntregue` | `ServiceOrder`           |
+| Atendimento de Oficina          | `OrdemServicoCriada`, `DiagnosticoIniciado`, `ExecuçãoIniciada`, `OrdemServicoFinalizada`, `VeiculoEntregue` | `ServiceOrder`           |
 | Cadastro de Clientes e Veículos | `ClienteIdentificado`, `ClienteCadastrado`, `VeiculoCadastrado`                                              | `Customer`, `Vehicle`    |
 | Catálogo de Serviços            | `ServicoIncluidoNaOrdem`                                                                                     | `WorkshopService`        |
 | Gestão de Peças e Estoque       | `PecaCadastrada`, `EntradaEstoqueRegistrada`, `PecaReservada`, `EstoqueBaixado`, `EstoqueAtualizado`         | `Part`, `StockMovement`  |
@@ -359,7 +359,7 @@ flowchart TD
     E9["OrcamentoGerado"]
     E10["OrcamentoDisponibilizado"]
     E11["OrcamentoAprovado"]
-    E12["ExecucaoIniciada"]
+    E12["ExecuçãoIniciada"]
     E13["OrdemServicoFinalizada"]
     E14["VeiculoEntregue"]
     E15["OrdemServicoConsultadaPeloCliente"]
@@ -388,9 +388,9 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    C1["IniciarExecucao"]
+    C1["IniciarExecução"]
     P1{"Orçamento aprovado?"}
-    E1["ExecucaoIniciada"]
+    E1["ExecuçãoIniciada"]
     C2["FinalizarOrdemServico"]
     P2{"OS em execução?"}
     E2["OrdemServicoFinalizada"]
