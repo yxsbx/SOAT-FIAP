@@ -37,17 +37,17 @@ resource "kubernetes_config_map" "autocarehub" {
   }
 
   data = {
-    POSTGRES_DB                 = var.postgres_db
-    POSTGRES_USER               = var.postgres_user
-    PGDATA                      = var.postgres_data_directory
-    DB_URL                      = "jdbc:postgresql://${var.postgres_service_name}:5432/${var.postgres_db}"
-    DB_USERNAME                 = var.postgres_user
-    JWT_EXPIRATION_MINUTES      = tostring(var.jwt_expiration_minutes)
-    SERVER_PORT                 = tostring(var.backend_port)
-    SPRING_PROFILES_ACTIVE      = var.spring_profile
-    APP_CORS_ALLOWED_ORIGINS    = var.cors_allowed_origins
-    SPRINGDOC_API_DOCS_ENABLED  = tostring(var.springdoc_api_docs_enabled)
-    JAVA_TOOL_OPTIONS           = var.java_tool_options
+    POSTGRES_DB                = var.postgres_db
+    POSTGRES_USER              = var.postgres_user
+    PGDATA                     = var.postgres_data_directory
+    DB_URL                     = "jdbc:postgresql://${var.postgres_service_name}:5432/${var.postgres_db}"
+    DB_USERNAME                = var.postgres_user
+    JWT_EXPIRATION_MINUTES     = tostring(var.jwt_expiration_minutes)
+    SERVER_PORT                = tostring(var.backend_port)
+    SPRING_PROFILES_ACTIVE     = var.spring_profile
+    APP_CORS_ALLOWED_ORIGINS   = var.cors_allowed_origins
+    SPRINGDOC_API_DOCS_ENABLED = tostring(var.springdoc_api_docs_enabled)
+    JAVA_TOOL_OPTIONS          = var.java_tool_options
   }
 }
 
