@@ -106,3 +106,129 @@ resource "kubernetes_persistent_volume_claim" "postgres_data" {
     storage_class_name = var.postgres_storage_class_name
   }
 }
+
+resource "kubernetes_deployment" "postgres" {
+  metadata {
+    name      = "autocarehub-postgres"
+    namespace = kubernetes_namespace.autocarehub.metadata[0].name
+
+    labels = {
+      app        = "autocarehub-postgres"
+      component  = "database"
+      managed-by = "terraform"
+    }
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "autocarehub-postgres"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "autocarehub-postgres"
+        }
+      }
+
+      spec {
+        container {
+          name              = "postgres"
+          image             = "postgres:16"
+          image_pull_policy = "IfNotPresent"
+
+          port {
+            name           = "postgres"
+            container_port = 5432
+          }
+
+          env_from {
+            config_map_ref {
+              name = kubernetes_config_map.autocarehub.metadata[0].name
+            }
+          }
+
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.autocarehub.metadata[0].name
+            }
+          }
+
+          volume_mount {
+            name       = "data"
+            mount_path = "/var/lib/postgresql/data"
+          }
+
+          readiness_probe {
+            exec {
+              command = ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            }
+
+            initial_delay_seconds = 10
+            period_seconds        = 10
+          }
+
+          liveness_probe {
+            exec {
+              command = ["sh", "-c", "pg_isready -U \"$POSTGRES_USER\" -d \"$POSTGRES_DB\""]
+            }
+
+            initial_delay_seconds = 30
+            period_seconds        = 20
+          }
+
+          resources {
+            requests = {
+              cpu    = "100m"
+              memory = "256Mi"
+            }
+
+            limits = {
+              cpu    = "500m"
+              memory = "512Mi"
+            }
+          }
+        }
+
+        volume {
+          name = "data"
+
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.postgres_data.metadata[0].name
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "postgres" {
+  metadata {
+    name      = var.postgres_service_name
+    namespace = kubernetes_namespace.autocarehub.metadata[0].name
+
+    labels = {
+      app        = "autocarehub-postgres"
+      component  = "database"
+      managed-by = "terraform"
+    }
+  }
+
+  spec {
+    selector = {
+      app = "autocarehub-postgres"
+    }
+
+    port {
+      name        = "postgres"
+      port        = 5432
+      target_port = "postgres"
+    }
+
+    type = "ClusterIP"
+  }
+}

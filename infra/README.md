@@ -4,17 +4,17 @@ Infraestrutura como codigo da Fase 2 para provisionamento local ou academico de 
 
 ## Recursos Criados
 
-| Status | Recurso |
-| --- | --- |
-| ATENDIDO | Cluster Kubernetes local com `kind`, opcional, quando `create_kind_cluster=true`. |
-| ATENDIDO | Namespace `autocarehub`. |
-| ATENDIDO | ConfigMap `autocarehub-config` com variaveis nao sensiveis. |
+| Status   | Recurso                                                                                                       |
+|----------|---------------------------------------------------------------------------------------------------------------|
+| ATENDIDO | Cluster Kubernetes local com `kind`, opcional, quando `create_kind_cluster=true`.                             |
+| ATENDIDO | Namespace `autocarehub`.                                                                                      |
+| ATENDIDO | ConfigMap `autocarehub-config` com variaveis nao sensiveis.                                                   |
 | ATENDIDO | Secret `autocarehub-secret` com senha do banco, JWT secret e token externo recebidos por variaveis sensiveis. |
-| ATENDIDO | PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo executado no cluster. |
-| PARCIAL | Banco provisionado como workload Kubernetes local, nao como banco gerenciado em cloud. |
+| ATENDIDO | PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo executado no cluster.                         |
+| ATENDIDO | Deployment e Service do PostgreSQL demonstrativo no Kubernetes local.                                         |
 
-Os Deployments, Services e HPAs da aplicação ficam em `../k8s/` e sao aplicados depois do Terraform. Essa divisao evita
-duplicar os workloads entre Terraform e YAML, mantendo a entrega reproduzivel sem contratar cloud paga.
+Os Deployments, Services e HPAs da aplicação ficam em `../k8s/` e sao aplicados depois do Terraform. O banco de dados
+demonstrativo fica no Terraform para atender o requisito de IaC do banco sem contratar cloud paga.
 
 ## Pre-Requisitos
 
@@ -66,11 +66,10 @@ cd ..
 
 ## Relação Com Kubernetes
 
-O Terraform prepara a base compartilhada: namespace, configuracoes, secrets e PVC. Em seguida, aplique os workloads:
+O Terraform prepara a base compartilhada e o banco PostgreSQL demonstrativo: namespace, configuracoes, secrets, PVC,
+Deployment e Service do banco. Em seguida, aplique os workloads da aplicação:
 
 ```powershell
-kubectl apply -f k8s/postgres-deployment.yaml
-kubectl apply -f k8s/postgres-service.yaml
 kubectl apply -f k8s/backend-deployment.yaml
 kubectl apply -f k8s/backend-service.yaml
 kubectl apply -f k8s/backend-hpa.yaml
@@ -93,13 +92,13 @@ de considerar o deploy como real.
 
 ## Banco De Dados
 
-O banco da Fase 2 e o PostgreSQL demonstrativo no Kubernetes local. O Terraform cria o PVC e as variaveis sensiveis; os
-manifestos Kubernetes criam o Deployment e o Service. As migrations Flyway rodam no startup do backend.
+O banco da Fase 2 e o PostgreSQL demonstrativo no Kubernetes local. O Terraform cria o PVC, as variaveis sensiveis, o
+Deployment e o Service do banco. As migrations Flyway rodam no startup do backend.
 
 ## Limitacoes
 
-| Status | Item |
-| --- | --- |
-| VALIDAR MANUALMENTE | O cluster local precisa estar ativo e acessivel pelo kubeconfig. |
-| VALIDAR MANUALMENTE | O HPA depende de Metrics Server. |
-| MELHORIA FUTURA | Para producao, avaliar banco gerenciado, backup, replicação e registry privado. |
+| Status              | Item                                                                            |
+|---------------------|---------------------------------------------------------------------------------|
+| VALIDAR MANUALMENTE | O cluster local precisa estar ativo e acessivel pelo kubeconfig.                |
+| VALIDAR MANUALMENTE | O HPA depende de Metrics Server.                                                |
+| MELHORIA FUTURA     | Para producao, avaliar banco gerenciado, backup, replicação e registry privado. |

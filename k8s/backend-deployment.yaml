@@ -29,7 +29,7 @@ spec:
                   key: DB_USERNAME
       containers:
         - name: api
-          image: ghcr.io/yxsbx/autocarehub-api:latest
+          image: autocarehub-api:local
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

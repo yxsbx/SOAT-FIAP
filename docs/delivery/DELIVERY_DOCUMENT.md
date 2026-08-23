@@ -56,7 +56,7 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 - Docker e Docker Compose para execução local.
 - Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.
 - Terraform com criação opcional de cluster local `kind` e provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap, Secret e PVC do PostgreSQL demonstrativo.
-- GitHub Actions para qualidade, build de imagens e deploy Kubernetes quando `KUBE_CONFIG` estiver configurado.
+- GitHub Actions para qualidade, build de imagens e deploy Kubernetes local em cluster `kind` efêmero.
 - Swagger/OpenAPI como contrato principal da API.
 
 ## 5. Relatório com análise de vulnerabilidades encontradas no sistema

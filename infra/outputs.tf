@@ -23,6 +23,16 @@ output "postgres_pvc_name" {
   value       = kubernetes_persistent_volume_claim.postgres_data.metadata[0].name
 }
 
+output "postgres_deployment_name" {
+  description = "Deployment do PostgreSQL demonstrativo criado pelo Terraform."
+  value       = kubernetes_deployment.postgres.metadata[0].name
+}
+
+output "postgres_service_name" {
+  description = "Service do PostgreSQL demonstrativo criado pelo Terraform."
+  value       = kubernetes_service.postgres.metadata[0].name
+}
+
 output "postgres_jdbc_url" {
   description = "URL JDBC configurada para o backend acessar o PostgreSQL no cluster."
   value       = kubernetes_config_map.autocarehub.data.DB_URL
@@ -30,5 +40,5 @@ output "postgres_jdbc_url" {
 
 output "kubectl_apply_workloads_command" {
   description = "Comando para aplicar os workloads Kubernetes apos o provisionamento base."
-  value       = "kubectl apply -f ../k8s/backend-deployment.yaml -f ../k8s/backend-service.yaml -f ../k8s/backend-hpa.yaml -f ../k8s/frontend-deployment.yaml -f ../k8s/frontend-service.yaml -f ../k8s/frontend-hpa.yaml -f ../k8s/postgres-deployment.yaml -f ../k8s/postgres-service.yaml"
+  value       = "kubectl apply -f ../k8s/backend-deployment.yaml -f ../k8s/backend-service.yaml -f ../k8s/backend-hpa.yaml -f ../k8s/frontend-deployment.yaml -f ../k8s/frontend-service.yaml -f ../k8s/frontend-hpa.yaml"
 }

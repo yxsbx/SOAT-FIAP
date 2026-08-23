@@ -18,14 +18,14 @@ Registrar a revisão de segurança do AutoCare Hub para a Fase 2 sem inventar re
 | Secrets no repositório             | Não foi identificado secret real em `.env.example`, manifestos ou workflows; arquivos reais continuam fora do versionamento.                        |
 | `.env` ignorado                    | `.gitignore` ignora `.env` e `.env.*`, mantendo `!.env.example`.                                                                                    |
 | `.env.example` seguro              | Usa placeholders para senha do banco e segredo JWT.                                                                                                 |
-| Kubernetes Secrets                 | `k8s/secret.example.yaml` contem placeholders; `phase2-ci-cd.yml` cria o Secret real a partir de GitHub Actions Secrets.                            |
+| Kubernetes Secrets                 | `k8s/secret.example.yaml` contem placeholders; `phase2-ci-cd.yml` cria o Secret do cluster temporario a partir de variaveis de CI.                   |
 | Variáveis sensíveis fora do código | Banco, JWT e Terraform sensível dependem de variáveis de ambiente, secrets do CI/CD ou `TF_VAR_*`.                                                  |
 | CPF/CNPJ                           | `Document` normaliza e valida dígitos verificadores de CPF/CNPJ.                                                                                    |
 | Placa                              | `Plate` aceita placas antigas e Mercosul, normalizando para alfanumérico maiúsculo.                                                                 |
 | Payloads                           | OpenAPI gerado aplica `@Valid`, Bean Validation, limites de tamanho/paginação e padrões para documento/placa; Jackson rejeita campos desconhecidos. |
 | Autorização por perfil             | `SecurityConfig` diferencia `ADMIN`, `EMPLOYEE` e `CUSTOMER`; testes de segurança existem.                                                          |
 | Escopo empresa/cliente             | `AuthorizationService` restringe acesso a cliente/OS pelo `customerId`; política de usuários restringe gestão por empresa.                          |
-| Pipeline                           | Workflows usam placeholders de CI ou GitHub Actions Secrets; não ha `echo` de valores sensíveis.                                                    |
+| Pipeline                           | Workflows usam placeholders e variaveis temporarias de CI; não ha `echo` de valores sensíveis.                                                       |
 | `.gitignore`                       | Atualizado para cobrir arquivos locais de ambiente, chaves, certificados, kubeconfig e estado Terraform.                                            |
 
 ## Correcoes aplicadas nesta revisão

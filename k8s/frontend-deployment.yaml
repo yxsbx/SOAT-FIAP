@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/yxsbx/autocarehub-web:latest
+          image: autocarehub-web:local
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

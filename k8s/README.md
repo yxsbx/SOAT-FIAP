@@ -13,7 +13,7 @@ Manifestos da Fase 2 para deploy local ou academico do AutoCare Hub em Kubernete
 | ATENDIDO | Backend com Deployment, Service, probes, requests/limits e HPA por CPU/memoria. |
 | ATENDIDO | Frontend demonstrativo com Deployment, Service, probes, requests/limits e HPA por CPU/memoria. |
 | VALIDAR MANUALMENTE | Metrics Server precisa existir no cluster para o HPA calcular metricas. |
-| VALIDAR MANUALMENTE | Imagens precisam estar publicadas no registry ou carregadas no cluster local. |
+| ATENDIDO | Imagens usam tags locais e devem ser carregadas no runtime do cluster local. |
 
 ## Aplicação
 

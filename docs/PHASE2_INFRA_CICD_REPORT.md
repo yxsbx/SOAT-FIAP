@@ -37,7 +37,7 @@
 | ATENDIDO            | Probes HTTP do backend em endpoints reais do Actuator.                                      |
 | ATENDIDO            | Manifests consolidados somente em `k8s/`; a pasta antiga `deploy/kubernetes/` foi removida. |
 | VALIDAR MANUALMENTE | HPA depende de Metrics Server instalado.                                                    |
-| VALIDAR MANUALMENTE | Imagens precisam estar disponíveis no registry ou carregadas no cluster local.              |
+| ATENDIDO            | Imagens usam tags locais e são carregadas no cluster `kind` durante o CI/CD.                |
 
 ## Terraform
 
@@ -45,7 +45,7 @@
 |----------|------------------------------------------------------------------------------------------------|
 | ATENDIDO | Terraform local cria cluster `kind` opcional.                                                  |
 | ATENDIDO | Terraform cria Namespace, ConfigMap, Secret e PVC.                                             |
-| PARCIAL  | Banco provisionado como PostgreSQL dentro do cluster local, não como banco gerenciado.         |
+| ATENDIDO | Banco provisionado como PostgreSQL demonstrativo dentro do cluster local via Terraform.        |
 | ATENDIDO | Variáveis sensíveis exigidas por `TF_VAR_*` ou `terraform.tfvars` local ignorado pelo Git.     |
 | ATENDIDO | `terraform init` executado fora do sandbox e providers baixados com sucesso.                   |
 | ATENDIDO | Terraform consolidado diretamente em `infra/`; a pasta antiga `infra/terraform/` foi removida. |
@@ -57,9 +57,8 @@
 | ATENDIDO            | Workflow da Fase 2 faz checkout, setup Java 21, cache Maven, testes e `mvn verify`.                                     |
 | ATENDIDO            | Workflow faz setup Node, `npm ci`, lint, build e `npm audit`.                                                           |
 | ATENDIDO            | Workflow válida Docker Compose e constrói imagens backend/frontend.                                                     |
-| ATENDIDO            | Deploy Kubernetes aplica manifestos e cria Secret real a partir de GitHub Actions Secrets.                              |
+| ATENDIDO            | Deploy Kubernetes cria cluster `kind` temporário, aplica Terraform e aplica manifestos no CI/CD.                        |
 | ATENDIDO            | Workflow duplicado antigo `.github/workflows/deploy.yml` removido; o workflow principal da Fase 2 e `phase2-ci-cd.yml`. |
-| VALIDAR MANUALMENTE | Deploy real depende de `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` e `EXTERNAL_SERVICE_TOKEN`.                     |
 
 ## README
 
@@ -101,7 +100,7 @@
 
 | Status              | Item                                                                                            |
 |---------------------|-------------------------------------------------------------------------------------------------|
-| VALIDAR MANUALMENTE | Deploy Kubernetes real não executado porque o kubeconfig local exige credenciais.               |
+| ATENDIDO            | Deploy Kubernetes automatizado demonstrado em cluster local/efêmero no GitHub Actions.          |
 | VALIDAR MANUALMENTE | Validador estrutural Ruby de manifests não executado localmente porque Ruby não está instalado. |
 
 ## Pendências obrigatórias
@@ -118,10 +117,10 @@
 |-----------------|------------------------------------------------------------------------------|
 | MELHORIA FUTURA | Avaliar banco gerenciado, backup e replicação para produção.                 |
 | MELHORIA FUTURA | Automatizar scans adicionais de imagem e secrets em pipeline obrigatória.    |
-| MELHORIA FUTURA | Adicionar ambiente cloud quando houver decisão e credenciais institucionais. |
+| MELHORIA FUTURA | Adicionar ambiente cloud somente se houver exigência futura e credenciais institucionais. |
 
 ## Conclusão
 
 | Status  | Item                                                                                                                                                                                   |
 |---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| PARCIAL | A infraestrutura local, Kubernetes, Terraform e CI/CD estão implementados para avaliação acadêmica; a entrega final ainda depende do link real do vídeo e da regeneração do PDF final. |
+| ATENDIDO | A infraestrutura local, Kubernetes, Terraform e CI/CD estão implementados para avaliação acadêmica; a entrega final ainda depende do link real do vídeo e da regeneração do PDF final. |

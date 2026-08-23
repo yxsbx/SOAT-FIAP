@@ -94,6 +94,12 @@ Desenho da arquitetura:
 
 [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md)
 
+O desenho contempla os três pontos pedidos na Fase 2:
+
+- Componentes da aplicação: frontend demonstrativo, API backend e PostgreSQL.
+- Infraestrutura provisionada: Docker local, Kubernetes, ConfigMap, Secret, Deployments, Services, HPAs e Terraform.
+- Fluxo de deploy: GitHub Actions cria cluster `kind`, carrega imagens, executa Terraform e aplica manifests.
+
 ```mermaid
 flowchart LR
     user["Usuário / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
@@ -133,11 +139,12 @@ flowchart LR
     subgraph cicd["CI/CD"]
         pipeline["GitHub Actions phase2-ci-cd.yml"]
         pipeline --> images["Build imagens Docker"]
-        pipeline --> apply["kubectl apply -f k8s/"]
+        pipeline --> kind["Cluster kind temporário"]
+        kind --> apply["terraform apply + kubectl apply"]
     end
 
     terraform["Terraform infra/"] --> k8sCluster
-    images --> k8sCluster
+    images --> kind
     apply --> k8sCluster
 ```
 
@@ -780,7 +787,7 @@ Docker na Fase 2:
 - Dockerfile frontend em [frontend/Dockerfile](frontend/Dockerfile).
 - Docker Compose para execução local com PostgreSQL, backend e frontend.
 - Variáveis por ambiente via `.env.example`.
-- Publicação de imagens preparada no workflow [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml).
+- Build de imagens preparado no workflow [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml).
 
 ## Kubernetes
 
@@ -801,8 +808,8 @@ Manifestos principais:
 - `backend-deployment.yaml`, `backend-service.yaml` e `backend-hpa.yaml`: API Spring Boot, Service interno e HPA por CPU/memória.
 - `frontend-deployment.yaml`, `frontend-service.yaml` e `frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU/memória.
 
-Antes de aplicar, crie um Secret real a partir de valores seguros do ambiente ou deixe a pipeline gerar esse recurso
-a partir dos GitHub Actions Secrets. Não versione secrets reais.
+Antes de aplicar, crie um Secret real a partir de valores seguros do ambiente local ou deixe a pipeline gerar esse
+recurso com variáveis temporárias de CI. Não versione secrets reais.
 
 Validação local dos manifests:
 
@@ -833,8 +840,8 @@ kubectl port-forward -n autocarehub svc/autocarehub-web 5173:8080
 ```
 
 Limitações: o PostgreSQL em Kubernetes é demonstrativo para a Fase 2; ambientes produtivos devem avaliar banco gerenciado,
-backup e replicação. O HPA depende do Metrics Server instalado no cluster. As imagens precisam estar publicadas no registry
-ou carregadas no runtime local do cluster.
+backup e replicação. O HPA depende do Metrics Server instalado no cluster. As imagens precisam estar carregadas no
+runtime local do cluster, como ocorre no CI com `kind load docker-image`.
 
 ## Terraform
 
@@ -852,7 +859,7 @@ disponibilizado para avaliação; opcionalmente, o Terraform cria um cluster loc
 
 Arquivos:
 
-- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
+- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes, recursos base e PostgreSQL demonstrativo.
 - `infra/variables.tf`: variáveis parametrizáveis.
 - `infra/outputs.tf`: outputs úteis para conferência e deploy.
 - `infra/versions.tf`: providers e versões.
@@ -865,6 +872,7 @@ Recursos provisionados:
 - ConfigMap `autocarehub-config`.
 - Secret `autocarehub-secret`, com valores recebidos por variáveis locais/CI.
 - PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo.
+- Deployment e Service `autocarehub-postgres` do banco de dados demonstrativo.
 
 Comandos:
 
@@ -891,14 +899,14 @@ export TF_VAR_postgres_password="substituir-localmente"
 export TF_VAR_jwt_secret="segredo-com-pelo-menos-32-bytes"
 ```
 
-Depois do `terraform apply`, aplique apenas os workloads Kubernetes que não são gerenciados pelo Terraform, conforme
-detalhado em [infra/README.md](infra/README.md). Se o Terraform criar o Secret real, não aplique outro Secret com
-placeholders por cima dele.
+Depois do `terraform apply`, aplique apenas os workloads Kubernetes da aplicação que não são gerenciados pelo Terraform,
+conforme detalhado em [infra/README.md](infra/README.md). Se o Terraform criar o Secret real, não aplique outro Secret
+com placeholders por cima dele.
 
 Limitações: o modo `kind` cria cluster local, não cluster gerenciado em cloud. O Terraform não cria banco gerenciado em
 cloud; ele provisiona a base necessária para o PostgreSQL demonstrativo dentro do cluster configurado no kubeconfig local
-ou no cluster `kind` criado. Os Deployments, Services e HPAs continuam nos manifests em `k8s/` e são
-aplicados depois do provisionamento base.
+ou no cluster `kind` criado. Os Deployments, Services e HPAs da aplicação continuam nos manifests em `k8s/` e são
+aplicados depois do provisionamento da base e do banco.
 
 Última validação registrada: `terraform fmt -check`, `terraform init -backend=false` e `terraform validate` passaram em
 `infra`.
@@ -929,28 +937,14 @@ Pipelines atuais:
 - Validação estrutural dos YAMLs de `k8s/`.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
 - Build das imagens Docker do backend e frontend.
-- Publicação das imagens no GitHub Container Registry quando a execução estiver em `main` ou for manual.
-- Deploy real no Kubernetes somente quando os secrets necessários estiverem configurados.
-- Aplicação de namespace, ConfigMap e PVC.
-- Criação/atualização do Secret Kubernetes a partir dos GitHub Actions Secrets, sem usar placeholders.
-- Aplicação do PostgreSQL, backend, frontend, Services e HPAs.
-- Atualização dos Deployments para as imagens geradas no SHA da própria pipeline.
+- Criação de cluster Kubernetes local e temporário com `kind` no runner do GitHub Actions.
+- Carga das imagens locais no cluster `kind`.
+- Aplicação de namespace, ConfigMap, Secret, PVC e PostgreSQL com Terraform.
+- Aplicação do backend, frontend, Services e HPAs.
 - Verificação de rollout e listagem de pods, services e HPAs.
 
-Secrets necessários para deploy real:
-
-| Secret | Uso |
-| ------ | --- |
-| `KUBE_CONFIG` | Kubeconfig em base64 para acesso ao cluster. |
-| `POSTGRES_PASSWORD` | Senha do PostgreSQL usada no Secret Kubernetes. |
-| `JWT_SECRET` | Segredo JWT com pelo menos 32 bytes. |
-| `EXTERNAL_SERVICE_TOKEN` | Token compartilhado usado nos webhooks externos simulados. |
-
-O push para o GitHub Container Registry usa `GITHUB_TOKEN`, secret automático do GitHub Actions. Ele não deve ser
-exposto nem substituido por token pessoal sem necessidade.
-
-Se qualquer secret obrigatório estiver ausente, a pipeline mantém build, testes, validações e build de imagens, mas registra
-que o deploy real foi pulado. Esse comportamento é intencional para permitir execução acadêmica sem expor credenciais.
+Não há publicação em nuvem, GHCR ou cluster externo nesta entrega. O deploy automatizado é local/efêmero dentro do
+GitHub Actions, usando variáveis seguras de CI apenas para criar o Secret no cluster temporário.
 
 O deploy do banco é demonstrável pelo manifesto do PostgreSQL em Kubernetes e pelas migrations Flyway executadas no
 startup do backend. A pipeline aplica o PVC e o Deployment do PostgreSQL antes dos workloads da aplicação.
@@ -966,13 +960,13 @@ Também é possível executar manualmente pela aba GitHub Actions, selecionando 
 
 `phase2-ci-cd.yml` e o workflow principal da Fase 2 para o roteiro da banca. Ele executa checkout, Java 21, cache Maven,
 build/testes/cobertura backend, Node 22, `npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do
-Docker Compose e deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` ou
-`EXTERNAL_SERVICE_TOKEN` não existem, o deploy é pulado com mensagem explícita.
+Docker Compose, validação do Terraform e deploy Kubernetes local em `kind`.
 
 ## Documentação complementar
 
 | Documento | Link |
 | --------- | ---- |
+| Índice da documentação | [docs/README.md](docs/README.md) |
 | DDD | [docs/domain/DDD_DOCUMENTATION.md](docs/domain/DDD_DOCUMENTATION.md) |
 | Event Storming | [docs/domain/EVENT_STORMING.md](docs/domain/EVENT_STORMING.md) |
 | Domain Storytelling | [docs/domain/DOMAIN_STORYTELLING.md](docs/domain/DOMAIN_STORYTELLING.md) |
@@ -994,11 +988,35 @@ Docker Compose e deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, 
 | Roteiro do vídeo | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
 | Vídeo | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA] |
 
+Artefatos técnicos principais:
+
+| Artefato | Caminho |
+| -------- | ------- |
+| Pipeline principal CI/CD | [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml) |
+| Pipeline de qualidade | [.github/workflows/quality.yml](.github/workflows/quality.yml) |
+| Pipeline Qodana | [.github/workflows/qodana_code_quality.yml](.github/workflows/qodana_code_quality.yml) |
+| Docker Compose | [docker-compose.yml](docker-compose.yml) |
+| Dockerfile backend | [Dockerfile](Dockerfile) |
+| Dockerfile frontend | [frontend/Dockerfile](frontend/Dockerfile) |
+| Manifestos Kubernetes | [k8s/](k8s/) |
+| Guia Kubernetes | [k8s/README.md](k8s/README.md) |
+| Scripts Terraform | [infra/](infra/) |
+| Guia Terraform | [infra/README.md](infra/README.md) |
+
 ## Entrega da Fase 2
 
 ## Vídeo demonstrativo
 
 Link do vídeo: [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA]
+
+O vídeo deve ser publicado no YouTube ou Vimeo, em modo público ou não listado, com duração máxima de 15 minutos.
+
+O roteiro esperado está em [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) e deve demonstrar:
+
+- Deploy da aplicação com Docker/Kubernetes local.
+- Execução do CI/CD no GitHub Actions.
+- Consumo das APIs pelo Swagger, Postman ou chamadas equivalentes.
+- Escalabilidade automática com HPA, via simulação de carga ou criação/processamento de múltiplas Ordens de Serviço.
 
 ## PDF final
 
@@ -1011,6 +1029,7 @@ O PDF enviado no portal deve conter:
 Checklist de preparação:
 
 - [x] Código refatorado.
+- [x] Testes automatizados unitários e de integração cobrindo fluxos críticos.
 - [x] Dockerfile revisado.
 - [x] `docker-compose.yml` revisado.
 - [x] `k8s/` criado.

@@ -69,7 +69,7 @@ flowchart LR
 | ATENDIDO         | Docker Compose local com backend, frontend e PostgreSQL.                                                      |
 | ATENDIDO         | Kubernetes local com Namespace, ConfigMap, Secret de exemplo, Deployments, Services, probes, resources e HPA. |
 | ATENDIDO         | Terraform local em `infra/` para cluster `kind` opcional, Namespace, ConfigMap, Secret e PVC.                 |
-| ATENDIDO         | CI/CD em `.github/workflows/phase2-ci-cd.yml` com build, testes, Docker e deploy protegido por secrets.       |
+| ATENDIDO         | CI/CD em `.github/workflows/phase2-ci-cd.yml` com build, testes, Docker e deploy Kubernetes local em `kind`.  |
 | ATENDIDO         | Acesso do usuário `soat-architecture` ao repositório privado confirmado.                                      |
 | BLOQUEIA ENTREGA | Link real do vídeo ainda deve ser inserido antes do envio.                                                    |
 
@@ -114,16 +114,16 @@ kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
 
-Antes de deploy real, substituir `k8s/secret.example.yaml` por secrets seguros do ambiente ou criar o Secret via CI/CD.
+Para a demonstração local, use secrets seguros apenas no ambiente local ou deixe o Terraform criar o Secret no cluster.
+Não publique kubeconfig nem credenciais em GitHub Actions.
 
 ## CI/CD resumido
 
 O workflow `.github/workflows/phase2-ci-cd.yml` executa checkout, Java 21, cache Maven, testes, `mvn verify`, Node 22,
-`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose e deploy Kubernetes.
+`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose e deploy Kubernetes local.
 
-O deploy real só roda em `main` ou `workflow_dispatch` quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` e
-`EXTERNAL_SERVICE_TOKEN` estiverem configurados como GitHub Actions Secrets. Sem esses valores, o workflow registra que
-o deploy foi pulado.
+O deploy do CI cria um cluster `kind` temporário, carrega as imagens locais, aplica a base com Terraform e aplica os
+manifestos Kubernetes. Não há publicação em nuvem nem uso de `KUBE_CONFIG`.
 
 ## PDF final
 
