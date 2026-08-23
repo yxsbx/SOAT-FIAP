@@ -23,11 +23,11 @@ jobs:
           java-version: "21"
           cache: maven
 
-      - name: Backend build and tests
+      - name: Backend unit tests
         working-directory: backend
         run: mvn -B test
 
-      - name: Backend coverage gate
+      - name: Backend integration tests and coverage gate
         working-directory: backend
         run: mvn -B verify
 

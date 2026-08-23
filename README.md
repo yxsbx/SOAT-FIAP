@@ -102,50 +102,82 @@ O desenho contempla os três pontos pedidos na Fase 2:
 
 ```mermaid
 flowchart LR
-    user["Usuário / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
-    user --> api["API Backend Spring Boot"]
-    frontend --> api
-    api --> postgres["PostgreSQL"]
+    user["Usuário / Cliente"] --> frontend["Frontend Vue/Vite<br/>Nginx"]
+    user --> swagger["Swagger / Postman<br/>Consumo da API"]
 
-    subgraph docker["Docker local"]
-        compose["docker-compose.yml"]
-        compose --> appContainer["Container backend"]
-        compose --> webContainer["Container frontend"]
-        compose --> dbContainer["Container PostgreSQL"]
+    frontend --> backend["Backend Java 21<br/>Spring Boot API REST"]
+    swagger --> backend
+
+    backend --> auth["JWT<br/>Autenticação e Autorização"]
+    backend --> flyway["Flyway<br/>Migrações"]
+    backend --> postgres["PostgreSQL<br/>Banco de Dados"]
+
+    subgraph local["Ambiente Local - Docker Compose"]
+        dockerFrontend["Container Frontend"]
+        dockerBackend["Container Backend"]
+        dockerDb["Container PostgreSQL"]
     end
 
-    subgraph k8sCluster["Kubernetes"]
-        cm["ConfigMap"]
-        secret["Secret"]
-        hpaApi["HPA backend"]
-        hpaWeb["HPA frontend"]
-        deployApi["Deployment backend"]
-        deployWeb["Deployment frontend"]
-        deployDb["Deployment PostgreSQL"]
-        svcApi["Service backend"]
-        svcWeb["Service frontend"]
-        svcDb["Service PostgreSQL"]
-        hpaApi --> deployApi
-        hpaWeb --> deployWeb
-        cm --> deployApi
-        secret --> deployApi
-        secret --> deployDb
-        deployApi --> svcApi
-        deployWeb --> svcWeb
-        deployDb --> svcDb
-        svcApi --> svcDb
+    subgraph k8s["Kubernetes"]
+        namespace["Namespace autocarehub"]
+
+        configmap["ConfigMap<br/>Variáveis não sensíveis"]
+        secret["Secret<br/>Tokens e senhas"]
+
+        deployFrontend["Deployment Frontend"]
+        deployBackend["Deployment Backend"]
+        deployPostgres["Deployment PostgreSQL"]
+
+        svcFrontend["Service Frontend"]
+        svcBackend["Service Backend"]
+        svcPostgres["Service PostgreSQL"]
+
+        hpaFrontend["HPA Frontend<br/>CPU / Memória"]
+        hpaBackend["HPA Backend<br/>CPU / Memória"]
+
+        namespace --> configmap
+        namespace --> secret
+
+        configmap --> deployBackend
+        secret --> deployBackend
+        secret --> deployPostgres
+
+        hpaFrontend --> deployFrontend
+        hpaBackend --> deployBackend
+
+        deployFrontend --> svcFrontend
+        deployBackend --> svcBackend
+        deployPostgres --> svcPostgres
+
+        svcBackend --> svcPostgres
     end
 
-    subgraph cicd["CI/CD"]
-        pipeline["GitHub Actions phase2-ci-cd.yml"]
-        pipeline --> images["Build imagens Docker"]
-        pipeline --> kind["Cluster kind temporário"]
-        kind --> apply["terraform apply + kubectl apply"]
+    subgraph iac["Infraestrutura como Código"]
+        terraform["Terraform<br/>infra/"]
+        terraform --> k8s
     end
 
-    terraform["Terraform infra/"] --> k8sCluster
-    images --> kind
-    apply --> k8sCluster
+    subgraph cicd["CI/CD - GitHub Actions"]
+        pipeline["Pipeline phase2-ci-cd.yml"]
+        tests["Build + Testes<br/>Surefire / Failsafe / JaCoCo"]
+        dockerBuild["Build Imagens Docker"]
+        kind["Cluster local temporário<br/>kind"]
+        deploy["Aplicação Terraform<br/>+ kubectl apply"]
+
+        pipeline --> tests
+        pipeline --> dockerBuild
+        pipeline --> kind
+        kind --> deploy
+        deploy --> k8s
+    end
+
+    dockerFrontend --> frontend
+    dockerBackend --> backend
+    dockerDb --> postgres
+
+    backend --> svcPostgres
+    svcBackend --> backend
+    svcFrontend --> frontend
 ```
 
 Documentação detalhada:
@@ -693,14 +725,14 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 
 ## Testes
 
-Executar testes:
+Executar a suite rapida de testes unitarios e de contexto:
 
 ```bash
 cd backend
 mvn test
 ```
 
-Executar verificação completa:
+Executar verificação completa com testes de integração e cobertura:
 
 ```bash
 cd backend
@@ -726,15 +758,15 @@ Documentação complementar de testes:
 
 Última validação registrada após as correções da Fase 2:
 
-- `mvn test`: 172 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
+- `mvn clean test`: passou com 146 testes, 0 falhas, 0 erros e 0 ignorados pelo Maven Surefire.
+- `mvn clean verify`: executa 146 testes pelo Surefire + 26 testes pelo Failsafe, totalizando 172 testes, e valida o gate JaCoCo.
 - O percentual JaCoCo atualizado não é citado aqui sem consultar o relatório real em `backend/target/site/jacoco`.
 
 Validação desta revisão de infraestrutura:
 
 - `mvn spotless:check`: passou.
-- `mvn test`: passou com 172 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
+- `mvn clean test`: passou com 146 testes, 0 falhas, 0 erros e 0 ignorados pelo Maven Surefire.
+- `mvn clean verify`: passou executando 146 testes pelo Surefire + 26 testes pelo Failsafe, totalizando 172 testes, e gate JaCoCo.
 - Resultado detalhado: [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md).
 
 ## Segurança
@@ -932,7 +964,8 @@ Pipelines atuais:
 
 `phase2-ci-cd.yml` executa:
 
-- Build e testes do backend com `mvn -B verify` em `backend/`.
+- Build e testes unitarios do backend com `mvn -B test` em `backend/`.
+- Testes de integracao e gate JaCoCo com `mvn -B verify` em `backend/`.
 - Instalação, lint e build do frontend.
 - Validação estrutural dos YAMLs de `k8s/`.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.

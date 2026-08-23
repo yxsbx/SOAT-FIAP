@@ -73,9 +73,8 @@
 | Status              | Comando                                                      | Resultado                                                                                                                                                              |
 |---------------------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ATENDIDO            | `mvn spotless:check`                                         | Passou na raiz após adicionar `pom.xml` agregador com plugin Spotless.                                                                                                 |
-| ATENDIDO            | `mvn test`                                                   | Passou na raiz: 172 testes, 0 falhas, 0 erros e 0 ignorados.                                                                                                           |
-| ATENDIDO            | `cd backend; mvn test`                                       | Passou: 172 testes, 0 falhas, 0 erros e 0 ignorados.                                                                                                                   |
-| ATENDIDO            | `mvn clean verify`                                           | Passou com 172 testes, 0 falhas, 0 erros, 0 ignorados; gate JaCoCo aprovado.                                                                                           |
+| ATENDIDO            | `cd backend; mvn clean test`                                 | Passou: 146 testes pelo Maven Surefire, 0 falhas, 0 erros e 0 ignorados.                                                                                               |
+| ATENDIDO            | `cd backend; mvn clean verify`                               | Passou: 146 testes pelo Surefire + 26 testes pelo Failsafe, total 172 testes, e gate JaCoCo aprovado.                                                                  |
 | ATENDIDO            | `cd frontend; npm ci`                                        | Passou: 141 pacotes instalados/auditados, 0 vulnerabilidades.                                                                                                          |
 | ATENDIDO            | `cd frontend; npm run lint`                                  | Passou com ESLint e `--max-warnings=0`.                                                                                                                                |
 | ATENDIDO            | `cd frontend; npm run build`                                 | Falhou no sandbox com `spawn EPERM`; passou fora do sandbox com Vite, gerando `dist/`.                                                                                 |
@@ -113,14 +112,14 @@
 
 ## Melhorias futuras
 
-| Status          | Item                                                                         |
-|-----------------|------------------------------------------------------------------------------|
-| MELHORIA FUTURA | Avaliar banco gerenciado, backup e replicação para produção.                 |
-| MELHORIA FUTURA | Automatizar scans adicionais de imagem e secrets em pipeline obrigatória.    |
+| Status          | Item                                                                                      |
+|-----------------|-------------------------------------------------------------------------------------------|
+| MELHORIA FUTURA | Avaliar banco gerenciado, backup e replicação para produção.                              |
+| MELHORIA FUTURA | Automatizar scans adicionais de imagem e secrets em pipeline obrigatória.                 |
 | MELHORIA FUTURA | Adicionar ambiente cloud somente se houver exigência futura e credenciais institucionais. |
 
 ## Conclusão
 
-| Status  | Item                                                                                                                                                                                   |
-|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Status   | Item                                                                                                                                                                                   |
+|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | ATENDIDO | A infraestrutura local, Kubernetes, Terraform e CI/CD estão implementados para avaliação acadêmica; a entrega final ainda depende do link real do vídeo e da regeneração do PDF final. |

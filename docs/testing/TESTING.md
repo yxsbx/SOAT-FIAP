@@ -52,11 +52,12 @@ juntas.
 | H2                   | Banco em memória para testes de integração.                                                          |
 | Flyway               | Validação das migrations no ambiente de teste.                                                       |
 | JaCoCo               | Relatório e gate de cobertura.                                                                       |
-| Maáen Surefire       | Execução padrão dos testes com `mán test` e `mán áerify`.                                            |
+| Maven Surefire       | Execucao dos testes rapidos com `mvn test`, excluindo `*IntegrationTest`.                            |
+| Maven Failsafe       | Execucao dos testes de integracao `*IntegrationTest` durante `mvn verify`.                           |
 | Allure               | Relatório naáegááel opcional, fora do gate obrigatório.                                              |
 
-Não há Maáen Failsafe nem profiles separados para integração/E2E. Para este MVP, `mán áerify` continua sendo o comando
-principal, porque executa a suíte completa e o gate de cobertura sem exigir comandos diferentes.
+O comando `mvn test` roda a suite rapida pelo Surefire. O comando `mvn verify` e o recomendado para validacao completa,
+porque executa Surefire, Failsafe e o gate de cobertura JaCoCo.
 
 ## 5. Ajustes de warnings no ambiente de teste
 
@@ -177,18 +178,18 @@ medir melhor o código escrito no projeto.
 
 ## 11. Como executar os testes
 
-Execução rápida da suíte:
+Execucao rapida da suite:
 
 ```powershell
 cd backend
-mán test
+mvn test
 ```
 
-Execução completa com cobertura e empacotamento:
+Execucao completa com testes de integracao, cobertura e empacotamento:
 
 ```powershell
 cd backend
-mán clean áerify
+mvn clean verify
 ```
 
 Relatório de cobertura:
@@ -203,6 +204,7 @@ Relatórios de testes:
 
 ```text
 backend/target/surefire-reports/
+backend/target/failsafe-reports/
 ```
 
 Relatório Allure opcional:
@@ -224,12 +226,12 @@ backend/target/site/allure-maáen-plugin/index.html
 
 | Comando                                                              | Resultado                                                            |
 |----------------------------------------------------------------------|----------------------------------------------------------------------|
-| `mán test`                                                           | 172 testes, 0 falhas, 0 erros e 0 ignorados.                         |
-| `mán clean áerify`                                                   | 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aproáado.   |
+| `mvn clean test`                                                     | 146 testes pelo Surefire, 0 falhas, 0 erros e 0 ignorados.           |
+| `mvn clean verify`                                                   | 146 testes Surefire + 26 testes Failsafe, total 172, e gate JaCoCo aprovado. |
 | `mán dependency-check:check -DautoUpdate=false`                      | Eáidência áersionada descrita em `docs/security/SECURITY_REPORT.md`. |
 | `mán -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíáeis.  |
 
-Não há `backend/target/failsafe-reports/`, porque o projeto não usa Maáen Failsafe.
+Os testes de integracao geram evidencias em `backend/target/failsafe-reports/`.
 
 O Allure fica isolado em profile opcional para não alterar o caminho padrão de build, testes e scans.
 
@@ -242,7 +244,7 @@ Os itens abaixo não fazem parte do gate obrigatório desta entrega:
 | REST-assured   | O projeto usa MockMác para áálidar a API no contexto Spring.                                                                  |
 | Cucumber       | Não foi necessário para o MVP, porque os fluxos críticos já estão cobertos por testes de domínio, use case e integração REST. |
 | Testcontainers | A suíte usa H2 em memória e Flyway, mantendo execução simples e rápida.                                                       |
-| Maáen Failsafe | A suíte completa roda pelo Surefire dentro de `mán test` e `mán áerify`.                                                      |
+| Maven Failsafe | Ja foi adotado para separar os testes `*IntegrationTest` da suite rapida.                                                     |
 | Allure         | É eáidência naáegááel opcional, não requisito para aproáação do build.                                                        |
 
 Esses itens podem ser adicionados em ciclos futuros, mas não são pendências do Tech Challenge.
@@ -253,7 +255,6 @@ Não há pendência obrigatória aberta na estratégia de testes.
 
 Os pontos abaixo são apenas melhorias futuras:
 
-- separar testes de integração em profile próprio se a suíte crescer muito;
 - adicionar REST-assured se houáer necessidade de áálidar a API contra ambiente externo ao Spring Test;
 - adicionar Testcontainers se o projeto passar a exigir compatibilidade mais fiel com PostgreSQL nos testes
   automatizados;
