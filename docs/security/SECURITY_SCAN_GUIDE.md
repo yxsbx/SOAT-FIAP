@@ -17,7 +17,7 @@ repositório, sempre deixando claro qual é o caso.
 mvn dependency-check:check
 ```
 
-Quando a base local do OWASP Dependency-Check já estiver atualizada é for necessário evitar acesso a internet:
+Quando a base local do OWASP Dependency-Check já estiver atualizada e for necessário evitar acesso a internet:
 
 ```bash
 mvn dependency-check:check -DautoUpdate=false
@@ -60,7 +60,7 @@ trivy image autocarehub-api:local
 trivy image autocarehub-web:local
 ```
 
-Com Docker ativo é Trivy via container:
+Com Docker ativo e Trivy via container:
 
 ```bash
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image autocarehub-api:local
@@ -75,7 +75,7 @@ Com Gitleaks instalado localmente:
 gitleaks detect --source . --report-format json --report-path security-reports/secrets/gitleaks.json
 ```
 
-Com Docker ativo é Gitleaks via container:
+Com Docker ativo e Gitleaks via container:
 
 ```bash
 docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /repo \
@@ -84,7 +84,7 @@ docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /rep
 
 ## API dinamica
 
-Com OWASP ZAP, quando disponível é com a API local rodando:
+Com OWASP ZAP, quando disponível e com a API local rodando:
 
 ```bash
 docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
@@ -94,12 +94,12 @@ docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
 
 ## Revisão manual obrigatória
 
-- JWT deve exigir segredo por variável de ambiente é tamanho mínimo.
+- JWT deve exigir segredo por variável de ambiente e tamanho mínimo.
 - CORS não deve aceitar `*` ou `null`; origens devem vir de configuração por ambiente.
 - `.env`, arquivos de chave, kubeconfig local e `terraform.tfvars` reais devem ficar fora do versionamento.
 - `.env.example`, `frontend/.env.example`, `infra/terraform.tfvars.example` e `k8s/secret.example.yaml` devem usar apenas placeholders.
 - Kubernetes Secrets reais devem ser criados por CI/CD, Terraform ou operador do ambiente, nunca versionados.
 - GitHub Actions não deve imprimir valores de secrets.
-- Validações de CPF/CNPJ, placa e payloads devem continuar cobertas por domínio, OpenAPI/Bean Validation é testes.
-- Autorização por perfil é escopo de cliente/empresa deve continuar coberta por testes de segurança.
+- Validações de CPF/CNPJ, placa e payloads devem continuar cobertas por domínio, OpenAPI/Bean Validation e testes.
+- Autorização por perfil e escopo de cliente/empresa deve continuar coberta por testes de segurança.
 - O relatório final deve separar resultados reexecutados na rodada atual de evidências versionadas anteriormente.

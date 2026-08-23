@@ -17,7 +17,7 @@ Workflow principal:
 2. Setup de Java 21, Node.js 22 e Terraform.
 3. Build, testes e cobertura do backend com `mvn -B verify`.
 4. Instalação do frontend com `npm ci`.
-5. Lint é build do frontend com `npm run lint` e `npm run build`.
+5. Lint e build do frontend com `npm run lint` e `npm run build`.
 6. Validação estrutural dos manifests Kubernetes em `k8s/*.yaml`.
 7. Validação do Terraform com `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
 8. Build das imagens Docker do backend e frontend.
@@ -27,7 +27,7 @@ Workflow principal:
 12. Criação/atualização do Secret Kubernetes a partir de GitHub Actions Secrets.
 13. Aplicação do PostgreSQL, backend, frontend, Services e HPAs.
 14. Atualização dos Deployments para as imagens geradas no commit da pipeline.
-15. Verificação de rollout é listagem de Deployments, Pods, Services e HPAs.
+15. Verificação de rollout e listagem de Deployments, Pods, Services e HPAs.
 
 ## Secrets necessários
 

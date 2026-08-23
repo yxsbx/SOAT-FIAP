@@ -2,14 +2,14 @@
 
 ## Identificação
 
-| Campo                      | Valor                                               |
-|----------------------------|-----------------------------------------------------|
-| Projeto                    | AutoCare Hub                                        |
-| Responsavel                | Yasmin Barcelos Pires                               |
-| RM                         | RM370897                                            |
-| Repositório                | <https://github.com/yxsbx/SOAT-FIAP>                |
-| Acesso `soat-architecture` | Feito desde a Fase 1                                |
-| Vídeo demonstrativo        | [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA] |
+  Campo                        Valor                                                
+ ---------------------------- ----------------------------------------------------- 
+  Projeto                      AutoCare Hub                                         
+  Responsavel                  Yasmin Barcelos Pires                                
+  RM                           RM370897                                             
+  Repositório                  <https://github.com/yxsbx/SOAT-FIAP>                 
+  Acesso `soat-architecture`   Feito desde a Fase 1                                 
+  Vídeo demonstrativo          [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA]  
 
 ## Arquitetura
 
@@ -62,16 +62,16 @@ flowchart LR
 
 ## Recursos Escolhidos
 
-| Status              | Recurso                                                                                                       |
-|---------------------|---------------------------------------------------------------------------------------------------------------|
-| ATENDIDO            | Backend Java 21/Spring Boot com arquitetura hexagonal, JWT, Flyway, PostgreSQL e Swagger/OpenAPI.             |
-| ATENDIDO            | Frontend demonstrativo Vue/Vite servido por Nginx.                                                            |
-| ATENDIDO            | Docker Compose local com backend, frontend e PostgreSQL.                                                      |
-| ATENDIDO            | Kubernetes local com Namespace, ConfigMap, Secret de exemplo, Deployments, Services, probes, resources e HPA. |
-| ATENDIDO            | Terraform local em `infra/` para cluster `kind` opcional, Namespace, ConfigMap, Secret e PVC.                 |
-| ATENDIDO            | CI/CD em `.github/workflows/phase2-ci-cd.yml` com build, testes, Docker e deploy protegido por secrets.       |
-| VALIDAR MANUALMENTE | Acesso do usuário `soat-architecture` ao repositório privado.                                                 |
-| BLOQUEIA ENTREGA    | Link real do vídeo ainda deve ser inserido antes do envio.                                                    |
+  Status                Recurso                                                                                                        
+ --------------------- --------------------------------------------------------------------------------------------------------------- 
+  ATENDIDO              Backend Java 21/Spring Boot com arquitetura hexagonal, JWT, Flyway, PostgreSQL e Swagger/OpenAPI.              
+  ATENDIDO              Frontend demonstrativo Vue/Vite servido por Nginx.                                                             
+  ATENDIDO              Docker Compose local com backend, frontend e PostgreSQL.                                                       
+  ATENDIDO              Kubernetes local com Namespace, ConfigMap, Secret de exemplo, Deployments, Services, probes, resources e HPA.  
+  ATENDIDO              Terraform local em `infra/` para cluster `kind` opcional, Namespace, ConfigMap, Secret e PVC.                  
+  ATENDIDO              CI/CD em `.github/workflows/phase2-ci-cd.yml` com build, testes, Docker e deploy protegido por secrets.        
+  ATENDIDO   Acesso do usuário `soat-architecture` ao repositório privado confirmado.                                                  
+  BLOQUEIA ENTREGA      Link real do vídeo ainda deve ser inserido antes do envio.                                                     
 
 ## Execução Resumida
 
@@ -102,7 +102,7 @@ terraform apply
 cd ..
 ```
 
-O Terraform prepara a infraestrutura base. O PostgreSQL é executado como workload Kubernetes demonstrativo; o PVC é os
+O Terraform prepara a infraestrutura base. O PostgreSQL é executado como workload Kubernetes demonstrativo; o PVC e os
 secrets são provisionados pelo Terraform quando esse fluxo for usado.
 
 ## Kubernetes Resumido
@@ -119,7 +119,7 @@ Antes de deploy real, substituir `k8s/secret.example.yaml` por secrets seguros d
 ## CI/CD Resumido
 
 O workflow `.github/workflows/phase2-ci-cd.yml` executa checkout, Java 21, cache Maven, testes, `mvn verify`, Node 22,
-`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose é deploy Kubernetes.
+`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose e deploy Kubernetes.
 
 O deploy real só roda em `main` ou `workflow_dispatch` quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` é
 `EXTERNAL_SERVICE_TOKEN` estiverem configurados como GitHub Actions Secrets. Sem esses valores, o workflow registra que
