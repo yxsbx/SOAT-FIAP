@@ -13,6 +13,7 @@ import br.com.autocarehub.application.usecase.serviceorder.ListServiceOrdersUseC
 import br.com.autocarehub.application.usecase.serviceorder.TrackServiceOrderUseCase;
 import br.com.autocarehub.application.usecase.serviceorder.UpdateServiceOrderStatusUseCase;
 import br.com.autocarehub.domain.model.ServiceOrder;
+import br.com.autocarehub.infrastructure.security.ExternalServiceTokenVerifier;
 import br.com.autocarehub.interfaces.rest.generated.api.ServiceOrdersApi;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderPartRequest;
 import br.com.autocarehub.interfaces.rest.generated.model.AddServiceOrderServiceRequest;
@@ -50,6 +51,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     private final ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase;
     private final GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase;
     private final TrackServiceOrderUseCase trackServiceOrderUseCase;
+    private final ExternalServiceTokenVerifier externalServiceTokenVerifier;
 
     public ServiceOrdersController(
             CreateServiceOrderUseCase createServiceOrderUseCase,
@@ -63,7 +65,8 @@ public class ServiceOrdersController implements ServiceOrdersApi {
             UpdateServiceOrderStatusUseCase updateServiceOrderStatusUseCase,
             ListServiceOrdersByCustomerUseCase listServiceOrdersByCustomerUseCase,
             GetAverageServiceOrderExecutionTimeUseCase getAverageServiceOrderExecutionTimeUseCase,
-            TrackServiceOrderUseCase trackServiceOrderUseCase) {
+            TrackServiceOrderUseCase trackServiceOrderUseCase,
+            ExternalServiceTokenVerifier externalServiceTokenVerifier) {
         this.createServiceOrderUseCase = createServiceOrderUseCase;
         this.findServiceOrderUseCase = findServiceOrderUseCase;
         this.listServiceOrdersUseCase = listServiceOrdersUseCase;
@@ -76,6 +79,7 @@ public class ServiceOrdersController implements ServiceOrdersApi {
         this.listServiceOrdersByCustomerUseCase = listServiceOrdersByCustomerUseCase;
         this.getAverageServiceOrderExecutionTimeUseCase = getAverageServiceOrderExecutionTimeUseCase;
         this.trackServiceOrderUseCase = trackServiceOrderUseCase;
+        this.externalServiceTokenVerifier = externalServiceTokenVerifier;
     }
 
     @Override
@@ -104,7 +108,10 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> decideServiceOrderBudget(
-            UUID serviceOrderId, ExternalBudgetDecisionRequest externalBudgetDecisionRequest) {
+            UUID serviceOrderId,
+            @Nullable String xExternalServiceToken,
+            ExternalBudgetDecisionRequest externalBudgetDecisionRequest) {
+        externalServiceTokenVerifier.verify(xExternalServiceToken);
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(decideServiceOrderBudgetUseCase.execute(
                 ServiceOrderRestMapper.toCommand(serviceOrderId, externalBudgetDecisionRequest))));
     }
@@ -112,7 +119,10 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudgetFromExternalTool(
-            UUID serviceOrderId, ExternalBudgetNotificationRequest externalBudgetNotificationRequest) {
+            UUID serviceOrderId,
+            @Nullable String xExternalServiceToken,
+            ExternalBudgetNotificationRequest externalBudgetNotificationRequest) {
+        externalServiceTokenVerifier.verify(xExternalServiceToken);
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(
                 decideServiceOrderBudgetUseCase.execute(ServiceOrderRestMapper.toCommand(
                         serviceOrderId,
@@ -172,7 +182,10 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     @Override
     @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> rejectServiceOrderBudgetFromExternalTool(
-            UUID serviceOrderId, ExternalBudgetNotificationRequest externalBudgetNotificationRequest) {
+            UUID serviceOrderId,
+            @Nullable String xExternalServiceToken,
+            ExternalBudgetNotificationRequest externalBudgetNotificationRequest) {
+        externalServiceTokenVerifier.verify(xExternalServiceToken);
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(
                 decideServiceOrderBudgetUseCase.execute(ServiceOrderRestMapper.toCommand(
                         serviceOrderId,
@@ -190,7 +203,10 @@ public class ServiceOrdersController implements ServiceOrdersApi {
 
     @Override
     public ResponseEntity<ServiceOrderResponse> updateServiceOrderStatusFromExternalTool(
-            UUID serviceOrderId, ExternalStatusUpdateRequest externalStatusUpdateRequest) {
+            UUID serviceOrderId,
+            @Nullable String xExternalServiceToken,
+            ExternalStatusUpdateRequest externalStatusUpdateRequest) {
+        externalServiceTokenVerifier.verify(xExternalServiceToken);
         ServiceOrder serviceOrder = updateServiceOrderStatusUseCase.execute(
                 ServiceOrderRestMapper.toCommand(serviceOrderId, externalStatusUpdateRequest));
         return ResponseEntity.ok(ServiceOrderRestMapper.toResponse(serviceOrder));

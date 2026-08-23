@@ -15,9 +15,9 @@ Registrar a revisao de seguranca do AutoCare Hub para a Fase 2 sem inventar resu
 | --- | --- |
 | JWT | Implementado com JJWT, segredo obrigatorio via `JWT_SECRET`/`security.jwt.secret`, minimo de 32 bytes e expiracao configuravel. |
 | CORS | Configuravel por `APP_CORS_ALLOWED_ORIGINS`; `SecurityConfig` rejeita origem `*` e `null`. |
-| Secrets no repositorio | Nao foi identificado secret real em `.env.example`, manifestos ou workflows; arquivos reais continuam fora do versionamento. |
+| Secrets no repositorio | Nao foi identificado secret real em `deploy/docker/.env.example`, manifestos ou workflows; arquivos reais continuam fora do versionamento. |
 | `.env` ignorado | `.gitignore` ignora `.env` e `.env.*`, mantendo `!.env.example`. |
-| `.env.example` seguro | Usa placeholders para senha do banco e segredo JWT. |
+| `deploy/docker/.env.example` seguro | Usa placeholders para senha do banco e segredo JWT. |
 | Kubernetes Secrets | `deploy/kubernetes/02-secret.yaml` contem placeholders; `deploy.yml` cria o Secret real a partir de GitHub Actions Secrets. |
 | Variaveis sensiveis fora do codigo | Banco, JWT e Terraform sensivel dependem de variaveis de ambiente, secrets do CI/CD ou `TF_VAR_*`. |
 | CPF/CNPJ | `Document` normaliza e valida digitos verificadores de CPF/CNPJ. |
@@ -43,6 +43,7 @@ Nao houve mudanca de regra de seguranca no codigo de negocio nesta rodada; porta
 | Comando | Resultado real |
 | --- | --- |
 | `npm audit --audit-level=high` em `frontend/` | Sucesso: `found 0 vulnerabilities`. |
+| `npm audit --json` em `frontend/` após as correções da Fase 2 | Sucesso: resultado final com 0 vulnerabilidades. |
 | `gitleaks version` | Falhou: `gitleaks` nao esta instalado no PATH local. |
 | `trivy --version` | Falhou: `trivy` nao esta instalado no PATH local. |
 | `docker run --rm zricethezav/gitleaks:latest version` | Falhou: Docker daemon nao estava em execucao. |
@@ -81,7 +82,7 @@ ambiente permitir, mas servem como historico versionado da entrega.
 | CORS sem wildcard em producao/configuracao | OK |
 | Secrets reais fora do repositorio | OK na revisao local; Gitleaks atual pendente por ferramenta |
 | `.env` ignorado | OK |
-| `.env.example` seguro | OK |
+| `deploy/docker/.env.example` seguro | OK |
 | Kubernetes Secrets com placeholders no repo | OK |
 | Variaveis sensiveis fora do codigo | OK |
 | CPF/CNPJ validado | OK |

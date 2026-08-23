@@ -6,7 +6,7 @@ Tempo alvo: ate 15 minutos.
 |-------------|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|
 | 0:00-1:00   | Problema da oficina e evolução da Fase 1 para Fase 2.            | `README.md` e resumo do projeto.                                                                                                                                                                                                | Contexto e documentação.         |
 | 1:00-2:30   | Arquitetura monolitica modular com Clean Architecture/Hexagonal. | `docs/architecture/PHASE2_ARCHITECTURE.md`, pacotes `domain`, `application`, `infrastructure`, `interfaces`.                                                                                                                                 | Arquitetura e Clean Code.        |
-| 2:30-4:00   | Execução local com Docker.                                       | `docker compose down -v`, `docker compose up -d --build`, `docker compose ps`.                                                                                                                                                  | Docker e Compose.                |
+| 2:30-4:00   | Execução local com Docker.                                       | `.\scripts\start-local.ps1 -Rebuild -Reset`, `docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml ps`.                                                                                             | Docker e Compose.                |
 | 4:00-6:00   | Consumo das APIs obrigatorias.                                   | Swagger e chamadas para OS, status, decisão externa e listagem.                                                                                                                                                                 | APIs Fase 2 e OpenAPI.           |
 | 6:00-7:30   | Testes e cobertura.                                              | `mvn clean verify`, `backend/target/site/jacoco/index.html`.                                                                                                                                                                            | Testes automatizados e JaCoCo.   |
 | 7:30-9:30   | Kubernetes.                                                      | `kubectl apply --dry-run=client -f deploy/kubernetes/`, `kubectl apply -f deploy/kubernetes/`, `kubectl get pods -n autocarehub`, `kubectl get svc -n autocarehub`, `kubectl get hpa -n autocarehub`, `kubectl logs -n autocarehub deploy/autocarehub-api`. | Deploy e escalabilidade.         |
@@ -28,7 +28,7 @@ Tempo alvo: ate 15 minutos.
 
 - `mvn clean verify` passando.
 - `npm run lint` e `npm run build` passando no frontend.
-- `docker compose up -d --build` funcionando.
+- `.\scripts\start-local.ps1 -Rebuild -Reset` funcionando.
 - Swagger acessível em `http://localhost:8080/swagger-ui.html`.
 - Manifests em `deploy/kubernetes/` aplicáveis no cluster escolhido.
 - Metrics Server instalado no cluster para demonstrar HPA.

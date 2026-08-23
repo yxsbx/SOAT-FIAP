@@ -183,7 +183,7 @@ documentação.
 
 | Risco                          | Tratamento aplicado                                                  |
 |--------------------------------|----------------------------------------------------------------------|
-| Ambiente difícil de reproduzir | Docker Compose e `.env.example`.                                     |
+| Ambiente difícil de reproduzir | Docker Compose e `deploy/docker/.env.example`.                                     |
 | API difícil de entender        | Swagger/OpenAPI versionado.                                          |
 | Dados inválidos                | `Document`, `Plate` e validações de request.                         |
 | Acesso indevido                | JWT nas APIs administrativas e regras no `SecurityConfig`.           |
@@ -194,7 +194,7 @@ documentação.
 | Banco inconsistente            | Migration Flyway versionada.                                         |
 | Regressão em fluxo crítico     | Testes unitários e integração REST.                                  |
 | Dependências vulneráveis       | Scans e relatório de vulnerabilidades.                               |
-| Secrets versionados            | `.gitignore`, `deploy/docker/env/.env.example` sem secrets e Gitleaks.                 |
+| Secrets versionados            | `.gitignore`, `deploy/docker/.env.example` sem secrets e Gitleaks.                 |
 
 ## 11. Itens fora do escopo do MVP
 

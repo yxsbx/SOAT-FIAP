@@ -20,6 +20,10 @@ security:
     secret: test-jwt-secret-with-at-least-32-bytes
     expiration-minutes: 60
 
+app:
+  external-service:
+    token: test-external-service-token
+
 logging:
   level:
     org.springdoc.core.events.SpringDocAppInitializer: ERROR

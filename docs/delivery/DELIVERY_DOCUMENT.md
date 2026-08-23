@@ -143,7 +143,7 @@ A Fase 2 evolui o MVP da Fase 1 com:
 - endpoint de atualização externa de status em `POST /api/v1/service-orders/{serviceOrderId}/status/external`;
 - listagem operacional de OS movida para query no repository/adapter, ordenada por status e data e ocultando OS finalizadas e entregues;
 - manifests Kubernetes em `deploy/kubernetes/`;
-- estrutura Terraform em `infra/`;
+- estrutura Terraform em `infra/terraform/`;
 - pipeline de deploy em `.github/workflows/deploy.yml`;
 - README principal atualizado com exemplos rápidos de API;
 - guia de scans de segurança em `docs/security/SECURITY_SCAN_GUIDE.md`;

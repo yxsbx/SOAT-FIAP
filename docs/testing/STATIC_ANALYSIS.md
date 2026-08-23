@@ -66,11 +66,12 @@ cd ..
 ### Docker Compose
 
 ```powershell
-docker compose config --quiet
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet
 ```
 
-A validação com `docker compose config --quiet` é não destrutiva e verifica se o arquivo Compose é válido. O comando
-`docker compose down -v` não é necessário para a análise estática, porque remove volumes locais. Ele deve ser usado
+A validação com `docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet` é
+não destrutiva e verifica se o arquivo Compose é válido. O comando
+`docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down -v` não é necessário para a análise estática, porque remove volumes locais. Ele deve ser usado
 apenas na demonstração de execução limpa do projeto ou em ambiente descartável.
 
 ## 5. Resultados por ferramenta
@@ -80,12 +81,12 @@ apenas na demonstração de execução limpa do projeto ou em ambiente descartá
 | Spotless               | `mvn spotless:check` aprovado, sem arquivos exigindo alteração.                        |
 | Maven/JUnit            | `mvn test` aprovado com 167 testes, 0 falhas, 0 erros e 0 ignorados.                   |
 | JaCoCo                 | Gate aprovado no `mvn clean verify`.                                                   |
-| OWASP Dependency-Check | Build aprovado. 103 dependências analisadas e 0 vulnerabilidades no relatório final.   |
+| OWASP Dependency-Check | Evidência versionada em `security-reports/`; reexecução local atual não foi usada como gate desta revisão documental. |
 | ESLint frontend        | Aprovado com `--max-warnings=0`.                                                       |
 | Vite build             | Build de produção aprovado.                                                            |
 | npm audit              | Relatório JSON final com 0 vulnerabilidades.                                           |
-| Semgrep                | Evidência local com 200 arquivos analisados, 0 achados e 0 erros.                      |
-| Gitleaks               | Evidência local com 0 leaks encontrados.                                               |
+| Semgrep                | Evidência versionada em `security-reports/static-analysis/semgrep.json`.               |
+| Gitleaks               | Evidência versionada em `security-reports/secrets/gitleaks.json`.                      |
 | Docker Compose config  | Arquivo Compose válido na validação não destrutiva.                                    |
 
 ## 6. Correções e ajustes aplicados

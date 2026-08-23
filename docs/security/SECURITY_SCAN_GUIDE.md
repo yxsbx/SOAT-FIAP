@@ -97,7 +97,7 @@ docker run --rm -t ghcr.io/zaproxy/zaproxy:stable zap-api-scan.py \
 - JWT deve exigir segredo por variavel de ambiente e tamanho minimo.
 - CORS nao deve aceitar `*` ou `null`; origens devem vir de configuracao por ambiente.
 - `.env`, arquivos de chave, kubeconfig local e `terraform.tfvars` reais devem ficar fora do versionamento.
-- `deploy/docker/env/.env.example`, `frontend/.env.example`, `infra/terraform.tfvars.example` e `deploy/kubernetes/02-secret.yaml` devem usar apenas placeholders.
+- `deploy/docker/.env.example`, `frontend/.env.example`, `infra/terraform/terraform.tfvars.example` e `deploy/kubernetes/02-secret.yaml` devem usar apenas placeholders.
 - Kubernetes Secrets reais devem ser criados por CI/CD, Terraform ou operador do ambiente, nunca versionados.
 - GitHub Actions nao deve imprimir valores de secrets.
 - Validacoes de CPF/CNPJ, placa e payloads devem continuar cobertas por dominio, OpenAPI/Bean Validation e testes.

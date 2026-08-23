@@ -65,7 +65,7 @@ A configuração de testes foi ajustada para evitar warnings que poderiam escond
 - H2 fixado em versão compatível com a versão verificada pelo Flyway usada no projeto;
 - Mockito carregado como `javaagent` no Surefire, evitando auto-attach dinâmico no JDK;
 - `spring.jpa.open-in-view=false` também no profile de teste;
-- relatório JaCoCo movido para `verify`, evitando bloqueio de arquivo no Windows durante `mvn clean test`;
+- relatório JaCoCo movido para `verify`, evitando bloqueio de arquivo no Windows durante execuções locais de teste;
 - modelo OpenAPI gerado pós-processado para remover `@Valid` diretamente de `List`, mantendo validação nos itens da
   lista e nos objetos aninhados.
 
@@ -226,7 +226,7 @@ backend/target/site/allure-maven-plugin/index.html
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
 | `mvn test`                                                           | 167 testes, 0 falhas, 0 erros e 0 ignorados.                        |
 | `mvn clean verify`                                                   | 167 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.  |
-| `mvn dependency-check:check -DautoUpdate=false`                      | 103 dependências analisadas e 0 vulnerabilidades.                   |
+| `mvn dependency-check:check -DautoUpdate=false`                      | Evidência versionada descrita em `docs/security/SECURITY_REPORT.md`. |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 
 Não há `backend/target/failsafe-reports/`, porque o projeto não usa Maven Failsafe.

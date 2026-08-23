@@ -199,7 +199,7 @@ public class SecurityConfig {
         }
         origins.forEach(configuration::addAllowedOrigin);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-External-Service-Token"));
         configuration.setAllowCredentials(false);
         configuration.setMaxAge(CORS_MAX_AGE_SECONDS);
 

@@ -26,6 +26,7 @@ class SecurityAuthorizationIntegrationTest {
     private static final String CUSTOMER_ORDER_ID = "50000000-0000-0000-0000-000000000002";
     private static final String OTHER_CUSTOMER_ORDER_ID = "50000000-0000-0000-0000-000000000003";
     private static final String CUSTOMER_DOCUMENT = "12345678909";
+    private static final String EXTERNAL_SERVICE_TOKEN = "test-external-service-token";
 
     @Autowired
     private MockMvc mockMvc;
@@ -160,6 +161,7 @@ class SecurityAuthorizationIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", CUSTOMER_ORDER_ID)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("decision", "APPROVED", "source", "email"))))
                 .andExpect(status().isOk())
@@ -167,6 +169,7 @@ class SecurityAuthorizationIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", OTHER_CUSTOMER_ORDER_ID)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("decision", "REJECTED", "source", "email"))))
                 .andExpect(status().isForbidden());

@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class ServiceOrderFlowIntegrationTest {
 
+    private static final String EXTERNAL_SERVICE_TOKEN = "test-external-service-token";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -61,6 +63,7 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/decision", serviceOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of(
                                 "decision", "REJECTED",
@@ -72,6 +75,7 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", serviceOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of(
                                 "status", "WAITING_APPROVAL",
@@ -89,6 +93,7 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/external-approval", approvedOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("source", "email", "reason", "Cliente aprovou pelo webhook"))))
                 .andExpect(status().isOk())
@@ -98,6 +103,7 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/external-rejection", rejectedOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("source", "email", "reason", "Cliente pediu revisão"))))
                 .andExpect(status().isOk())
@@ -119,18 +125,21 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/external-approval", UUID.randomUUID())
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("source", "email"))))
                 .andExpect(status().isNotFound());
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/external-approval", receivedOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("source", "email"))))
                 .andExpect(status().isBadRequest());
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/budget/external-rejection", receivedOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("reason", "sem origem"))))
                 .andExpect(status().isBadRequest());
@@ -142,12 +151,14 @@ class ServiceOrderFlowIntegrationTest {
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", UUID.randomUUID())
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("status", "IN_DIAGNOSIS", "source", "email"))))
                 .andExpect(status().isNotFound());
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", receivedOrderId)
                         .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("status", "IN_PROGRESS", "source", "email"))))
                 .andExpect(status().isBadRequest());
@@ -156,6 +167,13 @@ class ServiceOrderFlowIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of("status", "IN_DIAGNOSIS", "source", "email"))))
                 .andExpect(status().isUnauthorized());
+
+        mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", receivedOrderId)
+                        .header("Authorization", bearer(token))
+                        .header("X-External-Service-Token", "invalid-token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("status", "IN_DIAGNOSIS", "source", "email"))))
+                .andExpect(status().isForbidden());
     }
 
     @Test

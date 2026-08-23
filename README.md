@@ -177,14 +177,14 @@ Documentação detalhada:
 Copie os arquivos de exemplo antes de rodar localmente:
 
 ```bash
-cp deploy/docker/env/.env.example deploy/docker/.env
+cp deploy/docker/.env.example deploy/docker/.env
 cp frontend/.env.example frontend/.env
 ```
 
 No PowerShell:
 
 ```powershell
-Copy-Item deploy/docker/env/.env.example deploy/docker/.env
+Copy-Item deploy/docker/.env.example deploy/docker/.env
 Copy-Item frontend/.env.example frontend/.env
 ```
 
@@ -216,37 +216,33 @@ Variáveis principais do frontend:
 
 ## Como rodar localmente com Docker
 
-Crie o arquivo local de ambiente a partir do template seguro:
+O projeto pode ser iniciado inteiro com um único comando a partir da raiz:
 
-```bash
-cp deploy/docker/env/.env.example deploy/docker/.env
+```powershell
+.\scripts\start-local.ps1 -Rebuild -Reset
 ```
 
-Edite o `.env` local e troque pelo menos `POSTGRES_PASSWORD` e `JWT_SECRET`. O arquivo `.env` real não deve ser
-versionado.
+Esse comando usa `deploy/docker/.env`, remove containers antigos do próprio projeto se existirem, sobe PostgreSQL,
+backend e frontend, e mostra o estado dos containers ao final.
+O arquivo local já pode existir com seus valores pessoais; caso ele não exista, o script cria uma cópia a partir de
+`deploy/docker/.env.example`.
 
-Sequência recomendada para subir do zero:
+Para acompanhar os logs depois de subir:
 
-```bash
-docker compose down
-docker compose down -v
-docker compose down --remove-orphans
-docker compose up -d --build
-docker compose ps
-docker compose logs -f
+```powershell
+.\scripts\start-local.ps1 -FollowLogs
 ```
 
 Comandos úteis de limpeza e acompanhamento:
 
-```bash
-docker compose down
-docker compose down -v
-docker compose down --remove-orphans
-docker compose up -d --build
-docker compose logs -f
-docker compose logs -f backend
-docker compose logs -f frontend
-docker compose ps
+```powershell
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down -v
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d --build
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f backend
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f frontend
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml ps
 ```
 
 URLs locais:
@@ -264,7 +260,7 @@ executa as migrations Flyway no startup e expõe `/actuator/health` para healthc
 `/v3/api-docs`, `/swagger-ui` e `/openapi.yaml` para o backend, então a aplicação web funciona em
 `http://localhost:5173` sem configurar uma URL absoluta de API.
 
-Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `deploy/docker/env/.env.example`:
+Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `deploy/docker/.env.example`:
 
 ```text
 http://localhost:5173,http://127.0.0.1:5173
@@ -275,7 +271,7 @@ http://localhost:5173,http://127.0.0.1:5173
 Suba apenas o PostgreSQL pelo Docker Compose:
 
 ```bash
-docker compose -f deploy/docker/docker-compose.yml up -d postgres
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d postgres
 cd backend
 mvn spring-boot:run
 ```
@@ -670,7 +666,7 @@ O projeto possui:
 - Validação de CPF/CNPJ.
 - Validação de placa.
 - Configuração de CORS por variável de ambiente.
-- Uso de `deploy/docker/env/.env.example` para evitar versionamento de secrets reais.
+- Uso de `deploy/docker/.env.example` para evitar versionamento de secrets reais.
 - `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local e estado sensível do Terraform.
 - Kubernetes Secrets com placeholders no repositório e criação de valores reais por ambiente/CI.
 - Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
@@ -698,11 +694,11 @@ Arquivos atuais:
 Comandos principais:
 
 ```bash
-docker compose -f deploy/docker/docker-compose.yml config --quiet
-docker compose -f deploy/docker/docker-compose.yml build
-docker compose -f deploy/docker/docker-compose.yml up -d --build
-docker compose -f deploy/docker/docker-compose.yml logs -f
-docker compose -f deploy/docker/docker-compose.yml down
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml build
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d --build
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f
+docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down
 ```
 
 Docker na Fase 2:
@@ -710,7 +706,7 @@ Docker na Fase 2:
 - Dockerfile backend com build multi-stage.
 - Dockerfile frontend em [frontend/Dockerfile](frontend/Dockerfile).
 - Docker Compose para execução local com PostgreSQL, backend e frontend.
-- Variáveis por ambiente via `deploy/docker/env/.env.example`.
+- Variáveis por ambiente via `deploy/docker/.env.example`.
 - Publicação de imagens preparada no workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
 ## Kubernetes

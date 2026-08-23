@@ -8,7 +8,7 @@ Esta pasta concentra a documentação técnica, acadêmica e de entrega do proje
 docs/
 |-- api/             # OpenAPI e Collection Postman
 |-- architecture/    # Arquitetura, desenho da Fase 2 e refinamento tecnico
-|-- delivery/        # Documento de entrega, roteiro de video e evidencias da fase
+|-- delivery/        # Documento de entrega, PDF final e roteiro de video
 |-- domain/          # DDD, requisitos, Event Storming e Domain Storytelling
 |-- security/        # Relatorio de seguranca, guia de scans e supressoes
 |-- testing/         # Estrategia de testes e analise estatica

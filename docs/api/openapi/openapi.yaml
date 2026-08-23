@@ -1252,6 +1252,7 @@ paths:
       operationId: decideServiceOrderBudget
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+        - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
       requestBody:
         required: true
         content:
@@ -1327,6 +1328,7 @@ paths:
       operationId: approveServiceOrderBudgetFromExternalTool
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+        - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
       requestBody:
         required: true
         content:
@@ -1378,6 +1380,7 @@ paths:
       operationId: rejectServiceOrderBudgetFromExternalTool
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+        - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
       requestBody:
         required: true
         content:
@@ -1472,6 +1475,7 @@ paths:
       operationId: updateServiceOrderStatusFromExternalTool
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
+        - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
       requestBody:
         required: true
         content:
@@ -2023,6 +2027,14 @@ components:
       schema:
         type: string
         format: uuid
+    ExternalServiceTokenHeaderParam:
+      name: X-External-Service-Token
+      in: header
+      required: true
+      description: Token compartilhado configurado em `EXTERNAL_SERVICE_TOKEN` para webhooks externos simulados.
+      schema:
+        type: string
+        minLength: 1
   responses:
     BadRequest:
       description: Requisição invalida

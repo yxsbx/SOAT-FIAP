@@ -362,7 +362,7 @@ sequenceDiagram
 | Controlar estoque                                | `Part` e use cases de estoque/movimentação.                        | RF-008, RF-009, RF-012         |
 | Monitorar tempo médio                            | `GetAverageServiceOrderExecutionTimeUseCase`.                      | RF-020                         |
 | Proteger APIs                                    | `SecurityConfig`, `JwtAuthenticationFilter`, `JwtService`.         | RF-021, RNF-010                |
-| Executar localmente                              | Dockerfile, Compose e `.env.example`.                              | RNF-007, RNF-008, RNF-009      |
+| Executar localmente                              | Dockerfile, Compose e `deploy/docker/.env.example`.                 | RNF-007, RNF-008, RNF-009      |
 | Documentar API                                   | OpenAPI e Swagger UI.                                              | RNF-003, RNF-004               |
 
 ## 6. Aderência ao código
