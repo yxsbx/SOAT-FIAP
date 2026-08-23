@@ -1,6 +1,6 @@
-# Relatório De Infraestrutura E CI/CD - Fase 2
+# Relatório de infraestrutura e CI/CD - Fase 2
 
-## Arquivos Criados/Alterados
+## Arquivos criados/alterados
 
 | Status   | Item                                                                                                                           |
 |----------|--------------------------------------------------------------------------------------------------------------------------------|
@@ -63,13 +63,13 @@
 
 ## README
 
-| Status              | Item                                                                                    |
-|---------------------|-----------------------------------------------------------------------------------------|
-| ATENDIDO            | README documenta Fase 2, Docker, Kubernetes, Terraform, CI/CD, APIs, vídeo e PDF final. |
-| BLOQUEIA ENTREGA    | Link do vídeo deve ser preenchido antes da entrega final no portal.                     |
-| ATENDIDO | Acesso do `soat-architecture` foi confirmado no GitHub.                            |
+| Status           | Item                                                                                    |
+|------------------|-----------------------------------------------------------------------------------------|
+| ATENDIDO         | README documenta Fase 2, Docker, Kubernetes, Terraform, CI/CD, APIs, vídeo e PDF final. |
+| BLOQUEIA ENTREGA | Link do vídeo deve ser preenchido antes da entrega final no portal.                     |
+| ATENDIDO         | Acesso do `soat-architecture` foi confirmado no GitHub.                                 |
 
-## Comandos Executados
+## Comandos executados
 
 | Status              | Comando                                                      | Resultado                                                                                                                                                              |
 |---------------------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -89,7 +89,7 @@
 | ATENDIDO            | `docker compose up -d --build`                               | Construiu imagens e subiu containers; primeira tentativa encontrou conflito com containers antigos, resolvido antes da consolidação final para Docker Compose na raiz. |
 | ATENDIDO            | `docker compose ps`                                          | PostgreSQL, `app` e frontend ficaram `Up` e `healthy`; portas 5432, 8080 e 5173 expostas.                                                                              |
 | ATENDIDO            | `docker compose logs --tail=100 app`                         | Backend iniciou com Spring Boot, conectou ao PostgreSQL 16.13 e aplicou 1 migration Flyway com sucesso.                                                                |
-| VALIDAR MANUALMENTE | `kubectl apply --dry-run=client -f k8s/`                     | Falhou porque o cluster/kubeconfig local pediu credenciais; não foi possível válidar contra API Kubernetes local.                                                      |
+| VALIDAR MANUALMENTE | `kubectl apply --dry-run=client -f k8s/`                     | Falhou porque o cluster/kubeconfig local pediu credenciais; não foi possível validar contra API Kubernetes local.                                                      |
 | VALIDAR MANUALMENTE | `kubectl apply --dry-run=client --validate=false -f k8s/`    | Também falhou por credenciais do cluster ao reconhecer recursos.                                                                                                       |
 | VALIDAR MANUALMENTE | Validador estrutural Ruby dos YAMLs                          | Não executado localmente porque `ruby` não está instalado no PATH; a checagem existe no workflow `phase2-ci-cd.yml`.                                                   |
 | ATENDIDO            | `cd infra; terraform fmt -check`                             | Passou.                                                                                                                                                                |
@@ -97,22 +97,22 @@
 | ATENDIDO            | `cd infra; terraform validate`                               | Passou: configuração válida.                                                                                                                                           |
 | ATENDIDO            | Consolidação de Terraform                                    | Estrutura duplicada antiga removida; a entrega versionada fica em `infra/`.                                                                                            |
 
-## Comandos Não Executados Por Limitação Do Ambiente
+## Comandos não executados por limitação do ambiente
 
 | Status              | Item                                                                                            |
 |---------------------|-------------------------------------------------------------------------------------------------|
 | VALIDAR MANUALMENTE | Deploy Kubernetes real não executado porque o kubeconfig local exige credenciais.               |
 | VALIDAR MANUALMENTE | Validador estrutural Ruby de manifests não executado localmente porque Ruby não está instalado. |
 
-## Pendências Obrigatórias
+## Pendências obrigatórias
 
 | Status              | Item                                                                           |
 |---------------------|--------------------------------------------------------------------------------|
 | BLOQUEIA ENTREGA    | Inserir link real do vídeo demonstrativo.                                      |
-| ATENDIDO | Acesso do usuário `soat-architecture` ao repositório privado confirmado.        |
+| ATENDIDO            | Acesso do usuário `soat-architecture` ao repositório privado confirmado.       |
 | VALIDAR MANUALMENTE | Regenerar PDF final no portal/documento final após inserir link real do vídeo. |
 
-## Melhorias Futuras
+## Melhorias futuras
 
 | Status          | Item                                                                         |
 |-----------------|------------------------------------------------------------------------------|
@@ -120,8 +120,8 @@
 | MELHORIA FUTURA | Automatizar scans adicionais de imagem e secrets em pipeline obrigatória.    |
 | MELHORIA FUTURA | Adicionar ambiente cloud quando houver decisão e credenciais institucionais. |
 
-## Conclusao
+## Conclusão
 
-| Status  | Item                                                                                                                                                                                                      |
-|---------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Status  | Item                                                                                                                                                                                   |
+|---------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | PARCIAL | A infraestrutura local, Kubernetes, Terraform e CI/CD estão implementados para avaliação acadêmica; a entrega final ainda depende do link real do vídeo e da regeneração do PDF final. |

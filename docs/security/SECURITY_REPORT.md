@@ -70,7 +70,7 @@ ambiente permitir, mas servem como histórico versionado da entrega.
 | Dependency-Check não reexecutado nesta rodada por lock local do OWASP no cache Maven.            | Pendente: reexecutar quando o lock terminar ou em ambiente limpo de CI.                                                           |
 | Gitleaks não reexecutado nesta rodada por ausência da ferramenta e Docker daemon parado.         | Pendente: instalar Gitleaks ou iniciar Docker e executar via container.                                                           |
 | Trivy não reexecutado nesta rodada por ausência da ferramenta e Docker daemon parado.            | Pendente: instalar Trivy ou iniciar Docker e executar via container.                                                              |
-| Imagens Docker versionadas ainda possuem 1 CVE media cada em relatórios Docker Scout anteriores. | Residual: reválidar com Trivy/Docker Scout quando Docker estiver ativo e atualizar imagem/dependência se houver fix.              |
+| Imagens Docker versionadas ainda possuem 1 CVE média cada em relatórios Docker Scout anteriores. | Residual: revalidar com Trivy/Docker Scout quando Docker estiver ativo e atualizar imagem/dependência se houver fix.              |
 | Swagger/OpenAPI habilitado por padrão para ambiente local.                                       | Aceito para avaliação acadêmica; em produção usar `SPRINGDOC_API_DOCS_ENABLED=false` e restringir exposicao.                      |
 | JWT no frontend demonstrativo fica em `localStorage`.                                            | Aceito no MVP acadêmico; mitigado por autorização server-side e ausência de `v-html`/`innerHTML`/`eval` identificado no frontend. |
 

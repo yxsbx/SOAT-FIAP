@@ -75,14 +75,13 @@ public record Document(DocumentType type, String value) {
         if (value.length() != CNPJ_LENGTH || hasSameDigits(value)) {
             return false;
         }
-        int firstDigit = calculateCnpjDigit(value, CNPJ_FIRST_DIGIT_INDEX);
-        int secondDigit = calculateCnpjDigit(value, CNPJ_SECOND_DIGIT_INDEX);
+        int firstDigit = calculateCnpjDigit(value, CNPJ_FIRST_DIGIT_INDEX, CNPJ_FIRST_DIGIT_WEIGHTS);
+        int secondDigit = calculateCnpjDigit(value, CNPJ_SECOND_DIGIT_INDEX, CNPJ_SECOND_DIGIT_WEIGHTS);
         return firstDigit == Character.getNumericValue(value.charAt(CNPJ_FIRST_DIGIT_INDEX))
                 && secondDigit == Character.getNumericValue(value.charAt(CNPJ_SECOND_DIGIT_INDEX));
     }
 
-    private static int calculateCnpjDigit(String value, int length) {
-        int[] weights = length == CNPJ_FIRST_DIGIT_INDEX ? CNPJ_FIRST_DIGIT_WEIGHTS : CNPJ_SECOND_DIGIT_WEIGHTS;
+    private static int calculateCnpjDigit(String value, int length, int[] weights) {
         int sum = 0;
         for (int index = 0; index < length; index++) {
             sum += Character.getNumericValue(value.charAt(index)) * weights[index];

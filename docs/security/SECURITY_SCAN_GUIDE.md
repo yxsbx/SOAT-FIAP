@@ -1,6 +1,6 @@
 # Guia de scans de segurança
 
-Este guia lista os comandos de segurança usados para reválidar o AutoCare Hub na Fase 2. Registre em
+Este guia lista os comandos de segurança usados para revalidar o AutoCare Hub na Fase 2. Registre em
 [SECURITY_REPORT.md](SECURITY_REPORT.md) apenas resultados realmente executados ou evidências já versionadas no
 repositório, sempre deixando claro qual é o caso.
 
@@ -8,8 +8,8 @@ repositório, sempre deixando claro qual é o caso.
 
 - Java 21 e Maven.
 - Node.js 22/npm para o frontend.
-- Docker em execução, se for executar scans por imagem ou ferramentas em container.
-- Gitleaks e Trivy instalados localmente, ou Docker ativo para executa-los via imagem.
+- Docker em execução, se forem executados scans por imagem ou ferramentas em container.
+- Gitleaks e Trivy instalados localmente, ou Docker ativo para executá-los via imagem.
 
 ## Backend
 
@@ -17,13 +17,13 @@ repositório, sempre deixando claro qual é o caso.
 mvn dependency-check:check
 ```
 
-Quando a base local do OWASP Dependency-Check já estiver atualizada e for necessário evitar acesso a internet:
+Quando a base local do OWASP Dependency-Check já estiver atualizada e for necessário evitar acesso à internet:
 
 ```bash
 mvn dependency-check:check -DautoUpdate=false
 ```
 
-Saidas esperadas:
+Saídas esperadas:
 
 ```text
 backend/target/dependency-check/dependency-check-report.html
@@ -41,7 +41,7 @@ npm audit --audit-level=high
 cd ..
 ```
 
-Para gerar evidencia JSON:
+Para gerar evidência JSON:
 
 ```bash
 cd frontend
@@ -82,7 +82,7 @@ docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest detect --source /rep
   --report-format json --report-path /repo/security-reports/secrets/gitleaks.json
 ```
 
-## API dinamica
+## API dinâmica
 
 Com OWASP ZAP, quando disponível e com a API local rodando:
 
