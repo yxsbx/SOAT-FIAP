@@ -6,7 +6,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$output = Join-Path $PSScriptRoot "..\docs\DELIVERY_DOCUMENT.pdf"
+$output = Join-Path $PSScriptRoot "..\docs\delivery\DELIVERY_DOCUMENT.pdf"
 
 $pages = @(
     @(
@@ -30,23 +30,23 @@ $pages = @(
         "- Atualizacao externa de status: POST /api/v1/service-orders/{id}/status/external",
         "- Listagem operacional de OS ordenada por prioridade/status e data.",
         "- Ocultacao de OS finalizadas e entregues na fila operacional.",
-        "- Manifests Kubernetes em k8s/.",
-        "- Estrutura Terraform em infra/.",
+        "- Manifests Kubernetes em deploy/kubernetes/.",
+        "- Estrutura Terraform em infra/terraform/.",
         "- Pipeline GitHub Actions em .github/workflows/deploy.yml.",
-        "- Collection Postman em docs/postman/autocarehub-phase2.postman_collection.json."
+        "- Collection Postman em docs/api/postman/autocarehub-phase2.postman_collection.json."
     ),
     @(
         "Documentacao principal",
         "",
         "- README.md: entrada principal do projeto e fluxo rapido da API.",
-        "- docs/openapi/openapi.yaml: contrato OpenAPI.",
-        "- docs/DDD_DOCUMENTATION.md: documentacao DDD.",
-        "- docs/EVENT_STORMING.md: Event Storming.",
-        "- docs/PHASE2_ARCHITECTURE.md: desenho textual e Mermaid da arquitetura.",
-        "- docs/TESTING.md: estrategia e evidencias de testes.",
-        "- docs/SECURITY_REPORT.md: relatorio de vulnerabilidades.",
-        "- docs/SECURITY_SCAN_GUIDE.md: guia de execucao dos scans.",
-        "- docs/PHASE2_VIDEO_SCRIPT.md: roteiro do video demonstrativo.",
+        "- docs/api/openapi/openapi.yaml: contrato OpenAPI.",
+        "- docs/domain/DDD_DOCUMENTATION.md: documentacao DDD.",
+        "- docs/domain/EVENT_STORMING.md: Event Storming.",
+        "- docs/architecture/PHASE2_ARCHITECTURE.md: desenho textual e Mermaid da arquitetura.",
+        "- docs/testing/TESTING.md: estrategia e evidencias de testes.",
+        "- docs/security/SECURITY_REPORT.md: relatorio de vulnerabilidades.",
+        "- docs/security/SECURITY_SCAN_GUIDE.md: guia de execucao dos scans.",
+        "- docs/delivery/PHASE2_VIDEO_SCRIPT.md: roteiro do video demonstrativo.",
         "",
         "Recursos escolhidos",
         "- Java, Spring Boot e Maven para o backend.",
@@ -61,7 +61,7 @@ $pages = @(
         "- JWT e autorizacao por perfil.",
         "- Validacao de CPF/CNPJ e placa.",
         "- Secrets fora do codigo e uso de placeholders seguros.",
-        "- Relatorios em docs/SECURITY_REPORT.md e docs/SECURITY_SCAN_GUIDE.md."
+        "- Relatorios em docs/security/SECURITY_REPORT.md e docs/security/SECURITY_SCAN_GUIDE.md."
     ),
     @(
         "Evidencias de validacao",
@@ -76,14 +76,14 @@ $pages = @(
         "- terraform version: nao executado neste ambiente porque Terraform nao esta instalado.",
         "",
         "Links finais",
-        "- Desenho da arquitetura: docs/PHASE2_ARCHITECTURE.md",
-        "- Collection Postman: docs/postman/autocarehub-phase2.postman_collection.json",
-        "- PDF final: docs/DELIVERY_DOCUMENT.pdf",
+        "- Desenho da arquitetura: docs/architecture/PHASE2_ARCHITECTURE.md",
+        "- Collection Postman: docs/api/postman/autocarehub-phase2.postman_collection.json",
+        "- PDF final: docs/delivery/DELIVERY_DOCUMENT.pdf",
         "- Video demonstrativo: $VideoUrl",
         "",
         "Pendencias antes do envio no portal",
         "- Gravar e publicar o video demonstrativo de ate 15 minutos, se ainda nao publicado.",
-        "- Substituir o placeholder do link do video em README.md e docs/DELIVERY_DOCUMENT.md.",
+        "- Substituir o placeholder do link do video em README.md e docs/delivery/DELIVERY_DOCUMENT.md.",
         "- Confirmar acesso do usuario soat-architecture ao repositorio privado.",
         "- Configurar secrets reais da plataforma de CI/CD se o deploy real for demonstrado.",
         "- Validar Terraform em maquina com terraform instalado.",

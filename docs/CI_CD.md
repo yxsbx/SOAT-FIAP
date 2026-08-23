@@ -18,7 +18,7 @@ Workflow principal:
 3. Build, testes e cobertura do backend com `mvn -B verify`.
 4. Instalação do frontend com `npm ci`.
 5. Lint e build do frontend com `npm run lint` e `npm run build`.
-6. Validação estrutural dos manifests Kubernetes em `k8s/*.yaml`.
+6. Validação estrutural dos manifests Kubernetes em `deploy/kubernetes/*.yaml`.
 7. Validação do Terraform com `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
 8. Build das imagens Docker do backend e frontend.
 9. Push das imagens para GitHub Container Registry em `main` ou execução manual.
@@ -54,11 +54,11 @@ O push para GHCR usa `GITHUB_TOKEN`, secret automatico do GitHub Actions. Nao co
 
 A pipeline aplica:
 
-- `k8s/03-postgres-pvc.yaml`
-- `k8s/04-postgres-deployment.yaml`
-- `k8s/05-postgres-service.yaml`
+- `deploy/kubernetes/03-postgres-pvc.yaml`
+- `deploy/kubernetes/04-postgres-deployment.yaml`
+- `deploy/kubernetes/05-postgres-service.yaml`
 
-As migrations SQL ficam em `src/main/resources/db/migration/` e sao executadas pelo Flyway durante o startup do backend. O deploy do banco nesta entrega e academico/demonstrativo; ambiente produtivo deve avaliar banco gerenciado, backup e replicacao.
+As migrations SQL ficam em `backend/src/main/resources/db/migration/` e sao executadas pelo Flyway durante o startup do backend. O deploy do banco nesta entrega e academico/demonstrativo; ambiente produtivo deve avaliar banco gerenciado, backup e replicacao.
 
 ## Comportamento sem secrets
 

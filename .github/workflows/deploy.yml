@@ -38,6 +38,7 @@ jobs:
           terraform_wrapper: false
 
       - name: Backend tests and coverage
+        working-directory: backend
         run: mvn -B verify
 
       - name: Frontend install
@@ -53,7 +54,7 @@ jobs:
       - name: Validate Kubernetes YAML structure
         run: |
           ruby -ryaml -e '
-            Dir["k8s/*.yaml"].sort.each do |path|
+            Dir["deploy/kubernetes/*.yaml"].sort.each do |path|
               docs = YAML.load_stream(File.read(path)).compact
               abort("#{path}: empty YAML") if docs.empty?
               docs.each do |doc|
@@ -66,15 +67,15 @@ jobs:
           '
 
       - name: Terraform format check
-        working-directory: infra
+        working-directory: infra/terraform
         run: terraform fmt -check
 
       - name: Terraform init for validation
-        working-directory: infra
+        working-directory: infra/terraform
         run: terraform init -backend=false
 
       - name: Terraform validate
-        working-directory: infra
+        working-directory: infra/terraform
         run: terraform validate
 
       - name: Docker login
@@ -86,7 +87,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build backend image
-        run: docker build -t "${BACKEND_IMAGE}:${IMAGE_TAG}" -t "${BACKEND_IMAGE}:latest" .
+        run: docker build -f backend/Dockerfile -t "${BACKEND_IMAGE}:${IMAGE_TAG}" -t "${BACKEND_IMAGE}:latest" .
 
       - name: Build frontend image
         run: docker build -t "${FRONTEND_IMAGE}:${IMAGE_TAG}" -t "${FRONTEND_IMAGE}:latest" ./frontend
@@ -122,9 +123,9 @@ jobs:
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
         run: |
           kubectl apply \
-            -f k8s/00-namespace.yaml \
-            -f k8s/01-configmap.yaml \
-            -f k8s/03-postgres-pvc.yaml
+            -f deploy/kubernetes/00-namespace.yaml \
+            -f deploy/kubernetes/01-configmap.yaml \
+            -f deploy/kubernetes/03-postgres-pvc.yaml
 
       - name: Apply runtime secrets
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
@@ -139,14 +140,14 @@ jobs:
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
         run: |
           kubectl apply \
-            -f k8s/04-postgres-deployment.yaml \
-            -f k8s/05-postgres-service.yaml \
-            -f k8s/06-backend-deployment.yaml \
-            -f k8s/07-backend-service.yaml \
-            -f k8s/08-backend-hpa.yaml \
-            -f k8s/09-frontend-deployment.yaml \
-            -f k8s/10-frontend-service.yaml \
-            -f k8s/11-frontend-hpa.yaml
+            -f deploy/kubernetes/04-postgres-deployment.yaml \
+            -f deploy/kubernetes/05-postgres-service.yaml \
+            -f deploy/kubernetes/06-backend-deployment.yaml \
+            -f deploy/kubernetes/07-backend-service.yaml \
+            -f deploy/kubernetes/08-backend-hpa.yaml \
+            -f deploy/kubernetes/09-frontend-deployment.yaml \
+            -f deploy/kubernetes/10-frontend-service.yaml \
+            -f deploy/kubernetes/11-frontend-hpa.yaml
 
       - name: Use images built by this workflow
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''

@@ -15,19 +15,19 @@ O Terraform pode criar:
 - namespace `autocarehub`;
 - ConfigMap com variáveis não sensíveis;
 - Secret com valores sensíveis recebidos por variáveis;
-- PVC do PostgreSQL demonstrativo.
+- PVC do PostgreSQL demonstrativo executado no proprio cluster Kubernetes.
 
-Os workloads da aplicação ficam em [../k8s](../k8s) e podem ser aplicados depois do provisionamento base. Esta estrutura
-não assume cloud especifica.
+Os workloads da aplicação e do PostgreSQL demonstrativo ficam em [../deploy/kubernetes](../deploy/kubernetes) e podem ser aplicados depois do
+provisionamento base. Esta estrutura não assume cloud especifica e não cria banco gerenciado.
 
 ## Arquivos
 
 | Arquivo | Função |
 | ------- | ------ |
-| `main.tf` | Criação opcional de cluster `kind`, provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
-| `variables.tf` | Variáveis parametrizáveis do ambiente local/acadêmico. |
-| `outputs.tf` | Outputs uteis para conferencia e proximo passo de deploy. |
-| `terraform.tfvars.example` | Exemplo com placeholders seguros. |
+| `terraform/main.tf` | Criação opcional de cluster `kind`, provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
+| `terraform/variables.tf` | Variáveis parametrizáveis do ambiente local/acadêmico. |
+| `terraform/outputs.tf` | Outputs uteis para conferencia e proximo passo de deploy. |
+| `terraform/terraform.tfvars.example` | Exemplo com placeholders seguros. |
 
 ## Variáveis sensíveis
 
@@ -58,7 +58,10 @@ storage sem unidade reconhecida, senha fraca do PostgreSQL e segredo JWT menor q
 
 ## Comandos
 
+Execute os comandos Terraform a partir da pasta `infra/terraform`:
+
 ```bash
+cd infra/terraform
 terraform init
 terraform fmt
 terraform validate
@@ -76,36 +79,38 @@ terraform apply -var="create_kind_cluster=true"
 Use esse modo quando o cluster ainda não existir. Se o cluster `kind` ja existir, use o modo padrão com
 `create_kind_cluster=false` e aponte `kubeconfig_path`/`kubeconfig_context` para ele.
 
-Depois de aplicar a infraestrutura base, aplique apenas os workloads que não são gerenciados pelo Terraform:
+Depois de aplicar a infraestrutura base, ainda a partir de `infra/terraform`, aplique apenas os workloads que não são
+gerenciados pelo Terraform:
 
 ```bash
-kubectl apply -f ../k8s/04-postgres-deployment.yaml \
-  -f ../k8s/05-postgres-service.yaml \
-  -f ../k8s/06-backend-deployment.yaml \
-  -f ../k8s/07-backend-service.yaml \
-  -f ../k8s/08-backend-hpa.yaml \
-  -f ../k8s/09-frontend-deployment.yaml \
-  -f ../k8s/10-frontend-service.yaml \
-  -f ../k8s/11-frontend-hpa.yaml
+kubectl apply -f ../../deploy/kubernetes/04-postgres-deployment.yaml \
+  -f ../../deploy/kubernetes/05-postgres-service.yaml \
+  -f ../../deploy/kubernetes/06-backend-deployment.yaml \
+  -f ../../deploy/kubernetes/07-backend-service.yaml \
+  -f ../../deploy/kubernetes/08-backend-hpa.yaml \
+  -f ../../deploy/kubernetes/09-frontend-deployment.yaml \
+  -f ../../deploy/kubernetes/10-frontend-service.yaml \
+  -f ../../deploy/kubernetes/11-frontend-hpa.yaml
 
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
 
-Se preferir não usar Terraform, use diretamente o fluxo Kubernetes completo documentado em [../k8s/README.md](../k8s/README.md):
+Se preferir não usar Terraform, use diretamente o fluxo Kubernetes completo documentado em [../deploy/kubernetes/README.md](../deploy/kubernetes/README.md)
+a partir da raiz do repositório:
 
 ```bash
-kubectl apply -f ../k8s/
+kubectl apply -f deploy/kubernetes/
 ```
 
-Não misture os dois modos aplicando `../k8s/02-secret.yaml` depois do Terraform, pois esse arquivo contem placeholders.
+Não misture os dois modos aplicando `deploy/kubernetes/02-secret.yaml` depois do Terraform, pois esse arquivo contem placeholders.
 
 ## Limitações
 
 - O modo `kind` cria cluster local; não cria cluster gerenciado em cloud.
 - Não cria banco gerenciado em cloud.
-- Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC e variáveis de conexao.
+- Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC, Secret e variáveis de conexao.
 - Usa o contexto Kubernetes configurado localmente.
 - Secrets reais devem ser fornecidos apenas por ambiente seguro ou pela plataforma de CI/CD.
 - O HPA dos workloads depende de Metrics Server instalado no cluster.

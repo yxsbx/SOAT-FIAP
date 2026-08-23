@@ -51,7 +51,7 @@ mas torna o produto mais visual e palpável, mostrando como pessoas e empresas p
 - Abertura de OS retornando identificador unico: ja existe no fluxo `POST /api/v1/service-orders`.
 - Consulta de status da OS: ja existe via `GET /api/v1/service-orders/{serviceOrderId}` e tracking.
 - Endpoint de aprovação de orcamento: ja existe em `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`.
-- Endpoint de aprovação/recusa de orcamento por notificação externa em `POST /api/v1/service-orders/{serviceOrderId}/budget/decision`.
+- Endpoints explícitos de aprovação e recusa de orcamento por notificação externa em `POST /api/v1/service-orders/{serviceOrderId}/budget/external-approval` e `POST /api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
 - Listagem de OS ordenada por prioridade/status e data.
 - Exclusão logica da listagem principal de OS finalizadas e entregues.
 - Atualização de status via ferramenta externa, como email, em `POST /api/v1/service-orders/{serviceOrderId}/status/external`.
@@ -92,43 +92,46 @@ Arquitetura consolidada na Fase 2:
 
 Desenho da arquitetura:
 
-[docs/PHASE2_ARCHITECTURE.md](docs/PHASE2_ARCHITECTURE.md)
+[docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md)
 
 Documentação detalhada:
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md)
-- [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md)
-- [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md)
+- [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)
+- [docs/domain/DDD_DOCUMENTATION.md](docs/domain/DDD_DOCUMENTATION.md)
+- [docs/domain/EVENT_STORMING.md](docs/domain/EVENT_STORMING.md)
+- [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md)
 
 ## Estrutura de pastas
 
 ```text
 .
-|-- src/
-|   |-- main/java/                  # Backend Spring Boot
-|   |-- main/resources/             # Configuração, Flyway e assets estaticos
-|   `-- test/java/                  # Testes unitarios e de integração
-|-- docs/
-|   |-- openapi/                    # Contrato OpenAPI
-|   |-- ARCHITECTURE.md
-|   |-- CI_CD.md
-|   |-- DDD_DOCUMENTATION.md
-|   |-- EVENT_STORMING.md
-|   |-- SECURITY_REPORT.md
-|   |-- STATIC_ANALYSIS.md
-|   `-- TESTING.md
+|-- backend/                        # API Spring Boot monolitica modular
+|   |-- pom.xml
+|   |-- Dockerfile
+|   `-- src/
+|       |-- main/java/              # Código backend
+|       |-- main/resources/         # Configuração, Flyway e assets estaticos
+|       `-- test/java/              # Testes unitarios e de integração
 |-- frontend/                       # Frontend demonstrativo Vue/Vite
+|-- docs/
+|   |-- README.md                   # Guia da documentação
+|   |-- api/                        # OpenAPI e Postman
+|   |-- architecture/               # Arquitetura e desenho tecnico
+|   |-- delivery/                   # Entrega, roteiro e evidencias da fase
+|   |-- domain/                     # DDD, requisitos e modelagem
+|   |-- security/                   # Segurança e scans
+|   `-- testing/                    # Testes e analise estatica
+|-- deploy/
+|   |-- docker/                     # Docker Compose e env local
+|   |-- kubernetes/                 # Manifests Kubernetes da Fase 2
+|   `-- pipelines/                  # Notas sobre publicação/CI-CD
+|-- infra/
+|   `-- terraform/                  # Infraestrutura como código
 |-- security-reports/               # Evidencias de segurança versionadas
 |-- scripts/                        # Scripts auxiliares de validação
 |-- .github/workflows/
 |   |-- quality.yml                  # Pipeline de qualidade
 |   `-- deploy.yml                   # Pipeline de build, imagem e deploy Kubernetes
-|-- k8s/                            # Manifests Kubernetes da Fase 2
-|-- infra/                          # Terraform da Fase 2
-|-- Dockerfile
-|-- docker-compose.yml
-|-- pom.xml
 `-- README.md
 ```
 
@@ -174,14 +177,14 @@ Documentação detalhada:
 Copie os arquivos de exemplo antes de rodar localmente:
 
 ```bash
-cp .env.example .env
+cp deploy/docker/env/.env.example deploy/docker/.env
 cp frontend/.env.example frontend/.env
 ```
 
 No PowerShell:
 
 ```powershell
-Copy-Item .env.example .env
+Copy-Item deploy/docker/env/.env.example deploy/docker/.env
 Copy-Item frontend/.env.example frontend/.env
 ```
 
@@ -216,7 +219,7 @@ Variáveis principais do frontend:
 Crie o arquivo local de ambiente a partir do template seguro:
 
 ```bash
-cp .env.example .env
+cp deploy/docker/env/.env.example deploy/docker/.env
 ```
 
 Edite o `.env` local e troque pelo menos `POSTGRES_PASSWORD` e `JWT_SECRET`. O arquivo `.env` real não deve ser
@@ -256,12 +259,12 @@ URLs locais:
 | Healthcheck backend | <http://localhost:8080/actuator/health> |
 | PostgreSQL | `localhost:5432` |
 
-O `docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
+O `deploy/docker/docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
 executa as migrations Flyway no startup e expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
 `/v3/api-docs`, `/swagger-ui` e `/openapi.yaml` para o backend, então a aplicação web funciona em
 `http://localhost:5173` sem configurar uma URL absoluta de API.
 
-Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `.env.example`:
+Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `deploy/docker/env/.env.example`:
 
 ```text
 http://localhost:5173,http://127.0.0.1:5173
@@ -272,7 +275,8 @@ http://localhost:5173,http://127.0.0.1:5173
 Suba apenas o PostgreSQL pelo Docker Compose:
 
 ```bash
-docker compose up -d postgres
+docker compose -f deploy/docker/docker-compose.yml up -d postgres
+cd backend
 mvn spring-boot:run
 ```
 
@@ -303,6 +307,7 @@ Passos:
 4. No terminal do Codespace, rode o backend:
 
 ```bash
+cd backend
 mvn spring-boot:run
 ```
 
@@ -319,8 +324,8 @@ notebook usa apenas navegador/terminal e não precisa abrir Docker Desktop.
 ## Swagger/OpenAPI
 
 - Swagger UI local: <http://localhost:8080/swagger-ui.html>
-- Contrato OpenAPI: [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml)
-- Collection: [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json)
+- Contrato OpenAPI: [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml)
+- Collection: [docs/api/postman/autocarehub-phase2.postman_collection.json](docs/api/postman/autocarehub-phase2.postman_collection.json)
 
 Para autenticar no Swagger:
 
@@ -508,19 +513,23 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
 
 ### 11. Aprovar ou recusar orcamento por notificação externa
 
-- Objetivo: permitir que uma ferramenta externa, como email, registre aprovação ou recusa.
+- Objetivo: permitir que uma ferramenta externa, como email, registre aprovação ou recusa por webhook demonstrável.
 - Metodo: `POST`.
-- Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/decision`.
+- Endpoints:
+  - `/api/v1/service-orders/{serviceOrderId}/budget/external-approval`.
+  - `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
 - Bearer token: sim. Cliente dono da OS, administrador ou colaborador da oficina.
 - Body:
 
 ```json
 {
-  "decision": "REJECTED",
   "source": "email",
-  "reason": "Cliente recusou o orcamento por email."
+  "reason": "Cliente respondeu a notificação externa."
 }
 ```
+
+O endpoint legado `/api/v1/service-orders/{serviceOrderId}/budget/decision` permanece disponível por compatibilidade,
+recebendo `decision` como `APPROVED` ou `REJECTED`.
 
 ### 12. Consultar status da OS
 
@@ -558,7 +567,7 @@ Listagem ordenada por prioridade/status e data:
 - Objetivo: atender requisito da Fase 2.
 - Metodo: `GET`.
 - Endpoint: `/api/v1/service-orders?page=0&size=10`.
-- Status: implementado. A fila principal retorna `IN_PROGRESS`, `WAITING_APPROVAL`, `IN_DIAGNOSIS` e `RECEIVED`, nessa ordem de prioridade; dentro do mesmo status, retorna as OS mais antigas primeiro.
+- Status: implementado. A fila principal retorna `IN_PROGRESS`, `WAITING_APPROVAL`, `IN_DIAGNOSIS` e `RECEIVED`, nessa ordem de prioridade; dentro do mesmo status, retorna as OS mais antigas primeiro. A ordenação e os filtros da fila operacional são executados no repositório para evitar carregar toda a base no caso PostgreSQL.
 
 ### 14. Atualizar status por ferramenta externa
 
@@ -606,9 +615,11 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/parts` | Sim | Adicionar peca a OS. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orcamento. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Sim | Registrar aprovação externa de orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Sim | Registrar recusa externa de orcamento. |
 | `PATCH` | `/api/v1/service-orders/{serviceOrderId}/status` | Sim | Atualizar status da OS. |
 | `GET` | `/api/v1/service-orders/metrics/average-execution-time` | Sim | Consultar tempo medio de execução. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Sim | Aprovar ou recusar orcamento por notificação externa. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Sim | Endpoint legado para aprovar ou recusar orcamento por notificação externa. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Sim | Atualizar status por ferramenta externa simulada. |
 | `GET` | `/api/v1/service-orders` | Sim | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
 
@@ -617,19 +628,21 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 Executar testes:
 
 ```bash
-mvn clean test
+cd backend
+mvn test
 ```
 
 Executar verificação completa:
 
 ```bash
+cd backend
 mvn clean verify
 ```
 
 Relatorio JaCoCo local:
 
 ```text
-target/site/jacoco/index.html
+backend/target/site/jacoco/index.html
 ```
 
 Cobertura minima configurada no projeto:
@@ -640,8 +653,14 @@ Cobertura minima configurada no projeto:
 
 Documentação complementar de testes:
 
-- [docs/TESTING.md](docs/TESTING.md)
-- [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md)
+- [docs/testing/TESTING.md](docs/testing/TESTING.md)
+- [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md)
+
+Última validação registrada após as correções da Fase 2:
+
+- `mvn test`: 167 testes, 0 falhas, 0 erros e 0 ignorados.
+- `mvn clean verify`: passou com build, testes, empacotamento e gate JaCoCo aprovado.
+- O percentual JaCoCo atualizado não é citado aqui sem consultar o relatório real em `backend/target/site/jacoco`.
 
 ## Seguranca
 
@@ -651,38 +670,39 @@ O projeto possui:
 - Validação de CPF/CNPJ.
 - Validação de placa.
 - Configuração de CORS por variável de ambiente.
-- Uso de `.env.example` para evitar versionamento de secrets reais.
+- Uso de `deploy/docker/env/.env.example` para evitar versionamento de secrets reais.
 - `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local e estado sensível do Terraform.
 - Kubernetes Secrets com placeholders no repositório e criação de valores reais por ambiente/CI.
 - Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
 - OWASP Dependency-Check no backend.
 - `npm audit` no frontend.
 - Evidencias complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega.
+- Último `npm audit --json` executado após as correções do frontend: 0 vulnerabilidades.
 
 Resultados de scan devem ser atualizados somente apos execução real das ferramentas. A revisão da Fase 2 fica
 consolidada no relatório abaixo, incluindo pendências quando alguma ferramenta local não estiver disponível.
 
 Documentos:
 
-- [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md)
-- [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md)
+- [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md)
+- [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md)
 
 ## Docker
 
 Arquivos atuais:
 
-- [Dockerfile](Dockerfile)
-- [docker-compose.yml](docker-compose.yml)
+- [backend/Dockerfile](backend/Dockerfile)
+- [deploy/docker/docker-compose.yml](deploy/docker/docker-compose.yml)
 - [frontend/Dockerfile](frontend/Dockerfile)
 
 Comandos principais:
 
 ```bash
-docker compose config --quiet
-docker compose build
-docker compose up -d --build
-docker compose logs -f
-docker compose down
+docker compose -f deploy/docker/docker-compose.yml config --quiet
+docker compose -f deploy/docker/docker-compose.yml build
+docker compose -f deploy/docker/docker-compose.yml up -d --build
+docker compose -f deploy/docker/docker-compose.yml logs -f
+docker compose -f deploy/docker/docker-compose.yml down
 ```
 
 Docker na Fase 2:
@@ -690,7 +710,7 @@ Docker na Fase 2:
 - Dockerfile backend com build multi-stage.
 - Dockerfile frontend em [frontend/Dockerfile](frontend/Dockerfile).
 - Docker Compose para execução local com PostgreSQL, backend e frontend.
-- Variáveis por ambiente via `.env.example`.
+- Variáveis por ambiente via `deploy/docker/env/.env.example`.
 - Publicação de imagens preparada no workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
 ## Kubernetes
@@ -700,7 +720,7 @@ Status: implementado para demonstração local/acadêmica.
 Local:
 
 ```text
-k8s/
+deploy/kubernetes/
 ```
 
 Manifestos principais:
@@ -710,25 +730,29 @@ Manifestos principais:
 - `02-secret.yaml`: placeholders seguros para senha do banco e segredo JWT.
 - `03-postgres-pvc.yaml`, `04-postgres-deployment.yaml`, `05-postgres-service.yaml`: PostgreSQL demonstrativo no cluster.
 - `06-backend-deployment.yaml`, `07-backend-service.yaml`, `08-backend-hpa.yaml`: API Spring Boot, Service interno `backend` e HPA por CPU/memoria.
-- `09-frontend-deployment.yaml`, `10-frontend-service.yaml`, `11-frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU.
+- `09-frontend-deployment.yaml`, `10-frontend-service.yaml`, `11-frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU/memoria.
 
-Antes de aplicar, substitua os placeholders em `k8s/02-secret.yaml` por valores seguros do ambiente. Não versione secrets reais.
+Antes de aplicar, substitua os placeholders em `deploy/kubernetes/02-secret.yaml` por valores seguros do ambiente. Não versione secrets reais.
 
 Validação local dos manifests:
 
 ```bash
-kubectl apply --dry-run=client -f k8s/
+kubectl apply --dry-run=client -f deploy/kubernetes/
 ```
+
+Na última validação local, esse dry-run não concluiu porque não havia cluster Kubernetes ativo/configurado; o `kubectl`
+tentou acessar `http://localhost:8080` e a conexão foi recusada. Não foi identificado erro nos manifests a partir dessa
+falha de ambiente.
 
 Comandos principais:
 
 ```bash
-kubectl apply -f k8s/
+kubectl apply -f deploy/kubernetes/
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 kubectl logs -n autocarehub deploy/autocarehub-api
-kubectl delete -f k8s/
+kubectl delete -f deploy/kubernetes/
 ```
 
 Acesso local para demonstração:
@@ -749,7 +773,7 @@ Status: implementado para demonstração local/acadêmica.
 Local:
 
 ```text
-infra/
+infra/terraform/
 ```
 
 Decisão de ambiente: o projeto não assume AWS, Azure, GCP ou outro provedor cloud. A infraestrutura da Fase 2 foi
@@ -758,10 +782,10 @@ disponibilizado para avaliação; opcionalmente, o Terraform cria um cluster loc
 
 Arquivos:
 
-- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
-- `infra/variables.tf`: variáveis parametrizáveis.
-- `infra/outputs.tf`: outputs uteis para conferencia e deploy.
-- `infra/terraform.tfvars.example`: exemplo seguro com placeholders.
+- `infra/terraform/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
+- `infra/terraform/variables.tf`: variáveis parametrizáveis.
+- `infra/terraform/outputs.tf`: outputs uteis para conferencia e deploy.
+- `infra/terraform/terraform.tfvars.example`: exemplo seguro com placeholders.
 - `infra/README.md`: instruções detalhadas.
 
 Recursos provisionados:
@@ -774,7 +798,7 @@ Recursos provisionados:
 Comandos:
 
 ```bash
-cd infra
+cd infra/terraform
 terraform init
 terraform fmt
 terraform validate
@@ -797,11 +821,16 @@ export TF_VAR_jwt_secret="segredo-com-pelo-menos-32-bytes"
 ```
 
 Depois do `terraform apply`, aplique apenas os workloads Kubernetes que não são gerenciados pelo Terraform, conforme
-detalhado em [infra/README.md](infra/README.md). Não aplique `k8s/02-secret.yaml` por cima do Secret criado pelo
+detalhado em [infra/README.md](infra/README.md). Não aplique `deploy/kubernetes/02-secret.yaml` por cima do Secret criado pelo
 Terraform, porque o manifesto Kubernetes usa placeholders.
 
 Limitações: o modo `kind` cria cluster local, não cluster gerenciado em cloud. O Terraform não cria banco gerenciado em
-cloud; ele provisiona a base necessaria no cluster configurado no kubeconfig local ou no cluster `kind` criado.
+cloud; ele provisiona a base necessaria para o PostgreSQL demonstrativo dentro do cluster configurado no kubeconfig local
+ou no cluster `kind` criado. Os Deployments, Services e HPAs continuam nos manifests em `deploy/kubernetes/` e são
+aplicados depois do provisionamento base.
+
+Última validação registrada: `terraform fmt -check`, `terraform init -backend=false` e `terraform validate` passaram em
+`infra/terraform`.
 
 ## CI/CD
 
@@ -810,11 +839,12 @@ Pipelines atuais:
 - [.github/workflows/quality.yml](.github/workflows/quality.yml)
 - [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
 - [docs/CI_CD.md](docs/CI_CD.md)
+- [deploy/pipelines/README.md](deploy/pipelines/README.md)
 
 `quality.yml` executa:
 
 - Spotless no backend.
-- `mvn verify`.
+- `mvn verify` em `backend/`.
 - `npm ci`.
 - Lint frontend.
 - Build frontend.
@@ -824,9 +854,9 @@ Pipelines atuais:
 
 `deploy.yml` executa:
 
-- Build e testes do backend com `mvn -B verify`.
+- Build e testes do backend com `mvn -B verify` em `backend/`.
 - Instalação, lint e build do frontend.
-- Validação estrutural dos YAMLs de `k8s/`.
+- Validação estrutural dos YAMLs de `deploy/kubernetes/`.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
 - Build das imagens Docker do backend e frontend.
 - Publicação das imagens no GitHub Container Registry quando a execução estiver em `main` ou for manual.
@@ -867,24 +897,24 @@ Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o w
 
 | Documento | Link |
 | --------- | ---- |
-| DDD | [docs/DDD_DOCUMENTATION.md](docs/DDD_DOCUMENTATION.md) |
-| Event Storming | [docs/EVENT_STORMING.md](docs/EVENT_STORMING.md) |
-| Domain Storytelling | [docs/DOMAIN_STORYTELLING.md](docs/DOMAIN_STORYTELLING.md) |
-| Requisitos | [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md) |
-| Arquitetura | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
-| Refinamento tecnico | [docs/TECHNICAL_REFINEMENT.md](docs/TECHNICAL_REFINEMENT.md) |
-| OpenAPI | [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml) |
-| Collection Postman | [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json) |
-| Testes | [docs/TESTING.md](docs/TESTING.md) |
-| Analise estatica | [docs/STATIC_ANALYSIS.md](docs/STATIC_ANALYSIS.md) |
+| DDD | [docs/domain/DDD_DOCUMENTATION.md](docs/domain/DDD_DOCUMENTATION.md) |
+| Event Storming | [docs/domain/EVENT_STORMING.md](docs/domain/EVENT_STORMING.md) |
+| Domain Storytelling | [docs/domain/DOMAIN_STORYTELLING.md](docs/domain/DOMAIN_STORYTELLING.md) |
+| Requisitos | [docs/domain/REQUIREMENTS.md](docs/domain/REQUIREMENTS.md) |
+| Arquitetura | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) |
+| Refinamento tecnico | [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md) |
+| OpenAPI | [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml) |
+| Collection Postman | [docs/api/postman/autocarehub-phase2.postman_collection.json](docs/api/postman/autocarehub-phase2.postman_collection.json) |
+| Testes | [docs/testing/TESTING.md](docs/testing/TESTING.md) |
+| Analise estatica | [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md) |
 | CI/CD | [docs/CI_CD.md](docs/CI_CD.md) |
-| Seguranca | [docs/SECURITY_REPORT.md](docs/SECURITY_REPORT.md) |
-| Guia de scan de segurança | [docs/SECURITY_SCAN_GUIDE.md](docs/SECURITY_SCAN_GUIDE.md) |
-| Documento de entrega | [docs/DELIVERY_DOCUMENT.md](docs/DELIVERY_DOCUMENT.md) |
+| Seguranca | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md) |
+| Guia de scan de segurança | [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md) |
+| Documento de entrega | [docs/delivery/DELIVERY_DOCUMENT.md](docs/delivery/DELIVERY_DOCUMENT.md) |
 | Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
-| Desenho da arquitetura | [docs/PHASE2_ARCHITECTURE.md](docs/PHASE2_ARCHITECTURE.md) |
-| Roteiro do video | [docs/PHASE2_VIDEO_SCRIPT.md](docs/PHASE2_VIDEO_SCRIPT.md) |
-| Video | [PREENCHER APOS PUBLICAR NO YOUTUBE OU VIMEO] |
+| Desenho da arquitetura | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md) |
+| Roteiro do video | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
+| Video | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA] |
 
 ## Entrega da Fase 2
 
@@ -892,14 +922,14 @@ Checklist de preparação:
 
 - [x] Codigo refatorado.
 - [x] Dockerfile revisado.
-- [x] `docker-compose.yml` revisado.
-- [x] `/k8s` criado.
-- [x] `/infra` criado.
+- [x] `deploy/docker/docker-compose.yml` revisado.
+- [x] `deploy/kubernetes/` criado.
+- [x] `infra/terraform/` criado.
 - [x] Pipeline CI/CD de deploy criada.
 - [x] README atualizado como documento principal.
-- [x] Swagger/OpenAPI disponível em [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml).
+- [x] Swagger/OpenAPI disponível em [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml).
 - [x] Collection da API adicionada ou linkada.
-- [ ] Video de ate 15 minutos publicado e link preenchido.
+- [ ] Video de ate 15 minutos publicado e link preenchido: `[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`.
 - [ ] PDF final regenerado apos preencher o link real do video.
 - [ ] Acesso ao usuário `soat-architecture` confirmado no GitHub antes do envio.
 
