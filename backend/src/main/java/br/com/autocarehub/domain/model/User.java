@@ -22,7 +22,7 @@ public record User(
         String companyName,
         String companyType,
         String employeeSubRole,
-        List<String> permissions,
+        @Nullable List<String> permissions,
         boolean active,
         LocalDateTime createdAt)
         implements Serializable {
