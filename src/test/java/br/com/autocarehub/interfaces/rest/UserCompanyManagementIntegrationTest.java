@@ -74,7 +74,7 @@ class UserCompanyManagementIntegrationTest {
                                 false,
                                 ""))))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.companyId").dõesNotExist())
+                .andExpect(jsonPath("$.companyId").doesNotExist())
                 .andExpect(jsonPath("$.companyName").value(""));
 
         mockMvc.perform(post("/api/v1/users")

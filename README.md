@@ -1,6 +1,6 @@
 # AutoCare Hub
 
-## Tech Challenge FIAP - Fase 2
+## Tech Challenge FIAP — Fase 2
 
 AutoCare Hub e uma solução academica para gestão de oficina mecanica. O projeto centraliza o cadastro de clientes,
 veiculos, servicos, pecas, estoque e Ordens de Servico, permitindo que a oficina registre uma OS, gere orcamento,
@@ -121,7 +121,9 @@ Documentação detalhada:
 |-- frontend/                       # Frontend demonstrativo Vue/Vite
 |-- security-reports/               # Evidencias de segurança versionadas
 |-- scripts/                        # Scripts auxiliares de validação
-|-- .github/workflows/quality.yml   # Pipeline atual de qualidade
+|-- .github/workflows/
+|   |-- quality.yml                  # Pipeline de qualidade
+|   `-- deploy.yml                   # Pipeline de build, imagem e deploy Kubernetes
 |-- k8s/                            # Manifests Kubernetes da Fase 2
 |-- infra/                          # Terraform da Fase 2
 |-- Dockerfile
@@ -287,6 +289,32 @@ npm run dev
 
 O frontend le `VITE_API_BASE_URL` de `frontend/.env`. Deixe vazio para usar o proxy configurado no Vite/Nginx, ou defina
 a URL da API quando necessario.
+
+## Como rodar fora do notebook com Codespaces
+
+Use esta opção quando o notebook não suportar Docker Desktop localmente. A configuração em [.devcontainer](.devcontainer)
+prepara um ambiente remoto com Java 21, Maven, Node.js 22, Terraform e PostgreSQL.
+
+Passos:
+
+1. Faça push do repositório para o GitHub.
+2. No GitHub, abra `Code > Codespaces > Create codespace on main` ou na branch que estiver usando.
+3. Aguarde o `postCreateCommand` baixar dependências Maven e npm.
+4. No terminal do Codespace, rode o backend:
+
+```bash
+mvn spring-boot:run
+```
+
+5. Em outro terminal do Codespace, rode o frontend:
+
+```bash
+cd frontend
+npm run dev -- --host 0.0.0.0
+```
+
+O Codespaces expõe as portas `8080` e `5173` pelo painel `Ports`. O PostgreSQL roda dentro do ambiente remoto, então o
+notebook usa apenas navegador/terminal e não precisa abrir Docker Desktop.
 
 ## Swagger/OpenAPI
 
@@ -624,10 +652,15 @@ O projeto possui:
 - Validação de placa.
 - Configuração de CORS por variável de ambiente.
 - Uso de `.env.example` para evitar versionamento de secrets reais.
+- `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local e estado sensível do Terraform.
+- Kubernetes Secrets com placeholders no repositório e criação de valores reais por ambiente/CI.
 - Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
 - OWASP Dependency-Check no backend.
 - `npm audit` no frontend.
-- Evidencias complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega da Fase 1.
+- Evidencias complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega.
+
+Resultados de scan devem ser atualizados somente apos execução real das ferramentas. A revisão da Fase 2 fica
+consolidada no relatório abaixo, incluindo pendências quando alguma ferramenta local não estiver disponível.
 
 Documentos:
 
@@ -652,12 +685,13 @@ docker compose logs -f
 docker compose down
 ```
 
-Revisão Docker da Fase 2:
+Docker na Fase 2:
 
-- Revisar imagens e multi-stage builds.
-- Confirmar variáveis por ambiente.
-- Confirmar healthchecks quando necessario.
-- Preparar publicação de imagem para o pipeline de deploy.
+- Dockerfile backend com build multi-stage.
+- Dockerfile frontend em [frontend/Dockerfile](frontend/Dockerfile).
+- Docker Compose para execução local com PostgreSQL, backend e frontend.
+- Variáveis por ambiente via `.env.example`.
+- Publicação de imagens preparada no workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
 
 ## Kubernetes
 
@@ -719,12 +753,12 @@ infra/
 ```
 
 Decisão de ambiente: o projeto não assume AWS, Azure, GCP ou outro provedor cloud. A infraestrutura da Fase 2 foi
-modelada para um cluster Kubernetes local/acadêmico ja existente, como `kind`, `minikube` ou cluster disponibilizado para
-avaliação.
+modelada para Kubernetes local/acadêmico. O modo padrão usa um cluster ja existente, como `kind`, `minikube` ou cluster
+disponibilizado para avaliação; opcionalmente, o Terraform cria um cluster local com `kind`.
 
 Arquivos:
 
-- `infra/main.tf`: provider Kubernetes e recursos base.
+- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
 - `infra/variables.tf`: variáveis parametrizáveis.
 - `infra/outputs.tf`: outputs uteis para conferencia e deploy.
 - `infra/terraform.tfvars.example`: exemplo seguro com placeholders.
@@ -749,6 +783,12 @@ terraform apply
 terraform destroy
 ```
 
+Para criar tambem um cluster local com `kind`, instale Docker Desktop e `kind`, depois execute:
+
+```bash
+terraform apply -var="create_kind_cluster=true"
+```
+
 Variáveis sensíveis devem ser informadas fora do repositorio, por exemplo:
 
 ```bash
@@ -760,8 +800,8 @@ Depois do `terraform apply`, aplique apenas os workloads Kubernetes que não sã
 detalhado em [infra/README.md](infra/README.md). Não aplique `k8s/02-secret.yaml` por cima do Secret criado pelo
 Terraform, porque o manifesto Kubernetes usa placeholders.
 
-Limitações: o Terraform não cria o cluster Kubernetes e não cria banco gerenciado em cloud. Ele provisiona a base
-necessaria no cluster configurado no kubeconfig local.
+Limitações: o modo `kind` cria cluster local, não cluster gerenciado em cloud. O Terraform não cria banco gerenciado em
+cloud; ele provisiona a base necessaria no cluster configurado no kubeconfig local ou no cluster `kind` criado.
 
 ## CI/CD
 
@@ -844,25 +884,24 @@ Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o w
 | Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
 | Desenho da arquitetura | [docs/PHASE2_ARCHITECTURE.md](docs/PHASE2_ARCHITECTURE.md) |
 | Roteiro do video | [docs/PHASE2_VIDEO_SCRIPT.md](docs/PHASE2_VIDEO_SCRIPT.md) |
-| Video | [INSERIR LINK DO VIDEO] |
-| Collection da API | [docs/postman/autocarehub-phase2.postman_collection.json](docs/postman/autocarehub-phase2.postman_collection.json) |
+| Video | [PREENCHER APOS PUBLICAR NO YOUTUBE OU VIMEO] |
 
 ## Entrega da Fase 2
 
 Checklist de preparação:
 
-- [ ] Codigo refatorado.
-- [ ] Dockerfile revisado.
-- [ ] `docker-compose.yml` revisado.
+- [x] Codigo refatorado.
+- [x] Dockerfile revisado.
+- [x] `docker-compose.yml` revisado.
 - [x] `/k8s` criado.
 - [x] `/infra` criado.
 - [x] Pipeline CI/CD de deploy criada.
 - [x] README atualizado como documento principal.
 - [x] Swagger/OpenAPI disponível em [docs/openapi/openapi.yaml](docs/openapi/openapi.yaml).
 - [x] Collection da API adicionada ou linkada.
-- [ ] Video de ate 15 minutos.
-- [ ] PDF com link do repositorio, desenho da arquitetura e link do video.
-- [ ] Acesso ao usuário `soat-architecture` confirmado para a entrega da Fase 2.
+- [ ] Video de ate 15 minutos publicado e link preenchido.
+- [ ] PDF final regenerado apos preencher o link real do video.
+- [ ] Acesso ao usuário `soat-architecture` confirmado no GitHub antes do envio.
 
 ## Historico das fases
 

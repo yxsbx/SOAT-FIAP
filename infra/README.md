@@ -1,28 +1,30 @@
 # Infraestrutura - AutoCare Hub
 
-Estrutura Terraform da Fase 2 para provisionamento academico/local de recursos base no Kubernetes.
+Estrutura Terraform da Fase 2 para provisionamento academico/local de Kubernetes e recursos base da aplicação.
 
 ## Decisão de ambiente
 
 Este projeto não assume uma cloud especifica. Para evitar inventar AWS, Azure ou GCP sem evidencia no repositorio, a
-infraestrutura foi modelada para um cluster Kubernetes local ou academico ja existente, como `kind`, `minikube` ou um
-cluster disponibilizado para demonstração.
+infraestrutura foi modelada para um cluster Kubernetes local ou academico. O modo padrão usa um cluster ja existente,
+como `kind`, `minikube` ou um cluster disponibilizado para demonstração; opcionalmente, o Terraform cria um cluster local
+com `kind`.
 
-O Terraform cria:
+O Terraform pode criar:
 
+- cluster Kubernetes local com `kind`, quando `create_kind_cluster=true`;
 - namespace `autocarehub`;
 - ConfigMap com variáveis não sensíveis;
 - Secret com valores sensíveis recebidos por variáveis;
 - PVC do PostgreSQL demonstrativo.
 
 Os workloads da aplicação ficam em [../k8s](../k8s) e podem ser aplicados depois do provisionamento base. Esta estrutura
-não cria cluster Kubernetes e não assume cloud especifica.
+não assume cloud especifica.
 
 ## Arquivos
 
 | Arquivo | Função |
 | ------- | ------ |
-| `main.tf` | Provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
+| `main.tf` | Criação opcional de cluster `kind`, provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
 | `variables.tf` | Variáveis parametrizáveis do ambiente local/acadêmico. |
 | `outputs.tf` | Outputs uteis para conferencia e proximo passo de deploy. |
 | `terraform.tfvars.example` | Exemplo com placeholders seguros. |
@@ -65,6 +67,15 @@ terraform apply
 terraform destroy
 ```
 
+Para provisionar tambem um cluster local com `kind`, instale Docker Desktop e `kind`, depois execute:
+
+```bash
+terraform apply -var="create_kind_cluster=true"
+```
+
+Use esse modo quando o cluster ainda não existir. Se o cluster `kind` ja existir, use o modo padrão com
+`create_kind_cluster=false` e aponte `kubeconfig_path`/`kubeconfig_context` para ele.
+
 Depois de aplicar a infraestrutura base, aplique apenas os workloads que não são gerenciados pelo Terraform:
 
 ```bash
@@ -92,7 +103,7 @@ Não misture os dois modos aplicando `../k8s/02-secret.yaml` depois do Terraform
 
 ## Limitações
 
-- Não cria cluster Kubernetes.
+- O modo `kind` cria cluster local; não cria cluster gerenciado em cloud.
 - Não cria banco gerenciado em cloud.
 - Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC e variáveis de conexao.
 - Usa o contexto Kubernetes configurado localmente.

@@ -850,6 +850,9 @@ paths:
       tags:
         - Service Orders
       summary: Cria uma ordem de serviço identificando o cliente por CPF ou CNPJ
+      description: >
+        Abre uma Ordem de Serviço recebendo dados do cliente, veículo, serviços e peças/insumos.
+        Retorna o identificador único da OS no campo `id`.
       operationId: createServiceOrder
       requestBody:
         required: true
@@ -914,16 +917,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderResponse'
+              example:
+                id: 50000000-0000-0000-0000-000000000010
+                customerId: 10000000-0000-0000-0000-000000000001
+                vehicleId: 20000000-0000-0000-0000-000000000001
+                status: WAITING_APPROVAL
+                diagnosticNotes: Cliente relata ruido ao frear e vibração no pedal.
+                services:
+                  - serviceId: 30000000-0000-0000-0000-000000000004
+                    name: Diagnóstico de freios
+                    quantity: 1
+                    unitPrice: 180.0
+                    totalPrice: 180.0
+                parts:
+                  - partId: 40000000-0000-0000-0000-000000000005
+                    name: Pastilha de freio dianteira
+                    quantity: 1
+                    unitPrice: 220.0
+                    totalPrice: 220.0
+                servicesTotal: 180.0
+                partsTotal: 220.0
+                totalAmount: 400.0
+                createdAt: '2026-07-05T10:00:00-03:00'
+                budgetGeneratedAt: '2026-07-05T10:01:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
     get:
       tags:
         - Service Orders
       summary: Lista ordens de serviço
+      description: >
+        Lista a fila operacional de OS. Sem filtro de status, a listagem da Fase 2 retorna apenas OS abertas
+        ordenadas por prioridade/status: IN_PROGRESS, WAITING_APPROVAL, IN_DIAGNOSIS e RECEIVED.
+        Dentro do mesmo status, as mais antigas aparecem primeiro; FINISHED e DELIVERED não aparecem na fila.
       operationId: listServiceOrders
       parameters:
         - $ref: '#/components/parameters/PageParam'
@@ -964,8 +996,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderListResponse'
+              example:
+                items:
+                  - id: 50000000-0000-0000-0000-000000000020
+                    customerId: 10000000-0000-0000-0000-000000000001
+                    vehicleId: 20000000-0000-0000-0000-000000000001
+                    status: IN_PROGRESS
+                    diagnosticNotes: Serviço em execução.
+                    services: [ ]
+                    parts: [ ]
+                    servicesTotal: 0.0
+                    partsTotal: 0.0
+                    totalAmount: 0.0
+                    createdAt: '2026-07-05T08:00:00-03:00'
+                  - id: 50000000-0000-0000-0000-000000000021
+                    customerId: 10000000-0000-0000-0000-000000000002
+                    vehicleId: 20000000-0000-0000-0000-000000000002
+                    status: WAITING_APPROVAL
+                    diagnosticNotes: Aguardando aprovação do orçamento.
+                    services: [ ]
+                    parts: [ ]
+                    servicesTotal: 0.0
+                    partsTotal: 0.0
+                    totalAmount: 0.0
+                    createdAt: '2026-07-05T09:00:00-03:00'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/v1/service-orders/metrics/average-execution-time:
     get:
       tags:
@@ -1030,6 +1088,7 @@ paths:
       tags:
         - Service Orders
       summary: Busca uma ordem de serviço por id
+      description: Consulta os dados atuais da OS, incluindo o status atual.
       operationId: getServiceOrderById
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
@@ -1040,8 +1099,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderResponse'
+              example:
+                id: 50000000-0000-0000-0000-000000000002
+                customerId: 10000000-0000-0000-0000-000000000001
+                vehicleId: 20000000-0000-0000-0000-000000000001
+                status: WAITING_APPROVAL
+                diagnosticNotes: Cliente solicita revisão de freios.
+                services: [ ]
+                parts: [ ]
+                servicesTotal: 0.0
+                partsTotal: 0.0
+                totalAmount: 0.0
+                createdAt: '2026-07-05T10:00:00-03:00'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/services:
@@ -1136,6 +1209,7 @@ paths:
       tags:
         - Service Orders
       summary: Aprova o orçamento de uma ordem de serviço
+      description: Aprova o orçamento existente e move a OS para execução quando as regras de negócio permitirem.
       operationId: approveServiceOrderBudget
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
@@ -1146,10 +1220,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderResponse'
+              example:
+                id: 50000000-0000-0000-0000-000000000002
+                customerId: 10000000-0000-0000-0000-000000000001
+                vehicleId: 20000000-0000-0000-0000-000000000001
+                status: IN_PROGRESS
+                diagnosticNotes: Cliente solicita revisão de freios.
+                services: [ ]
+                parts: [ ]
+                servicesTotal: 0.0
+                partsTotal: 0.0
+                totalAmount: 0.0
+                createdAt: '2026-07-05T10:00:00-03:00'
+                approvedAt: '2026-07-05T10:10:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/budget/decision:
@@ -1189,10 +1278,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderResponse'
+              examples:
+                aprovado:
+                  summary: Orçamento aprovado por notificação externa
+                  value:
+                    id: 50000000-0000-0000-0000-000000000002
+                    customerId: 10000000-0000-0000-0000-000000000001
+                    vehicleId: 20000000-0000-0000-0000-000000000001
+                    status: IN_PROGRESS
+                    diagnosticNotes: Cliente solicita revisão de freios.
+                    services: [ ]
+                    parts: [ ]
+                    servicesTotal: 0.0
+                    partsTotal: 0.0
+                    totalAmount: 0.0
+                    createdAt: '2026-07-05T10:00:00-03:00'
+                    approvedAt: '2026-07-05T10:12:00-03:00'
+                recusado:
+                  summary: Orçamento recusado por notificação externa
+                  value:
+                    id: 50000000-0000-0000-0000-000000000002
+                    customerId: 10000000-0000-0000-0000-000000000001
+                    vehicleId: 20000000-0000-0000-0000-000000000001
+                    status: IN_DIAGNOSIS
+                    diagnosticNotes: Cliente solicita revisão de freios.
+                    services: [ ]
+                    parts: [ ]
+                    servicesTotal: 0.0
+                    partsTotal: 0.0
+                    totalAmount: 0.0
+                    createdAt: '2026-07-05T10:00:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
   /api/v1/service-orders/{serviceOrderId}/status:
@@ -1270,10 +1391,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ServiceOrderResponse'
+              example:
+                id: 50000000-0000-0000-0000-000000000002
+                customerId: 10000000-0000-0000-0000-000000000001
+                vehicleId: 20000000-0000-0000-0000-000000000001
+                status: FINISHED
+                diagnosticNotes: Cliente solicita revisão de freios.
+                services: [ ]
+                parts: [ ]
+                servicesTotal: 0.0
+                partsTotal: 0.0
+                totalAmount: 0.0
+                createdAt: '2026-07-05T10:00:00-03:00'
+                finishedAt: '2026-07-05T16:00:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
   /api/v1/users/me:

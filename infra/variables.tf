@@ -10,6 +10,23 @@ variable "kubeconfig_context" {
   default     = null
 }
 
+variable "create_kind_cluster" {
+  description = "Quando true, cria um cluster Kubernetes local com kind antes de aplicar os recursos base."
+  type        = bool
+  default     = false
+}
+
+variable "kind_cluster_name" {
+  description = "Nome do cluster kind criado quando create_kind_cluster=true."
+  type        = string
+  default     = "autocarehub"
+
+  validation {
+    condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", var.kind_cluster_name))
+    error_message = "O nome do cluster kind deve seguir o padrão DNS label."
+  }
+}
+
 variable "namespace" {
   description = "Namespace Kubernetes do AutoCare Hub."
   type        = string

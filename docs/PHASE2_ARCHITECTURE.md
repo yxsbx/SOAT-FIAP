@@ -82,7 +82,7 @@ flowchart LR
 - Infraestrutura: JPA, repositories, segurança JWT, BCrypt e configurações.
 - Docker: execução local reproduzível.
 - Kubernetes: Deployments, Services, ConfigMaps, Secrets e HPA.
-- Terraform: provisionamento base do namespace, ConfigMap e Secret em cluster local/acadêmico.
+- Terraform: criação opcional de cluster local `kind` e provisionamento base de namespace, ConfigMap, Secret e PVC em cluster local/acadêmico.
 - CI/CD: qualidade, testes, build de imagens e deploy opcional no cluster.
 
 ## Refatoração de aplicação
@@ -101,4 +101,5 @@ flowchart LR
 ## Decisão de ambiente
 
 Não foi assumida uma cloud especifica. A Fase 2 esta preparada para demonstração local/acadêmica com Kubernetes e
-Terraform, mantendo placeholders onde credenciais ou ambiente real precisam ser definidos.
+Terraform, incluindo modo opcional de cluster local `kind`, mantendo placeholders onde credenciais ou ambiente real
+precisam ser definidos.

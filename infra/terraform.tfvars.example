@@ -1,6 +1,9 @@
 kubeconfig_path    = "~/.kube/config"
 kubeconfig_context = null
 
+create_kind_cluster = false
+kind_cluster_name   = "autocarehub"
+
 namespace = "autocarehub"
 
 postgres_db       = "autocarehub"

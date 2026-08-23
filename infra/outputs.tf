@@ -3,6 +3,11 @@ output "namespace" {
   value       = kubernetes_namespace.autocarehub.metadata[0].name
 }
 
+output "kind_cluster_name" {
+  description = "Cluster kind criado pelo Terraform quando create_kind_cluster=true; null quando o cluster ja existia."
+  value       = var.create_kind_cluster ? var.kind_cluster_name : null
+}
+
 output "config_map_name" {
   description = "ConfigMap criado pelo Terraform."
   value       = kubernetes_config_map.autocarehub.metadata[0].name

@@ -57,13 +57,23 @@ kubectl get hpa -n autocarehub
 kubectl logs -n autocarehub deploy/autocarehub-api
 ```
 
-4. Demonstrar acesso local:
+4. Demonstrar HPA com Metrics Server instalado:
+
+```bash
+kubectl get hpa -n autocarehub
+kubectl run autocarehub-load --rm -i --tty --image=busybox:1.36 --restart=Never -n autocarehub -- \
+  /bin/sh -c "while true; do wget -q -O- http://backend:8080/actuator/health >/dev/null; done"
+kubectl get hpa -n autocarehub --watch
+kubectl get deploy -n autocarehub
+```
+
+5. Demonstrar acesso local:
 ```bash
 kubectl port-forward -n autocarehub svc/backend 8080:8080
 kubectl port-forward -n autocarehub svc/autocarehub-web 5173:8080
 ```
 
-5. Encerrar a demonstração:
+6. Encerrar a demonstração:
 ```bash
 kubectl delete -f k8s/
 ```

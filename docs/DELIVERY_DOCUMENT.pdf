@@ -10,7 +10,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 4 0 R >>
 endobj
 4 0 obj
-<< /Length 1739 >>
+<< /Length 1750 >>
 stream
 BT
 /F2 14 Tf
@@ -37,7 +37,7 @@ BT
 (Branch de entrega: main) Tj
 0 -16 Td
 /F1 9 Tf
-(Acesso ao avaliador: usuario informado pela FIAP com leitura concedida.) Tj
+(Acesso ao avaliador: Confirmar acesso do usuario soat-architecture antes do envio.) Tj
 0 -16 Td
 /F1 9 Tf
 () Tj
@@ -94,7 +94,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 6 0 R >>
 endobj
 6 0 obj
-<< /Length 1771 >>
+<< /Length 1769 >>
 stream
 BT
 /F2 14 Tf
@@ -151,7 +151,7 @@ BT
 (- Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.) Tj
 0 -16 Td
 /F1 9 Tf
-(- Terraform com provider Kubernetes para provisionamento academico/local.) Tj
+(- Terraform com criacao opcional de cluster kind e provider Kubernetes.) Tj
 0 -16 Td
 /F1 9 Tf
 (- GitHub Actions para build, testes, imagens e deploy Kubernetes.) Tj
@@ -184,7 +184,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> /F2 << /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >> >> >> /Contents 8 0 R >>
 endobj
 8 0 obj
-<< /Length 1759 >>
+<< /Length 1890 >>
 stream
 BT
 /F2 14 Tf
@@ -235,7 +235,7 @@ BT
 (- PDF final: docs/DELIVERY_DOCUMENT.pdf) Tj
 0 -16 Td
 /F1 9 Tf
-(- Video demonstrativo: [INSERIR LINK DO VIDEO DA FASE 2]) Tj
+(- Video demonstrativo: [PREENCHER APOS PUBLICAR NO YOUTUBE OU VIMEO]) Tj
 0 -16 Td
 /F1 9 Tf
 () Tj
@@ -244,10 +244,13 @@ BT
 (Pendencias antes do envio no portal) Tj
 0 -16 Td
 /F1 9 Tf
-(- Gravar e publicar o video demonstrativo de ate 15 minutos.) Tj
+(- Gravar e publicar o video demonstrativo de ate 15 minutos, se ainda nao publicado.) Tj
 0 -16 Td
 /F1 9 Tf
 (- Substituir o placeholder do link do video em README.md e docs/DELIVERY_DOCUMENT.md.) Tj
+0 -16 Td
+/F1 9 Tf
+(- Confirmar acesso do usuario soat-architecture ao repositorio privado.) Tj
 0 -16 Td
 /F1 9 Tf
 (- Configurar secrets reais da plataforma de CI/CD se o deploy real for demonstrado.) Tj
@@ -277,12 +280,12 @@ xref
 0000000072 00000 n 
 0000000143 00000 n 
 0000000382 00000 n 
-0000002173 00000 n 
-0000002412 00000 n 
-0000004235 00000 n 
-0000004474 00000 n 
+0000002184 00000 n 
+0000002423 00000 n 
+0000004244 00000 n 
+0000004483 00000 n 
 trailer
 << /Size 9 /Root 1 0 R >>
 startxref
-6285
+6425
 %%EOF

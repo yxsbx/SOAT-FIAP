@@ -66,7 +66,7 @@ class ServiceOrderFlowIntegrationTest {
                                 "reason", "Cliente pediu revisão do orçamento"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("IN_DIAGNOSIS"))
-                .andExpect(jsonPath("$.approvedAt").dõesNotExist());
+                .andExpect(jsonPath("$.approvedAt").doesNotExist());
 
         mockMvc.perform(post("/api/v1/service-orders/{serviceOrderId}/status/external", serviceOrderId)
                         .header("Authorization", bearer(token))

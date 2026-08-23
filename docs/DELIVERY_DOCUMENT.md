@@ -17,8 +17,8 @@
 
 Repositório privado: <https://github.com/yxsbx/SOAT-FIAP>
 
-A branch final de entrega é `main`. O acesso de leitura ao repositório privado foi concedido ao usuário avaliador
-informado pela FIAP.
+A branch final de entrega é `main`. O acesso de leitura ao repositório privado deve ser confirmado no GitHub para o
+usuário avaliador `soat-architecture` antes do envio no portal.
 
 ## 4. Link da documentação
 
@@ -46,7 +46,7 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 | Item                   | Link                                                      |
 |------------------------|-----------------------------------------------------------|
 | Desenho da arquitetura | `docs/PHASE2_ARCHITECTURE.md`                             |
-| Vídeo demonstrativo    | [INSERIR LINK DO VIDEO DA FASE 2]                         |
+| Vídeo demonstrativo    | [PREENCHER APOS PUBLICAR NO YOUTUBE OU VIMEO]             |
 | PDF final no portal    | `docs/DELIVERY_DOCUMENT.pdf`                              |
 | Collection Postman     | `docs/postman/autocarehub-phase2.postman_collection.json` |
 
@@ -56,7 +56,7 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 - PostgreSQL como banco relacional.
 - Docker e Docker Compose para execução local.
 - Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.
-- Terraform com provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap e Secret.
+- Terraform com criação opcional de cluster local `kind` e provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap e Secret.
 - GitHub Actions para qualidade, build de imagens e deploy Kubernetes quando `KUBE_CONFIG` estiver configurado.
 - Swagger/OpenAPI como contrato principal da API.
 
@@ -165,5 +165,5 @@ corrigidas. As duas CVEs médias restantes foram registradas como risco residual
 mitigação documentada.
 
 Para a Fase 2, a entrega passa a demonstrar arquitetura evoluída, automação, infraestrutura como código, Kubernetes,
-HPA, CI/CD e documentação de apoio. Permanecem como dados a preencher manualmente antes do envio final: link do vídeo,
-PDF final exportado e collection Postman se ela for usada além do Swagger/OpenAPI.
+HPA, CI/CD e documentação de apoio. Permanecem como dados externos a confirmar antes do envio final: link do vídeo,
+PDF final exportado após preencher esse link e acesso do usuário `soat-architecture`.

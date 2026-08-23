@@ -1,3 +1,9 @@
+[CmdletBinding()]
+param(
+    [string]$VideoUrl = "[PREENCHER APOS PUBLICAR NO YOUTUBE OU VIMEO]",
+    [string]$EvaluatorAccess = "Confirmar acesso do usuario soat-architecture antes do envio"
+)
+
 $ErrorActionPreference = "Stop"
 
 $output = Join-Path $PSScriptRoot "..\docs\DELIVERY_DOCUMENT.pdf"
@@ -11,54 +17,54 @@ $pages = @(
         "Participante: Yasmin Barcelos Pires - RM370897 - Discord yxsbx",
         "Repositorio privado: https://github.com/yxsbx/SOAT-FIAP",
         "Branch de entrega: main",
-        "Acesso ao avaliador: usuário informado pela FIAP com leitura concedida.",
+        "Acesso ao avaliador: $EvaluatorAccess.",
         "",
-        "Resumo da solução",
-        "Backend monolitico para gestão de oficina mecanica, com clientes, veiculos,",
-        "ordens de servico, servicos, pecas, estoque, orcamento, aprovação e status da OS.",
-        "A Fase 2 evolui a solução com arquitetura em camadas, automação, infraestrutura",
-        "como código, Kubernetes, CI/CD, testes e documentação de entrega.",
+        "Resumo da solucao",
+        "Backend monolitico para gestao de oficina mecanica, com clientes, veiculos,",
+        "ordens de servico, servicos, pecas, estoque, orcamento, aprovacao e status da OS.",
+        "A Fase 2 evolui a solucao com arquitetura em camadas, automacao, infraestrutura",
+        "como codigo, Kubernetes, CI/CD, testes e documentacao de entrega.",
         "",
-        "Evoluções implementadas na Fase 2",
-        "- Decisão externa de orcamento: POST /api/v1/service-orders/{id}/budget/decision",
-        "- Atualização externa de status: POST /api/v1/service-orders/{id}/status/external",
+        "Evolucoes implementadas na Fase 2",
+        "- Decisao externa de orcamento: POST /api/v1/service-orders/{id}/budget/decision",
+        "- Atualizacao externa de status: POST /api/v1/service-orders/{id}/status/external",
         "- Listagem operacional de OS ordenada por prioridade/status e data.",
-        "- Ocultação de OS finalizadas e entregues na fila operacional.",
+        "- Ocultacao de OS finalizadas e entregues na fila operacional.",
         "- Manifests Kubernetes em k8s/.",
         "- Estrutura Terraform em infra/.",
         "- Pipeline GitHub Actions em .github/workflows/deploy.yml.",
         "- Collection Postman em docs/postman/autocarehub-phase2.postman_collection.json."
     ),
     @(
-        "Documentação principal",
+        "Documentacao principal",
         "",
         "- README.md: entrada principal do projeto e fluxo rapido da API.",
         "- docs/openapi/openapi.yaml: contrato OpenAPI.",
-        "- docs/DDD_DOCUMENTATION.md: documentação DDD.",
+        "- docs/DDD_DOCUMENTATION.md: documentacao DDD.",
         "- docs/EVENT_STORMING.md: Event Storming.",
         "- docs/PHASE2_ARCHITECTURE.md: desenho textual e Mermaid da arquitetura.",
         "- docs/TESTING.md: estrategia e evidencias de testes.",
         "- docs/SECURITY_REPORT.md: relatorio de vulnerabilidades.",
-        "- docs/SECURITY_SCAN_GUIDE.md: guia de execução dos scans.",
+        "- docs/SECURITY_SCAN_GUIDE.md: guia de execucao dos scans.",
         "- docs/PHASE2_VIDEO_SCRIPT.md: roteiro do video demonstrativo.",
         "",
         "Recursos escolhidos",
         "- Java, Spring Boot e Maven para o backend.",
-        "- PostgreSQL e Flyway para persistencia e migrações.",
-        "- Docker e Docker Compose para execução local.",
+        "- PostgreSQL e Flyway para persistencia e migracoes.",
+        "- Docker e Docker Compose para execucao local.",
         "- Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.",
-        "- Terraform com provider Kubernetes para provisionamento academico/local.",
+        "- Terraform com criacao opcional de cluster kind e provider Kubernetes.",
         "- GitHub Actions para build, testes, imagens e deploy Kubernetes.",
         "- Vue/Vite no frontend demonstrativo.",
         "",
         "Seguranca e scans",
-        "- JWT e autorização por perfil.",
-        "- Validação de CPF/CNPJ e placa.",
-        "- Secrets fora do código e uso de placeholders seguros.",
+        "- JWT e autorizacao por perfil.",
+        "- Validacao de CPF/CNPJ e placa.",
+        "- Secrets fora do codigo e uso de placeholders seguros.",
         "- Relatorios em docs/SECURITY_REPORT.md e docs/SECURITY_SCAN_GUIDE.md."
     ),
     @(
-        "Evidencias de validação",
+        "Evidencias de validacao",
         "",
         "- mvn clean verify: 160 testes, 0 falhas, 0 erros, JaCoCo aprovado.",
         "- mvn -q spotless:check: aprovado.",
@@ -66,22 +72,23 @@ $pages = @(
         "- npm run lint: aprovado.",
         "- npm run build: aprovado.",
         "- git diff --check: aprovado.",
-        "- kubectl version --client: cliente disponível.",
-        "- terraform version: não executado neste ambiente porque Terraform não esta instalado.",
+        "- kubectl version --client: cliente disponivel.",
+        "- terraform version: nao executado neste ambiente porque Terraform nao esta instalado.",
         "",
         "Links finais",
         "- Desenho da arquitetura: docs/PHASE2_ARCHITECTURE.md",
         "- Collection Postman: docs/postman/autocarehub-phase2.postman_collection.json",
         "- PDF final: docs/DELIVERY_DOCUMENT.pdf",
-        "- Video demonstrativo: [INSERIR LINK DO VIDEO DA FASE 2]",
+        "- Video demonstrativo: $VideoUrl",
         "",
         "Pendencias antes do envio no portal",
-        "- Gravar e publicar o video demonstrativo de ate 15 minutos.",
+        "- Gravar e publicar o video demonstrativo de ate 15 minutos, se ainda nao publicado.",
         "- Substituir o placeholder do link do video em README.md e docs/DELIVERY_DOCUMENT.md.",
+        "- Confirmar acesso do usuario soat-architecture ao repositorio privado.",
         "- Configurar secrets reais da plataforma de CI/CD se o deploy real for demonstrado.",
         "- Validar Terraform em maquina com terraform instalado.",
         "",
-        "Conclusão",
+        "Conclusao",
         "O AutoCare Hub esta documentado e preparado para a entrega academica da Fase 2,",
         "com os artefatos exigidos versionados e os dados externos mantidos como placeholders claros."
     )
@@ -125,7 +132,7 @@ for ($i = 0; $i -lt $pages.Count; $i++) {
         }
 
         $firstLine = $false
-        $font = if ($line -match "^(AutoCare|Documento|Resumo|Evoluções|Documentação|Recursos|Segurança|Evidencias|Links|Pendências|Conclusão)") {
+        $font = if ($line -match "^(AutoCare|Documento|Resumo|Evolucoes|Documentacao|Recursos|Seguranca|Evidencias|Links|Pendencias|Conclusao)") {
             "/F2 11 Tf"
         } else {
             "/F1 9 Tf"

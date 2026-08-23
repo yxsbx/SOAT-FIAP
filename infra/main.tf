@@ -6,6 +6,28 @@ terraform {
       source  = "hashicorp/kubernetes"
       version = "~> 2.36"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.2"
+    }
+  }
+}
+
+resource "null_resource" "kind_cluster" {
+  count = var.create_kind_cluster ? 1 : 0
+
+  triggers = {
+    cluster_name = var.kind_cluster_name
+    kubeconfig   = pathexpand(var.kubeconfig_path)
+  }
+
+  provisioner "local-exec" {
+    command = "kind create cluster --name ${var.kind_cluster_name} --kubeconfig ${pathexpand(var.kubeconfig_path)}"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kind delete cluster --name ${self.triggers.cluster_name}"
   }
 }
 
@@ -15,6 +37,8 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_namespace" "autocarehub" {
+  depends_on = [null_resource.kind_cluster]
+
   metadata {
     name = var.namespace
 
