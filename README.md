@@ -202,6 +202,7 @@ Variáveis principais do backend:
 | `FRONTEND_PORT` | Porta do frontend no Docker Compose. |
 | `JWT_SECRET` | Segredo usado para assinar tokens JWT. |
 | `JWT_EXPIRATION_MINUTES` | Tempo de expiração do token. |
+| `EXTERNAL_SERVICE_TOKEN` | Token compartilhado exigido no header `X-External-Service-Token` dos webhooks externos simulados. |
 | `APP_CORS_ALLOWED_ORIGINS` | Origens liberadas no CORS. |
 | `DB_URL` | URL JDBC usada ao rodar o backend fora do container. |
 | `DB_USERNAME` | Usuario do banco ao rodar com Maven. |
@@ -514,7 +515,8 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
 - Endpoints:
   - `/api/v1/service-orders/{serviceOrderId}/budget/external-approval`.
   - `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
-- Bearer token: sim. Cliente dono da OS, administrador ou colaborador da oficina.
+- Bearer token: não. Este webhook é chamado por ferramenta externa simulada.
+- Header externo: `X-External-Service-Token` com o valor de `EXTERNAL_SERVICE_TOKEN`.
 - Body:
 
 ```json
@@ -524,8 +526,17 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
 }
 ```
 
+Exemplo de aprovação:
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budget/external-approval" \
+  -H "X-External-Service-Token: $EXTERNAL_SERVICE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"source":"email","reason":"Cliente aprovou pelo webhook."}'
+```
+
 O endpoint legado `/api/v1/service-orders/{serviceOrderId}/budget/decision` permanece disponível por compatibilidade,
-recebendo `decision` como `APPROVED` ou `REJECTED`.
+recebendo `decision` como `APPROVED` ou `REJECTED` e exigindo o mesmo header externo.
 
 ### 12. Consultar status da OS
 
@@ -570,11 +581,12 @@ Listagem ordenada por prioridade/status e data:
 - Objetivo: simular ferramenta externa, como email, notificando nova etapa da OS.
 - Metodo: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/status/external`.
-- Bearer token: sim. Administrador ou colaborador da oficina.
+- Bearer token: não. Este webhook é chamado por ferramenta externa simulada.
+- Header externo: `X-External-Service-Token` com o valor de `EXTERNAL_SERVICE_TOKEN`.
 
 ```bash
 curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/status/external" \
-  -H "Authorization: Bearer $TOKEN" \
+  -H "X-External-Service-Token: $EXTERNAL_SERVICE_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "status": "FINISHED",
@@ -611,12 +623,12 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/parts` | Sim | Adicionar peca a OS. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orcamento. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orcamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Sim | Registrar aprovação externa de orcamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Sim | Registrar recusa externa de orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Não, usa `X-External-Service-Token` | Registrar aprovação externa de orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Não, usa `X-External-Service-Token` | Registrar recusa externa de orcamento. |
 | `PATCH` | `/api/v1/service-orders/{serviceOrderId}/status` | Sim | Atualizar status da OS. |
 | `GET` | `/api/v1/service-orders/metrics/average-execution-time` | Sim | Consultar tempo medio de execução. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Sim | Endpoint legado para aprovar ou recusar orcamento por notificação externa. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Sim | Atualizar status por ferramenta externa simulada. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Não, usa `X-External-Service-Token` | Endpoint legado para aprovar ou recusar orcamento por notificação externa. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Não, usa `X-External-Service-Token` | Atualizar status por ferramenta externa simulada. |
 | `GET` | `/api/v1/service-orders` | Sim | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
 
 ## Testes
@@ -870,6 +882,7 @@ Secrets necessários para deploy real:
 | `KUBE_CONFIG` | Kubeconfig em base64 para acesso ao cluster. |
 | `POSTGRES_PASSWORD` | Senha do PostgreSQL usada no Secret Kubernetes. |
 | `JWT_SECRET` | Segredo JWT com pelo menos 32 bytes. |
+| `EXTERNAL_SERVICE_TOKEN` | Token compartilhado usado nos webhooks externos simulados. |
 
 O push para o GitHub Container Registry usa `GITHUB_TOKEN`, secret automatico do GitHub Actions. Ele nao deve ser
 exposto nem substituido por token pessoal sem necessidade.

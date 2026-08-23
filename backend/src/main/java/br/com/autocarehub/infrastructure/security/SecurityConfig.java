@@ -133,6 +133,13 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/v1/service-orders")
                         .hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers(
+                                org.springframework.http.HttpMethod.POST,
+                                "/api/v1/service-orders/*/budget/decision",
+                                "/api/v1/service-orders/*/budget/external-approval",
+                                "/api/v1/service-orders/*/budget/external-rejection",
+                                "/api/v1/service-orders/*/status/external")
+                        .permitAll()
+                        .requestMatchers(
                                 org.springframework.http.HttpMethod.PUT,
                                 "/api/v1/customers/*",
                                 "/api/v1/vehicles/*",
@@ -159,15 +166,8 @@ public class SecurityConfig {
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/service-orders/*")
                         .authenticated()
                         .requestMatchers(
-                                org.springframework.http.HttpMethod.POST,
-                                "/api/v1/service-orders/*/budget/approve",
-                                "/api/v1/service-orders/*/budget/decision",
-                                "/api/v1/service-orders/*/budget/external-approval",
-                                "/api/v1/service-orders/*/budget/external-rejection")
+                                org.springframework.http.HttpMethod.POST, "/api/v1/service-orders/*/budget/approve")
                         .authenticated()
-                        .requestMatchers(
-                                org.springframework.http.HttpMethod.POST, "/api/v1/service-orders/*/status/external")
-                        .hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/v1/**")
                         .hasAnyRole("ADMIN", "EMPLOYEE")
                         .anyRequest()

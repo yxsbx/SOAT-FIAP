@@ -107,20 +107,21 @@ jobs:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      EXTERNAL_SERVICE_TOKEN: ${{ secrets.EXTERNAL_SERVICE_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
       - uses: azure/setup-kubectl@v4
 
       - name: Configure kubeconfig
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           mkdir -p "${HOME}/.kube"
           echo "${KUBE_CONFIG}" | base64 --decode > "${HOME}/.kube/config"
           chmod 600 "${HOME}/.kube/config"
 
       - name: Apply namespace, config and database storage
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl apply \
             -f deploy/kubernetes/00-namespace.yaml \
@@ -128,16 +129,17 @@ jobs:
             -f deploy/kubernetes/03-postgres-pvc.yaml
 
       - name: Apply runtime secrets
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl -n autocarehub create secret generic autocarehub-secret \
             --from-literal=POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
             --from-literal=DB_PASSWORD="${POSTGRES_PASSWORD}" \
             --from-literal=JWT_SECRET="${JWT_SECRET}" \
+            --from-literal=EXTERNAL_SERVICE_TOKEN="${EXTERNAL_SERVICE_TOKEN}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Apply database and application workloads
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl apply \
             -f deploy/kubernetes/04-postgres-deployment.yaml \
@@ -150,13 +152,13 @@ jobs:
             -f deploy/kubernetes/11-frontend-hpa.yaml
 
       - name: Use images built by this workflow
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl -n autocarehub set image deployment/autocarehub-api api="${BACKEND_IMAGE}:${IMAGE_TAG}"
           kubectl -n autocarehub set image deployment/autocarehub-web web="${FRONTEND_IMAGE}:${IMAGE_TAG}"
 
       - name: Show rollout state
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != ''
+        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl rollout status deployment/autocarehub-postgres -n autocarehub --timeout=180s
           kubectl rollout status deployment/autocarehub-api -n autocarehub --timeout=180s
@@ -167,7 +169,7 @@ jobs:
           kubectl get hpa -n autocarehub
 
       - name: Explain skipped deploy
-        if: env.KUBE_CONFIG == '' || env.POSTGRES_PASSWORD == '' || env.JWT_SECRET == ''
+        if: env.KUBE_CONFIG == '' || env.POSTGRES_PASSWORD == '' || env.JWT_SECRET == '' || env.EXTERNAL_SERVICE_TOKEN == ''
         run: |
           echo "Deploy real não executado."
-          echo "Configure KUBE_CONFIG, POSTGRES_PASSWORD e JWT_SECRET nos GitHub Actions Secrets para aplicar os manifests no Kubernetes."
+          echo "Configure KUBE_CONFIG, POSTGRES_PASSWORD, JWT_SECRET e EXTERNAL_SERVICE_TOKEN nos GitHub Actions Secrets para aplicar os manifests no Kubernetes."

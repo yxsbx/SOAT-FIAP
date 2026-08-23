@@ -1248,8 +1248,10 @@ paths:
       summary: Recebe decisão externa de aprovação ou recusa do orçamento
       description: >
         Endpoint demonstrável para simular uma notificação externa, como email, aprovando ou recusando o orçamento.
+        Não exige login de usuário. Exige o header X-External-Service-Token com o valor configurado em EXTERNAL_SERVICE_TOKEN.
         Quando aprovado, confirma a reserva de peças. Quando recusado, libera reservas e retorna a OS para diagnóstico.
       operationId: decideServiceOrderBudget
+      security: [ ]
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
         - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
@@ -1324,8 +1326,10 @@ paths:
       summary: Recebe aprovação externa do orçamento
       description: >
         Webhook demonstrável para registrar aprovação de orçamento recebida por uma ferramenta externa,
-        como email. Usa as mesmas regras de autorização e de domínio do fluxo principal de aprovação.
+        como email. Não exige login de usuário. Exige o header X-External-Service-Token e usa as mesmas regras
+        de domínio do fluxo principal de aprovação.
       operationId: approveServiceOrderBudgetFromExternalTool
+      security: [ ]
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
         - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
@@ -1376,8 +1380,10 @@ paths:
       summary: Recebe recusa externa do orçamento
       description: >
         Webhook demonstrável para registrar recusa de orçamento recebida por uma ferramenta externa,
-        como email. A recusa libera reservas e retorna a OS para diagnóstico sem remover a OS.
+        como email. Não exige login de usuário. Exige o header X-External-Service-Token. A recusa libera reservas e retorna a OS
+        para diagnóstico sem remover a OS.
       operationId: rejectServiceOrderBudgetFromExternalTool
+      security: [ ]
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
         - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'
@@ -1471,8 +1477,9 @@ paths:
       summary: Recebe atualização externa de status da ordem de serviço
       description: >
         Endpoint demonstrável para simular uma ferramenta externa, como email, notificando mudança de status da OS.
-        A transição usa as mesmas regras de negócio do fluxo principal.
+        Não exige login de usuário. Exige o header X-External-Service-Token. A transição usa as mesmas regras de negócio do fluxo principal.
       operationId: updateServiceOrderStatusFromExternalTool
+      security: [ ]
       parameters:
         - $ref: '#/components/parameters/ServiceOrderIdPathParam'
         - $ref: '#/components/parameters/ExternalServiceTokenHeaderParam'

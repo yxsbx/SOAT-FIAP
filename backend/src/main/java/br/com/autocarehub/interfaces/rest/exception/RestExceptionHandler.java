@@ -58,6 +58,9 @@ public class RestExceptionHandler {
         List<String> details = exception.getConstraintViolations().stream()
                 .map(violation -> violation.getPropertyPath() + ": " + violation.getMessage())
                 .toList();
+        if (details.stream().anyMatch(detail -> detail.contains("xExternalServiceToken"))) {
+            return error(HttpStatus.FORBIDDEN, "Access denied", details, request);
+        }
         return error(HttpStatus.BAD_REQUEST, "Invalid request parameters", details, request);
     }
 

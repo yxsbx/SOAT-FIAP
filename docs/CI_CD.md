@@ -38,6 +38,7 @@ Configure os valores em `Settings > Secrets and variables > Actions > Repository
 | `KUBE_CONFIG` | Sim | Conteudo do kubeconfig em base64 para acessar o cluster Kubernetes. |
 | `POSTGRES_PASSWORD` | Sim | Senha aplicada no Secret Kubernetes para PostgreSQL e backend. |
 | `JWT_SECRET` | Sim | Segredo JWT usado pela API. Deve ter pelo menos 32 bytes. |
+| `EXTERNAL_SERVICE_TOKEN` | Sim | Token compartilhado exigido pelos webhooks externos simulados da API. |
 
 O push para GHCR usa `GITHUB_TOKEN`, secret automatico do GitHub Actions. Nao configure nem exponha tokens pessoais para esse fluxo sem necessidade.
 
@@ -62,7 +63,7 @@ As migrations SQL ficam em `backend/src/main/resources/db/migration/` e sao exec
 
 ## Comportamento sem secrets
 
-Se `KUBE_CONFIG`, `POSTGRES_PASSWORD` ou `JWT_SECRET` nao estiverem configurados, a pipeline continua executando build, testes, validacoes e build das imagens. O deploy real no cluster e pulado com mensagem explicita no log.
+Se `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` ou `EXTERNAL_SERVICE_TOKEN` nao estiverem configurados, a pipeline continua executando build, testes, validacoes e build das imagens. O deploy real no cluster e pulado com mensagem explicita no log.
 
 Esse comportamento evita expor credenciais e permite demonstrar a automacao mesmo sem cluster disponivel.
 

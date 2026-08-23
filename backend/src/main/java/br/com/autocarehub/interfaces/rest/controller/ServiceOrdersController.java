@@ -106,7 +106,6 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> decideServiceOrderBudget(
             UUID serviceOrderId,
             @Nullable String xExternalServiceToken,
@@ -117,7 +116,6 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> approveServiceOrderBudgetFromExternalTool(
             UUID serviceOrderId,
             @Nullable String xExternalServiceToken,
@@ -180,7 +178,6 @@ public class ServiceOrdersController implements ServiceOrdersApi {
     }
 
     @Override
-    @PreAuthorize("hasAnyRole('ADMIN','EMPLOYEE') or @authorizationService.canAccessServiceOrder(#serviceOrderId)")
     public ResponseEntity<ServiceOrderResponse> rejectServiceOrderBudgetFromExternalTool(
             UUID serviceOrderId,
             @Nullable String xExternalServiceToken,
