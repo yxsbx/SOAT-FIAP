@@ -8,7 +8,7 @@ Infraestrutura como codigo da Fase 2 para provisionamento local ou academico de 
 |----------|---------------------------------------------------------------------------------------------------------------|
 | ATENDIDO | Cluster Kubernetes local com `kind`, opcional, quando `create_kind_cluster=true`.                             |
 | ATENDIDO | Namespace `autocarehub`.                                                                                      |
-| ATENDIDO | ConfigMap `autocarehub-config` com variaveis nao sensiveis.                                                   |
+| ATENDIDO | ConfigMap `autocarehub-config` com variaveis não sensiveis.                                                   |
 | ATENDIDO | Secret `autocarehub-secret` com senha do banco, JWT secret e token externo recebidos por variaveis sensiveis. |
 | ATENDIDO | PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo executado no cluster.                         |
 | ATENDIDO | Deployment e Service do PostgreSQL demonstrativo no Kubernetes local.                                         |
@@ -78,7 +78,7 @@ kubectl apply -f k8s/frontend-service.yaml
 kubectl apply -f k8s/frontend-hpa.yaml
 ```
 
-Se preferir nao usar Terraform, aplique o pacote completo:
+Se preferir não usar Terraform, aplique o pacote completo:
 
 ```powershell
 kubectl apply -f k8s/

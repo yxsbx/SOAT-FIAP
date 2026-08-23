@@ -4,16 +4,16 @@ Manifestos da Fase 2 para deploy local ou academico do AutoCare Hub em Kubernete
 
 ## Recursos
 
-| Status | Recurso |
-| --- | --- |
-| ATENDIDO | Namespace `autocarehub`. |
-| ATENDIDO | ConfigMap com variaveis nao sensiveis. |
-| ATENDIDO | Secret de exemplo com placeholders, sem secrets reais. |
-| ATENDIDO | PostgreSQL demonstrativo no cluster com PVC, Deployment e Service. |
-| ATENDIDO | Backend com Deployment, Service, probes, requests/limits e HPA por CPU/memoria. |
-| ATENDIDO | Frontend demonstrativo com Deployment, Service, probes, requests/limits e HPA por CPU/memoria. |
-| VALIDAR MANUALMENTE | Metrics Server precisa existir no cluster para o HPA calcular metricas. |
-| ATENDIDO | Imagens usam tags locais e devem ser carregadas no runtime do cluster local. |
+| Status              | Recurso                                                                                        |
+|---------------------|------------------------------------------------------------------------------------------------|
+| ATENDIDO            | Namespace `autocarehub`.                                                                       |
+| ATENDIDO            | ConfigMap com variaveis não sensiveis.                                                         |
+| ATENDIDO            | Secret de exemplo com placeholders, sem secrets reais.                                         |
+| ATENDIDO            | PostgreSQL demonstrativo no cluster com PVC, Deployment e Service.                             |
+| ATENDIDO            | Backend com Deployment, Service, probes, requests/limits e HPA por CPU/memoria.                |
+| ATENDIDO            | Frontend demonstrativo com Deployment, Service, probes, requests/limits e HPA por CPU/memoria. |
+| VALIDAR MANUALMENTE | Metrics Server precisa existir no cluster para o HPA calcular metricas.                        |
+| ATENDIDO            | Imagens usam tags locais e devem ser carregadas no runtime do cluster local.                   |
 
 ## Aplicação
 

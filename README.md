@@ -252,28 +252,28 @@ Não versione o `.env` real. Ele deve conter valores locais ou de ambiente segur
 
 Variáveis principais do backend:
 
-| Variável | Objetivo |
-| -------- | -------- |
-| `POSTGRES_DB` | Nome do banco local. |
-| `POSTGRES_USER` | Usuário do PostgreSQL. |
-| `POSTGRES_PASSWORD` | Senha local do PostgreSQL. |
-| `POSTGRES_PORT` | Porta exposta do PostgreSQL. |
-| `APP_PORT` | Porta da API no Docker Compose. |
-| `FRONTEND_PORT` | Porta do frontend no Docker Compose. |
-| `JWT_SECRET` | Segredo usado para assinar tokens JWT. |
-| `JWT_EXPIRATION_MINUTES` | Tempo de expiração do token. |
-| `EXTERNAL_SERVICE_TOKEN` | Token compartilhado exigido no header `X-External-Service-Token` dos webhooks externos simulados. |
-| `APP_CORS_ALLOWED_ORIGINS` | Origens liberadas no CORS. |
-| `DB_URL` | URL JDBC usada ao rodar o backend fora do container. |
-| `DB_USERNAME` | Usuário do banco ao rodar com Maven. |
-| `DB_PASSWORD` | Senha do banco ao rodar com Maven. |
+| Variável                   | Objetivo                                                                                          |
+|----------------------------|---------------------------------------------------------------------------------------------------|
+| `POSTGRES_DB`              | Nome do banco local.                                                                              |
+| `POSTGRES_USER`            | Usuário do PostgreSQL.                                                                            |
+| `POSTGRES_PASSWORD`        | Senha local do PostgreSQL.                                                                        |
+| `POSTGRES_PORT`            | Porta exposta do PostgreSQL.                                                                      |
+| `APP_PORT`                 | Porta da API no Docker Compose.                                                                   |
+| `FRONTEND_PORT`            | Porta do frontend no Docker Compose.                                                              |
+| `JWT_SECRET`               | Segredo usado para assinar tokens JWT.                                                            |
+| `JWT_EXPIRATION_MINUTES`   | Tempo de expiração do token.                                                                      |
+| `EXTERNAL_SERVICE_TOKEN`   | Token compartilhado exigido no header `X-External-Service-Token` dos webhooks externos simulados. |
+| `APP_CORS_ALLOWED_ORIGINS` | Origens liberadas no CORS.                                                                        |
+| `DB_URL`                   | URL JDBC usada ao rodar o backend fora do container.                                              |
+| `DB_USERNAME`              | Usuário do banco ao rodar com Maven.                                                              |
+| `DB_PASSWORD`              | Senha do banco ao rodar com Maven.                                                                |
 
 Variáveis principais do frontend:
 
-| Variável | Objetivo |
-| -------- | -------- |
-| `VITE_API_BASE_URL` | URL da API. Pode ficar vazia para usar o proxy do Vite/Nginx. |
-| `VITE_DEMO_PASSWORD` | Senha demonstrativa opcional para a interface. |
+| Variável             | Objetivo                                                      |
+|----------------------|---------------------------------------------------------------|
+| `VITE_API_BASE_URL`  | URL da API. Pode ficar vazia para usar o proxy do Vite/Nginx. |
+| `VITE_DEMO_PASSWORD` | Senha demonstrativa opcional para a interface.                |
 
 ## Como rodar localmente com Docker
 
@@ -308,13 +308,13 @@ docker compose logs --tail=100 app
 
 URLs locais:
 
-| Recurso | URL |
-| ------- | --- |
-| Frontend | <http://localhost:5173> |
-| API | <http://localhost:8080> |
-| Swagger UI | <http://localhost:8080/swagger-ui.html> |
+| Recurso             | URL                                     |
+|---------------------|-----------------------------------------|
+| Frontend            | <http://localhost:5173>                 |
+| API                 | <http://localhost:8080>                 |
+| Swagger UI          | <http://localhost:8080/swagger-ui.html> |
 | Healthcheck backend | <http://localhost:8080/actuator/health> |
-| PostgreSQL | `localhost:5432` |
+| PostgreSQL          | `localhost:5432`                        |
 
 O `docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
 executa as migrations Flyway no startup e expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
@@ -657,39 +657,39 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 
 ## Endpoints principais
 
-| Método | Endpoint | Protegido por JWT | Objetivo |
-| ------ | -------- | ----------------- | -------- |
-| `POST` | `/api/v1/auth/login` | Não | Autenticar usuário e emitir JWT. |
-| `POST` | `/api/v1/customers` | Sim | Criar cliente. |
-| `GET` | `/api/v1/customers` | Sim | Listar clientes. |
-| `GET` | `/api/v1/customers/{customerId}` | Sim | Buscar cliente por id. |
-| `PUT` | `/api/v1/customers/{customerId}` | Sim | Atualizar cliente. |
-| `DELETE` | `/api/v1/customers/{customerId}` | Sim | Remover lógicamente cliente. |
-| `POST` | `/api/v1/vehicles` | Sim | Criar veiculo. |
-| `GET` | `/api/v1/vehicles` | Sim | Listar veículos. |
-| `PUT` | `/api/v1/vehicles/{vehicleId}` | Sim | Atualizar quilometragem/status; placa, marca, modelo e ano permanecem imutáveis. |
-| `GET` | `/api/v1/customers/{customerId}/vehicles` | Sim | Listar veículos de um cliente. |
-| `POST` | `/api/v1/workshop-services` | Sim | Criar servico da oficina. |
-| `GET` | `/api/v1/workshop-services` | Sim | Listar serviços. |
-| `POST` | `/api/v1/parts` | Sim | Criar peca ou insumo. |
-| `GET` | `/api/v1/parts` | Sim | Listar peças e insumos. |
-| `PATCH` | `/api/v1/parts/{partId}/stock` | Sim | Atualizar estoque. |
-| `POST` | `/api/v1/parts/{partId}/stock-movement` | Sim | Registrar movimento de estoque. |
-| `POST` | `/api/v1/service-orders` | Sim | Abrir Ordem de Serviço e retornar identificador único. |
-| `GET` | `/api/v1/service-orders` | Sim | Listar Ordens de Serviço com filtros atuais. |
-| `GET` | `/api/v1/service-orders/{serviceOrderId}` | Sim | Consultar OS e status. |
-| `GET` | `/api/v1/service-orders/tracking` | Sim | Acompanhar progresso da OS. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/services` | Sim | Adicionar servico a OS. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/parts` | Sim | Adicionar peca a OS. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orçamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orçamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Não, usa `X-External-Service-Token` | Registrar aprovação externa de orçamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Não, usa `X-External-Service-Token` | Registrar recusa externa de orçamento. |
-| `PATCH` | `/api/v1/service-orders/{serviceOrderId}/status` | Sim | Atualizar status da OS. |
-| `GET` | `/api/v1/service-orders/metrics/average-execution-time` | Sim | Consultar tempo medio de execução. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Não, usa `X-External-Service-Token` | Endpoint legado para aprovar ou recusar orçamento por notificação externa. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Não, usa `X-External-Service-Token` | Atualizar status por ferramenta externa simulada. |
-| `GET` | `/api/v1/service-orders` | Sim | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
+| Método   | Endpoint                                                            | Protegido por JWT                   | Objetivo                                                                             |
+|----------|---------------------------------------------------------------------|-------------------------------------|--------------------------------------------------------------------------------------|
+| `POST`   | `/api/v1/auth/login`                                                | Não                                 | Autenticar usuário e emitir JWT.                                                     |
+| `POST`   | `/api/v1/customers`                                                 | Sim                                 | Criar cliente.                                                                       |
+| `GET`    | `/api/v1/customers`                                                 | Sim                                 | Listar clientes.                                                                     |
+| `GET`    | `/api/v1/customers/{customerId}`                                    | Sim                                 | Buscar cliente por id.                                                               |
+| `PUT`    | `/api/v1/customers/{customerId}`                                    | Sim                                 | Atualizar cliente.                                                                   |
+| `DELETE` | `/api/v1/customers/{customerId}`                                    | Sim                                 | Remover lógicamente cliente.                                                         |
+| `POST`   | `/api/v1/vehicles`                                                  | Sim                                 | Criar veiculo.                                                                       |
+| `GET`    | `/api/v1/vehicles`                                                  | Sim                                 | Listar veículos.                                                                     |
+| `PUT`    | `/api/v1/vehicles/{vehicleId}`                                      | Sim                                 | Atualizar quilometragem/status; placa, marca, modelo e ano permanecem imutáveis.     |
+| `GET`    | `/api/v1/customers/{customerId}/vehicles`                           | Sim                                 | Listar veículos de um cliente.                                                       |
+| `POST`   | `/api/v1/workshop-services`                                         | Sim                                 | Criar servico da oficina.                                                            |
+| `GET`    | `/api/v1/workshop-services`                                         | Sim                                 | Listar serviços.                                                                     |
+| `POST`   | `/api/v1/parts`                                                     | Sim                                 | Criar peca ou insumo.                                                                |
+| `GET`    | `/api/v1/parts`                                                     | Sim                                 | Listar peças e insumos.                                                              |
+| `PATCH`  | `/api/v1/parts/{partId}/stock`                                      | Sim                                 | Atualizar estoque.                                                                   |
+| `POST`   | `/api/v1/parts/{partId}/stock-movement`                             | Sim                                 | Registrar movimento de estoque.                                                      |
+| `POST`   | `/api/v1/service-orders`                                            | Sim                                 | Abrir Ordem de Serviço e retornar identificador único.                               |
+| `GET`    | `/api/v1/service-orders`                                            | Sim                                 | Listar Ordens de Serviço com filtros atuais.                                         |
+| `GET`    | `/api/v1/service-orders/{serviceOrderId}`                           | Sim                                 | Consultar OS e status.                                                               |
+| `GET`    | `/api/v1/service-orders/tracking`                                   | Sim                                 | Acompanhar progresso da OS.                                                          |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/services`                  | Sim                                 | Adicionar servico a OS.                                                              |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/parts`                     | Sim                                 | Adicionar peca a OS.                                                                 |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/budget/generate`           | Sim                                 | Gerar orçamento.                                                                     |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/budget/approve`            | Sim                                 | Aprovar orçamento.                                                                   |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval`  | Não, usa `X-External-Service-Token` | Registrar aprovação externa de orçamento.                                            |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Não, usa `X-External-Service-Token` | Registrar recusa externa de orçamento.                                               |
+| `PATCH`  | `/api/v1/service-orders/{serviceOrderId}/status`                    | Sim                                 | Atualizar status da OS.                                                              |
+| `GET`    | `/api/v1/service-orders/metrics/average-execution-time`             | Sim                                 | Consultar tempo medio de execução.                                                   |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/budget/decision`           | Não, usa `X-External-Service-Token` | Endpoint legado para aprovar ou recusar orçamento por notificação externa.           |
+| `POST`   | `/api/v1/service-orders/{serviceOrderId}/status/external`           | Não, usa `X-External-Service-Token` | Atualizar status por ferramenta externa simulada.                                    |
+| `GET`    | `/api/v1/service-orders`                                            | Sim                                 | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
 
 ## Testes
 
@@ -964,44 +964,44 @@ Docker Compose, validação do Terraform e deploy Kubernetes local em `kind`.
 
 ## Documentação complementar
 
-| Documento | Link |
-| --------- | ---- |
-| Índice da documentação | [docs/README.md](docs/README.md) |
-| DDD | [docs/domain/DDD_DOCUMENTATION.md](docs/domain/DDD_DOCUMENTATION.md) |
-| Event Storming | [docs/domain/EVENT_STORMING.md](docs/domain/EVENT_STORMING.md) |
-| Domain Storytelling | [docs/domain/DOMAIN_STORYTELLING.md](docs/domain/DOMAIN_STORYTELLING.md) |
-| Requisitos | [docs/domain/REQUIREMENTS.md](docs/domain/REQUIREMENTS.md) |
-| Arquitetura | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) |
-| Refinamento técnico | [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md) |
-| OpenAPI | [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml) |
-| Collection Postman | [docs/api/postman/autocarehub-phase2.postman_collection.json](docs/api/postman/autocarehub-phase2.postman_collection.json) |
-| Testes | [docs/testing/TESTING.md](docs/testing/TESTING.md) |
-| Análise estática | [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md) |
-| CI/CD | [docs/CI_CD.md](docs/CI_CD.md) |
-| Segurança | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md) |
-| Guia de scan de segurança | [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md) |
-| Documento de entrega | [docs/delivery/DELIVERY_DOCUMENT.md](docs/delivery/DELIVERY_DOCUMENT.md) |
-| Documento final Fase 2 | [docs/PHASE2_DELIVERY_DOCUMENT.md](docs/PHASE2_DELIVERY_DOCUMENT.md) |
-| Relatório Infra/CI-CD Fase 2 | [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md) |
-| Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
-| Desenho da arquitetura | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md) |
-| Roteiro do vídeo | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
-| Vídeo | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA] |
+| Documento                    | Link                                                                                                                       |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| Índice da documentação       | [docs/README.md](docs/README.md)                                                                                           |
+| DDD                          | [docs/domain/DDD_DOCUMENTATION.md](docs/domain/DDD_DOCUMENTATION.md)                                                       |
+| Event Storming               | [docs/domain/EVENT_STORMING.md](docs/domain/EVENT_STORMING.md)                                                             |
+| Domain Storytelling          | [docs/domain/DOMAIN_STORYTELLING.md](docs/domain/DOMAIN_STORYTELLING.md)                                                   |
+| Requisitos                   | [docs/domain/REQUIREMENTS.md](docs/domain/REQUIREMENTS.md)                                                                 |
+| Arquitetura                  | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)                                                     |
+| Refinamento técnico          | [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md)                                     |
+| OpenAPI                      | [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml)                                                             |
+| Collection Postman           | [docs/api/postman/autocarehub-phase2.postman_collection.json](docs/api/postman/autocarehub-phase2.postman_collection.json) |
+| Testes                       | [docs/testing/TESTING.md](docs/testing/TESTING.md)                                                                         |
+| Análise estática             | [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md)                                                         |
+| CI/CD                        | [docs/CI_CD.md](docs/CI_CD.md)                                                                                             |
+| Segurança                    | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md)                                                       |
+| Guia de scan de segurança    | [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md)                                               |
+| Documento de entrega         | [docs/delivery/DELIVERY_DOCUMENT.md](docs/delivery/DELIVERY_DOCUMENT.md)                                                   |
+| Documento final Fase 2       | [docs/PHASE2_DELIVERY_DOCUMENT.md](docs/PHASE2_DELIVERY_DOCUMENT.md)                                                       |
+| Relatório Infra/CI-CD Fase 2 | [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md)                                                       |
+| Frontend demonstrativo       | [frontend/README.md](frontend/README.md)                                                                                   |
+| Desenho da arquitetura       | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md)                                       |
+| Roteiro do vídeo             | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md)                                               |
+| Vídeo                        | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA]                                                                                   |
 
 Artefatos técnicos principais:
 
-| Artefato | Caminho |
-| -------- | ------- |
-| Pipeline principal CI/CD | [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml) |
-| Pipeline de qualidade | [.github/workflows/quality.yml](.github/workflows/quality.yml) |
-| Pipeline Qodana | [.github/workflows/qodana_code_quality.yml](.github/workflows/qodana_code_quality.yml) |
-| Docker Compose | [docker-compose.yml](docker-compose.yml) |
-| Dockerfile backend | [Dockerfile](Dockerfile) |
-| Dockerfile frontend | [frontend/Dockerfile](frontend/Dockerfile) |
-| Manifestos Kubernetes | [k8s/](k8s/) |
-| Guia Kubernetes | [k8s/README.md](k8s/README.md) |
-| Scripts Terraform | [infra/](infra/) |
-| Guia Terraform | [infra/README.md](infra/README.md) |
+| Artefato                 | Caminho                                                                                |
+|--------------------------|----------------------------------------------------------------------------------------|
+| Pipeline principal CI/CD | [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml)               |
+| Pipeline de qualidade    | [.github/workflows/quality.yml](.github/workflows/quality.yml)                         |
+| Pipeline Qodana          | [.github/workflows/qodana_code_quality.yml](.github/workflows/qodana_code_quality.yml) |
+| Docker Compose           | [docker-compose.yml](docker-compose.yml)                                               |
+| Dockerfile backend       | [Dockerfile](Dockerfile)                                                               |
+| Dockerfile frontend      | [frontend/Dockerfile](frontend/Dockerfile)                                             |
+| Manifestos Kubernetes    | [k8s/](k8s/)                                                                           |
+| Guia Kubernetes          | [k8s/README.md](k8s/README.md)                                                         |
+| Scripts Terraform        | [infra/](infra/)                                                                       |
+| Guia Terraform           | [infra/README.md](infra/README.md)                                                     |
 
 ## Entrega da Fase 2
 
