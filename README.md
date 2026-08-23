@@ -719,16 +719,15 @@ Documentação complementar de testes:
 
 Última validação registrada após as correções da Fase 2:
 
-- `mvn test`: 167 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: passou com build, testes, empacotamento e gate JaCoCo aprovado.
+- `mvn test`: 172 testes, 0 falhas, 0 erros e 0 ignorados.
+- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
 - O percentual JaCoCo atualizado não é citado aqui sem consultar o relatório real em `backend/target/site/jacoco`.
 
 Validação desta revisão de infraestrutura:
 
 - `mvn spotless:check`: passou.
 - `mvn test`: passou com 172 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: precisa ser reexecutado em terminal limpo ou CI; nesta rodada local no Windows falhou durante
-  leitura de fontes gerados em `backend/target/generated-sources/openapi` após tentativas concorrentes de Maven.
+- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
 - Resultado detalhado: [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md).
 
 ## Seguranca

@@ -48,6 +48,7 @@ jobs:
     env:
       POSTGRES_PASSWORD: ci-postgres-password
       JWT_SECRET: ci-jwt-secret-with-at-least-32-bytes
+      EXTERNAL_SERVICE_TOKEN: ci-external-service-token
     steps:
       - uses: actions/checkout@v4
       - name: Validate Compose

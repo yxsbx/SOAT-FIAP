@@ -224,8 +224,8 @@ backend/target/site/allure-maven-plugin/index.html
 
 | Comando                                                              | Resultado                                                           |
 |----------------------------------------------------------------------|---------------------------------------------------------------------|
-| `mvn test`                                                           | 167 testes, 0 falhas, 0 erros e 0 ignorados.                        |
-| `mvn clean verify`                                                   | 167 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.  |
+| `mvn test`                                                           | 172 testes, 0 falhas, 0 erros e 0 ignorados.                        |
+| `mvn clean verify`                                                   | 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.  |
 | `mvn dependency-check:check -DautoUpdate=false`                      | Evidência versionada descrita em `docs/security/SECURITY_REPORT.md`. |
 | `mvn -Pallure-report -DskipTests compile test-compile allure:report` | Relatório Allure gerado a partir dos resultados locais disponíveis. |
 

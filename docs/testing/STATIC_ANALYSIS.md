@@ -79,7 +79,7 @@ apenas na demonstração de execução limpa do projeto ou em ambiente descartá
 | Ferramenta             | Resultado                                                                              |
 |------------------------|----------------------------------------------------------------------------------------|
 | Spotless               | `mvn spotless:check` aprovado, sem arquivos exigindo alteração.                        |
-| Maven/JUnit            | `mvn test` aprovado com 167 testes, 0 falhas, 0 erros e 0 ignorados.                   |
+| Maven/JUnit            | `mvn test` aprovado com 172 testes, 0 falhas, 0 erros e 0 ignorados.                   |
 | JaCoCo                 | Gate aprovado no `mvn clean verify`.                                                   |
 | OWASP Dependency-Check | Evidência versionada em `security-reports/`; reexecução local atual não foi usada como gate desta revisão documental. |
 | ESLint frontend        | Aprovado com `--max-warnings=0`.                                                       |

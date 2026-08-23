@@ -1313,8 +1313,6 @@ paths:
                     createdAt: '2026-07-05T10:00:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -1367,8 +1365,6 @@ paths:
                 approvedAt: '2026-07-05T10:12:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -1420,8 +1416,6 @@ paths:
                 createdAt: '2026-07-05T10:00:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -1518,8 +1512,6 @@ paths:
                 finishedAt: '2026-07-05T16:00:00-03:00'
         '400':
           $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
         '404':
@@ -2071,7 +2063,7 @@ components:
             path: /api/v1/customers
             details: [ ]
     Forbidden:
-      description: Usuário autenticado sem permissão para acessar o recurso
+      description: Usuário autenticado sem permissão para acessar o recurso, ou token externo ausente/invalido nos webhooks simulados
       content:
         application/json:
           schema:

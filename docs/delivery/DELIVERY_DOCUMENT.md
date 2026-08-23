@@ -152,8 +152,8 @@ A Fase 2 evolui o MVP da Fase 1 com:
 
 Validações finais registradas após as correções da Fase 2:
 
-- `mvn test`: 167 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: passou com build, testes, empacotamento e gate JaCoCo aprovado.
+- `mvn test`: 172 testes, 0 falhas, 0 erros e 0 ignorados.
+- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
 - `npm audit --json`: resultado final com 0 vulnerabilidades.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`: passaram.
 - `kubectl apply --dry-run=client -f k8s/`: não concluiu apenas por ausência de cluster Kubernetes ativo/configurado no ambiente local; não houve erro identificado nos manifests a partir dessa falha.

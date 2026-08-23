@@ -76,7 +76,7 @@
 | ATENDIDO | `mvn spotless:check` | Passou na raiz apos adicionar `pom.xml` agregador com plugin Spotless. |
 | ATENDIDO | `mvn test` | Passou na raiz: 172 testes, 0 falhas, 0 erros e 0 ignorados. |
 | ATENDIDO | `cd backend; mvn test` | Passou: 172 testes, 0 falhas, 0 erros e 0 ignorados. |
-| PARCIAL | `mvn clean verify` | Falhou no ambiente local Windows durante leitura de fontes gerados em `backend/target/generated-sources/openapi` apos `clean`; a tentativa foi contaminada por execucoes Maven concorrentes e depois persistiu como erro local de leitura. Reexecutar em terminal limpo/CI antes da entrega final. |
+| ATENDIDO | `mvn clean verify` | Passou com 172 testes, 0 falhas, 0 erros, 0 ignorados; gate JaCoCo aprovado. |
 | ATENDIDO | `cd frontend; npm ci` | Passou: 141 pacotes instalados/auditados, 0 vulnerabilidades. |
 | ATENDIDO | `cd frontend; npm run lint` | Passou com ESLint e `--max-warnings=0`. |
 | ATENDIDO | `cd frontend; npm run build` | Falhou no sandbox com `spawn EPERM`; passou fora do sandbox com Vite, gerando `dist/`. |
@@ -103,14 +103,12 @@
 | --- | --- |
 | VALIDAR MANUALMENTE | Deploy Kubernetes real nao executado porque o kubeconfig local exige credenciais. |
 | VALIDAR MANUALMENTE | Validador estrutural Ruby de manifests nao executado localmente porque Ruby nao esta instalado. |
-| PARCIAL | `mvn clean verify` deve ser reexecutado em terminal limpo ou CI; `mvn test` passou, mas o gate JaCoCo desta rodada nao foi confirmado por causa do erro local de leitura em `target/generated-sources/openapi`. |
 
 ## Pendencias Obrigatorias
 
 | Status | Item |
 | --- | --- |
 | BLOQUEIA ENTREGA | Inserir link real do video demonstrativo. |
-| PARCIAL | Reexecutar `mvn clean verify` em ambiente limpo/CI para registrar gate JaCoCo final desta rodada. |
 | VALIDAR MANUALMENTE | Confirmar acesso do usuario `soat-architecture` ao repositorio privado. |
 | VALIDAR MANUALMENTE | Regenerar PDF final no portal/documento final apos inserir link real do video. |
 
