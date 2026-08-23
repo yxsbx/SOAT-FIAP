@@ -266,7 +266,7 @@ flowchart TB
     Compose -.-> Postgres
 ```
 
-Contêineres executáveis conforme `deploy/docker/docker-compose.yml`:
+Contêineres executáveis conforme `docker-compose.yml`:
 
 | Contêiner              | Tecnologia            | Papel                   |
 |------------------------|-----------------------|-------------------------|
@@ -362,7 +362,7 @@ sequenceDiagram
 | Controlar estoque                                | `Part` e use cases de estoque/movimentação.                        | RF-008, RF-009, RF-012         |
 | Monitorar tempo médio                            | `GetAverageServiceOrderExecutionTimeUseCase`.                      | RF-020                         |
 | Proteger APIs                                    | `SecurityConfig`, `JwtAuthenticationFilter`, `JwtService`.         | RF-021, RNF-010                |
-| Executar localmente                              | Dockerfile, Compose e `deploy/docker/.env.example`.                 | RNF-007, RNF-008, RNF-009      |
+| Executar localmente                              | Dockerfile, Compose e `.env.example`.                 | RNF-007, RNF-008, RNF-009      |
 | Documentar API                                   | OpenAPI e Swagger UI.                                              | RNF-003, RNF-004               |
 
 ## 6. Aderência ao código
@@ -371,7 +371,7 @@ A arquitetura descrita está alinhada com os principais pontos da implementaçã
 
 - os endpoints citados estão documentados em `docs/api/openapi/openapi.yaml`;
 - os pacotes `interfaces`, `application`, `domain` e `infrastructure` organizam a aplicação em camadas;
-- o banco documentado é PostgreSQL, configurado em `application.yml` e `deploy/docker/docker-compose.yml`;
+- o banco documentado é PostgreSQL, configurado em `application.yml` e `docker-compose.yml`;
 - o Compose possui os serviços `autocarehub-api`, `autocarehub-postgres` e `autocarehub-web`;
 - o Swagger está documentado em `/swagger-ui.html`;
 - JWT, BCrypt e autorização por papel fazem parte da camada de segurança;

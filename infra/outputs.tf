@@ -30,5 +30,5 @@ output "postgres_jdbc_url" {
 
 output "kubectl_apply_workloads_command" {
   description = "Comando para aplicar os workloads Kubernetes apos o provisionamento base."
-  value       = "kubectl apply -f ../../deploy/kubernetes/04-postgres-deployment.yaml -f ../../deploy/kubernetes/05-postgres-service.yaml -f ../../deploy/kubernetes/06-backend-deployment.yaml -f ../../deploy/kubernetes/07-backend-service.yaml -f ../../deploy/kubernetes/08-backend-hpa.yaml -f ../../deploy/kubernetes/09-frontend-deployment.yaml -f ../../deploy/kubernetes/10-frontend-service.yaml -f ../../deploy/kubernetes/11-frontend-hpa.yaml"
+  value       = "kubectl apply -f ../k8s/backend-deployment.yaml -f ../k8s/backend-service.yaml -f ../k8s/backend-hpa.yaml -f ../k8s/frontend-deployment.yaml -f ../k8s/frontend-service.yaml -f ../k8s/frontend-hpa.yaml -f ../k8s/postgres-deployment.yaml -f ../k8s/postgres-service.yaml"
 }

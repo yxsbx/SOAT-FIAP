@@ -7,20 +7,20 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-autocarehub}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
-      - '${POSTGRES_PORT:-5432}:5432'
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - autocarehub-postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: [ 'CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-autocarehub} -d ${POSTGRES_DB:-autocarehub}' ]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-autocarehub} -d ${POSTGRES_DB:-autocarehub}"]
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 10s
 
-  backend:
+  app:
     build:
-      context: ../..
-      dockerfile: backend/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: autocarehub-api
     environment:
       DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-autocarehub}
@@ -33,11 +33,11 @@ services:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
       SPRINGDOC_API_DOCS_ENABLED: ${SPRINGDOC_API_DOCS_ENABLED:-true}
       APP_CORS_ALLOWED_ORIGINS: ${APP_CORS_ALLOWED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: 'true'
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
       LOGGING_LEVEL_ROOT: ${LOGGING_LEVEL_ROOT:-INFO}
       JAVA_TOOL_OPTIONS: ${JAVA_OPTS:-}
     ports:
-      - '${APP_PORT:-8080}:8080'
+      - "${APP_PORT:-8080}:8080"
     read_only: true
     tmpfs:
       - /tmp
@@ -46,8 +46,12 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    networks:
+      default:
+        aliases:
+          - backend
     healthcheck:
-      test: [ 'CMD-SHELL', 'wget -q --spider http://localhost:8080/actuator/health || exit 1' ]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -55,13 +59,13 @@ services:
 
   frontend:
     build:
-      context: ../../frontend
+      context: ./frontend
       dockerfile: Dockerfile
       args:
         VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
     container_name: autocarehub-web
     ports:
-      - '${FRONTEND_PORT:-5173}:8080'
+      - "${FRONTEND_PORT:-5173}:8080"
     read_only: true
     tmpfs:
       - /tmp
@@ -70,10 +74,10 @@ services:
     security_opt:
       - no-new-privileges:true
     depends_on:
-      backend:
+      app:
         condition: service_healthy
     healthcheck:
-      test: [ 'CMD-SHELL', 'wget -q --spider http://127.0.0.1:8080/ || exit 1' ]
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/ || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12

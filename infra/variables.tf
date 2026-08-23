@@ -23,7 +23,7 @@ variable "kind_cluster_name" {
 
   validation {
     condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", var.kind_cluster_name))
-    error_message = "O nome do cluster kind deve seguir o padrão DNS label."
+    error_message = "O nome do cluster kind deve seguir o padrao DNS label."
   }
 }
 
@@ -34,7 +34,7 @@ variable "namespace" {
 
   validation {
     condition     = can(regex("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$", var.namespace))
-    error_message = "O namespace deve seguir o padrão DNS label do Kubernetes."
+    error_message = "O namespace deve seguir o padrao DNS label do Kubernetes."
   }
 }
 
@@ -74,7 +74,7 @@ variable "postgres_storage_size" {
 }
 
 variable "postgres_storage_class_name" {
-  description = "StorageClass do PVC. Use null para deixar o cluster escolher a classe padrão."
+  description = "StorageClass do PVC. Use null para deixar o cluster escolher a classe padrao."
   type        = string
   default     = null
 }
@@ -104,6 +104,17 @@ variable "jwt_secret" {
   validation {
     condition     = length(var.jwt_secret) >= 32
     error_message = "O segredo JWT deve ter pelo menos 32 caracteres."
+  }
+}
+
+variable "external_service_token" {
+  description = "Token compartilhado usado pelos webhooks externos simulados."
+  type        = string
+  sensitive   = true
+
+  validation {
+    condition     = length(var.external_service_token) >= 16
+    error_message = "O token externo deve ter pelo menos 16 caracteres."
   }
 }
 
@@ -148,7 +159,7 @@ variable "springdoc_api_docs_enabled" {
 }
 
 variable "java_tool_options" {
-  description = "Opções de JVM para o backend."
+  description = "Opcoes de JVM para o backend."
   type        = string
   default     = "-Xms256m -Xmx512m"
 }

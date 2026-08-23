@@ -29,7 +29,7 @@ flowchart LR
     Adapters --> Db["PostgreSQL"]
 
     subgraph Docker["Execução local"]
-        Compose["deploy/docker/docker-compose.yml"]
+        Compose["docker-compose.yml"]
         BackendImage["Imagem backend"]
         FrontendImage["Imagem frontend"]
         Compose --> BackendImage
@@ -65,7 +65,7 @@ flowchart LR
 
     subgraph Pipeline["GitHub Actions"]
         Quality["Quality workflow"]
-        Deploy["Deploy workflow"]
+        Deploy["Phase 2 CI/CD workflow"]
         Quality --> Tests["Testes e cobertura"]
         Deploy --> BackendImage
         Deploy --> FrontendImage

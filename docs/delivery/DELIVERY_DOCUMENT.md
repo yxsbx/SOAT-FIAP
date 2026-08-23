@@ -37,9 +37,9 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 | Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/security/SECURITY_REPORT.md>      |
 | Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/architecture/PHASE2_ARCHITECTURE.md>  |
 | Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/delivery/PHASE2_VIDEO_SCRIPT.md>  |
-| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/deploy/kubernetes>            |
-| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra/terraform>              |
-| Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/deploy.yml> |
+| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>            |
+| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>              |
+| Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/phase2-ci-cd.yml> |
 
 ## 4.1 Links finais da Fase 2
 
@@ -142,9 +142,9 @@ A Fase 2 evolui o MVP da Fase 1 com:
 - endpoint legado de decisão externa de orçamento em `POST /api/v1/service-orders/{serviceOrderId}/budget/decision`;
 - endpoint de atualização externa de status em `POST /api/v1/service-orders/{serviceOrderId}/status/external`;
 - listagem operacional de OS movida para query no repository/adapter, ordenada por status e data e ocultando OS finalizadas e entregues;
-- manifests Kubernetes em `deploy/kubernetes/`;
-- estrutura Terraform em `infra/terraform/`;
-- pipeline de deploy em `.github/workflows/deploy.yml`;
+- manifests Kubernetes em `k8s/`;
+- estrutura Terraform em `infra/`;
+- pipeline de deploy em `.github/workflows/phase2-ci-cd.yml`;
 - README principal atualizado com exemplos rápidos de API;
 - guia de scans de segurança em `docs/security/SECURITY_SCAN_GUIDE.md`;
 - desenho textual/Mermaid da arquitetura em `docs/architecture/PHASE2_ARCHITECTURE.md`;
@@ -156,7 +156,7 @@ Validações finais registradas após as correções da Fase 2:
 - `mvn clean verify`: passou com build, testes, empacotamento e gate JaCoCo aprovado.
 - `npm audit --json`: resultado final com 0 vulnerabilidades.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`: passaram.
-- `kubectl apply --dry-run=client -f deploy/kubernetes/`: não concluiu apenas por ausência de cluster Kubernetes ativo/configurado no ambiente local; não houve erro identificado nos manifests a partir dessa falha.
+- `kubectl apply --dry-run=client -f k8s/`: não concluiu apenas por ausência de cluster Kubernetes ativo/configurado no ambiente local; não houve erro identificado nos manifests a partir dessa falha.
 
 ## 7. Conclusão
 

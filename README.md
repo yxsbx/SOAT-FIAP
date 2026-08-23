@@ -94,6 +94,53 @@ Desenho da arquitetura:
 
 [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md)
 
+```mermaid
+flowchart LR
+    user["Usuario / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
+    user --> api["API Backend Spring Boot"]
+    frontend --> api
+    api --> postgres["PostgreSQL"]
+
+    subgraph docker["Docker local"]
+        compose["docker-compose.yml"]
+        compose --> appContainer["Container backend"]
+        compose --> webContainer["Container frontend"]
+        compose --> dbContainer["Container PostgreSQL"]
+    end
+
+    subgraph k8sCluster["Kubernetes"]
+        cm["ConfigMap"]
+        secret["Secret"]
+        hpaApi["HPA backend"]
+        hpaWeb["HPA frontend"]
+        deployApi["Deployment backend"]
+        deployWeb["Deployment frontend"]
+        deployDb["Deployment PostgreSQL"]
+        svcApi["Service backend"]
+        svcWeb["Service frontend"]
+        svcDb["Service PostgreSQL"]
+        hpaApi --> deployApi
+        hpaWeb --> deployWeb
+        cm --> deployApi
+        secret --> deployApi
+        secret --> deployDb
+        deployApi --> svcApi
+        deployWeb --> svcWeb
+        deployDb --> svcDb
+        svcApi --> svcDb
+    end
+
+    subgraph cicd["CI/CD"]
+        pipeline["GitHub Actions phase2-ci-cd.yml"]
+        pipeline --> images["Build imagens Docker"]
+        pipeline --> apply["kubectl apply -f k8s/"]
+    end
+
+    terraform["Terraform infra/"] --> k8sCluster
+    images --> k8sCluster
+    apply --> k8sCluster
+```
+
 Documentação detalhada:
 
 - [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md)
@@ -107,12 +154,14 @@ Documentação detalhada:
 .
 |-- backend/                        # API Spring Boot monolitica modular
 |   |-- pom.xml
-|   |-- Dockerfile
 |   `-- src/
 |       |-- main/java/              # Código backend
 |       |-- main/resources/         # Configuração, Flyway e assets estaticos
 |       `-- test/java/              # Testes unitarios e de integração
 |-- frontend/                       # Frontend demonstrativo Vue/Vite
+|   |-- Dockerfile                  # Dockerfile frontend
+|   `-- src/
+|-- k8s/                            # Manifests Kubernetes exigidos na Fase 2
 |-- docs/
 |   |-- README.md                   # Guia da documentação
 |   |-- api/                        # OpenAPI e Postman
@@ -121,17 +170,21 @@ Documentação detalhada:
 |   |-- domain/                     # DDD, requisitos e modelagem
 |   |-- security/                   # Segurança e scans
 |   `-- testing/                    # Testes e analise estatica
-|-- deploy/
-|   |-- docker/                     # Docker Compose e env local
-|   |-- kubernetes/                 # Manifests Kubernetes da Fase 2
-|   `-- pipelines/                  # Notas sobre publicação/CI-CD
 |-- infra/
-|   `-- terraform/                  # Infraestrutura como código
+|   |-- main.tf                     # Terraform local/acadêmico da Fase 2
+|   |-- variables.tf
+|   |-- outputs.tf
+|   |-- versions.tf
+|   `-- README.md
 |-- security-reports/               # Evidencias de segurança versionadas
 |-- scripts/                        # Scripts auxiliares de validação
 |-- .github/workflows/
-|   |-- quality.yml                  # Pipeline de qualidade
-|   `-- deploy.yml                   # Pipeline de build, imagem e deploy Kubernetes
+|   |-- quality.yml                 # Pipeline de qualidade complementar
+|   |-- qodana_code_quality.yml     # Analise estatica complementar
+|   `-- phase2-ci-cd.yml            # Pipeline principal da Fase 2
+|-- Dockerfile                       # Dockerfile backend para comandos pela raiz
+|-- docker-compose.yml               # Compose local exigido na Fase 2
+|-- .env.example                     # Template local sem secrets reais
 `-- README.md
 ```
 
@@ -177,14 +230,14 @@ Documentação detalhada:
 Copie os arquivos de exemplo antes de rodar localmente:
 
 ```bash
-cp deploy/docker/.env.example deploy/docker/.env
+cp .env.example .env
 cp frontend/.env.example frontend/.env
 ```
 
 No PowerShell:
 
 ```powershell
-Copy-Item deploy/docker/.env.example deploy/docker/.env
+Copy-Item .env.example .env
 Copy-Item frontend/.env.example frontend/.env
 ```
 
@@ -223,10 +276,10 @@ O projeto pode ser iniciado inteiro com um único comando a partir da raiz:
 .\scripts\start-local.ps1 -Rebuild -Reset
 ```
 
-Esse comando usa `deploy/docker/.env`, remove containers antigos do próprio projeto se existirem, sobe PostgreSQL,
+Esse comando usa `.env`, remove containers antigos do próprio projeto se existirem, sobe PostgreSQL,
 backend e frontend, e mostra o estado dos containers ao final.
 O arquivo local já pode existir com seus valores pessoais; caso ele não exista, o script cria uma cópia a partir de
-`deploy/docker/.env.example`.
+`.env.example`.
 
 Para acompanhar os logs depois de subir:
 
@@ -237,13 +290,13 @@ Para acompanhar os logs depois de subir:
 Comandos úteis de limpeza e acompanhamento:
 
 ```powershell
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down -v
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d --build
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f backend
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f frontend
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml ps
+docker compose config --quiet
+docker compose down
+docker compose down --remove-orphans
+docker compose down -v
+docker compose up -d --build
+docker compose ps
+docker compose logs --tail=100 app
 ```
 
 URLs locais:
@@ -256,12 +309,12 @@ URLs locais:
 | Healthcheck backend | <http://localhost:8080/actuator/health> |
 | PostgreSQL | `localhost:5432` |
 
-O `deploy/docker/docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
+O `docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
 executa as migrations Flyway no startup e expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
 `/v3/api-docs`, `/swagger-ui` e `/openapi.yaml` para o backend, então a aplicação web funciona em
 `http://localhost:5173` sem configurar uma URL absoluta de API.
 
-Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `deploy/docker/.env.example`:
+Para desenvolvimento fora do Nginx, o CORS de dev vem de `APP_CORS_ALLOWED_ORIGINS` no `.env.example`:
 
 ```text
 http://localhost:5173,http://127.0.0.1:5173
@@ -272,7 +325,7 @@ http://localhost:5173,http://127.0.0.1:5173
 Suba apenas o PostgreSQL pelo Docker Compose:
 
 ```bash
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d postgres
+docker compose --env-file .env -f docker-compose.yml up -d postgres
 cd backend
 mvn spring-boot:run
 ```
@@ -670,6 +723,14 @@ Documentação complementar de testes:
 - `mvn clean verify`: passou com build, testes, empacotamento e gate JaCoCo aprovado.
 - O percentual JaCoCo atualizado não é citado aqui sem consultar o relatório real em `backend/target/site/jacoco`.
 
+Validação desta revisão de infraestrutura:
+
+- `mvn spotless:check`: passou.
+- `mvn test`: passou com 172 testes, 0 falhas, 0 erros e 0 ignorados.
+- `mvn clean verify`: precisa ser reexecutado em terminal limpo ou CI; nesta rodada local no Windows falhou durante
+  leitura de fontes gerados em `backend/target/generated-sources/openapi` após tentativas concorrentes de Maven.
+- Resultado detalhado: [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md).
+
 ## Seguranca
 
 O projeto possui:
@@ -678,7 +739,7 @@ O projeto possui:
 - Validação de CPF/CNPJ.
 - Validação de placa.
 - Configuração de CORS por variável de ambiente.
-- Uso de `deploy/docker/.env.example` para evitar versionamento de secrets reais.
+- Uso de `.env.example` para evitar versionamento de secrets reais.
 - `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local e estado sensível do Terraform.
 - Kubernetes Secrets com placeholders no repositório e criação de valores reais por ambiente/CI.
 - Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
@@ -699,18 +760,19 @@ Documentos:
 
 Arquivos atuais:
 
-- [backend/Dockerfile](backend/Dockerfile)
-- [deploy/docker/docker-compose.yml](deploy/docker/docker-compose.yml)
+- [Dockerfile](Dockerfile)
+- [docker-compose.yml](docker-compose.yml)
+- [.env.example](.env.example)
 - [frontend/Dockerfile](frontend/Dockerfile)
 
 Comandos principais:
 
 ```bash
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml build
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml up -d --build
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml logs -f
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down
+docker compose config --quiet
+docker compose build
+docker compose up -d --build
+docker compose logs -f
+docker compose down
 ```
 
 Docker na Fase 2:
@@ -718,8 +780,8 @@ Docker na Fase 2:
 - Dockerfile backend com build multi-stage.
 - Dockerfile frontend em [frontend/Dockerfile](frontend/Dockerfile).
 - Docker Compose para execução local com PostgreSQL, backend e frontend.
-- Variáveis por ambiente via `deploy/docker/.env.example`.
-- Publicação de imagens preparada no workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
+- Variáveis por ambiente via `.env.example`.
+- Publicação de imagens preparada no workflow [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml).
 
 ## Kubernetes
 
@@ -728,24 +790,25 @@ Status: implementado para demonstração local/acadêmica.
 Local:
 
 ```text
-deploy/kubernetes/
+k8s/
 ```
 
 Manifestos principais:
 
-- `00-namespace.yaml`: namespace `autocarehub`.
-- `01-configmap.yaml`: variáveis não sensíveis.
-- `02-secret.yaml`: placeholders seguros para senha do banco e segredo JWT.
-- `03-postgres-pvc.yaml`, `04-postgres-deployment.yaml`, `05-postgres-service.yaml`: PostgreSQL demonstrativo no cluster.
-- `06-backend-deployment.yaml`, `07-backend-service.yaml`, `08-backend-hpa.yaml`: API Spring Boot, Service interno `backend` e HPA por CPU/memoria.
-- `09-frontend-deployment.yaml`, `10-frontend-service.yaml`, `11-frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU/memoria.
+- `namespace.yaml`: namespace `autocarehub`.
+- `configmap.yaml`: variáveis não sensíveis.
+- `secret.example.yaml`: exemplo sem secrets reais para senha do banco, JWT e token externo.
+- `postgres-deployment.yaml` e `postgres-service.yaml`: PostgreSQL demonstrativo no cluster.
+- `backend-deployment.yaml`, `backend-service.yaml` e `backend-hpa.yaml`: API Spring Boot, Service interno e HPA por CPU/memoria.
+- `frontend-deployment.yaml`, `frontend-service.yaml` e `frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU/memoria.
 
-Antes de aplicar, substitua os placeholders em `deploy/kubernetes/02-secret.yaml` por valores seguros do ambiente. Não versione secrets reais.
+Antes de aplicar, crie um Secret real a partir de valores seguros do ambiente ou deixe a pipeline gerar esse recurso
+a partir dos GitHub Actions Secrets. Não versione secrets reais.
 
 Validação local dos manifests:
 
 ```bash
-kubectl apply --dry-run=client -f deploy/kubernetes/
+kubectl apply --dry-run=client -f k8s/
 ```
 
 Na última validação local, esse dry-run não concluiu porque não havia cluster Kubernetes ativo/configurado; o `kubectl`
@@ -755,12 +818,12 @@ falha de ambiente.
 Comandos principais:
 
 ```bash
-kubectl apply -f deploy/kubernetes/
+kubectl apply -f k8s/
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 kubectl logs -n autocarehub deploy/autocarehub-api
-kubectl delete -f deploy/kubernetes/
+kubectl delete -f k8s/
 ```
 
 Acesso local para demonstração:
@@ -781,7 +844,7 @@ Status: implementado para demonstração local/acadêmica.
 Local:
 
 ```text
-infra/terraform/
+infra/
 ```
 
 Decisão de ambiente: o projeto não assume AWS, Azure, GCP ou outro provedor cloud. A infraestrutura da Fase 2 foi
@@ -790,10 +853,11 @@ disponibilizado para avaliação; opcionalmente, o Terraform cria um cluster loc
 
 Arquivos:
 
-- `infra/terraform/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
-- `infra/terraform/variables.tf`: variáveis parametrizáveis.
-- `infra/terraform/outputs.tf`: outputs uteis para conferencia e deploy.
-- `infra/terraform/terraform.tfvars.example`: exemplo seguro com placeholders.
+- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
+- `infra/variables.tf`: variáveis parametrizáveis.
+- `infra/outputs.tf`: outputs uteis para conferencia e deploy.
+- `infra/versions.tf`: providers e versões.
+- `infra/terraform.tfvars.example`: exemplo seguro com placeholders.
 - `infra/README.md`: instruções detalhadas.
 
 Recursos provisionados:
@@ -806,7 +870,7 @@ Recursos provisionados:
 Comandos:
 
 ```bash
-cd infra/terraform
+cd infra
 terraform init
 terraform fmt
 terraform validate
@@ -829,25 +893,24 @@ export TF_VAR_jwt_secret="segredo-com-pelo-menos-32-bytes"
 ```
 
 Depois do `terraform apply`, aplique apenas os workloads Kubernetes que não são gerenciados pelo Terraform, conforme
-detalhado em [infra/README.md](infra/README.md). Não aplique `deploy/kubernetes/02-secret.yaml` por cima do Secret criado pelo
-Terraform, porque o manifesto Kubernetes usa placeholders.
+detalhado em [infra/README.md](infra/README.md). Se o Terraform criar o Secret real, não aplique outro Secret com
+placeholders por cima dele.
 
 Limitações: o modo `kind` cria cluster local, não cluster gerenciado em cloud. O Terraform não cria banco gerenciado em
 cloud; ele provisiona a base necessaria para o PostgreSQL demonstrativo dentro do cluster configurado no kubeconfig local
-ou no cluster `kind` criado. Os Deployments, Services e HPAs continuam nos manifests em `deploy/kubernetes/` e são
+ou no cluster `kind` criado. Os Deployments, Services e HPAs continuam nos manifests em `k8s/` e são
 aplicados depois do provisionamento base.
 
 Última validação registrada: `terraform fmt -check`, `terraform init -backend=false` e `terraform validate` passaram em
-`infra/terraform`.
+`infra`.
 
 ## CI/CD
 
 Pipelines atuais:
 
 - [.github/workflows/quality.yml](.github/workflows/quality.yml)
-- [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
+- [.github/workflows/phase2-ci-cd.yml](.github/workflows/phase2-ci-cd.yml)
 - [docs/CI_CD.md](docs/CI_CD.md)
-- [deploy/pipelines/README.md](deploy/pipelines/README.md)
 
 `quality.yml` executa:
 
@@ -860,11 +923,11 @@ Pipelines atuais:
 - Validação do Docker Compose.
 - Build das imagens Docker.
 
-`deploy.yml` executa:
+`phase2-ci-cd.yml` executa:
 
 - Build e testes do backend com `mvn -B verify` em `backend/`.
 - Instalação, lint e build do frontend.
-- Validação estrutural dos YAMLs de `deploy/kubernetes/`.
+- Validação estrutural dos YAMLs de `k8s/`.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
 - Build das imagens Docker do backend e frontend.
 - Publicação das imagens no GitHub Container Registry quando a execução estiver em `main` ou for manual.
@@ -899,8 +962,13 @@ Execução:
 git push origin main
 ```
 
-Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o workflow `Deploy` e acionando
-`Run workflow`. Detalhes de variaveis, secrets e demonstracao estao em [docs/CI_CD.md](docs/CI_CD.md).
+Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o workflow `Phase 2 CI/CD` e acionando
+`Run workflow`. Detalhes de variaveis, secrets e demonstração estao em [docs/CI_CD.md](docs/CI_CD.md).
+
+`phase2-ci-cd.yml` e o workflow principal da Fase 2 para o roteiro da banca. Ele executa checkout, Java 21, cache Maven,
+build/testes/cobertura backend, Node 22, `npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do
+Docker Compose e deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` ou
+`EXTERNAL_SERVICE_TOKEN` nao existem, o deploy e pulado com mensagem explicita.
 
 ## Documentação complementar
 
@@ -920,6 +988,8 @@ Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o w
 | Seguranca | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md) |
 | Guia de scan de segurança | [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md) |
 | Documento de entrega | [docs/delivery/DELIVERY_DOCUMENT.md](docs/delivery/DELIVERY_DOCUMENT.md) |
+| Documento final Fase 2 | [docs/PHASE2_DELIVERY_DOCUMENT.md](docs/PHASE2_DELIVERY_DOCUMENT.md) |
+| Relatorio Infra/CI-CD Fase 2 | [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md) |
 | Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
 | Desenho da arquitetura | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md) |
 | Roteiro do video | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
@@ -927,13 +997,25 @@ Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o w
 
 ## Entrega da Fase 2
 
+## Video demonstrativo
+
+Link do vídeo: [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA]
+
+## PDF final
+
+O PDF enviado no portal deve conter:
+
+- link do repositório compartilhado com `soat-architecture`;
+- desenho da arquitetura;
+- link do vídeo.
+
 Checklist de preparação:
 
 - [x] Codigo refatorado.
 - [x] Dockerfile revisado.
-- [x] `deploy/docker/docker-compose.yml` revisado.
-- [x] `deploy/kubernetes/` criado.
-- [x] `infra/terraform/` criado.
+- [x] `docker-compose.yml` revisado.
+- [x] `k8s/` criado.
+- [x] `infra/` criado.
 - [x] Pipeline CI/CD de deploy criada.
 - [x] README atualizado como documento principal.
 - [x] Swagger/OpenAPI disponível em [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml).

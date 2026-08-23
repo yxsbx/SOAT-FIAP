@@ -9,7 +9,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
-    "backend:db": "docker compose --env-file ../deploy/docker/.env -f ../deploy/docker/docker-compose.yml up -d postgres",
+    "backend:db": "docker compose --env-file ../.env -f ../docker-compose.yml up -d postgres",
     "backend:api": "cd ../backend && mvn spring-boot:run",
     "backend:test": "cd ../backend && mvn test",
     "backend:security": "cd ../backend && mvn dependency-check:check"

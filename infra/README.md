@@ -1,116 +1,105 @@
-# Infraestrutura - AutoCare Hub
+# Terraform - AutoCare Hub
 
-Estrutura Terraform da Fase 2 para provisionamento academico/local de Kubernetes e recursos base da aplicação.
+Infraestrutura como codigo da Fase 2 para provisionamento local ou academico de Kubernetes e recursos base do banco.
 
-## Decisão de ambiente
+## Recursos Criados
 
-Este projeto não assume uma cloud especifica. Para evitar inventar AWS, Azure ou GCP sem evidencia no repositorio, a
-infraestrutura foi modelada para um cluster Kubernetes local ou academico. O modo padrão usa um cluster ja existente,
-como `kind`, `minikube` ou um cluster disponibilizado para demonstração; opcionalmente, o Terraform cria um cluster local
-com `kind`.
+| Status | Recurso |
+| --- | --- |
+| ATENDIDO | Cluster Kubernetes local com `kind`, opcional, quando `create_kind_cluster=true`. |
+| ATENDIDO | Namespace `autocarehub`. |
+| ATENDIDO | ConfigMap `autocarehub-config` com variaveis nao sensiveis. |
+| ATENDIDO | Secret `autocarehub-secret` com senha do banco, JWT secret e token externo recebidos por variaveis sensiveis. |
+| ATENDIDO | PVC `autocarehub-postgres-data` para o PostgreSQL demonstrativo executado no cluster. |
+| PARCIAL | Banco provisionado como workload Kubernetes local, nao como banco gerenciado em cloud. |
 
-O Terraform pode criar:
+Os Deployments, Services e HPAs da aplicação ficam em `../k8s/` e sao aplicados depois do Terraform. Essa divisao evita
+duplicar os workloads entre Terraform e YAML, mantendo a entrega reproduzivel sem contratar cloud paga.
 
-- cluster Kubernetes local com `kind`, quando `create_kind_cluster=true`;
-- namespace `autocarehub`;
-- ConfigMap com variáveis não sensíveis;
-- Secret com valores sensíveis recebidos por variáveis;
-- PVC do PostgreSQL demonstrativo executado no proprio cluster Kubernetes.
+## Pre-Requisitos
 
-Os workloads da aplicação e do PostgreSQL demonstrativo ficam em [../deploy/kubernetes](../deploy/kubernetes) e podem ser aplicados depois do
-provisionamento base. Esta estrutura não assume cloud especifica e não cria banco gerenciado.
+- Terraform 1.6 ou superior.
+- `kubectl` configurado para um cluster local ou academico.
+- Opcionalmente Docker Desktop e `kind`, se o Terraform for criar o cluster local.
+- Metrics Server no cluster para funcionamento do HPA.
 
-## Arquivos
+## Variaveis Sensiveis
 
-| Arquivo | Função |
-| ------- | ------ |
-| `terraform/main.tf` | Criação opcional de cluster `kind`, provider Kubernetes e recursos base: Namespace, ConfigMap, Secret e PVC. |
-| `terraform/variables.tf` | Variáveis parametrizáveis do ambiente local/acadêmico. |
-| `terraform/outputs.tf` | Outputs uteis para conferencia e proximo passo de deploy. |
-| `terraform/terraform.tfvars.example` | Exemplo com placeholders seguros. |
-
-## Variáveis sensíveis
-
-Não versione `terraform.tfvars` com valores reais. Use variáveis de ambiente:
-
-```bash
-export TF_VAR_postgres_password="substituir-localmente"
-export TF_VAR_jwt_secret="segredo-com-pelo-menos-32-bytes"
-```
-
-No PowerShell:
+Nao versione `terraform.tfvars` real. Use variaveis de ambiente:
 
 ```powershell
 $env:TF_VAR_postgres_password = "substituir-localmente"
 $env:TF_VAR_jwt_secret = "segredo-com-pelo-menos-32-bytes"
+$env:TF_VAR_external_service_token = "token-local-dos-webhooks"
 ```
 
-Opcionalmente, copie o exemplo e substitua os placeholders localmente:
+Ou copie o exemplo e substitua localmente:
 
-```bash
-cp terraform.tfvars.example terraform.tfvars
+```powershell
+Copy-Item infra/terraform.tfvars.example infra/terraform.tfvars
 ```
 
-O arquivo `terraform.tfvars` real deve ficar fora do versionamento.
+O arquivo `terraform.tfvars` fica no `.gitignore`.
 
-As variáveis possuem validações básicas para evitar namespace inválido, porta fora da faixa permitida, tamanho de
-storage sem unidade reconhecida, senha fraca do PostgreSQL e segredo JWT menor que 32 caracteres.
+## Execucao
 
-## Comandos
+A partir da raiz:
 
-Execute os comandos Terraform a partir da pasta `infra/terraform`:
-
-```bash
-cd infra/terraform
+```powershell
+cd infra
 terraform init
 terraform fmt
 terraform validate
 terraform plan
 terraform apply
 terraform destroy
+cd ..
 ```
 
-Para provisionar tambem um cluster local com `kind`, instale Docker Desktop e `kind`, depois execute:
+Para criar tambem um cluster local com `kind`:
 
-```bash
+```powershell
+cd infra
 terraform apply -var="create_kind_cluster=true"
+cd ..
 ```
 
-Use esse modo quando o cluster ainda não existir. Se o cluster `kind` ja existir, use o modo padrão com
-`create_kind_cluster=false` e aponte `kubeconfig_path`/`kubeconfig_context` para ele.
+## Relação Com Kubernetes
 
-Depois de aplicar a infraestrutura base, ainda a partir de `infra/terraform`, aplique apenas os workloads que não são
-gerenciados pelo Terraform:
+O Terraform prepara a base compartilhada: namespace, configuracoes, secrets e PVC. Em seguida, aplique os workloads:
 
-```bash
-kubectl apply -f ../../deploy/kubernetes/04-postgres-deployment.yaml \
-  -f ../../deploy/kubernetes/05-postgres-service.yaml \
-  -f ../../deploy/kubernetes/06-backend-deployment.yaml \
-  -f ../../deploy/kubernetes/07-backend-service.yaml \
-  -f ../../deploy/kubernetes/08-backend-hpa.yaml \
-  -f ../../deploy/kubernetes/09-frontend-deployment.yaml \
-  -f ../../deploy/kubernetes/10-frontend-service.yaml \
-  -f ../../deploy/kubernetes/11-frontend-hpa.yaml
+```powershell
+kubectl apply -f k8s/postgres-deployment.yaml
+kubectl apply -f k8s/postgres-service.yaml
+kubectl apply -f k8s/backend-deployment.yaml
+kubectl apply -f k8s/backend-service.yaml
+kubectl apply -f k8s/backend-hpa.yaml
+kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/frontend-service.yaml
+kubectl apply -f k8s/frontend-hpa.yaml
+```
 
+Se preferir nao usar Terraform, aplique o pacote completo:
+
+```powershell
+kubectl apply -f k8s/
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
 
-Se preferir não usar Terraform, use diretamente o fluxo Kubernetes completo documentado em [../deploy/kubernetes/README.md](../deploy/kubernetes/README.md)
-a partir da raiz do repositório:
+Nesse modo completo, `k8s/secret.example.yaml` cria apenas placeholders. Substitua por secrets reais no ambiente antes
+de considerar o deploy como real.
 
-```bash
-kubectl apply -f deploy/kubernetes/
-```
+## Banco De Dados
 
-Não misture os dois modos aplicando `deploy/kubernetes/02-secret.yaml` depois do Terraform, pois esse arquivo contem placeholders.
+O banco da Fase 2 e o PostgreSQL demonstrativo no Kubernetes local. O Terraform cria o PVC e as variaveis sensiveis; os
+manifestos Kubernetes criam o Deployment e o Service. As migrations Flyway rodam no startup do backend.
 
-## Limitações
+## Limitacoes
 
-- O modo `kind` cria cluster local; não cria cluster gerenciado em cloud.
-- Não cria banco gerenciado em cloud.
-- Provisiona apenas a infraestrutura base do banco demonstrativo no cluster: PVC, Secret e variáveis de conexao.
-- Usa o contexto Kubernetes configurado localmente.
-- Secrets reais devem ser fornecidos apenas por ambiente seguro ou pela plataforma de CI/CD.
-- O HPA dos workloads depende de Metrics Server instalado no cluster.
+| Status | Item |
+| --- | --- |
+| VALIDAR MANUALMENTE | O cluster local precisa estar ativo e acessivel pelo kubeconfig. |
+| VALIDAR MANUALMENTE | O HPA depende de Metrics Server. |
+| MELHORIA FUTURA | Para producao, avaliar banco gerenciado, backup, replicação e registry privado. |

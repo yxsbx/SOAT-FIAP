@@ -4,7 +4,7 @@
 
 Registrar a revisao de seguranca do AutoCare Hub para a Fase 2 sem inventar resultados de scan. Este documento separa:
 
-- controles confirmados por revisao de codigo/configuracao;
+- controles confirmados por revisao de codigo/configuração;
 - comandos reexecutados nesta rodada;
 - evidencias versionadas ja existentes em `security-reports/`;
 - pendencias de ferramenta ou ambiente.
@@ -13,17 +13,17 @@ Registrar a revisao de seguranca do AutoCare Hub para a Fase 2 sem inventar resu
 
 | Item | Resultado da revisao |
 | --- | --- |
-| JWT | Implementado com JJWT, segredo obrigatorio via `JWT_SECRET`/`security.jwt.secret`, minimo de 32 bytes e expiracao configuravel. |
+| JWT | Implementado com JJWT, segredo obrigatorio via `JWT_SECRET`/`security.jwt.secret`, minimo de 32 bytes e expiração configuravel. |
 | CORS | Configuravel por `APP_CORS_ALLOWED_ORIGINS`; `SecurityConfig` rejeita origem `*` e `null`. |
-| Secrets no repositorio | Nao foi identificado secret real em `deploy/docker/.env.example`, manifestos ou workflows; arquivos reais continuam fora do versionamento. |
+| Secrets no repositorio | Nao foi identificado secret real em `.env.example`, manifestos ou workflows; arquivos reais continuam fora do versionamento. |
 | `.env` ignorado | `.gitignore` ignora `.env` e `.env.*`, mantendo `!.env.example`. |
-| `deploy/docker/.env.example` seguro | Usa placeholders para senha do banco e segredo JWT. |
-| Kubernetes Secrets | `deploy/kubernetes/02-secret.yaml` contem placeholders; `deploy.yml` cria o Secret real a partir de GitHub Actions Secrets. |
+| `.env.example` seguro | Usa placeholders para senha do banco e segredo JWT. |
+| Kubernetes Secrets | `k8s/secret.example.yaml` contem placeholders; `phase2-ci-cd.yml` cria o Secret real a partir de GitHub Actions Secrets. |
 | Variaveis sensiveis fora do codigo | Banco, JWT e Terraform sensivel dependem de variaveis de ambiente, secrets do CI/CD ou `TF_VAR_*`. |
 | CPF/CNPJ | `Document` normaliza e valida digitos verificadores de CPF/CNPJ. |
 | Placa | `Plate` aceita placas antigas e Mercosul, normalizando para alfanumerico maiusculo. |
-| Payloads | OpenAPI gerado aplica `@Valid`, Bean Validation, limites de tamanho/paginacao e padroes para documento/placa; Jackson rejeita campos desconhecidos. |
-| Autorizacao por perfil | `SecurityConfig` diferencia `ADMIN`, `EMPLOYEE` e `CUSTOMER`; testes de seguranca existem. |
+| Payloads | OpenAPI gerado aplica `@Valid`, Bean Validation, limites de tamanho/paginação e padroes para documento/placa; Jackson rejeita campos desconhecidos. |
+| Autorização por perfil | `SecurityConfig` diferencia `ADMIN`, `EMPLOYEE` e `CUSTOMER`; testes de seguranca existem. |
 | Escopo empresa/cliente | `AuthorizationService` restringe acesso a cliente/OS pelo `customerId`; politica de usuarios restringe gestao por empresa. |
 | Pipeline | Workflows usam placeholders de CI ou GitHub Actions Secrets; nao ha `echo` de valores sensiveis. |
 | `.gitignore` | Atualizado para cobrir arquivos locais de ambiente, chaves, certificados, kubeconfig e estado Terraform. |
@@ -71,24 +71,24 @@ ambiente permitir, mas servem como historico versionado da entrega.
 | Gitleaks nao reexecutado nesta rodada por ausencia da ferramenta e Docker daemon parado. | Pendente: instalar Gitleaks ou iniciar Docker e executar via container. |
 | Trivy nao reexecutado nesta rodada por ausencia da ferramenta e Docker daemon parado. | Pendente: instalar Trivy ou iniciar Docker e executar via container. |
 | Imagens Docker versionadas ainda possuem 1 CVE media cada em relatorios Docker Scout anteriores. | Residual: revalidar com Trivy/Docker Scout quando Docker estiver ativo e atualizar imagem/dependencia se houver fix. |
-| Swagger/OpenAPI habilitado por padrao para ambiente local. | Aceito para avaliacao academica; em producao usar `SPRINGDOC_API_DOCS_ENABLED=false` e restringir exposicao. |
-| JWT no frontend demonstrativo fica em `localStorage`. | Aceito no MVP academico; mitigado por autorizacao server-side e ausencia de `v-html`/`innerHTML`/`eval` identificado no frontend. |
+| Swagger/OpenAPI habilitado por padrao para ambiente local. | Aceito para avaliação academica; em producao usar `SPRINGDOC_API_DOCS_ENABLED=false` e restringir exposicao. |
+| JWT no frontend demonstrativo fica em `localStorage`. | Aceito no MVP academico; mitigado por autorização server-side e ausencia de `v-html`/`innerHTML`/`eval` identificado no frontend. |
 
 ## Checklist final
 
 | Controle | Status |
 | --- | --- |
 | JWT com segredo externo e minimo de 32 bytes | OK |
-| CORS sem wildcard em producao/configuracao | OK |
+| CORS sem wildcard em producao/configuração | OK |
 | Secrets reais fora do repositorio | OK na revisao local; Gitleaks atual pendente por ferramenta |
 | `.env` ignorado | OK |
-| `deploy/docker/.env.example` seguro | OK |
+| `.env.example` seguro | OK |
 | Kubernetes Secrets com placeholders no repo | OK |
 | Variaveis sensiveis fora do codigo | OK |
 | CPF/CNPJ validado | OK |
 | Placa validada | OK |
 | Payloads validados | OK |
-| Autorizacao por perfil | OK |
+| Autorização por perfil | OK |
 | Acesso restrito por empresa/cliente | OK |
 | Dependencias frontend sem vulnerabilidades altas/criticas na rodada atual | OK |
 | Dependencias backend revalidadas na rodada atual | Pendente por lock do Dependency-Check |

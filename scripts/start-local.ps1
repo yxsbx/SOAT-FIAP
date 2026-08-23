@@ -8,9 +8,9 @@ param(
 $ErrorActionPreference = "Stop"
 
 $root = Resolve-Path (Join-Path $PSScriptRoot "..")
-$composeFile = Join-Path $root "deploy\docker\docker-compose.yml"
-$envFile = Join-Path $root "deploy\docker\.env"
-$envExample = Join-Path $root "deploy\docker\.env.example"
+$composeFile = Join-Path $root "docker-compose.yml"
+$envFile = Join-Path $root ".env"
+$envExample = Join-Path $root ".env.example"
 
 function Invoke-Compose {
     param([string[]]$Arguments)
@@ -43,7 +43,7 @@ if (-not (Test-Path $envFile)) {
     }
 
     Copy-Item $envExample $envFile
-    Write-Host "Arquivo local criado em deploy/docker/.env. Revise as variáveis se quiser trocar portas ou senhas."
+    Write-Host "Arquivo local criado em .env. Revise as variáveis se quiser trocar portas ou senhas."
 }
 
 if ($Reset) {

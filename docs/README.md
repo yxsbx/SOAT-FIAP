@@ -8,11 +8,11 @@ Esta pasta concentra a documentação técnica, acadêmica e de entrega do proje
 docs/
 |-- api/             # OpenAPI e Collection Postman
 |-- architecture/    # Arquitetura, desenho da Fase 2 e refinamento tecnico
-|-- delivery/        # Documento de entrega, PDF final e roteiro de video
+|-- delivery/        # Documento de entrega e roteiro de video
 |-- domain/          # DDD, requisitos, Event Storming e Domain Storytelling
 |-- security/        # Relatorio de seguranca, guia de scans e supressoes
 |-- testing/         # Estrategia de testes e analise estatica
-`-- CI_CD.md         # Documentacao da pipeline
+`-- CI_CD.md         # Documentação da pipeline
 ```
 
 ## Documentos principais

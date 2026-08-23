@@ -136,6 +136,7 @@
                 <version>${maven-compiler.version}</version>
                 <configuration>
                     <release>${maven.compiler.release}</release>
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
                     <compilerArgs>
                         <arg>-Xlint:-deprecation</arg>
                     </compilerArgs>
@@ -156,7 +157,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{argLine} -Xshare:off -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar</argLine>
+                    <argLine>@{argLine} -Xshare:off</argLine>
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
                 </configuration>
             </plugin>
             <plugin>

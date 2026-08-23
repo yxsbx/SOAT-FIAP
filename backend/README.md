@@ -7,7 +7,6 @@ API Spring Boot do AutoCare Hub. Nesta fase, o backend continua como um monolito
 ```text
 backend/
 |-- pom.xml
-|-- Dockerfile
 `-- src/
     |-- main/java/br/com/autocarehub/
     |   |-- domain/          # Regras e modelos de negocio
@@ -15,7 +14,7 @@ backend/
     |   |-- infrastructure/  # Persistencia, seguranca e configuracoes tecnicas
     |   `-- interfaces/      # Controllers REST, mappers e contrato gerado
     |-- main/resources/      # application.yml, Flyway e Swagger UI estatico
-    `-- test/                # Testes unitarios e de integracao
+    `-- test/                # Testes unitarios e de integração
 ```
 
 ## Comandos

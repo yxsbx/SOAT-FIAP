@@ -58,13 +58,13 @@ demonstrativo.
 
 | Requisito técnico      | Decisão adotada                                                           | Justificativa                                                                        | Onde aparece                                               |
 |------------------------|---------------------------------------------------------------------------|--------------------------------------------------------------------------------------|------------------------------------------------------------|
-| Backend monolítico     | Uma aplicação Spring Boot.                                                | O MVP valida o fluxo da oficina sem a complexidade de uma arquitetura distribuída.   | `AutoCareHubApiApplication`, `backend/Dockerfile`.                 |
+| Backend monolítico     | Uma aplicação Spring Boot.                                                | O MVP valida o fluxo da oficina sem a complexidade de uma arquitetura distribuída.   | `AutoCareHubApiApplication`, `Dockerfile`.                 |
 | Arquitetura em camadas | `interfaces`, `application`, `domain`, `infrastructure`.                  | Separa entrada, orquestração, regra de negócio e detalhes técnicos.                  | `backend/src/main/java/br/com/autocarehub`.                        |
 | API REST               | Controllers versionados em `/api/v1`.                                     | Facilita consumo pelo frontend, pelo Swagger e pela avaliação local.                 | `interfaces/rest/controller`, `docs/api/openapi/openapi.yaml`. |
 | Swagger/OpenAPI        | Contrato versionado e Swagger UI.                                         | Documenta endpoints e ajuda na validação manual da API.                              | `docs/api/openapi/openapi.yaml`, `/swagger-ui.html`.           |
-| PostgreSQL             | Banco relacional principal.                                               | O domínio tem relações claras entre cliente, veículo, OS, serviços, peças e estoque. | `deploy/docker/docker-compose.yml`, `application.yml`.                   |
-| Dockerfile             | Imagem backend com runtime restrito.                                      | Reduz superfície do runtime e padroniza execução.                                    | `backend/Dockerfile`.                                              |
-| Docker Compose         | Backend, banco e frontend local.                                          | Facilita demonstração e validação local.                                             | `deploy/docker/docker-compose.yml`.                                      |
+| PostgreSQL             | Banco relacional principal.                                               | O domínio tem relações claras entre cliente, veículo, OS, serviços, peças e estoque. | `docker-compose.yml`, `application.yml`.                   |
+| Dockerfile             | Imagem backend com runtime restrito.                                      | Reduz superfície do runtime e padroniza execução.                                    | `Dockerfile`.                                              |
+| Docker Compose         | Backend, banco e frontend local.                                          | Facilita demonstração e validação local.                                             | `docker-compose.yml`.                                      |
 | JWT                    | Bearer Token para APIs protegidas.                                        | Atende ao requisito de segurança sem depender de provedor externo.                   | `SecurityConfig`, `JwtService`.                            |
 | Validação sensível     | `Document` e `Plate`.                                                     | Mantém regras de CPF/CNPJ e placa centralizadas no domínio.                          | `domain/valueobject`.                                      |
 | Testes automatizados   | JUnit, Mockito, MockMvc e H2.                                             | Valida domínio, use cases, REST e segurança.                                         | `backend/src/test/java`, `docs/testing/TESTING.md`.                        |
@@ -95,8 +95,8 @@ As validações foram feitas no próprio projeto, sem necessidade de POCs separa
 
 | Validação técnica                 | Objetivo                                                                          | Resultado                                               | Evidência                                                    |
 |-----------------------------------|-----------------------------------------------------------------------------------|---------------------------------------------------------|--------------------------------------------------------------|
-| Execução local com Docker Compose | Confirmar que backend, PostgreSQL e frontend sobem juntos.                        | Configuração válida.                                    | `deploy/docker/docker-compose.yml`, `backend/Dockerfile`, `frontend/Dockerfile`.   |
-| Conexão com PostgreSQL            | Garantir persistência relacional para o MVP.                                      | Backend usa JDBC/JPA com variáveis de ambiente.         | `application.yml`, `deploy/docker/docker-compose.yml`.                     |
+| Execução local com Docker Compose | Confirmar que backend, PostgreSQL e frontend sobem juntos.                        | Configuração válida.                                    | `docker-compose.yml`, `Dockerfile`, `frontend/Dockerfile`.   |
+| Conexão com PostgreSQL            | Garantir persistência relacional para o MVP.                                      | Backend usa JDBC/JPA com variáveis de ambiente.         | `application.yml`, `docker-compose.yml`.                     |
 | Migrations Flyway                 | Garantir schema reproduzível.                                                     | Migration baseline aplicada em testes e execução local. | `backend/src/main/resources/db/migration`.                           |
 | Swagger/OpenAPI                   | Confirmar documentação e teste manual da API.                                     | Swagger exposto em `/swagger-ui.html`.                  | `docs/api/openapi/openapi.yaml`, `SecurityConfig`.               |
 | Autenticação JWT                  | Confirmar login e proteção das rotas administrativas.                             | Login retorna token e filtros validam Bearer Token.     | `LoginUseCase`, `JwtAuthenticationFilter`.                   |
@@ -183,7 +183,7 @@ documentação.
 
 | Risco                          | Tratamento aplicado                                                  |
 |--------------------------------|----------------------------------------------------------------------|
-| Ambiente difícil de reproduzir | Docker Compose e `deploy/docker/.env.example`.                                     |
+| Ambiente difícil de reproduzir | Docker Compose e `.env.example`.                                     |
 | API difícil de entender        | Swagger/OpenAPI versionado.                                          |
 | Dados inválidos                | `Document`, `Plate` e validações de request.                         |
 | Acesso indevido                | JWT nas APIs administrativas e regras no `SecurityConfig`.           |
@@ -194,7 +194,7 @@ documentação.
 | Banco inconsistente            | Migration Flyway versionada.                                         |
 | Regressão em fluxo crítico     | Testes unitários e integração REST.                                  |
 | Dependências vulneráveis       | Scans e relatório de vulnerabilidades.                               |
-| Secrets versionados            | `.gitignore`, `deploy/docker/.env.example` sem secrets e Gitleaks.                 |
+| Secrets versionados            | `.gitignore`, `.env.example` sem secrets e Gitleaks.                 |
 
 ## 11. Itens fora do escopo do MVP
 

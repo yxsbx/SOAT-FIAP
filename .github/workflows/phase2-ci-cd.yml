@@ -1,10 +1,13 @@
-name: Deploy
+name: Phase 2 CI/CD
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -13,73 +16,69 @@ env:
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-  build-test-and-image:
+  build-test:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
           cache: maven
 
-      - uses: actions/setup-node@v4
+      - name: Backend build and tests
+        working-directory: backend
+        run: mvn -B test
+
+      - name: Backend coverage gate
+        working-directory: backend
+        run: mvn -B verify
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "22"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_wrapper: false
-
-      - name: Backend tests and coverage
-        working-directory: backend
-        run: mvn -B verify
-
       - name: Frontend install
         working-directory: frontend
         run: npm ci
 
-      - name: Frontend lint and build
+      - name: Frontend lint
         working-directory: frontend
-        run: |
-          npm run lint
-          npm run build
+        run: npm run lint
 
-      - name: Validate Kubernetes YAML structure
-        run: |
-          ruby -ryaml -e '
-            Dir["deploy/kubernetes/*.yaml"].sort.each do |path|
-              docs = YAML.load_stream(File.read(path)).compact
-              abort("#{path}: empty YAML") if docs.empty?
-              docs.each do |doc|
-                %w[apiVersion kind metadata].each do |key|
-                  abort("#{path}: missing #{key}") unless doc.key?(key)
-                end
-              end
-            end
-            puts "Kubernetes YAML structure validated"
-          '
+      - name: Frontend build
+        working-directory: frontend
+        run: npm run build
 
-      - name: Terraform format check
-        working-directory: infra/terraform
-        run: terraform fmt -check
+      - name: Frontend audit
+        working-directory: frontend
+        run: npm audit --audit-level=high
 
-      - name: Terraform init for validation
-        working-directory: infra/terraform
-        run: terraform init -backend=false
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: build-test
+    permissions:
+      contents: read
+      packages: write
+    env:
+      POSTGRES_PASSWORD: ci-postgres-password
+      JWT_SECRET: ci-jwt-secret-with-at-least-32-bytes
+      EXTERNAL_SERVICE_TOKEN: ci-external-service-token
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Terraform validate
-        working-directory: infra/terraform
-        run: terraform validate
+      - name: Validate Docker Compose
+        run: docker compose config --quiet
 
       - name: Docker login
-        if: github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -87,10 +86,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build backend image
-        run: docker build -f backend/Dockerfile -t "${BACKEND_IMAGE}:${IMAGE_TAG}" -t "${BACKEND_IMAGE}:latest" .
+        run: docker build -f Dockerfile -t "${BACKEND_IMAGE}:${IMAGE_TAG}" -t "${BACKEND_IMAGE}:latest" .
 
       - name: Build frontend image
-        run: docker build -t "${FRONTEND_IMAGE}:${IMAGE_TAG}" -t "${FRONTEND_IMAGE}:latest" ./frontend
+        run: docker build -f frontend/Dockerfile -t "${FRONTEND_IMAGE}:${IMAGE_TAG}" -t "${FRONTEND_IMAGE}:latest" ./frontend
 
       - name: Push images
         if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
@@ -102,16 +101,19 @@ jobs:
 
   deploy-kubernetes:
     runs-on: ubuntu-latest
-    needs: build-test-and-image
+    needs: docker-build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
     env:
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       EXTERNAL_SERVICE_TOKEN: ${{ secrets.EXTERNAL_SERVICE_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: azure/setup-kubectl@v4
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v4
 
       - name: Configure kubeconfig
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
@@ -120,50 +122,39 @@ jobs:
           echo "${KUBE_CONFIG}" | base64 --decode > "${HOME}/.kube/config"
           chmod 600 "${HOME}/.kube/config"
 
-      - name: Apply namespace, config and database storage
+      - name: Apply Kubernetes manifests
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
-          kubectl apply \
-            -f deploy/kubernetes/00-namespace.yaml \
-            -f deploy/kubernetes/01-configmap.yaml \
-            -f deploy/kubernetes/03-postgres-pvc.yaml
-
-      - name: Apply runtime secrets
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
-        run: |
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/configmap.yaml
           kubectl -n autocarehub create secret generic autocarehub-secret \
             --from-literal=POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
             --from-literal=DB_PASSWORD="${POSTGRES_PASSWORD}" \
             --from-literal=JWT_SECRET="${JWT_SECRET}" \
             --from-literal=EXTERNAL_SERVICE_TOKEN="${EXTERNAL_SERVICE_TOKEN}" \
             --dry-run=client -o yaml | kubectl apply -f -
-
-      - name: Apply database and application workloads
-        if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
-        run: |
           kubectl apply \
-            -f deploy/kubernetes/04-postgres-deployment.yaml \
-            -f deploy/kubernetes/05-postgres-service.yaml \
-            -f deploy/kubernetes/06-backend-deployment.yaml \
-            -f deploy/kubernetes/07-backend-service.yaml \
-            -f deploy/kubernetes/08-backend-hpa.yaml \
-            -f deploy/kubernetes/09-frontend-deployment.yaml \
-            -f deploy/kubernetes/10-frontend-service.yaml \
-            -f deploy/kubernetes/11-frontend-hpa.yaml
+            -f k8s/postgres-deployment.yaml \
+            -f k8s/postgres-service.yaml \
+            -f k8s/backend-deployment.yaml \
+            -f k8s/backend-service.yaml \
+            -f k8s/backend-hpa.yaml \
+            -f k8s/frontend-deployment.yaml \
+            -f k8s/frontend-service.yaml \
+            -f k8s/frontend-hpa.yaml
 
-      - name: Use images built by this workflow
+      - name: Apply workflow images
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl -n autocarehub set image deployment/autocarehub-api api="${BACKEND_IMAGE}:${IMAGE_TAG}"
           kubectl -n autocarehub set image deployment/autocarehub-web web="${FRONTEND_IMAGE}:${IMAGE_TAG}"
 
-      - name: Show rollout state
+      - name: Validate rollout
         if: env.KUBE_CONFIG != '' && env.POSTGRES_PASSWORD != '' && env.JWT_SECRET != '' && env.EXTERNAL_SERVICE_TOKEN != ''
         run: |
           kubectl rollout status deployment/autocarehub-postgres -n autocarehub --timeout=180s
           kubectl rollout status deployment/autocarehub-api -n autocarehub --timeout=180s
           kubectl rollout status deployment/autocarehub-web -n autocarehub --timeout=180s
-          kubectl get deploy -n autocarehub -o wide
           kubectl get pods -n autocarehub
           kubectl get svc -n autocarehub
           kubectl get hpa -n autocarehub
@@ -171,5 +162,5 @@ jobs:
       - name: Explain skipped deploy
         if: env.KUBE_CONFIG == '' || env.POSTGRES_PASSWORD == '' || env.JWT_SECRET == '' || env.EXTERNAL_SERVICE_TOKEN == ''
         run: |
-          echo "Deploy real não executado."
-          echo "Configure KUBE_CONFIG, POSTGRES_PASSWORD, JWT_SECRET e EXTERNAL_SERVICE_TOKEN nos GitHub Actions Secrets para aplicar os manifests no Kubernetes."
+          echo "Deploy Kubernetes pulado."
+          echo "Configure KUBE_CONFIG, POSTGRES_PASSWORD, JWT_SECRET e EXTERNAL_SERVICE_TOKEN para executar kubectl apply -f k8s/ com secrets reais."

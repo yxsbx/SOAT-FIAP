@@ -66,12 +66,12 @@ cd ..
 ### Docker Compose
 
 ```powershell
-docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet
+docker compose --env-file .env -f docker-compose.yml config --quiet
 ```
 
-A validação com `docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml config --quiet` é
+A validação com `docker compose --env-file .env -f docker-compose.yml config --quiet` é
 não destrutiva e verifica se o arquivo Compose é válido. O comando
-`docker compose --env-file deploy/docker/.env -f deploy/docker/docker-compose.yml down -v` não é necessário para a análise estática, porque remove volumes locais. Ele deve ser usado
+`docker compose --env-file .env -f docker-compose.yml down -v` não é necessário para a análise estática, porque remove volumes locais. Ele deve ser usado
 apenas na demonstração de execução limpa do projeto ou em ambiente descartável.
 
 ## 5. Resultados por ferramenta
