@@ -2,32 +2,32 @@
 
 ## Tech Challenge FIAP — Fase 2
 
-AutoCare Hub e uma solução academica para gestão de oficina mecanica. O projeto centraliza o cadastro de clientes,
-veiculos, servicos, pecas, estoque e Ordens de Servico, permitindo que a oficina registre uma OS, gere orcamento,
-aprove o atendimento e acompanhe o fluxo operacional pela API.
+AutoCare Hub é uma solução acadêmica para gestão de oficina mecanica. O projeto centraliza o cadastro de clientes,
+veículos, serviços, peças, estoque e Ordens de Serviço, permitindo que a oficina registre uma OS, gere orçamento,
+aprove o atendimento é acompanhe o fluxo operacional pela API.
 
-Na Fase 1, o projeto entregou um MVP backend em Java/Spring Boot com API REST, autenticação JWT, persistencia em
-PostgreSQL, migrações Flyway, Swagger/OpenAPI, Docker, testes automatizados, cobertura JaCoCo e evidencias de
-segurança. O feedback da fase indicou que a documentação da API ja estava detalhada no OpenAPI/Swagger, mas que o
+Na Fase 1, o projeto entregou um MVP backend em Java/Spring Boot com API REST, autenticação JWT, persistência em
+PostgreSQL, migrações Flyway, Swagger/OpenAPI, Docker, testes automatizados, cobertura JaCoCo é evidências de
+segurança. O feedback da fase indicou que a documentação da API já estava detalhada no OpenAPI/Swagger, mas que o
 README precisava trazer exemplos mais diretos de uso.
 
-Na Fase 2, o projeto evolui para qualidade, escalabilidade, resiliencia, automação e deploy. O objetivo e preparar a
+Na Fase 2, o projeto evolui para qualidade, escalabilidade, resiliencia, automação é deploy. O objetivo é preparar a
 aplicação para Clean Architecture ou Arquitetura Hexagonal, revisar Docker, adicionar Kubernetes, Terraform, CI/CD,
-deploy automatizado, escalabilidade automatica e documentação atualizada.
+deploy automatizado, escalabilidade automática é documentação atualizada.
 
-O repositorio tambem inclui um frontend demonstrativo em Vue/Vite em [frontend/](frontend/). Ele não substitui a API,
-mas torna o produto mais visual e palpável, mostrando como pessoas e empresas poderiam consumir os fluxos do backend.
+O repositório também inclui um frontend demonstrativo em Vue/Vite em [frontend/](frontend/). Ele não substitui a API,
+mas torna o produto mais visual é palpável, mostrando como pessoas é empresas poderiam consumir os fluxos do backend.
 
 ## Objetivos da Fase 2
 
 - Refatorar pontos do código com Clean Code.
 - Consolidar Clean Architecture ou Arquitetura Hexagonal.
-- Melhorar testes unitarios, integração e fluxo de API.
-- Revisar Dockerfile e Docker Compose.
+- Melhorar testes unitários, integração é fluxo de API.
+- Revisar Dockerfile é Docker Compose.
 - Criar manifestos Kubernetes.
 - Criar scripts Terraform.
 - Evoluir CI/CD para build, testes, imagem Docker e deploy.
-- Preparar escalabilidade automatica, incluindo HPA no Kubernetes.
+- Preparar escalabilidade automática, incluindo HPA no Kubernetes.
 - Automatizar deploy da aplicação e aplicação dos manifests.
 - Ajustar APIs conforme roteiro da Fase 2, sem quebrar o contrato existente sem necessidade.
 
@@ -36,35 +36,35 @@ mas torna o produto mais visual e palpável, mostrando como pessoas e empresas p
 ### Funcionalidades da Fase 1
 
 - Clientes.
-- Veiculos.
-- Servicos.
-- Pecas e insumos.
+- Veículos.
+- Serviços.
+- Pecas é insumos.
 - Controle de estoque.
-- Criação de Ordem de Servico.
-- Geração e aprovação de orcamento.
-- Acompanhamento da Ordem de Servico.
-- Autenticação e autorização com JWT.
+- Criação de Ordem de Serviço.
+- Geração é aprovação de orçamento.
+- Acompanhamento da Ordem de Serviço.
+- Autenticação é autorização com JWT.
 - Swagger/OpenAPI.
 
 ### Evoluções da Fase 2
 
-- Abertura de OS retornando identificador unico: ja existe no fluxo `POST /api/v1/service-orders`.
-- Consulta de status da OS: ja existe via `GET /api/v1/service-orders/{serviceOrderId}` e tracking.
-- Endpoint de aprovação de orcamento: ja existe em `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`.
-- Endpoints explícitos de aprovação e recusa de orcamento por notificação externa em `POST /api/v1/service-orders/{serviceOrderId}/budget/external-approval` e `POST /api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
+- Abertura de OS retornando identificador único: já existe no fluxo `POST /api/v1/service-orders`.
+- Consulta de status da OS: já existe via `GET /api/v1/service-orders/{serviceOrderId}` e tracking.
+- Endpoint de aprovação de orçamento: já existe em `POST /api/v1/service-orders/{serviceOrderId}/budget/approve`.
+- Endpoints explícitos de aprovação e recusa de orçamento por notificação externa em `POST /api/v1/service-orders/{serviceOrderId}/budget/external-approval` e `POST /api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
 - Listagem de OS ordenada por prioridade/status e data.
-- Exclusão logica da listagem principal de OS finalizadas e entregues.
+- Exclusão lógica da listagem principal de OS finalizadas e entregues.
 - Atualização de status via ferramenta externa, como email, em `POST /api/v1/service-orders/{serviceOrderId}/status/external`.
-- Preparação para Kubernetes, Terraform e CI/CD de deploy.
+- Preparação para Kubernetes, Terraform é CI/CD de deploy.
 
 ## Arquitetura da aplicação
 
-O backend atual e um monolito Spring Boot organizado com Arquitetura Hexagonal/Clean Architecture: `domain` concentra
-modelos e regras, `application` orquestra casos de uso e portas, `infrastructure` implementa adaptadores de persistencia
-e segurança, e `interfaces` adapta o contrato REST/OpenAPI para a aplicação.
+O backend atual é um monolito Spring Boot organizado com Arquitetura Hexagonal/Clean Architecture: `domain` concentra
+modelos é regras, `application` orquestra casos de uso é portas, `infrastructure` implementa adaptadores de persistência
+é segurança, e `interfaces` adapta o contrato REST/OpenAPI para a aplicação.
 
 Na refatoração da Fase 2, regras de gestão de usuários foram removidas do `UsersController` e movidas para casos de uso
-e política de aplicação. A autenticação e o hash de senhas tambem passaram a depender das portas
+é política de aplicação. A autenticação é o hash de senhas também passaram a depender das portas
 `AuthenticationGateway` e `PasswordHasher`, implementadas por adaptadores em `infrastructure/security`, evitando
 dependencia direta de Spring Security nos casos de uso.
 
@@ -76,17 +76,17 @@ Arquitetura atual:
 - API REST documentada por Swagger/OpenAPI.
 - Autenticação JWT.
 - Frontend demonstrativo Vue/Vite.
-- Dockerfile e Docker Compose para execução local.
+- Dockerfile é Docker Compose para execução local.
 - Pipeline GitHub Actions de qualidade, testes, build frontend e build Docker.
 
 Arquitetura consolidada na Fase 2:
 
 - Clean Architecture/Hexagonal Architecture dentro do monolito.
-- Domínio independente de frameworks sempre que possivel.
-- Camada de aplicação com casos de uso e portas.
-- Infraestrutura com adaptadores de banco, segurança e integrações externas.
-- Interfaces REST e futuras entradas externas desacopladas da regra de negocio.
-- Kubernetes para deploy, Services, ConfigMaps, Secrets e HPA.
+- Domínio independente de frameworks sempre que possível.
+- Camada de aplicação com casos de uso é portas.
+- Infraestrutura com adaptadores de banco, segurança é integrações externas.
+- Interfaces REST é futuras entradas externas desacopladas da regra de negocio.
+- Kubernetes para deploy, Services, ConfigMaps, Secrets é HPA.
 - Terraform para provisionamento da infraestrutura.
 - CI/CD com build, testes, imagem Docker e deploy automatizado.
 
@@ -96,7 +96,7 @@ Desenho da arquitetura:
 
 ```mermaid
 flowchart LR
-    user["Usuario / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
+    user["Usuário / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
     user --> api["API Backend Spring Boot"]
     frontend --> api
     api --> postgres["PostgreSQL"]
@@ -156,31 +156,31 @@ Documentação detalhada:
 |   |-- pom.xml
 |   `-- src/
 |       |-- main/java/              # Código backend
-|       |-- main/resources/         # Configuração, Flyway e assets estaticos
-|       `-- test/java/              # Testes unitarios e de integração
+|       |-- main/resources/         # Configuração, Flyway é assets estaticos
+|       `-- test/java/              # Testes unitários é de integração
 |-- frontend/                       # Frontend demonstrativo Vue/Vite
 |   |-- Dockerfile                  # Dockerfile frontend
 |   `-- src/
 |-- k8s/                            # Manifests Kubernetes exigidos na Fase 2
 |-- docs/
 |   |-- README.md                   # Guia da documentação
-|   |-- api/                        # OpenAPI e Postman
-|   |-- architecture/               # Arquitetura e desenho tecnico
-|   |-- delivery/                   # Entrega, roteiro e evidencias da fase
-|   |-- domain/                     # DDD, requisitos e modelagem
-|   |-- security/                   # Segurança e scans
-|   `-- testing/                    # Testes e analise estatica
+|   |-- api/                        # OpenAPI é Postman
+|   |-- architecture/               # Arquitetura é desenho técnico
+|   |-- delivery/                   # Entrega, roteiro é evidências da fase
+|   |-- domain/                     # DDD, requisitos é modelagem
+|   |-- security/                   # Segurança é scans
+|   `-- testing/                    # Testes é análise estática
 |-- infra/
 |   |-- main.tf                     # Terraform local/acadêmico da Fase 2
 |   |-- variables.tf
 |   |-- outputs.tf
 |   |-- versions.tf
 |   `-- README.md
-|-- security-reports/               # Evidencias de segurança versionadas
+|-- security-reports/               # Evidências de segurança versionadas
 |-- scripts/                        # Scripts auxiliares de validação
 |-- .github/workflows/
 |   |-- quality.yml                 # Pipeline de qualidade complementar
-|   |-- qodana_code_quality.yml     # Analise estatica complementar
+|   |-- qodana_code_quality.yml     # Análise estática complementar
 |   `-- phase2-ci-cd.yml            # Pipeline principal da Fase 2
 |-- Dockerfile                       # Dockerfile backend para comandos pela raiz
 |-- docker-compose.yml               # Compose local exigido na Fase 2
@@ -202,24 +202,24 @@ Documentação detalhada:
 - Docker Compose.
 - Swagger/OpenAPI com Springdoc.
 - JWT com JJWT.
-- JUnit 5, Mockito, MockMvc e H2.
+- JUnit 5, Mockito, MockMvc é H2.
 - JaCoCo.
 - OWASP Dependency-Check.
 - Spotless.
-- Vue 3, Vite, Pinia, Vue Router e Lucide Vue no frontend demonstrativo.
+- Vue 3, Vite, Pinia, Vue Router é Lucide Vue no frontend demonstrativo.
 - ESLint no frontend.
 - GitHub Actions para pipeline de qualidade.
 - Kubernetes.
 - Terraform.
 - CI/CD de deploy com GitHub Actions.
 
-## Pre-requisitos
+## Pré-requisitos
 
 - Java 21.
 - Maven.
 - Docker.
 - Docker Compose.
-- Node.js 22 ou versão compativel com o frontend.
+- Node.js 22 ou versão compatível com o frontend.
 - npm.
 - kubectl.
 - Terraform.
@@ -248,7 +248,7 @@ Variáveis principais do backend:
 | Variável | Objetivo |
 | -------- | -------- |
 | `POSTGRES_DB` | Nome do banco local. |
-| `POSTGRES_USER` | Usuario do PostgreSQL. |
+| `POSTGRES_USER` | Usuário do PostgreSQL. |
 | `POSTGRES_PASSWORD` | Senha local do PostgreSQL. |
 | `POSTGRES_PORT` | Porta exposta do PostgreSQL. |
 | `APP_PORT` | Porta da API no Docker Compose. |
@@ -258,7 +258,7 @@ Variáveis principais do backend:
 | `EXTERNAL_SERVICE_TOKEN` | Token compartilhado exigido no header `X-External-Service-Token` dos webhooks externos simulados. |
 | `APP_CORS_ALLOWED_ORIGINS` | Origens liberadas no CORS. |
 | `DB_URL` | URL JDBC usada ao rodar o backend fora do container. |
-| `DB_USERNAME` | Usuario do banco ao rodar com Maven. |
+| `DB_USERNAME` | Usuário do banco ao rodar com Maven. |
 | `DB_PASSWORD` | Senha do banco ao rodar com Maven. |
 
 Variáveis principais do frontend:
@@ -277,7 +277,7 @@ O projeto pode ser iniciado inteiro com um único comando a partir da raiz:
 ```
 
 Esse comando usa `.env`, remove containers antigos do próprio projeto se existirem, sobe PostgreSQL,
-backend e frontend, e mostra o estado dos containers ao final.
+backend e frontend, é mostra o estado dos containers ao final.
 O arquivo local já pode existir com seus valores pessoais; caso ele não exista, o script cria uma cópia a partir de
 `.env.example`.
 
@@ -287,7 +287,7 @@ Para acompanhar os logs depois de subir:
 .\scripts\start-local.ps1 -FollowLogs
 ```
 
-Comandos úteis de limpeza e acompanhamento:
+Comandos úteis de limpeza é acompanhamento:
 
 ```powershell
 docker compose config --quiet
@@ -310,7 +310,7 @@ URLs locais:
 | PostgreSQL | `localhost:5432` |
 
 O `docker-compose.yml` sobe PostgreSQL, backend e frontend. O backend aguarda o banco ficar saudável antes de iniciar,
-executa as migrations Flyway no startup e expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
+executa as migrations Flyway no startup é expõe `/actuator/health` para healthcheck. O frontend Nginx encaminha `/api`,
 `/v3/api-docs`, `/swagger-ui` e `/openapi.yaml` para o backend, então a aplicação web funciona em
 `http://localhost:5173` sem configurar uma URL absoluta de API.
 
@@ -342,12 +342,12 @@ npm run dev
 ```
 
 O frontend le `VITE_API_BASE_URL` de `frontend/.env`. Deixe vazio para usar o proxy configurado no Vite/Nginx, ou defina
-a URL da API quando necessario.
+a URL da API quando necessário.
 
 ## Como rodar fora do notebook com Codespaces
 
-Use esta opção quando o notebook não suportar Docker Desktop localmente. A configuração em [.devcontainer](.devcontainer)
-prepara um ambiente remoto com Java 21, Maven, Node.js 22, Terraform e PostgreSQL.
+Use está opção quando o notebook não suportar Docker Desktop localmente. A configuração em [.devcontainer](.devcontainer)
+prepara um ambiente remoto com Java 21, Maven, Node.js 22, Terraform é PostgreSQL.
 
 Passos:
 
@@ -369,7 +369,7 @@ npm run dev -- --host 0.0.0.0
 ```
 
 O Codespaces expõe as portas `8080` e `5173` pelo painel `Ports`. O PostgreSQL roda dentro do ambiente remoto, então o
-notebook usa apenas navegador/terminal e não precisa abrir Docker Desktop.
+notebook usa apenas navegador/terminal é não precisa abrir Docker Desktop.
 
 ## Swagger/OpenAPI
 
@@ -386,13 +386,13 @@ Para autenticar no Swagger:
 
 ## Fluxo rapido da API
 
-Os exemplos abaixo são minimos e usam dados seed quando possivel. Para detalhes completos de schemas, consulte o
+Os exemplos abaixo são mínimos é usam dados seed quando possível. Para detalhes completos de schemas, consulte o
 OpenAPI.
 
-### 1. Login e token JWT
+### 1. Login é token JWT
 
-- Objetivo: autenticar usuário e obter token.
-- Metodo: `POST`.
+- Objetivo: autenticar usuário é obter token.
+- Método: `POST`.
 - Endpoint: `/api/v1/auth/login`.
 - Bearer token: não.
 
@@ -411,7 +411,7 @@ TOKEN="[TOKEN_RETORNADO]"
 ### 2. Criar cliente
 
 - Objetivo: cadastrar cliente.
-- Metodo: `POST`.
+- Método: `POST`.
 - Endpoint: `/api/v1/customers`.
 - Bearer token: sim.
 
@@ -438,7 +438,7 @@ curl -X POST http://localhost:8080/api/v1/customers \
 ### 3. Listar clientes
 
 - Objetivo: consultar clientes cadastrados.
-- Metodo: `GET`.
+- Método: `GET`.
 - Endpoint: `/api/v1/customers?page=0&size=10`.
 - Bearer token: sim.
 
@@ -450,7 +450,7 @@ curl http://localhost:8080/api/v1/customers?page=0\&size=10 \
 ### 4. Criar veiculo
 
 - Objetivo: cadastrar veiculo vinculado a cliente existente.
-- Metodo: `POST`.
+- Método: `POST`.
 - Endpoint: `/api/v1/vehicles`.
 - Bearer token: sim.
 
@@ -468,10 +468,10 @@ curl -X POST http://localhost:8080/api/v1/vehicles \
   }'
 ```
 
-### 5. Listar veiculos
+### 5. Listar veículos
 
-- Objetivo: consultar veiculos.
-- Metodo: `GET`.
+- Objetivo: consultar veículos.
+- Método: `GET`.
 - Endpoint: `/api/v1/vehicles?page=0&size=10&active=true`.
 - Bearer token: sim.
 
@@ -480,10 +480,10 @@ curl "http://localhost:8080/api/v1/vehicles?page=0&size=10&active=true" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### 6. Listar servicos
+### 6. Listar serviços
 
-- Objetivo: consultar catalogo de servicos.
-- Metodo: `GET`.
+- Objetivo: consultar catalogo de serviços.
+- Método: `GET`.
 - Endpoint: `/api/v1/workshop-services?page=0&size=10`.
 - Bearer token: sim.
 
@@ -492,10 +492,10 @@ curl "http://localhost:8080/api/v1/workshop-services?page=0&size=10" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### 7. Listar pecas
+### 7. Listar peças
 
-- Objetivo: consultar pecas e insumos.
-- Metodo: `GET`.
+- Objetivo: consultar peças e insumos.
+- Método: `GET`.
 - Endpoint: `/api/v1/parts?page=0&size=10&active=true`.
 - Bearer token: sim.
 
@@ -504,10 +504,10 @@ curl "http://localhost:8080/api/v1/parts?page=0&size=10&active=true" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### 8. Abrir Ordem de Servico
+### 8. Abrir Ordem de Serviço
 
-- Objetivo: criar OS e receber identificador unico na resposta.
-- Metodo: `POST`.
+- Objetivo: criar OS é receber identificador único na resposta.
+- Método: `POST`.
 - Endpoint: `/api/v1/service-orders`.
 - Bearer token: sim.
 
@@ -518,7 +518,7 @@ curl -X POST http://localhost:8080/api/v1/service-orders \
   -d '{
     "customerDocument": "12345678909",
     "vehicleId": "20000000-0000-0000-0000-000000000001",
-    "diagnosticNotes": "Cliente relata ruido ao frear e vibração no pedal.",
+    "diagnosticNotes": "Cliente relata ruido ao frear é vibração no pedal.",
     "services": [
       {
         "serviceId": "30000000-0000-0000-0000-000000000004",
@@ -535,10 +535,10 @@ curl -X POST http://localhost:8080/api/v1/service-orders \
   }'
 ```
 
-### 9. Gerar orcamento
+### 9. Gerar orçamento
 
-- Objetivo: gerar orcamento para OS existente.
-- Metodo: `POST`.
+- Objetivo: gerar orçamento para OS existente.
+- Método: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/generate`.
 - Bearer token: sim.
 
@@ -549,10 +549,10 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### 10. Aprovar orcamento
+### 10. Aprovar orçamento
 
-- Objetivo: aprovar orcamento gerado.
-- Metodo: `POST`.
+- Objetivo: aprovar orçamento gerado.
+- Método: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/budget/approve`.
 - Bearer token: sim.
 
@@ -561,10 +561,10 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
   -H "Authorization: Bearer $TOKEN"
 ```
 
-### 11. Aprovar ou recusar orcamento por notificação externa
+### 11. Aprovar ou recusar orçamento por notificação externa
 
 - Objetivo: permitir que uma ferramenta externa, como email, registre aprovação ou recusa por webhook demonstrável.
-- Metodo: `POST`.
+- Método: `POST`.
 - Endpoints:
   - `/api/v1/service-orders/{serviceOrderId}/budget/external-approval`.
   - `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection`.
@@ -594,7 +594,7 @@ recebendo `decision` como `APPROVED` ou `REJECTED` e exigindo o mesmo header ext
 ### 12. Consultar status da OS
 
 - Objetivo: consultar andamento pelo identificador da OS.
-- Metodo: `GET`.
+- Método: `GET`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}`.
 - Bearer token: sim.
 
@@ -603,7 +603,7 @@ curl "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID" \
   -H "Authorization: Bearer $TOKEN"
 ```
 
-Tambem existe tracking por id da OS, CPF/CNPJ ou placa:
+Também existe tracking por id da OS, CPF/CNPJ ou placa:
 
 ```bash
 curl "http://localhost:8080/api/v1/service-orders/tracking?serviceOrderId=$SERVICE_ORDER_ID" \
@@ -612,8 +612,8 @@ curl "http://localhost:8080/api/v1/service-orders/tracking?serviceOrderId=$SERVI
 
 ### 13. Listar OS por filtros atuais
 
-- Objetivo: listar Ordens de Servico.
-- Metodo: `GET`.
+- Objetivo: listar Ordens de Serviço.
+- Método: `GET`.
 - Endpoint: `/api/v1/service-orders?page=0&size=10&status=IN_PROGRESS`.
 - Bearer token: sim.
 
@@ -625,14 +625,14 @@ curl "http://localhost:8080/api/v1/service-orders?page=0&size=10&status=IN_PROGR
 Listagem ordenada por prioridade/status e data:
 
 - Objetivo: atender requisito da Fase 2.
-- Metodo: `GET`.
+- Método: `GET`.
 - Endpoint: `/api/v1/service-orders?page=0&size=10`.
-- Status: implementado. A fila principal retorna `IN_PROGRESS`, `WAITING_APPROVAL`, `IN_DIAGNOSIS` e `RECEIVED`, nessa ordem de prioridade; dentro do mesmo status, retorna as OS mais antigas primeiro. A ordenação e os filtros da fila operacional são executados no repositório para evitar carregar toda a base no caso PostgreSQL.
+- Status: implementado. A fila principal retorna `IN_PROGRESS`, `WAITING_APPROVAL`, `IN_DIAGNOSIS` e `RECEIVED`, nessa ordem de prioridade; dentro do mesmo status, retorna as OS mais antigas primeiro. A ordenação é os filtros da fila operacional são executados no repositório para evitar carregar toda a base no caso PostgreSQL.
 
 ### 14. Atualizar status por ferramenta externa
 
 - Objetivo: simular ferramenta externa, como email, notificando nova etapa da OS.
-- Metodo: `POST`.
+- Método: `POST`.
 - Endpoint: `/api/v1/service-orders/{serviceOrderId}/status/external`.
 - Bearer token: não. Este webhook é chamado por ferramenta externa simulada.
 - Header externo: `X-External-Service-Token` com o valor de `EXTERNAL_SERVICE_TOKEN`.
@@ -650,37 +650,37 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/stat
 
 ## Endpoints principais
 
-| Metodo | Endpoint | Protegido por JWT | Objetivo |
+| Método | Endpoint | Protegido por JWT | Objetivo |
 | ------ | -------- | ----------------- | -------- |
-| `POST` | `/api/v1/auth/login` | Não | Autenticar usuário e emitir JWT. |
+| `POST` | `/api/v1/auth/login` | Não | Autenticar usuário é emitir JWT. |
 | `POST` | `/api/v1/customers` | Sim | Criar cliente. |
 | `GET` | `/api/v1/customers` | Sim | Listar clientes. |
 | `GET` | `/api/v1/customers/{customerId}` | Sim | Buscar cliente por id. |
 | `PUT` | `/api/v1/customers/{customerId}` | Sim | Atualizar cliente. |
-| `DELETE` | `/api/v1/customers/{customerId}` | Sim | Remover logicamente cliente. |
+| `DELETE` | `/api/v1/customers/{customerId}` | Sim | Remover lógicamente cliente. |
 | `POST` | `/api/v1/vehicles` | Sim | Criar veiculo. |
-| `GET` | `/api/v1/vehicles` | Sim | Listar veiculos. |
+| `GET` | `/api/v1/vehicles` | Sim | Listar veículos. |
 | `PUT` | `/api/v1/vehicles/{vehicleId}` | Sim | Atualizar quilometragem/status; placa, marca, modelo e ano permanecem imutáveis. |
-| `GET` | `/api/v1/customers/{customerId}/vehicles` | Sim | Listar veiculos de um cliente. |
+| `GET` | `/api/v1/customers/{customerId}/vehicles` | Sim | Listar veículos de um cliente. |
 | `POST` | `/api/v1/workshop-services` | Sim | Criar servico da oficina. |
-| `GET` | `/api/v1/workshop-services` | Sim | Listar servicos. |
+| `GET` | `/api/v1/workshop-services` | Sim | Listar serviços. |
 | `POST` | `/api/v1/parts` | Sim | Criar peca ou insumo. |
-| `GET` | `/api/v1/parts` | Sim | Listar pecas e insumos. |
+| `GET` | `/api/v1/parts` | Sim | Listar peças e insumos. |
 | `PATCH` | `/api/v1/parts/{partId}/stock` | Sim | Atualizar estoque. |
 | `POST` | `/api/v1/parts/{partId}/stock-movement` | Sim | Registrar movimento de estoque. |
-| `POST` | `/api/v1/service-orders` | Sim | Abrir Ordem de Servico e retornar identificador unico. |
-| `GET` | `/api/v1/service-orders` | Sim | Listar Ordens de Servico com filtros atuais. |
-| `GET` | `/api/v1/service-orders/{serviceOrderId}` | Sim | Consultar OS e status. |
+| `POST` | `/api/v1/service-orders` | Sim | Abrir Ordem de Serviço é retornar identificador único. |
+| `GET` | `/api/v1/service-orders` | Sim | Listar Ordens de Serviço com filtros atuais. |
+| `GET` | `/api/v1/service-orders/{serviceOrderId}` | Sim | Consultar OS é status. |
 | `GET` | `/api/v1/service-orders/tracking` | Sim | Acompanhar progresso da OS. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/services` | Sim | Adicionar servico a OS. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/parts` | Sim | Adicionar peca a OS. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orcamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orcamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Não, usa `X-External-Service-Token` | Registrar aprovação externa de orcamento. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Não, usa `X-External-Service-Token` | Registrar recusa externa de orcamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/generate` | Sim | Gerar orçamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/approve` | Sim | Aprovar orçamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-approval` | Não, usa `X-External-Service-Token` | Registrar aprovação externa de orçamento. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/external-rejection` | Não, usa `X-External-Service-Token` | Registrar recusa externa de orçamento. |
 | `PATCH` | `/api/v1/service-orders/{serviceOrderId}/status` | Sim | Atualizar status da OS. |
 | `GET` | `/api/v1/service-orders/metrics/average-execution-time` | Sim | Consultar tempo medio de execução. |
-| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Não, usa `X-External-Service-Token` | Endpoint legado para aprovar ou recusar orcamento por notificação externa. |
+| `POST` | `/api/v1/service-orders/{serviceOrderId}/budget/decision` | Não, usa `X-External-Service-Token` | Endpoint legado para aprovar ou recusar orçamento por notificação externa. |
 | `POST` | `/api/v1/service-orders/{serviceOrderId}/status/external` | Não, usa `X-External-Service-Token` | Atualizar status por ferramenta externa simulada. |
 | `GET` | `/api/v1/service-orders` | Sim | Listar OS ordenadas por prioridade/status e data, ocultando finalizadas e entregues. |
 
@@ -700,7 +700,7 @@ cd backend
 mvn clean verify
 ```
 
-Relatorio JaCoCo local:
+Relatório JaCoCo local:
 
 ```text
 backend/target/site/jacoco/index.html
@@ -730,24 +730,24 @@ Validação desta revisão de infraestrutura:
 - `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
 - Resultado detalhado: [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md).
 
-## Seguranca
+## Segurança
 
 O projeto possui:
 
-- Autenticação e autorização com JWT.
+- Autenticação é autorização com JWT.
 - Validação de CPF/CNPJ.
 - Validação de placa.
 - Configuração de CORS por variável de ambiente.
 - Uso de `.env.example` para evitar versionamento de secrets reais.
-- `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local e estado sensível do Terraform.
+- `.gitignore` cobrindo `.env`, arquivos locais de chave/certificado, kubeconfig local é estado sensível do Terraform.
 - Kubernetes Secrets com placeholders no repositório e criação de valores reais por ambiente/CI.
-- Relatorios de vulnerabilidades e evidencias de scans em `security-reports/`.
+- Relatórios de vulnerabilidades é evidências de scans em `security-reports/`.
 - OWASP Dependency-Check no backend.
 - `npm audit` no frontend.
-- Evidencias complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega.
+- Evidências complementares de Docker Scout, OWASP ZAP, Gitleaks e Semgrep documentadas na entrega.
 - Último `npm audit --json` executado após as correções do frontend: 0 vulnerabilidades.
 
-Resultados de scan devem ser atualizados somente apos execução real das ferramentas. A revisão da Fase 2 fica
+Resultados de scan devem ser atualizados somente após execução real das ferramentas. A revisão da Fase 2 fica
 consolidada no relatório abaixo, incluindo pendências quando alguma ferramenta local não estiver disponível.
 
 Documentos:
@@ -798,8 +798,8 @@ Manifestos principais:
 - `configmap.yaml`: variáveis não sensíveis.
 - `secret.example.yaml`: exemplo sem secrets reais para senha do banco, JWT e token externo.
 - `postgres-deployment.yaml` e `postgres-service.yaml`: PostgreSQL demonstrativo no cluster.
-- `backend-deployment.yaml`, `backend-service.yaml` e `backend-hpa.yaml`: API Spring Boot, Service interno e HPA por CPU/memoria.
-- `frontend-deployment.yaml`, `frontend-service.yaml` e `frontend-hpa.yaml`: frontend Vue/Nginx e HPA por CPU/memoria.
+- `backend-deployment.yaml`, `backend-service.yaml` e `backend-hpa.yaml`: API Spring Boot, Service interno é HPA por CPU/memória.
+- `frontend-deployment.yaml`, `frontend-service.yaml` e `frontend-hpa.yaml`: frontend Vue/Nginx é HPA por CPU/memória.
 
 Antes de aplicar, crie um Secret real a partir de valores seguros do ambiente ou deixe a pipeline gerar esse recurso
 a partir dos GitHub Actions Secrets. Não versione secrets reais.
@@ -832,7 +832,7 @@ kubectl port-forward -n autocarehub svc/backend 8080:8080
 kubectl port-forward -n autocarehub svc/autocarehub-web 5173:8080
 ```
 
-Limitações: o PostgreSQL em Kubernetes e demonstrativo para a Fase 2; ambientes produtivos devem avaliar banco gerenciado,
+Limitações: o PostgreSQL em Kubernetes é demonstrativo para a Fase 2; ambientes produtivos devem avaliar banco gerenciado,
 backup e replicação. O HPA depende do Metrics Server instalado no cluster. As imagens precisam estar publicadas no registry
 ou carregadas no runtime local do cluster.
 
@@ -847,15 +847,15 @@ infra/
 ```
 
 Decisão de ambiente: o projeto não assume AWS, Azure, GCP ou outro provedor cloud. A infraestrutura da Fase 2 foi
-modelada para Kubernetes local/acadêmico. O modo padrão usa um cluster ja existente, como `kind`, `minikube` ou cluster
+modelada para Kubernetes local/acadêmico. O modo padrão usa um cluster já existente, como `kind`, `minikube` ou cluster
 disponibilizado para avaliação; opcionalmente, o Terraform cria um cluster local com `kind`.
 
 Arquivos:
 
-- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes e recursos base.
+- `infra/main.tf`: criação opcional de cluster `kind`, provider Kubernetes é recursos base.
 - `infra/variables.tf`: variáveis parametrizáveis.
-- `infra/outputs.tf`: outputs uteis para conferencia e deploy.
-- `infra/versions.tf`: providers e versões.
+- `infra/outputs.tf`: outputs úteis para conferencia é deploy.
+- `infra/versions.tf`: providers é versões.
 - `infra/terraform.tfvars.example`: exemplo seguro com placeholders.
 - `infra/README.md`: instruções detalhadas.
 
@@ -878,13 +878,13 @@ terraform apply
 terraform destroy
 ```
 
-Para criar tambem um cluster local com `kind`, instale Docker Desktop e `kind`, depois execute:
+Para criar também um cluster local com `kind`, instale Docker Desktop e `kind`, depois execute:
 
 ```bash
 terraform apply -var="create_kind_cluster=true"
 ```
 
-Variáveis sensíveis devem ser informadas fora do repositorio, por exemplo:
+Variáveis sensíveis devem ser informadas fora do repositório, por exemplo:
 
 ```bash
 export TF_VAR_postgres_password="substituir-localmente"
@@ -896,7 +896,7 @@ detalhado em [infra/README.md](infra/README.md). Se o Terraform criar o Secret r
 placeholders por cima dele.
 
 Limitações: o modo `kind` cria cluster local, não cluster gerenciado em cloud. O Terraform não cria banco gerenciado em
-cloud; ele provisiona a base necessaria para o PostgreSQL demonstrativo dentro do cluster configurado no kubeconfig local
+cloud; ele provisiona a base necessária para o PostgreSQL demonstrativo dentro do cluster configurado no kubeconfig local
 ou no cluster `kind` criado. Os Deployments, Services e HPAs continuam nos manifests em `k8s/` e são
 aplicados depois do provisionamento base.
 
@@ -924,7 +924,7 @@ Pipelines atuais:
 
 `phase2-ci-cd.yml` executa:
 
-- Build e testes do backend com `mvn -B verify` em `backend/`.
+- Build é testes do backend com `mvn -B verify` em `backend/`.
 - Instalação, lint e build do frontend.
 - Validação estrutural dos YAMLs de `k8s/`.
 - `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`.
@@ -935,7 +935,7 @@ Pipelines atuais:
 - Criação/atualização do Secret Kubernetes a partir dos GitHub Actions Secrets, sem usar placeholders.
 - Aplicação do PostgreSQL, backend, frontend, Services e HPAs.
 - Atualização dos Deployments para as imagens geradas no SHA da própria pipeline.
-- Verificação de rollout e listagem de pods, services e HPAs.
+- Verificação de rollout é listagem de pods, services é HPAs.
 
 Secrets necessários para deploy real:
 
@@ -946,14 +946,14 @@ Secrets necessários para deploy real:
 | `JWT_SECRET` | Segredo JWT com pelo menos 32 bytes. |
 | `EXTERNAL_SERVICE_TOKEN` | Token compartilhado usado nos webhooks externos simulados. |
 
-O push para o GitHub Container Registry usa `GITHUB_TOKEN`, secret automatico do GitHub Actions. Ele nao deve ser
+O push para o GitHub Container Registry usa `GITHUB_TOKEN`, secret automático do GitHub Actions. Ele não deve ser
 exposto nem substituido por token pessoal sem necessidade.
 
 Se qualquer secret obrigatório estiver ausente, a pipeline mantém build, testes, validações e build de imagens, mas registra
 que o deploy real foi pulado. Esse comportamento é intencional para permitir execução acadêmica sem expor credenciais.
 
-O deploy do banco é demonstrável pelo manifesto do PostgreSQL em Kubernetes e pelas migrations Flyway executadas no
-startup do backend. A pipeline aplica o PVC e o Deployment do PostgreSQL antes dos workloads da aplicação.
+O deploy do banco é demonstrável pelo manifesto do PostgreSQL em Kubernetes é pelas migrations Flyway executadas no
+startup do backend. A pipeline aplica o PVC é o Deployment do PostgreSQL antes dos workloads da aplicação.
 
 Execução:
 
@@ -961,13 +961,13 @@ Execução:
 git push origin main
 ```
 
-Tambem e possivel executar manualmente pela aba GitHub Actions, selecionando o workflow `Phase 2 CI/CD` e acionando
-`Run workflow`. Detalhes de variaveis, secrets e demonstração estao em [docs/CI_CD.md](docs/CI_CD.md).
+Também é possível executar manualmente pela aba GitHub Actions, selecionando o workflow `Phase 2 CI/CD` e acionando
+`Run workflow`. Detalhes de variáveis, secrets é demonstração estão em [docs/CI_CD.md](docs/CI_CD.md).
 
 `phase2-ci-cd.yml` e o workflow principal da Fase 2 para o roteiro da banca. Ele executa checkout, Java 21, cache Maven,
 build/testes/cobertura backend, Node 22, `npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do
-Docker Compose e deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` ou
-`EXTERNAL_SERVICE_TOKEN` nao existem, o deploy e pulado com mensagem explicita.
+Docker Compose é deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` ou
+`EXTERNAL_SERVICE_TOKEN` não existem, o deploy é pulado com mensagem explícita.
 
 ## Documentação complementar
 
@@ -978,25 +978,25 @@ Docker Compose e deploy Kubernetes protegido por secrets. Quando `KUBE_CONFIG`, 
 | Domain Storytelling | [docs/domain/DOMAIN_STORYTELLING.md](docs/domain/DOMAIN_STORYTELLING.md) |
 | Requisitos | [docs/domain/REQUIREMENTS.md](docs/domain/REQUIREMENTS.md) |
 | Arquitetura | [docs/architecture/ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) |
-| Refinamento tecnico | [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md) |
+| Refinamento técnico | [docs/architecture/TECHNICAL_REFINEMENT.md](docs/architecture/TECHNICAL_REFINEMENT.md) |
 | OpenAPI | [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml) |
 | Collection Postman | [docs/api/postman/autocarehub-phase2.postman_collection.json](docs/api/postman/autocarehub-phase2.postman_collection.json) |
 | Testes | [docs/testing/TESTING.md](docs/testing/TESTING.md) |
-| Analise estatica | [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md) |
+| Análise estática | [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md) |
 | CI/CD | [docs/CI_CD.md](docs/CI_CD.md) |
-| Seguranca | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md) |
+| Segurança | [docs/security/SECURITY_REPORT.md](docs/security/SECURITY_REPORT.md) |
 | Guia de scan de segurança | [docs/security/SECURITY_SCAN_GUIDE.md](docs/security/SECURITY_SCAN_GUIDE.md) |
 | Documento de entrega | [docs/delivery/DELIVERY_DOCUMENT.md](docs/delivery/DELIVERY_DOCUMENT.md) |
 | Documento final Fase 2 | [docs/PHASE2_DELIVERY_DOCUMENT.md](docs/PHASE2_DELIVERY_DOCUMENT.md) |
-| Relatorio Infra/CI-CD Fase 2 | [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md) |
+| Relatório Infra/CI-CD Fase 2 | [docs/PHASE2_INFRA_CICD_REPORT.md](docs/PHASE2_INFRA_CICD_REPORT.md) |
 | Frontend demonstrativo | [frontend/README.md](frontend/README.md) |
 | Desenho da arquitetura | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md) |
-| Roteiro do video | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
-| Video | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA] |
+| Roteiro do vídeo | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md) |
+| Vídeo | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA] |
 
 ## Entrega da Fase 2
 
-## Video demonstrativo
+## Vídeo demonstrativo
 
 Link do vídeo: [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA]
 
@@ -1010,7 +1010,7 @@ O PDF enviado no portal deve conter:
 
 Checklist de preparação:
 
-- [x] Codigo refatorado.
+- [x] Código refatorado.
 - [x] Dockerfile revisado.
 - [x] `docker-compose.yml` revisado.
 - [x] `k8s/` criado.
@@ -1019,13 +1019,13 @@ Checklist de preparação:
 - [x] README atualizado como documento principal.
 - [x] Swagger/OpenAPI disponível em [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml).
 - [x] Collection da API adicionada ou linkada.
-- [ ] Video de ate 15 minutos publicado e link preenchido: `[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`.
-- [ ] PDF final regenerado apos preencher o link real do video.
+- [ ] Vídeo de até 15 minutos publicado é link preenchido: `[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`.
+- [ ] PDF final regenerado após preencher o link real do vídeo.
 - [ ] Acesso ao usuário `soat-architecture` confirmado no GitHub antes do envio.
 
-## Historico das fases
+## Histórico das fases
 
-- Fase 1: MVP backend da oficina com API REST, JWT, Swagger/OpenAPI, Docker, testes, cobertura e relatorios de
+- Fase 1: MVP backend da oficina com API REST, JWT, Swagger/OpenAPI, Docker, testes, cobertura é relatórios de
   segurança.
-- Fase 2: evolução para qualidade, arquitetura, escalabilidade, infraestrutura como código, Kubernetes, CI/CD e deploy
+- Fase 2: evolução para qualidade, arquitetura, escalabilidade, infraestrutura como código, Kubernetes, CI/CD é deploy
   automatizado.

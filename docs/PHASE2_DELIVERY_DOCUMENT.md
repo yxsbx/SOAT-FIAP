@@ -7,15 +7,15 @@
 | Projeto                    | AutoCare Hub                                        |
 | Responsavel                | Yasmin Barcelos Pires                               |
 | RM                         | RM370897                                            |
-| Repositorio                | <https://github.com/yxsbx/SOAT-FIAP>                |
+| Repositório                | <https://github.com/yxsbx/SOAT-FIAP>                |
 | Acesso `soat-architecture` | Feito desde a Fase 1                                |
-| Video demonstrativo        | [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA] |
+| Vídeo demonstrativo        | [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA] |
 
 ## Arquitetura
 
 ```mermaid
 flowchart LR
-    user["Usuario / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
+    user["Usuário / Cliente"] --> frontend["Frontend demonstrativo Vue/Nginx"]
     user --> api["API Backend Spring Boot"]
     frontend --> api
     api --> postgres["PostgreSQL"]
@@ -70,10 +70,10 @@ flowchart LR
 | ATENDIDO            | Kubernetes local com Namespace, ConfigMap, Secret de exemplo, Deployments, Services, probes, resources e HPA. |
 | ATENDIDO            | Terraform local em `infra/` para cluster `kind` opcional, Namespace, ConfigMap, Secret e PVC.                 |
 | ATENDIDO            | CI/CD em `.github/workflows/phase2-ci-cd.yml` com build, testes, Docker e deploy protegido por secrets.       |
-| VALIDAR MANUALMENTE | Acesso do usuario `soat-architecture` ao repositorio privado.                                                 |
-| BLOQUEIA ENTREGA    | Link real do video ainda deve ser inserido antes do envio.                                                    |
+| VALIDAR MANUALMENTE | Acesso do usuário `soat-architecture` ao repositório privado.                                                 |
+| BLOQUEIA ENTREGA    | Link real do vídeo ainda deve ser inserido antes do envio.                                                    |
 
-## Execucao Resumida
+## Execução Resumida
 
 ```powershell
 Copy-Item .env.example .env
@@ -102,8 +102,8 @@ terraform apply
 cd ..
 ```
 
-O Terraform prepara a infraestrutura base. O PostgreSQL e executado como workload Kubernetes demonstrativo; o PVC e os
-secrets sao provisionados pelo Terraform quando esse fluxo for usado.
+O Terraform prepara a infraestrutura base. O PostgreSQL é executado como workload Kubernetes demonstrativo; o PVC é os
+secrets são provisionados pelo Terraform quando esse fluxo for usado.
 
 ## Kubernetes Resumido
 
@@ -119,9 +119,9 @@ Antes de deploy real, substituir `k8s/secret.example.yaml` por secrets seguros d
 ## CI/CD Resumido
 
 O workflow `.github/workflows/phase2-ci-cd.yml` executa checkout, Java 21, cache Maven, testes, `mvn verify`, Node 22,
-`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose e deploy Kubernetes.
+`npm ci`, lint, build, `npm audit`, build das imagens Docker, validação do Docker Compose é deploy Kubernetes.
 
-O deploy real so roda em `main` ou `workflow_dispatch` quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` e
+O deploy real só roda em `main` ou `workflow_dispatch` quando `KUBE_CONFIG`, `POSTGRES_PASSWORD`, `JWT_SECRET` é
 `EXTERNAL_SERVICE_TOKEN` estiverem configurados como GitHub Actions Secrets. Sem esses valores, o workflow registra que
 o deploy foi pulado.
 
@@ -131,4 +131,4 @@ O PDF enviado no portal deve conter:
 
 - link do repositório compartilhado com `soat-architecture`;
 - desenho da arquitetura;
-- link real do video demonstrativo.
+- link real do vídeo demonstrativo.

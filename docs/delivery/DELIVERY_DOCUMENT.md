@@ -7,7 +7,7 @@
 
 **Entrega individual - Yasmin Barcelos Pires**
 
-## 2. Participante e username no Discord
+## 2. Participante é username no Discord
 
 | Nome completo         | RM       | Username no Discord | Papel no projeto                      |
 |-----------------------|----------|---------------------|---------------------------------------|
@@ -24,55 +24,55 @@ usuário avaliador `soat-architecture` antes do envio no portal.
 
 A documentação oficial da entrega está versionada no próprio repositório, nos arquivos abaixo:
 
-| Documento                     | Local                                                                       |
-|-------------------------------|-----------------------------------------------------------------------------|
-| Levantamento de requisitos    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/REQUIREMENTS.md>         |
-| Arquitetura, HLD, LLD e C4    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/architecture/ARCHITECTURE.md>         |
-| Documentação DDD              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/DDD_DOCUMENTATION.md>    |
-| Domain Storytelling           | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/DOMAIN_STORYTELLING.md>  |
-| Event Storming                | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/EVENT_STORMING.md>       |
-| Contrato OpenAPI              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/api/openapi/openapi.yaml>    |
-| Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/testing/TESTING.md>              |
-| Análise estática e qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/testing/STATIC_ANALYSIS.md>      |
-| Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/security/SECURITY_REPORT.md>      |
-| Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/architecture/PHASE2_ARCHITECTURE.md>  |
-| Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/delivery/PHASE2_VIDEO_SCRIPT.md>  |
-| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>            |
-| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>              |
-| Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/phase2-ci-cd.yml> |
+| Documento                     | Local                                                                                   |
+|-------------------------------|-----------------------------------------------------------------------------------------|
+| Levantamento de requisitos    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/REQUIREMENTS.md>              |
+| Arquitetura, HLD, LLD é C4    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/architecture/ARCHITECTURE.md>        |
+| Documentação DDD              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/DDD_DOCUMENTATION.md>         |
+| Domain Storytelling           | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/DOMAIN_STORYTELLING.md>       |
+| Event Storming                | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/domain/EVENT_STORMING.md>            |
+| Contrato OpenAPI              | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/api/openapi/openapi.yaml>            |
+| Estratégia de testes          | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/testing/TESTING.md>                  |
+| Análise estática é qualidade  | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/testing/STATIC_ANALYSIS.md>          |
+| Relatório de vulnerabilidades | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/security/SECURITY_REPORT.md>         |
+| Arquitetura da Fase 2         | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/architecture/PHASE2_ARCHITECTURE.md> |
+| Roteiro do vídeo da Fase 2    | <https://github.com/yxsbx/SOAT-FIAP/blob/main/docs/delivery/PHASE2_VIDEO_SCRIPT.md>     |
+| Kubernetes                    | <https://github.com/yxsbx/SOAT-FIAP/tree/main/k8s>                                      |
+| Terraform                     | <https://github.com/yxsbx/SOAT-FIAP/tree/main/infra>                                    |
+| Pipeline CI/CD de deploy      | <https://github.com/yxsbx/SOAT-FIAP/blob/main/.github/workflows/phase2-ci-cd.yml>       |
 
 ## 4.1 Links finais da Fase 2
 
-| Item                   | Link                                                      |
-|------------------------|-----------------------------------------------------------|
-| Desenho da arquitetura | `docs/architecture/PHASE2_ARCHITECTURE.md`                             |
-| Vídeo demonstrativo    | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA]                  |
-| PDF final no portal    | `docs/delivery/DELIVERY_DOCUMENT.pdf`                              |
+| Item                   | Link                                                          |
+|------------------------|---------------------------------------------------------------|
+| Desenho da arquitetura | `docs/architecture/PHASE2_ARCHITECTURE.md`                    |
+| Vídeo demonstrativo    | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA]                      |
+| PDF final no portal    | `docs/delivery/DELIVERY_DOCUMENT.pdf`                         |
 | Collection Postman     | `docs/api/postman/autocarehub-phase2.postman_collection.json` |
 
 ## 4.2 Recursos escolhidos para a Fase 2
 
-- Backend monolítico Spring Boot organizado em domínio, aplicação, portas, infraestrutura e interfaces.
+- Backend monolítico Spring Boot organizado em domínio, aplicação, portas, infraestrutura é interfaces.
 - PostgreSQL como banco relacional.
-- Docker e Docker Compose para execução local.
-- Kubernetes com Deployments, Services, ConfigMaps, Secrets e HPA.
-- Terraform com criação opcional de cluster local `kind` e provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap, Secret e PVC do PostgreSQL demonstrativo.
-- GitHub Actions para qualidade, build de imagens e deploy Kubernetes quando `KUBE_CONFIG` estiver configurado.
+- Docker é Docker Compose para execução local.
+- Kubernetes com Deployments, Services, ConfigMaps, Secrets é HPA.
+- Terraform com criação opcional de cluster local `kind` é provider Kubernetes para provisionamento acadêmico/local de namespace, ConfigMap, Secret é PVC do PostgreSQL demonstrativo.
+- GitHub Actions para qualidade, build de imagens é deploy Kubernetes quando `KUBE_CONFIG` estiver configurado.
 - Swagger/OpenAPI como contrato principal da API.
 
 ## 5. Relatório com análise de vulnerabilidades encontradas no sistema
 
-Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes completos, comandos executados e evidências
+Esta seção resume a análise de vulnerabilidades da entrega. Os detalhes completos, comandos executados é evidências
 estão registrados em `docs/security/SECURITY_REPORT.md`.
 
 ### 5.1 Escopo analisado
 
 - Dependências backend Java/Maven analisadas pelo OWASP Dependency-Check.
 - Dependências frontend Vue/Vite analisadas por `npm audit`.
-- Imagens Docker de backend e frontend analisadas por Docker Scout.
+- Imagens Docker de backend é frontend analisadas por Docker Scout.
 - API local analisada com OWASP ZAP a partir do contrato OpenAPI em `/v3/api-docs`.
 - Histórico Git analisado por Gitleaks para verificar exposição de secrets.
-- Código backend, frontend e Dockerfiles analisados com Semgrep.
+- Código backend, frontend é Dockerfiles analisados com Semgrep.
 - Evidências de cobertura registradas pelo JaCoCo como apoio à qualidade da entrega.
 
 ### 5.2 Resultado geral dos scans finais
@@ -83,29 +83,29 @@ estão registrados em `docs/security/SECURITY_REPORT.md`.
 | Dependências frontend |       0 |    0 |     0 | Corrigido                         |
 | Imagem backend        |       0 |    0 |     1 | Risco médio aceito                |
 | Imagem frontend       |       0 |    0 |     1 | Risco médio aceito                |
-| OWASP ZAP API scan    |       0 |    0 |     0 | 0 falhas e 1 aviso baixo revisado |
+| OWASP ZAP API scan    |       0 |    0 |     0 | 0 falhas é 1 aviso baixo revisado |
 | Análise estática      |       0 |    0 |     0 | Semgrep sem achados               |
 | Secrets               |       0 |    0 |     0 | Gitleaks sem leaks                |
 
 Os scans finais não deixaram vulnerabilidades críticas ou altas abertas. Permanecem duas CVEs médias aceitas como risco
 residual: uma em `jackson-databind` transitivo na imagem backend, porque a versão corrigida indicada pelo Docker Scout
-ainda não estava publicada no Maven Central na validação, e uma em BusyBox na imagem frontend, porque o scanner não
+ainda não estava publicada no Maven Central na validação, é uma em BusyBox na imagem frontend, porque o scanner não
 indicou versão corrigida disponível.
 
-### 5.3 Vulnerabilidades encontradas e tratamento
+### 5.3 Vulnerabilidades encontradas é tratamento
 
 | ID       | Ferramenta             | Severidade               | Pacote/área afetada                                                | Status                 |
 |----------|------------------------|--------------------------|--------------------------------------------------------------------|------------------------|
 | VULN-001 | OWASP Dependency-Check | Alta/Média               | `log4j-api-2.24.3.jar`                                             | Corrigido              |
 | VULN-002 | OWASP Dependency-Check | Alta                     | `postgresql-42.7.10.jar`                                           | Corrigido              |
-| VULN-003 | OWASP Dependency-Check | Crítica/Alta/Média       | `spring-boot-3.5.13.jar` e starters                                | Corrigido              |
-| VULN-004 | OWASP Dependency-Check | Alta/Média/Baixa         | `spring-core-6.2.17.jar` e `spring-web-6.2.17.jar`                 | Corrigido              |
-| VULN-005 | OWASP Dependency-Check | Alta/Média/Baixa         | `spring-security-core-6.5.9.jar` e `spring-security-web-6.5.9.jar` | Corrigido              |
+| VULN-003 | OWASP Dependency-Check | Crítica/Alta/Média       | `spring-boot-3.5.13.jar` é starters                                | Corrigido              |
+| VULN-004 | OWASP Dependency-Check | Alta/Média/Baixa         | `spring-core-6.2.17.jar` é `spring-web-6.2.17.jar`                 | Corrigido              |
+| VULN-005 | OWASP Dependency-Check | Alta/Média/Baixa         | `spring-security-core-6.5.9.jar` é `spring-security-web-6.5.9.jar` | Corrigido              |
 | VULN-006 | OWASP Dependency-Check | Crítica/Alta/Média/Baixa | `tomcat-embed-core-10.1.53.jar`                                    | Corrigido              |
 | VULN-007 | OWASP Dependency-Check | Média                    | `commons-compress-1.24.0.jar`                                      | Corrigido              |
 | VULN-008 | OWASP Dependency-Check | Média                    | `commons-lang3-3.17.0.jar`                                         | Corrigido              |
 | VULN-009 | OWASP Dependency-Check | Média/Desconhecida       | `swagger-ui-5.32.2.jar`                                            | Corrigido              |
-| VULN-010 | npm audit              | Alta                     | `vite`, `esbuild` e `@vitejs/plugin-vue`                           | Corrigido              |
+| VULN-010 | npm audit              | Alta                     | `vite`, `esbuild` é `@vitejs/plugin-vue`                           | Corrigido              |
 | VULN-011 | npm audit              | Média                    | `js-yaml-4.1.1` transitivo do ESLint                               | Corrigido              |
 | VULN-012 | Docker Scout           | Crítica/Alta/Média       | `/usr/bin/pebble` da imagem runtime anterior                       | Corrigido              |
 | VULN-013 | Docker Scout           | Crítica/Alta/Média       | Imagem frontend Nginx 1.27/Alpine antiga                           | Corrigido              |
@@ -114,13 +114,13 @@ indicou versão corrigida disponível.
 
 ### 5.4 Correções aplicadas
 
-- Atualização de dependências Maven vulneráveis e reexecução do Dependency-Check final sem achados.
-- Atualização das dependências frontend vulneráveis, incluindo Vite, plugin Vue, esbuild transitivo e `js-yaml`.
+- Atualização de dependências Maven vulneráveis é reexecução do Dependency-Check final sem achados.
+- Atualização das dependências frontend vulneráveis, incluindo Vite, plugin Vue, esbuild transitivo é `js-yaml`.
 - Regeneração do `package-lock.json` após as correções do frontend.
 - Atualização direta do Swagger UI.
 - Migração da imagem backend para runtime distroless Java 21 non-root.
 - Migração da imagem frontend para Nginx unprivileged `mainline-alpine-slim`, fixada por digest.
-- Execução de OWASP ZAP API scan contra `/v3/api-docs`, com 0 falhas e 1 aviso baixo revisado.
+- Execução de OWASP ZAP API scan contra `/v3/api-docs`, com 0 falhas é 1 aviso baixo revisado.
 - Validação de secrets com Gitleaks, sem leaks encontrados no histórico analisado.
 - Análise estática com Semgrep, sem achados no escopo executado.
 
@@ -132,16 +132,16 @@ mas essa versão ainda não estava disponível no Maven Central na validação. 
 o Docker Scout informou que não havia versão corrigida disponível na base analisada.
 
 Como mitigação, os containers permanecem configurados com usuário não privilegiado, filesystem read-only quando
-aplicável e sem novos privilégios.
+aplicável é sem novos privilégios.
 
 ## 6. Evolução da Fase 2
 
 A Fase 2 evolui o MVP da Fase 1 com:
 
-- endpoints explícitos de decisão externa de orçamento em `POST /api/v1/service-orders/{serviceOrderId}/budget/external-approval` e `POST /api/v1/service-orders/{serviceOrderId}/budget/external-rejection`;
+- endpoints explícitos de decisão externa de orçamento em `POST /api/v1/service-orders/{serviceOrderId}/budget/external-approval` é `POST /api/v1/service-orders/{serviceOrderId}/budget/external-rejection`;
 - endpoint legado de decisão externa de orçamento em `POST /api/v1/service-orders/{serviceOrderId}/budget/decision`;
 - endpoint de atualização externa de status em `POST /api/v1/service-orders/{serviceOrderId}/status/external`;
-- listagem operacional de OS movida para query no repository/adapter, ordenada por status e data e ocultando OS finalizadas e entregues;
+- listagem operacional de OS movida para query no repository/adapter, ordenada por status é data é ocultando OS finalizadas é entregues;
 - manifests Kubernetes em `k8s/`;
 - estrutura Terraform em `infra/`;
 - pipeline de deploy em `.github/workflows/phase2-ci-cd.yml`;
@@ -152,28 +152,28 @@ A Fase 2 evolui o MVP da Fase 1 com:
 
 Validações finais registradas após as correções da Fase 2:
 
-- `mvn test`: 172 testes, 0 falhas, 0 erros e 0 ignorados.
-- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados e gate JaCoCo aprovado.
+- `mvn test`: 172 testes, 0 falhas, 0 erros é 0 ignorados.
+- `mvn clean verify`: passou com 172 testes, 0 falhas, 0 erros, 0 ignorados é gate JaCoCo aprovado.
 - `npm audit --json`: resultado final com 0 vulnerabilidades.
-- `terraform fmt -check`, `terraform init -backend=false` e `terraform validate`: passaram.
+- `terraform fmt -check`, `terraform init -backend=false` é `terraform validate`: passaram.
 - `kubectl apply --dry-run=client -f k8s/`: não concluiu apenas por ausência de cluster Kubernetes ativo/configurado no ambiente local; não houve erro identificado nos manifests a partir dessa falha.
 
 ## 7. Conclusão
 
 O AutoCare Hub entrega um MVP backend alinhado ao desafio proposto, cobrindo o ciclo principal de atendimento de uma
-oficina mecânica: cadastro de clientes e veículos, criação de Ordem de Serviço, composição com serviços e peças, geração
-e aprovação de orçamento, controle de status, estoque e consulta pelo cliente.
+oficina mecânica: cadastro de clientes é veículos, criação de Ordem de Serviço, composição com serviços é peças, geração
+é aprovação de orçamento, controle de status, estoque é consulta pelo cliente.
 
-A gestão administrativa diferencia Admin Master, admins de oficina/loja, funcionários e cliente final. As contas de
-oficinas e lojas são vinculadas por `companyId`, mas os IDs são gerados pelo backend. Na interface, o Admin Master
-seleciona a empresa pelo nome ou cadastra uma nova empresa informando nome e tipo.
+A gestão administrativa diferencia Admin Master, admins de oficina/loja, funcionários é cliente final. As contas de
+oficinas é lojas são vinculadas por `companyId`, mas os IDs são gerados pelo backend. Na interface, o Admin Master
+seleciona a empresa pelo nome ou cadastra uma nova empresa informando nome é tipo.
 
 A entrega também inclui documentação DDD, Event Storming, contrato OpenAPI, testes automatizados, execução local com
-Docker e relatório de vulnerabilidades. As vulnerabilidades críticas e altas encontradas nos scans iniciais foram
-corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica e
+Docker é relatório de vulnerabilidades. As vulnerabilidades críticas é altas encontradas nos scans iniciais foram
+corrigidas. As duas CVEs médias restantes foram registradas como risco residual aceito, com justificativa técnica é
 mitigação documentada.
 
 Para a Fase 2, a entrega passa a demonstrar arquitetura evoluída, automação, infraestrutura como código, Kubernetes,
-HPA, CI/CD e documentação de apoio. Permanecem como dados externos a confirmar antes do envio final: link do vídeo
-`[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`, PDF final exportado após preencher esse link e acesso do usuário
+HPA, CI/CD é documentação de apoio. Permanecem como dados externos a confirmar antes do envio final: link do vídeo
+`[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`, PDF final exportado após preencher esse link é acesso do usuário
 `soat-architecture`.

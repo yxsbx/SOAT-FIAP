@@ -6,17 +6,17 @@ Esta documentação apresenta como o AutoCare Hub foi organizado para atender ao
 a leitura da arquitetura, mostrar os principais fluxos técnicos e indicar onde a implementação pode ser conferida no
 repositório.
 
-| Documento                      | Papel na entrega                                                                                     |
-|--------------------------------|------------------------------------------------------------------------------------------------------|
-| `README.md`                    | Entrada principal do projeto, com comandos de execução, links das documentações e resumo da solução. |
-| `docs/domain/REQUIREMENTS.md`         | Requisitos funcionais, requisitos não funcionais e matriz de rastreabilidade.                        |
+| Documento                                   | Papel na entrega                                                                                     |
+|---------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `README.md`                                 | Entrada principal do projeto, com comandos de execução, links das documentações e resumo da solução. |
+| `docs/domain/REQUIREMENTS.md`               | Requisitos funcionais, requisitos não funcionais e matriz de rastreabilidade.                        |
 | `docs/architecture/ARCHITECTURE.md`         | HLD, LLD, C4 Model, decisões arquiteturais e relação com a implementação.                            |
-| `docs/domain/DDD_DOCUMENTATION.md`    | Linguagem ubíqua, entidades, value objects, agregados, regras de domínio e diagramas DDD.            |
-| `docs/domain/DOMAIN_STORYTELLING.md`  | Histórias do domínio por ator e rotina da oficina.                                                   |
-| `docs/domain/EVENT_STORMING.md`       | Comandos, eventos, políticas e linhas do tempo dos fluxos principais.                                |
-| `docs/api/openapi/openapi.yaml`    | Contrato REST usado pela API e pela geração das interfaces.                                          |
-| `docs/testing/TESTING.md`              | Estratégia de testes, cobertura e comandos de validação.                                             |
-| `docs/security/SECURITY_REPORT.md`      | Vulnerabilidades encontradas, scans executados, riscos aceitos e evidências consolidadas.            |
+| `docs/domain/DDD_DOCUMENTATION.md`          | Linguagem ubíqua, entidades, value objects, agregados, regras de domínio e diagramas DDD.            |
+| `docs/domain/DOMAIN_STORYTELLING.md`        | Histórias do domínio por ator e rotina da oficina.                                                   |
+| `docs/domain/EVENT_STORMING.md`             | Comandos, eventos, políticas e linhas do tempo dos fluxos principais.                                |
+| `docs/api/openapi/openapi.yaml`             | Contrato REST usado pela API e pela geração das interfaces.                                          |
+| `docs/testing/TESTING.md`                   | Estratégia de testes, cobertura e comandos de validação.                                             |
+| `docs/security/SECURITY_REPORT.md`          | Vulnerabilidades encontradas, scans executados, riscos aceitos e evidências consolidadas.            |
 | `docs/architecture/TECHNICAL_REFINEMENT.md` | Relação entre decisões técnicas, requisitos e implementação.                                         |
 
 ## 1. HLD: High-Level Design
@@ -115,7 +115,7 @@ flowchart LR
 | Backend monolítico              | Uma aplicação Spring Boot concentra o backend do MVP.                                              | Reduz complexidade e atende ao enunciado do Tech Challenge.                                             |
 | Arquitetura em camadas          | O projeto separa responsabilidades entre `interfaces`, `application`, `domain` e `infrastructure`. | Facilita manutenção, testes e separação entre API, casos de uso, regras de negócio e detalhes técnicos. |
 | Domínio com regras concentradas | `ServiceOrder`, `Part`, `Document`, `Plate` e `Money` concentram regras importantes do negócio.    | Evita espalhar regra de negócio em controllers, mappers ou repositories.                                |
-| OpenAPI como contrato           | `docs/api/openapi/openapi.yaml` documenta os endpoints REST.                                           | Mantém a API documentada e facilita validação pelo Swagger.                                             |
+| OpenAPI como contrato           | `docs/api/openapi/openapi.yaml` documenta os endpoints REST.                                       | Mantém a API documentada e facilita validação pelo Swagger.                                             |
 | PostgreSQL com Flyway           | O projeto usa banco relacional com migrations versionadas.                                         | O domínio possui relações importantes entre cliente, veículo, OS, itens e estoque.                      |
 | JWT e BCrypt                    | JWT protege APIs administrativas e BCrypt protege senhas.                                          | Atende aos requisitos de segurança do MVP.                                                              |
 | Docker Compose                  | Sobe backend, banco e frontend demonstrativo em ambiente local.                                    | Simplifica a execução e a avaliação do projeto.                                                         |
@@ -146,7 +146,7 @@ O backend está em `backend/src/main/java/br/com/autocarehub` e segue uma separa
 | Aplicação      | Orquestrar fluxos, validar existência de recursos e chamar domínio/repositories. | `CreateServiceOrderUseCase`, `GenerateServiceOrderBudgetUseCase`, `ApproveServiceOrderBudgetUseCase`. |
 | Domínio        | Proteger regras de negócio, valores, status, orçamento e estoque.                | `ServiceOrder`, `Part`, `Document`, `Plate`, `Money`.                                                 |
 | Infraestrutura | Implementar persistência, segurança, configuração e adaptadores técnicos.        | `ServiceOrderRepositoryAdapter`, `SecurityConfig`, `JwtAuthenticationFilter`.                         |
-| Contrato/API   | Descrever endpoints, schemas, status codes e segurança.                          | `docs/api/openapi/openapi.yaml`, Swagger UI.                                                              |
+| Contrato/API   | Descrever endpoints, schemas, status codes e segurança.                          | `docs/api/openapi/openapi.yaml`, Swagger UI.                                                          |
 
 Os controllers não concentram cálculo de orçamento, regra de estoque ou transição de status. Essas regras ficam nos
 casos de uso e nos agregados do domínio.
@@ -362,7 +362,7 @@ sequenceDiagram
 | Controlar estoque                                | `Part` e use cases de estoque/movimentação.                        | RF-008, RF-009, RF-012         |
 | Monitorar tempo médio                            | `GetAverageServiceOrderExecutionTimeUseCase`.                      | RF-020                         |
 | Proteger APIs                                    | `SecurityConfig`, `JwtAuthenticationFilter`, `JwtService`.         | RF-021, RNF-010                |
-| Executar localmente                              | Dockerfile, Compose e `.env.example`.                 | RNF-007, RNF-008, RNF-009      |
+| Executar localmente                              | Dockerfile, Compose e `.env.example`.                              | RNF-007, RNF-008, RNF-009      |
 | Documentar API                                   | OpenAPI e Swagger UI.                                              | RNF-003, RNF-004               |
 
 ## 6. Aderência ao código
