@@ -83,6 +83,8 @@ resource "kubernetes_secret" "autocarehub" {
 }
 
 resource "kubernetes_persistent_volume_claim" "postgres_data" {
+  wait_until_bound = false
+
   metadata {
     name      = var.postgres_pvc_name
     namespace = kubernetes_namespace.autocarehub.metadata[0].name

@@ -95,6 +95,10 @@ de considerar o deploy como real.
 O banco da Fase 2 e o PostgreSQL demonstrativo no Kubernetes local. O Terraform cria o PVC, as variaveis sensiveis, o
 Deployment e o Service do banco. As migrations Flyway rodam no startup do backend.
 
+O PVC usa `wait_until_bound = false` para evitar timeout em clusters locais, como `kind`, quando a StorageClass trabalha
+com binding tardio (`WaitForFirstConsumer`). Nesses casos, o volume so fica `Bound` depois que o Pod do PostgreSQL e
+agendado. A validacao real acontece no rollout do Deployment do PostgreSQL.
+
 ## Limitacoes
 
 | Status              | Item                                                                            |
