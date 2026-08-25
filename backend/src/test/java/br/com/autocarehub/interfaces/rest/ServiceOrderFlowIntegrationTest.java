@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 class ServiceOrderFlowIntegrationTest {
 
     private static final String EXTERNAL_SERVICE_TOKEN = "test-external-service-token";
+    private static final AtomicInteger UNIQUE_SEQUENCE = new AtomicInteger();
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,11 +37,11 @@ class ServiceOrderFlowIntegrationTest {
     void shouldExecuteServiceOrderFlow() throws Exception {
         String token = login();
         int completedOrdersBefore = getCompletedOrders(token);
-        UUID customerId = createCustomer(token);
-        UUID vehicleId = createVehicle(token, customerId);
+        CustomerFixture customer = createCustomer(token);
+        UUID vehicleId = createVehicle(token, customer.id());
         UUID partId = createPart(token);
         UUID serviceId = createWorkshopService(token);
-        UUID serviceOrderId = createServiceOrder(token, vehicleId, serviceId);
+        UUID serviceOrderId = createServiceOrder(token, customer.document(), vehicleId, serviceId);
 
         getServiceOrderStatus(token, serviceOrderId, "RECEIVED");
         trackServiceOrder(token, serviceOrderId, "RECEBIDA");
@@ -189,6 +191,39 @@ class ServiceOrderFlowIntegrationTest {
         org.assertj.core.api.Assertions.assertThat(priorities).isSorted();
     }
 
+    @Test
+    void shouldListOperationalQueueWithAllOptionalFiltersThroughApi() throws Exception {
+        String token = login();
+        CustomerFixture customer = createCustomer(token);
+        UUID vehicleId = createVehicle(token, customer.id());
+        UUID serviceId = createWorkshopService(token);
+        UUID serviceOrderId = createServiceOrder(token, customer.document(), vehicleId, serviceId);
+
+        String response = mockMvc.perform(get("/api/v1/service-orders")
+                        .param("page", "0")
+                        .param("size", "50")
+                        .param("status", "RECEIVED")
+                        .param("customerId", customer.id().toString())
+                        .param("vehicleId", vehicleId.toString())
+                        .param("createdFrom", "2000-01-01T00:00:00Z")
+                        .param("createdTo", "2999-12-31T23:59:59Z")
+                        .header("Authorization", bearer(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.items").isArray())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        JsonNode items = objectMapper.readTree(response).get("items");
+        org.assertj.core.api.Assertions.assertThat(items).isNotEmpty();
+        org.assertj.core.api.Assertions.assertThat(items.findValuesAsText("id")).contains(serviceOrderId.toString());
+        for (JsonNode item : items) {
+            org.assertj.core.api.Assertions.assertThat(item.get("status").asText()).isEqualTo("RECEIVED");
+            org.assertj.core.api.Assertions.assertThat(item.get("customerId").asText()).isEqualTo(customer.id().toString());
+            org.assertj.core.api.Assertions.assertThat(item.get("vehicleId").asText()).isEqualTo(vehicleId.toString());
+        }
+    }
+
     private String login() throws Exception {
         String response = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -201,19 +236,21 @@ class ServiceOrderFlowIntegrationTest {
         return objectMapper.readTree(response).get("accessToken").asText();
     }
 
-    private UUID createCustomer(String token) throws Exception {
+    private CustomerFixture createCustomer(String token) throws Exception {
+        int sequence = UNIQUE_SEQUENCE.getAndIncrement();
+        String document = validCpf(sequence);
         String response = mockMvc.perform(post("/api/v1/customers")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of(
                                 "name",
-                                "Maria Silva",
+                                "Maria Silva " + sequence,
                                 "document",
-                                "52998224725",
+                                document,
                                 "phone",
                                 "11999999999",
                                 "email",
-                                "maria@example.com",
+                                "maria.%s@example.com".formatted(sequence),
                                 "address",
                                 Map.of(
                                         "street", "Avenida Paulista",
@@ -227,10 +264,11 @@ class ServiceOrderFlowIntegrationTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        return uuid(response);
+        return new CustomerFixture(uuid(response), document);
     }
 
     private UUID createVehicle(String token, UUID customerId) throws Exception {
+        int sequence = UNIQUE_SEQUENCE.getAndIncrement();
         String response = mockMvc.perform(post("/api/v1/vehicles")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -238,7 +276,7 @@ class ServiceOrderFlowIntegrationTest {
                                 "customerId",
                                 customerId,
                                 "plate",
-                                "ABC1D23",
+                                "TST%dA%02d".formatted(sequence % 10, sequence % 100),
                                 "brand",
                                 "Honda",
                                 "model",
@@ -278,12 +316,13 @@ class ServiceOrderFlowIntegrationTest {
     }
 
     private UUID createWorkshopService(String token) throws Exception {
+        int sequence = UNIQUE_SEQUENCE.getAndIncrement();
         String response = mockMvc.perform(post("/api/v1/workshop-services")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of(
                                 "name",
-                                "Oil change",
+                                "Oil change " + sequence,
                                 "description",
                                 "Oil and filter replacement",
                                 "basePrice",
@@ -298,13 +337,13 @@ class ServiceOrderFlowIntegrationTest {
         return uuid(response);
     }
 
-    private UUID createServiceOrder(String token, UUID vehicleId, UUID serviceId) throws Exception {
+    private UUID createServiceOrder(String token, String customerDocument, UUID vehicleId, UUID serviceId) throws Exception {
         String response = mockMvc.perform(post("/api/v1/service-orders")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json(Map.of(
                                 "customerDocument",
-                                "52998224725",
+                                customerDocument,
                                 "vehicleId",
                                 vehicleId,
                                 "diagnosticNotes",
@@ -499,4 +538,22 @@ class ServiceOrderFlowIntegrationTest {
     private String bearer(String token) {
         return "Bearer " + token;
     }
+
+    private String validCpf(int sequence) {
+        String base = "%09d".formatted(900000000 + sequence);
+        int firstDigit = cpfDigit(base, 10);
+        int secondDigit = cpfDigit(base + firstDigit, 11);
+        return base + firstDigit + secondDigit;
+    }
+
+    private int cpfDigit(String value, int weight) {
+        int sum = 0;
+        for (int index = 0; index < value.length(); index++) {
+            sum += Character.getNumericValue(value.charAt(index)) * (weight - index);
+        }
+        int remainder = (sum * 10) % 11;
+        return remainder == 10 ? 0 : remainder;
+    }
+
+    private record CustomerFixture(UUID id, String document) {}
 }
