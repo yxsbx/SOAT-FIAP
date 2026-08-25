@@ -32,8 +32,9 @@ kubectl config use-context docker-desktop
 kubectl get nodes
 ```
 
-O caminho recomendado para deploy local e usar o script abaixo. Ele aplica os manifests em ordem, cria o Secret real a
-partir do `.env` local ou variaveis de ambiente e nao aplica `secret.example.yaml` com placeholders:
+O caminho recomendado para deploy local e usar o script abaixo. Ele constroi e tagueia as imagens locais esperadas pelos
+manifests (`autocarehub-api:local` e `autocarehub-web:local`), aplica os manifests em ordem, cria o Secret real a partir
+do `.env` local ou variaveis de ambiente e nao aplica `secret.example.yaml` com placeholders:
 
 ```powershell
 .\scripts\apply-k8s-local.ps1 -Wait

@@ -923,8 +923,9 @@ Deploy local recomendado:
 .\scripts\apply-k8s-local.ps1 -Wait
 ```
 
-O script aplica os arquivos na ordem correta, cria o Secret real a partir do `.env` ou de variáveis de ambiente locais e
-evita aplicar `k8s/secret.example.yaml` com placeholders.
+O script constrói e tagueia as imagens locais esperadas pelos manifests (`autocarehub-api:local` e
+`autocarehub-web:local`), aplica os arquivos na ordem correta, cria o Secret real a partir do `.env` ou de variáveis de
+ambiente locais e evita aplicar `k8s/secret.example.yaml` com placeholders.
 
 Comandos principais:
 

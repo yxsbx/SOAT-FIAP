@@ -2,6 +2,7 @@ param(
     [string]$Namespace = "autocarehub",
     [string]$EnvFile = ".env",
     [switch]$SkipSecret,
+    [switch]$SkipImageBuild,
     [switch]$Wait
 )
 
@@ -56,6 +57,15 @@ function Invoke-Kubectl {
     }
 }
 
+function Invoke-Docker {
+    param([string[]]$Arguments)
+
+    & docker @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "docker falhou com codigo $LASTEXITCODE."
+    }
+}
+
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $k8sDir = Join-Path $repoRoot "k8s"
 $envPath = Join-Path $repoRoot $EnvFile
@@ -74,6 +84,17 @@ Write-Host "Contexto Kubernetes atual: $context"
 & kubectl auth can-i get pods --namespace $Namespace *> $null
 if ($LASTEXITCODE -ne 0) {
     throw "O contexto '$context' nao esta autenticado ou nao tem permissao. Verifique o cluster com: kubectl config get-contexts"
+}
+
+if (-not $SkipImageBuild) {
+    if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+        throw "docker nao encontrado no PATH. Use -SkipImageBuild somente se as imagens locais ja existirem no cluster."
+    }
+
+    Write-Host "Construindo imagens locais usadas pelos manifests Kubernetes..."
+    Invoke-Docker @("compose", "--env-file", $EnvFile, "-f", (Join-Path $repoRoot "docker-compose.yml"), "build", "app", "frontend")
+    Invoke-Docker @("tag", "soat-fiap-app:latest", "autocarehub-api:local")
+    Invoke-Docker @("tag", "soat-fiap-frontend:latest", "autocarehub-web:local")
 }
 
 $envValues = Read-EnvFile $envPath
@@ -118,6 +139,12 @@ $manifestFiles = @(
 
 foreach ($file in $manifestFiles) {
     Invoke-Kubectl @("apply", "-f", (Join-Path $k8sDir $file))
+}
+
+if (-not $SkipImageBuild) {
+    Write-Host "Reiniciando workloads da aplicacao para usar as imagens locais atualizadas..."
+    Invoke-Kubectl @("rollout", "restart", "-n", $Namespace, "deploy/autocarehub-api")
+    Invoke-Kubectl @("rollout", "restart", "-n", $Namespace, "deploy/autocarehub-web")
 }
 
 if ($Wait) {
