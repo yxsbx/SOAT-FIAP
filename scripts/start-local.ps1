@@ -21,22 +21,6 @@ function Invoke-Compose {
     }
 }
 
-function Remove-ProjectContainer {
-    param([string]$Name)
-
-    $containerId = docker ps -aq --filter "name=^/$Name$"
-    if ($LASTEXITCODE -ne 0) {
-        throw "Não foi possível consultar o container $Name."
-    }
-
-    if ($containerId) {
-        docker rm -f $containerId | Out-Null
-        if ($LASTEXITCODE -ne 0) {
-            throw "Não foi possível remover o container $Name."
-        }
-    }
-}
-
 if (-not (Test-Path $envFile)) {
     if (-not (Test-Path $envExample)) {
         throw "Arquivo de exemplo não encontrado: $envExample"
@@ -47,9 +31,8 @@ if (-not (Test-Path $envFile)) {
 }
 
 if ($Reset) {
-    Remove-ProjectContainer "autocarehub-postgres"
-    Remove-ProjectContainer "autocarehub-api"
-    Remove-ProjectContainer "autocarehub-web"
+    Write-Host "Reset solicitado: containers, rede e volume local do PostgreSQL serão recriados."
+    Invoke-Compose @("--env-file", $envFile, "-f", $composeFile, "down", "--volumes", "--remove-orphans")
 }
 
 $composeArgs = @(
