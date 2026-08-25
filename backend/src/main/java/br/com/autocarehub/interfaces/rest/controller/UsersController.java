@@ -114,6 +114,10 @@ public class UsersController {
                 user.active());
     }
 
+    private static List<String> permissionsOrEmpty(@Nullable List<String> permissions) {
+        return permissions == null ? List.of() : permissions;
+    }
+
     private static CompanyResponse toCompanyResponse(Company company) {
         return new CompanyResponse(company.id(), company.name(), company.type(), company.active());
     }
@@ -221,7 +225,7 @@ public class UsersController {
                 request.companyType(),
                 Boolean.TRUE.equals(request.createCompany()),
                 request.employeeSubRole(),
-                request.permissions(),
+                permissionsOrEmpty(request.permissions()),
                 request.active()));
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
     }
@@ -245,7 +249,7 @@ public class UsersController {
                 request.companyType(),
                 Boolean.TRUE.equals(request.createCompany()),
                 request.employeeSubRole(),
-                request.permissions(),
+                permissionsOrEmpty(request.permissions()),
                 request.active()));
         return ResponseEntity.ok(toResponse(user));
     }
