@@ -627,6 +627,38 @@ curl -X POST "http://localhost:8080/api/v1/service-orders/$SERVICE_ORDER_ID/budg
   -d '{"source":"email","reason":"Cliente aprovou pelo webhook."}'
 ```
 
+No PowerShell, usando os valores locais do `.env`:
+
+```powershell
+$login = Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8080/api/v1/auth/login" `
+  -ContentType "application/json" `
+  -Body '{"username":"admin@autocarehub.com","password":"autocare123"}'
+
+$token = $login.accessToken
+$externalServiceToken = "replace-with-local-external-service-token"
+
+$createdOrder = Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8080/api/v1/service-orders" `
+  -Headers @{ Authorization = "Bearer $token" } `
+  -ContentType "application/json" `
+  -Body '{
+    "customerDocument": "12345678909",
+    "vehicleId": "20000000-0000-0000-0000-000000000001",
+    "diagnosticNotes": "OS para demonstrar aprovação externa por email.",
+    "services": [
+      { "serviceId": "30000000-0000-0000-0000-000000000004", "quantity": 1 }
+    ],
+    "generateBudget": true
+  }'
+
+Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8080/api/v1/service-orders/$($createdOrder.id)/budget/external-approval" `
+  -Headers @{ "X-External-Service-Token" = $externalServiceToken } `
+  -ContentType "application/json" `
+  -Body '{"source":"email","reason":"Cliente aprovou o orçamento pelo link enviado."}'
+```
+
 O endpoint legado `/api/v1/service-orders/{serviceOrderId}/budget/decision` permanece disponível por compatibilidade,
 recebendo `decision` como `APPROVED` ou `REJECTED` e exigindo o mesmo header externo.
 
@@ -756,6 +788,39 @@ Documentação complementar de testes:
 - [docs/testing/TESTING.md](docs/testing/TESTING.md)
 - [docs/testing/STATIC_ANALYSIS.md](docs/testing/STATIC_ANALYSIS.md)
 
+## Simulação de carga
+
+O script [scripts/load-test-service-orders.ps1](scripts/load-test-service-orders.ps1) cria várias Ordens de Serviço em
+paralelo para demonstrar volume de requisições e apoiar a gravação da escalabilidade automática.
+
+Com a API local ativa em Docker Compose ou via `kubectl port-forward`:
+
+```powershell
+.\scripts\load-test-service-orders.ps1 -Requests 100 -Concurrency 10
+```
+
+Para gerar orçamento automaticamente em cada OS criada:
+
+```powershell
+.\scripts\load-test-service-orders.ps1 -Requests 100 -Concurrency 10 -GenerateBudget
+```
+
+Parâmetros úteis:
+
+| Parâmetro      | Uso                                                                    |
+|----------------|------------------------------------------------------------------------|
+| `BaseUrl`      | URL da API. Padrão: `http://localhost:8080`.                           |
+| `Requests`     | Total de requisições de criação de OS.                                 |
+| `Concurrency`  | Quantidade de requisições simultâneas por lote.                        |
+| `GenerateBudget` | Cria OS já com orçamento gerado, deixando o status em aprovação.     |
+
+Durante a demonstração em Kubernetes, rode em outro terminal:
+
+```powershell
+kubectl get hpa -n autocarehub --watch
+kubectl get deploy -n autocarehub
+```
+
 Última validação registrada após as correções da Fase 2:
 
 - `mvn clean test`: passou com 146 testes, 0 falhas, 0 erros e 0 ignorados pelo Maven Surefire.
@@ -843,25 +908,32 @@ Manifestos principais:
 Antes de aplicar, crie um Secret real a partir de valores seguros do ambiente local ou deixe a pipeline gerar esse
 recurso com variáveis temporárias de CI. Não versione secrets reais.
 
-Validação local dos manifests:
+Se o `kubectl` retornar `the server has asked for the client to provide credentials`, o problema é o contexto
+Kubernetes sem autenticação válida. No Docker Desktop, habilite Kubernetes e selecione o contexto local:
 
 ```bash
-kubectl apply --dry-run=client -f k8s/
+kubectl config get-contexts
+kubectl config use-context docker-desktop
+kubectl get nodes
 ```
 
-Na última validação local, esse dry-run não concluiu porque não havia cluster Kubernetes ativo/configurado; o `kubectl`
-tentou acessar `http://localhost:8080` e a conexão foi recusada. Não foi identificado erro nos manifests a partir dessa
-falha de ambiente.
+Deploy local recomendado:
+
+```bash
+.\scripts\apply-k8s-local.ps1 -Wait
+```
+
+O script aplica os arquivos na ordem correta, cria o Secret real a partir do `.env` ou de variáveis de ambiente locais e
+evita aplicar `k8s/secret.example.yaml` com placeholders.
 
 Comandos principais:
 
 ```bash
-kubectl apply -f k8s/
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 kubectl logs -n autocarehub deploy/autocarehub-api
-kubectl delete -f k8s/
+kubectl delete namespace autocarehub
 ```
 
 Acesso local para demonstração:

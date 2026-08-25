@@ -78,17 +78,24 @@ kubectl apply -f k8s/frontend-service.yaml
 kubectl apply -f k8s/frontend-hpa.yaml
 ```
 
-Se preferir não usar Terraform, aplique o pacote completo:
+Se preferir não usar Terraform, use o script local. Ele valida o contexto do `kubectl`, cria o Secret a partir do `.env`
+ou de variaveis de ambiente e aplica os manifests na ordem correta:
 
 ```powershell
-kubectl apply -f k8s/
+.\scripts\apply-k8s-local.ps1 -Wait
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
 
-Nesse modo completo, `k8s/secret.example.yaml` cria apenas placeholders. Substitua por secrets reais no ambiente antes
-de considerar o deploy como real.
+Se aparecer `the server has asked for the client to provide credentials`, o problema e o contexto Kubernetes local sem
+login ou com credencial expirada. No Docker Desktop, habilite Kubernetes e rode:
+
+```powershell
+kubectl config get-contexts
+kubectl config use-context docker-desktop
+kubectl get nodes
+```
 
 ## Banco De Dados
 

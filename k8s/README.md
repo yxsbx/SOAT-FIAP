@@ -17,15 +17,33 @@ Manifestos da Fase 2 para deploy local ou academico do AutoCare Hub em Kubernete
 
 ## Aplicação
 
-Antes de aplicar, substitua os placeholders em `secret.example.yaml` por valores reais seguros no ambiente de execucao.
-Nao versione secrets reais.
+Antes de aplicar, confirme que o `kubectl` esta autenticado em um cluster local, como Docker Desktop, kind ou minikube.
+O erro abaixo indica problema de contexto/credencial do Kubernetes, nao erro de YAML:
+
+```text
+the server has asked for the client to provide credentials
+```
+
+No Docker Desktop, habilite Kubernetes nas configuracoes e selecione o contexto:
 
 ```powershell
-kubectl apply -f k8s/
+kubectl config get-contexts
+kubectl config use-context docker-desktop
+kubectl get nodes
+```
+
+O caminho recomendado para deploy local e usar o script abaixo. Ele aplica os manifests em ordem, cria o Secret real a
+partir do `.env` local ou variaveis de ambiente e nao aplica `secret.example.yaml` com placeholders:
+
+```powershell
+.\scripts\apply-k8s-local.ps1 -Wait
 kubectl get pods -n autocarehub
 kubectl get svc -n autocarehub
 kubectl get hpa -n autocarehub
 ```
+
+Se quiser aplicar manualmente, substitua os placeholders em `secret.example.yaml` por valores reais seguros no ambiente
+de execucao, ou crie o Secret com `kubectl create secret generic`. Nao versione secrets reais.
 
 Para acesso local:
 
@@ -37,7 +55,16 @@ kubectl port-forward -n autocarehub svc/autocarehub-web 5173:8080
 Para validar os manifestos sem criar recursos:
 
 ```powershell
-kubectl apply --dry-run=client -f k8s/
+kubectl apply --dry-run=client -f k8s/namespace.yaml
+kubectl apply --dry-run=client -f k8s/configmap.yaml
+kubectl apply --dry-run=client -f k8s/postgres-service.yaml
+kubectl apply --dry-run=client -f k8s/postgres-deployment.yaml
+kubectl apply --dry-run=client -f k8s/backend-service.yaml
+kubectl apply --dry-run=client -f k8s/backend-deployment.yaml
+kubectl apply --dry-run=client -f k8s/backend-hpa.yaml
+kubectl apply --dry-run=client -f k8s/frontend-service.yaml
+kubectl apply --dry-run=client -f k8s/frontend-deployment.yaml
+kubectl apply --dry-run=client -f k8s/frontend-hpa.yaml
 ```
 
 O PostgreSQL aqui e demonstrativo para avaliação academica. Em producao, avaliar banco gerenciado, backup, replicação e
