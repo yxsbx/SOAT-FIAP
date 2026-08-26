@@ -35,5 +35,4 @@ public interface ServiceOrderJpaRepository
                       and serviceOrder.finishedAt is not null
                     """)
     List<ServiceOrderJpaEntity> findCompletedWithExecutionTime();
-
 }

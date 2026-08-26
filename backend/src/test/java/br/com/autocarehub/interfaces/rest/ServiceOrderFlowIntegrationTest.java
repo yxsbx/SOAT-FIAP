@@ -218,9 +218,12 @@ class ServiceOrderFlowIntegrationTest {
         org.assertj.core.api.Assertions.assertThat(items).isNotEmpty();
         org.assertj.core.api.Assertions.assertThat(items.findValuesAsText("id")).contains(serviceOrderId.toString());
         for (JsonNode item : items) {
-            org.assertj.core.api.Assertions.assertThat(item.get("status").asText()).isEqualTo("RECEIVED");
-            org.assertj.core.api.Assertions.assertThat(item.get("customerId").asText()).isEqualTo(customer.id().toString());
-            org.assertj.core.api.Assertions.assertThat(item.get("vehicleId").asText()).isEqualTo(vehicleId.toString());
+            org.assertj.core.api.Assertions.assertThat(item.get("status").asText())
+                    .isEqualTo("RECEIVED");
+            org.assertj.core.api.Assertions.assertThat(item.get("customerId").asText())
+                    .isEqualTo(customer.id().toString());
+            org.assertj.core.api.Assertions.assertThat(item.get("vehicleId").asText())
+                    .isEqualTo(vehicleId.toString());
         }
     }
 
@@ -337,7 +340,8 @@ class ServiceOrderFlowIntegrationTest {
         return uuid(response);
     }
 
-    private UUID createServiceOrder(String token, String customerDocument, UUID vehicleId, UUID serviceId) throws Exception {
+    private UUID createServiceOrder(String token, String customerDocument, UUID vehicleId, UUID serviceId)
+            throws Exception {
         String response = mockMvc.perform(post("/api/v1/service-orders")
                         .header("Authorization", bearer(token))
                         .contentType(MediaType.APPLICATION_JSON)

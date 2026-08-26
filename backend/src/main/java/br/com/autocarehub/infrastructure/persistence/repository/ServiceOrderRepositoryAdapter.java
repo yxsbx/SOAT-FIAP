@@ -79,11 +79,7 @@ public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
     }
 
     private static Specification<ServiceOrderJpaEntity> operationalQueueSpec(
-            String statusCode,
-            UUID customerId,
-            UUID vehicleId,
-            LocalDateTime createdFrom,
-            LocalDateTime createdTo) {
+            String statusCode, UUID customerId, UUID vehicleId, LocalDateTime createdFrom, LocalDateTime createdTo) {
         return (root, query, criteriaBuilder) -> {
             boolean countQuery = Long.class.equals(query.getResultType()) || long.class.equals(query.getResultType());
             if (!countQuery) {
