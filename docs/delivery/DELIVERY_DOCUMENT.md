@@ -45,7 +45,7 @@ A documentação oficial da entrega está versionada no próprio repositório, n
 | Item                   | Link                                                          |
 |------------------------|---------------------------------------------------------------|
 | Desenho da arquitetura | `docs/architecture/PHASE2_ARCHITECTURE.md`                    |
-| Vídeo demonstrativo    | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA]                      |
+| Vídeo demonstrativo    | [https://youtu.be/DXzse67yQqs]                                |
 | PDF final no portal    | `docs/delivery/DELIVERY_DOCUMENT.pdf`                         |
 | Collection Postman     | `docs/api/postman/autocarehub-phase2.postman_collection.json` |
 
@@ -174,4 +174,4 @@ mitigação documentada.
 
 Para a Fase 2, a entrega passa a demonstrar arquitetura evoluída, automação, infraestrutura como código, Kubernetes,
 HPA, CI/CD e documentação de apoio. Permanecem como dados externos a confirmar antes do envio final: link do vídeo
-`[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]` e PDF final exportado após preencher esse link. O acesso do usuário `soat-architecture` foi confirmado.
+`[https://youtu.be/DXzse67yQqs]` e PDF final exportado após preencher esse link. O acesso do usuário `soat-architecture` foi confirmado.

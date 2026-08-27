@@ -2,14 +2,14 @@
 
 ## Identificação
 
-| Campo                      | Valor                                               |
-|----------------------------|-----------------------------------------------------|
-| Projeto                    | AutoCare Hub                                        |
-| Responsável                | Yasmin Barcelos Pires                               |
-| RM                         | RM370897                                            |
-| Repositório                | <https://github.com/yxsbx/SOAT-FIAP>                |
-| Acesso `soat-architecture` | Confirmado no GitHub                                |
-| Vídeo demonstrativo        | [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA] |
+| Campo                      | Valor                                |
+|----------------------------|--------------------------------------|
+| Projeto                    | AutoCare Hub                         |
+| Responsável                | Yasmin Barcelos Pires                |
+| RM                         | RM370897                             |
+| Repositório                | <https://github.com/yxsbx/SOAT-FIAP> |
+| Acesso `soat-architecture` | Confirmado no GitHub                 |
+| Vídeo demonstrativo        | [https://youtu.be/DXzse67yQqs]       |
 
 ## Arquitetura
 

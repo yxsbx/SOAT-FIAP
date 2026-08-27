@@ -1092,7 +1092,7 @@ Docker Compose, validação do Terraform e deploy Kubernetes local em `kind`.
 | Frontend demonstrativo       | [frontend/README.md](frontend/README.md)                                                                                   |
 | Desenho da arquitetura       | [docs/architecture/PHASE2_ARCHITECTURE.md](docs/architecture/PHASE2_ARCHITECTURE.md)                                       |
 | Roteiro do vídeo             | [docs/delivery/PHASE2_VIDEO_SCRIPT.md](docs/delivery/PHASE2_VIDEO_SCRIPT.md)                                               |
-| Vídeo                        | [INSERIR LINK DO VÍDEO ANTES DA ENTREGA]                                                                                   |
+| Vídeo                        | [https://youtu.be/DXzse67yQqs]                                                                                             |
 
 Artefatos técnicos principais:
 
@@ -1113,7 +1113,7 @@ Artefatos técnicos principais:
 
 ## Vídeo demonstrativo
 
-Link do vídeo: [INSERIR LINK DO YOUTUBE OU VIMEO ANTES DA ENTREGA]
+Link do vídeo: [https://youtu.be/DXzse67yQqs]
 
 O vídeo deve ser publicado no YouTube ou Vimeo, em modo público ou não listado, com duração máxima de 15 minutos.
 
@@ -1144,7 +1144,7 @@ Checklist de preparação:
 - [x] README atualizado como documento principal.
 - [x] Swagger/OpenAPI disponível em [docs/api/openapi/openapi.yaml](docs/api/openapi/openapi.yaml).
 - [x] Collection da API adicionada ou linkada.
-- [ ] Vídeo de até 15 minutos publicado e link preenchido: `[INSERIR LINK DO VÍDEO ANTES DA ENTREGA]`.
+- [ ] Vídeo de até 15 minutos publicado e link preenchido: `[https://youtu.be/DXzse67yQqs]`.
 - [ ] PDF final regenerado após preencher o link real do vídeo.
 - [x] Acesso ao usuário `soat-architecture` confirmado no GitHub antes do envio.
 
