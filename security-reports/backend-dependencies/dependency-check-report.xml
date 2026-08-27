@@ -2022,7 +2022,7 @@
                     <name>bundle-developers</name>
                     <value>joel-costigliola;email=&quot;joel.costigliola at gmail.com&quot;;name=&quot;Joel Costigliola&quot;;roles=&quot;Owner,Developer&quot;,scordio;name=&quot;Stefano
                         Cordio&quot;;roles=Developer,PascalSchumacher;name=&quot;Pascal Schumacher&quot;;roles=Developer,epeee;name=&quot;Erhard
-                        Pointl&quot;;roles=Developer,croesch;name=&quot;Christian Rösch&quot;;roles=Developer,VanRoy;name=&quot;Julien
+                        Pointl&quot;;roles=Developer,crõesch;name=&quot;Christian Rösch&quot;;roles=Developer,VanRoy;name=&quot;Julien
                         Roy&quot;;roles=Developer,regis1512;name=&quot;Régis Pouiller&quot;;roles=Developer,fbiville;name=&quot;Florent
                         Biville&quot;;roles=Developer,Patouche;name=&quot;Patrick Allain&quot;;roles=Developer
                     </value>
@@ -2060,7 +2060,7 @@
                 <evidence type="vendor" confidence="MEDIUM">
                     <source>pom</source>
                     <name>developer id</name>
-                    <value>croesch</value>
+                    <value>crõesch</value>
                 </evidence>
                 <evidence type="vendor" confidence="MEDIUM">
                     <source>pom</source>
@@ -2187,7 +2187,7 @@
                     <name>bundle-developers</name>
                     <value>joel-costigliola;email=&quot;joel.costigliola at gmail.com&quot;;name=&quot;Joel Costigliola&quot;;roles=&quot;Owner,Developer&quot;,scordio;name=&quot;Stefano
                         Cordio&quot;;roles=Developer,PascalSchumacher;name=&quot;Pascal Schumacher&quot;;roles=Developer,epeee;name=&quot;Erhard
-                        Pointl&quot;;roles=Developer,croesch;name=&quot;Christian Rösch&quot;;roles=Developer,VanRoy;name=&quot;Julien
+                        Pointl&quot;;roles=Developer,crõesch;name=&quot;Christian Rösch&quot;;roles=Developer,VanRoy;name=&quot;Julien
                         Roy&quot;;roles=Developer,regis1512;name=&quot;Régis Pouiller&quot;;roles=Developer,fbiville;name=&quot;Florent
                         Biville&quot;;roles=Developer,Patouche;name=&quot;Patrick Allain&quot;;roles=Developer
                     </value>
@@ -2225,7 +2225,7 @@
                 <evidence type="product" confidence="LOW">
                     <source>pom</source>
                     <name>developer id</name>
-                    <value>croesch</value>
+                    <value>crõesch</value>
                 </evidence>
                 <evidence type="product" confidence="LOW">
                     <source>pom</source>

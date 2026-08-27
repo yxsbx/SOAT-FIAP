@@ -1,0 +1,16 @@
+kubeconfig_path    = "~/.kube/config"
+kubeconfig_context = null
+
+create_kind_cluster = false
+kind_cluster_name   = "autocarehub"
+
+namespace = "autocarehub"
+
+postgres_db       = "autocarehub"
+postgres_user     = "autocarehub"
+postgres_password = "replace-with-safe-local-postgres-password"
+
+jwt_secret             = "replace-with-safe-local-jwt-secret-at-least-32-bytes"
+external_service_token = "replace-with-safe-local-external-service-token"
+
+cors_allowed_origins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080"

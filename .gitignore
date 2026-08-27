@@ -65,8 +65,31 @@ desktop.ini
 .env
 .env.*
 !.env.example
+.envrc
 *.local
 .m2-test/
+
+# Local keys, certificates and kubeconfig files
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+
+# Terraform local state and secrets
+**/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+terraform.tfvars
+terraform.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+*.tfplan
 
 # Build output
 build/

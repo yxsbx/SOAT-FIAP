@@ -12,7 +12,10 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:mainline-alpine-slim@sha256:8f92ff79b9e9039b1ec2e363a04ce89c95c30e3d0be545bf6263024f5c21a2a8
 
+USER root
+RUN rm -f /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
+USER nginx
 
 EXPOSE 8080

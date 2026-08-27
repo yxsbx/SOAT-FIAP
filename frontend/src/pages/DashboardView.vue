@@ -395,11 +395,6 @@ const forms = reactive({
     currentPassword: '',
     newPassword: '',
   },
-  order: {
-    customerDocument: '',
-    vehicleId: '',
-    diagnosticNotes: '',
-  },
   orderWizard: {
     scenario: 'existing-customer-vehicle',
     step: 0,
@@ -434,10 +429,6 @@ const forms = reactive({
       year: new Date().getFullYear(),
       mileage: 0,
     },
-  },
-  stock: {
-    partId: '',
-    stockQuantity: 0,
   },
   orderAction: {
     serviceOrderId: '',
@@ -3042,23 +3033,6 @@ function openCreateServiceModal() {
   serviceModalOpen.value = true;
 }
 
-function createOrder() {
-  return runAction(async () => {
-    await resources.createServiceOrder(forms.order);
-    forms.order.customerDocument = '';
-    forms.order.vehicleId = '';
-    forms.order.diagnosticNotes = '';
-  }, 'Ordem de serviço criada.');
-}
-
-function updateStock() {
-  return runAction(async () => {
-    await resources.updatePartStock(forms.stock.partId, forms.stock.stockQuantity);
-    forms.stock.partId = '';
-    forms.stock.stockQuantity = 0;
-  }, 'Estoque atualizado.');
-}
-
 function updateOrderStatus() {
   return runAction(async () => {
     await resources.updateOrderStatus(forms.orderAction.serviceOrderId, forms.orderAction.status);
@@ -3346,35 +3320,6 @@ async function saveDetailModal() {
   }
 }
 
-async function editCustomer(customer) {
-  let customerDetail = customer;
-  try {
-    customerDetail = await resources.customer(customer.id);
-  } catch (err) {
-    showError(err.message || 'Não foi possível carregar os dados completos do cliente.');
-  }
-  Object.assign(forms.customer, {
-    ...customerDetail,
-    address: {...(customerDetail.address || forms.customer.address)},
-    active: customerDetail.active !== false,
-  });
-  selectTab('customers');
-}
-
-function editVehicle(vehicle) {
-  Object.assign(forms.vehicle, {
-    id: vehicle.id,
-    customerId: vehicle.customerId,
-    plate: vehicle.plate,
-    brand: vehicle.brand,
-    model: vehicle.model,
-    year: vehicle.year,
-    mileage: vehicle.mileage,
-    active: vehicle.active !== false,
-  });
-  selectTab('vehicles');
-}
-
 function editService(service) {
   Object.assign(forms.service, {
     id: service.id,
@@ -3610,15 +3555,6 @@ function saveUser() {
     }
     closeUserModal();
   }, successMessage);
-}
-
-function saveStoreEmployee() {
-  forms.user.role = 'EMPLOYEE';
-  forms.user.profileType = 'PARTS_STORE_EMPLOYEE';
-  if (!forms.user.id && forms.user.permissions.includes('CREATE_ORDER')) {
-    forms.user.permissions = ['MANAGE_STOCK', 'CREATE_BUDGET', 'VIEW_STATS'];
-  }
-  return saveUser();
 }
 
 function saveAccount() {
@@ -6187,19 +6123,26 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="forms.vehicle.plate" placeholder="ABC1D23" required />
+              <input v-model="forms.vehicle.plate" :disabled="Boolean(forms.vehicle.id)" placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="forms.vehicle.brand" placeholder="Marca" required />
+              <input v-model="forms.vehicle.brand" :disabled="Boolean(forms.vehicle.id)" placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="forms.vehicle.model" placeholder="Modelo" required />
+              <input v-model="forms.vehicle.model" :disabled="Boolean(forms.vehicle.id)" placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="forms.vehicle.year" min="1900" placeholder="Ano" required type="number" />
+              <input
+                v-model.number="forms.vehicle.year"
+                :disabled="Boolean(forms.vehicle.id)"
+                min="1900"
+                placeholder="Ano"
+                required
+                type="number"
+              />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>
@@ -6588,19 +6531,19 @@ onMounted(async () => {
             </label>
             <label class="form-field">
               <span>Placa</span>
-              <input v-model="modalDraft.vehicle.plate" placeholder="ABC1D23" required />
+              <input v-model="modalDraft.vehicle.plate" disabled placeholder="ABC1D23" required />
             </label>
             <label class="form-field">
               <span>Marca</span>
-              <input v-model="modalDraft.vehicle.brand" placeholder="Marca" required />
+              <input v-model="modalDraft.vehicle.brand" disabled placeholder="Marca" required />
             </label>
             <label class="form-field">
               <span>Modelo</span>
-              <input v-model="modalDraft.vehicle.model" placeholder="Modelo" required />
+              <input v-model="modalDraft.vehicle.model" disabled placeholder="Modelo" required />
             </label>
             <label class="form-field">
               <span>Ano</span>
-              <input v-model.number="modalDraft.vehicle.year" min="1900" required type="number" />
+              <input v-model.number="modalDraft.vehicle.year" disabled min="1900" required type="number" />
             </label>
             <label class="form-field">
               <span>Quilometragem</span>

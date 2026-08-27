@@ -12,7 +12,7 @@ experiência real para pessoas e empresas.
 Na raiz do repositório:
 
 ```powershell
-docker compose up -d --build
+.\scripts\start-local.ps1 -Rebuild -Reset
 ```
 
 Abra `http://localhost:5173`. O container Nginx encaminha `/api` para o backend, portanto o frontend

@@ -2797,7 +2797,7 @@
             "confidence": "LOW",
             "source": "Manifest",
             "name": "bundle-developers",
-            "value": "joel-costigliola;email=\"joel.costigliola at gmail.com\";name=\"Joel Costigliola\";roles=\"Owner,Developer\",scordio;name=\"Stefano Cordio\";roles=Developer,PascalSchumacher;name=\"Pascal Schumacher\";roles=Developer,epeee;name=\"Erhard Pointl\";roles=Developer,croesch;name=\"Christian R\u00F6sch\";roles=Developer,VanRoy;name=\"Julien Roy\";roles=Developer,regis1512;name=\"R\u00E9gis Pouiller\";roles=Developer,fbiville;name=\"Florent Biville\";roles=Developer,Patouche;name=\"Patrick Allain\";roles=Developer"
+            "value": "joel-costigliola;email=\"joel.costigliola at gmail.com\";name=\"Joel Costigliola\";roles=\"Owner,Developer\",scordio;name=\"Stefano Cordio\";roles=Developer,PascalSchumacher;name=\"Pascal Schumacher\";roles=Developer,epeee;name=\"Erhard Pointl\";roles=Developer,crõesch;name=\"Christian R\u00F6sch\";roles=Developer,VanRoy;name=\"Julien Roy\";roles=Developer,regis1512;name=\"R\u00E9gis Pouiller\";roles=Developer,fbiville;name=\"Florent Biville\";roles=Developer,Patouche;name=\"Patrick Allain\";roles=Developer"
           },
           {
             "type": "vendor",
@@ -2846,7 +2846,7 @@
             "confidence": "MEDIUM",
             "source": "pom",
             "name": "developer id",
-            "value": "croesch"
+            "value": "crõesch"
           },
           {
             "type": "vendor",
@@ -3023,7 +3023,7 @@
             "confidence": "LOW",
             "source": "Manifest",
             "name": "bundle-developers",
-            "value": "joel-costigliola;email=\"joel.costigliola at gmail.com\";name=\"Joel Costigliola\";roles=\"Owner,Developer\",scordio;name=\"Stefano Cordio\";roles=Developer,PascalSchumacher;name=\"Pascal Schumacher\";roles=Developer,epeee;name=\"Erhard Pointl\";roles=Developer,croesch;name=\"Christian R\u00F6sch\";roles=Developer,VanRoy;name=\"Julien Roy\";roles=Developer,regis1512;name=\"R\u00E9gis Pouiller\";roles=Developer,fbiville;name=\"Florent Biville\";roles=Developer,Patouche;name=\"Patrick Allain\";roles=Developer"
+            "value": "joel-costigliola;email=\"joel.costigliola at gmail.com\";name=\"Joel Costigliola\";roles=\"Owner,Developer\",scordio;name=\"Stefano Cordio\";roles=Developer,PascalSchumacher;name=\"Pascal Schumacher\";roles=Developer,epeee;name=\"Erhard Pointl\";roles=Developer,crõesch;name=\"Christian R\u00F6sch\";roles=Developer,VanRoy;name=\"Julien Roy\";roles=Developer,regis1512;name=\"R\u00E9gis Pouiller\";roles=Developer,fbiville;name=\"Florent Biville\";roles=Developer,Patouche;name=\"Patrick Allain\";roles=Developer"
           },
           {
             "type": "product",
@@ -3072,7 +3072,7 @@
             "confidence": "LOW",
             "source": "pom",
             "name": "developer id",
-            "value": "croesch"
+            "value": "crõesch"
           },
           {
             "type": "product",

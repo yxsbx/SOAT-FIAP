@@ -2368,7 +2368,7 @@
           "riskcode": "0",
           "confidence": "2",
           "riskdesc": "Informational (Medium)",
-          "desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response does not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
+          "desc": "<p>The response contents are not storable by caching components such as proxy servers. If the response dões not contain sensitive, personal or user-specific information, it may benefit from being stored and cached, to improve performance.</p>",
           "instances": [
             {
               "id": "66",
