@@ -88,6 +88,12 @@ public class RestExceptionHandler {
         return error(HttpStatus.NOT_FOUND, "Resource not found", List.of(), request);
     }
 
+    @ExceptionHandler(org.springframework.dao.ConcurrencyFailureException.class)
+    public ResponseEntity<ErrorResponse> handleConcurrentUpdate(
+            org.springframework.dao.ConcurrencyFailureException exception, HttpServletRequest request) {
+        return error(HttpStatus.CONFLICT, "Concurrent update; retry the request", List.of(), request);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(Exception exception, HttpServletRequest request) {
         LOGGER.error("Unexpected API error at {}", request.getRequestURI(), exception);

@@ -23,6 +23,11 @@ jobs:
           java-version: "21"
           cache: maven
 
+      - name: Validate HPA metrics and resource requests
+        run: |
+          npm install --prefix "$RUNNER_TEMP/hpa-validation" js-yaml@4.3.1
+          NODE_PATH="$RUNNER_TEMP/hpa-validation/node_modules" node scripts/validate-hpa.cjs k8s
+
       - name: Backend unit tests
         working-directory: backend
         run: mvn -B test
@@ -101,6 +106,14 @@ jobs:
           cluster_name: autocarehub-ci
           wait: 120s
 
+      - name: Install Metrics Server for kind
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml
+          # Self-signed kubelet certificates are specific to this disposable kind cluster.
+          kubectl patch deployment metrics-server -n kube-system --type=json -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+          kubectl rollout status deployment/metrics-server -n kube-system --timeout=180s
+          kubectl wait apiservice/v1beta1.metrics.k8s.io --for=condition=Available --timeout=180s
+
       - name: Build backend image for local cluster
         run: docker build -f Dockerfile -t autocarehub-api:local .
 
@@ -134,3 +147,8 @@ jobs:
           kubectl get pods -n autocarehub
           kubectl get svc -n autocarehub
           kubectl get hpa -n autocarehub
+
+      - name: Verify HPA receives live resource metrics
+        run: |
+          kubectl wait hpa/autocarehub-api hpa/autocarehub-web -n autocarehub --for=condition=ScalingActive --timeout=300s
+          kubectl top pods -n autocarehub

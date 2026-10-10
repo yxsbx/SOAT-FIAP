@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Repository
 public class PartRepositoryAdapter implements PartRepository {
@@ -24,7 +25,11 @@ public class PartRepositoryAdapter implements PartRepository {
 
     @Override
     public Optional<Part> findById(UUID id) {
-        return partJpaRepository.findById(id).map(PartJpaMapper::toDomain);
+        return (TransactionSynchronizationManager.isActualTransactionActive()
+                                && !TransactionSynchronizationManager.isCurrentTransactionReadOnly()
+                        ? partJpaRepository.findByIdForUpdate(id)
+                        : partJpaRepository.findById(id))
+                .map(PartJpaMapper::toDomain);
     }
 
     @Override

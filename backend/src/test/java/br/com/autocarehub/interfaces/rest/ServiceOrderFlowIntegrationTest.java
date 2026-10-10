@@ -34,6 +34,23 @@ class ServiceOrderFlowIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Test
+    void shouldAcceptRejectionReplayAcrossExternalEndpoints() throws Exception {
+        String token = login();
+        UUID id = createSeedServiceOrderWithBudget(token);
+        mockMvc.perform(post("/api/v1/service-orders/{id}/budget/external-rejection", id)
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("source", "email"))))
+                .andExpect(status().isOk());
+        mockMvc.perform(post("/api/v1/service-orders/{id}/budget/decision", id)
+                        .header("X-External-Service-Token", EXTERNAL_SERVICE_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json(Map.of("source", "email", "decision", "REJECTED"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("IN_DIAGNOSIS"));
+    }
+
+    @Test
     void shouldExecuteServiceOrderFlow() throws Exception {
         String token = login();
         int completedOrdersBefore = getCompletedOrders(token);

@@ -28,22 +28,26 @@ public class DecideServiceOrderBudgetUseCase {
         ServiceOrder serviceOrder = serviceOrderRepository
                 .findById(command.serviceOrderId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
+        if (serviceOrder.rejectedAt() != null) {
+            return serviceOrder;
+        }
         serviceOrder.rejectBudget();
         releaseReservedParts(serviceOrder);
         return serviceOrderRepository.save(serviceOrder);
     }
 
     private void releaseReservedParts(ServiceOrder serviceOrder) {
-        for (ServiceOrder.ServiceOrderPart serviceOrderPart : serviceOrder.parts()) {
-            var part = partRepository
-                    .findById(serviceOrderPart.partId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-            part.releaseReservedStock(serviceOrderPart.quantity());
-            partRepository.save(part);
-        }
+        BudgetStock.update(serviceOrder, partRepository, br.com.autocarehub.domain.model.Part::releaseReservedStock);
     }
 
-    public record Command(UUID serviceOrderId, Decision decision, String source, String reason) {}
+    public record Command(UUID serviceOrderId, Decision decision, String source, String reason) {
+        public Command {
+            if (serviceOrderId == null || decision == null) {
+                throw new br.com.autocarehub.domain.exception.DomainException(
+                        "Service order ID and decision are required");
+            }
+        }
+    }
 
     public enum Decision {
         APPROVED,

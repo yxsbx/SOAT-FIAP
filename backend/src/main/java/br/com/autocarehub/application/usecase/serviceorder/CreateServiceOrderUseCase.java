@@ -111,7 +111,7 @@ public class CreateServiceOrderUseCase {
         if (parts == null) {
             return;
         }
-        parts.forEach(partInput -> {
+        parts.stream().sorted(java.util.Comparator.comparing(PartInput::partId)).forEach(partInput -> {
             Part part = partRepository
                     .findById(partInput.partId())
                     .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
@@ -123,13 +123,7 @@ public class CreateServiceOrderUseCase {
     }
 
     private void reserveBudgetParts(ServiceOrder serviceOrder) {
-        for (ServiceOrder.ServiceOrderPart orderPart : serviceOrder.parts()) {
-            Part part = partRepository
-                    .findById(orderPart.partId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-            part.reserveStock(orderPart.quantity());
-            partRepository.save(part);
-        }
+        BudgetStock.update(serviceOrder, partRepository, Part::reserveStock);
     }
 
     public record Command(

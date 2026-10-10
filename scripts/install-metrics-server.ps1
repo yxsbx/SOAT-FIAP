@@ -1,5 +1,5 @@
 param(
-    [string]$ManifestUrl = "https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml",
+    [string]$ManifestUrl = "https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml",
     [switch]$SkipLocalTlsPatch
 )
 

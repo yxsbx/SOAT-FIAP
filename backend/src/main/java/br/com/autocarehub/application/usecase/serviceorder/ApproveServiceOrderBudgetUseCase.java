@@ -21,20 +21,15 @@ public class ApproveServiceOrderBudgetUseCase {
         ServiceOrder serviceOrder = serviceOrderRepository
                 .findById(serviceOrderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service order not found"));
-        if (serviceOrder.approvedAt() == null) {
-            serviceOrder.approveBudget();
-            commitReservedParts(serviceOrder);
+        if (serviceOrder.approvedAt() != null) {
+            return serviceOrder;
         }
+        serviceOrder.approveBudget();
+        commitReservedParts(serviceOrder);
         return serviceOrderRepository.save(serviceOrder);
     }
 
     private void commitReservedParts(ServiceOrder serviceOrder) {
-        for (ServiceOrder.ServiceOrderPart serviceOrderPart : serviceOrder.parts()) {
-            var part = partRepository
-                    .findById(serviceOrderPart.partId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-            part.commitReservedStock(serviceOrderPart.quantity());
-            partRepository.save(part);
-        }
+        BudgetStock.update(serviceOrder, partRepository, br.com.autocarehub.domain.model.Part::commitReservedStock);
     }
 }

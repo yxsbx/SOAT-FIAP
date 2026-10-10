@@ -1154,3 +1154,7 @@ Checklist de preparação:
   segurança.
 - Fase 2: evolução para qualidade, arquitetura, escalabilidade, infraestrutura como código, Kubernetes, CI/CD e deploy
   automatizado.
+
+## Correções da avaliação da Fase 2
+
+Regras, testes de regressão, migração e roteiro de validação: [correções da Fase 2](docs/quality/phase-2-remediation.md).

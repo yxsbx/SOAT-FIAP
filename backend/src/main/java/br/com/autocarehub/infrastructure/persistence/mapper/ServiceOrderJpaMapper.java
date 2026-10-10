@@ -24,6 +24,7 @@ public final class ServiceOrderJpaMapper {
         entity.setCreatedAt(serviceOrder.createdAt());
         entity.setBudgetGeneratedAt(serviceOrder.budgetGeneratedAt());
         entity.setApprovedAt(serviceOrder.approvedAt());
+        entity.setRejectedAt(serviceOrder.rejectedAt());
         entity.setStartedAt(serviceOrder.startedAt());
         entity.setFinishedAt(serviceOrder.finishedAt());
         entity.setDeliveredAt(serviceOrder.deliveredAt());
@@ -57,7 +58,8 @@ public final class ServiceOrderJpaMapper {
                 entity.getApprovedAt(),
                 entity.getStartedAt(),
                 entity.getFinishedAt(),
-                entity.getDeliveredAt());
+                entity.getDeliveredAt(),
+                entity.getRejectedAt());
     }
 
     private static ServiceOrderServiceJpaEntity toServiceEntity(ServiceOrder.ServiceOrderService service) {

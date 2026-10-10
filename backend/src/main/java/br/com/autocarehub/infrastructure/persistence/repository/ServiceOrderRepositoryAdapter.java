@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @Repository
 public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
@@ -34,7 +35,11 @@ public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
 
     @Override
     public Optional<ServiceOrder> findById(UUID id) {
-        return serviceOrderJpaRepository.findById(id).map(ServiceOrderJpaMapper::toDomain);
+        return (TransactionSynchronizationManager.isActualTransactionActive()
+                                && !TransactionSynchronizationManager.isCurrentTransactionReadOnly()
+                        ? serviceOrderJpaRepository.findByIdForUpdate(id)
+                        : serviceOrderJpaRepository.findById(id))
+                .map(ServiceOrderJpaMapper::toDomain);
     }
 
     @Override
@@ -90,7 +95,10 @@ public class ServiceOrderRepositoryAdapter implements ServiceOrderRepository {
                         .when("IN_DIAGNOSIS", 2)
                         .when("RECEIVED", 3)
                         .otherwise(4);
-                query.orderBy(criteriaBuilder.asc(statusPriority), criteriaBuilder.asc(root.get("createdAt")));
+                query.orderBy(
+                        criteriaBuilder.asc(statusPriority),
+                        criteriaBuilder.asc(root.get("createdAt")),
+                        criteriaBuilder.asc(root.get("id")));
             }
 
             List<Predicate> predicates = new ArrayList<>();

@@ -42,6 +42,37 @@ class ServiceOrderTest {
     }
 
     @Test
+    void shouldKeepDecisionTimestampsOnDomainReplay() {
+        ServiceOrder approved = serviceOrderWithItems();
+        approved.generateBudget();
+        approved.approveBudget();
+        LocalDateTime timestamp = approved.approvedAt();
+        approved.approveBudget();
+        assertThat(approved.approvedAt()).isEqualTo(timestamp);
+        approved.startExecution();
+        approved.approveBudget();
+        assertThat(approved.approvedAt()).isEqualTo(timestamp);
+
+        ServiceOrder rejected = serviceOrderWithItems();
+        rejected.generateBudget();
+        rejected.rejectBudget();
+        timestamp = rejected.rejectedAt();
+        rejected.rejectBudget();
+        assertThat(rejected.rejectedAt()).isEqualTo(timestamp);
+        rejected.generateBudget();
+        assertThat(rejected.rejectedAt()).isNull();
+    }
+
+    @Test
+    void shouldNotRegenerateAnApprovedBudgetOrRejectIt() {
+        ServiceOrder order = serviceOrderWithItems();
+        order.generateBudget();
+        order.approveBudget();
+        assertThatThrownBy(order::rejectBudget).isInstanceOf(DomainException.class);
+        assertThatThrownBy(order::generateBudget).isInstanceOf(DomainException.class);
+    }
+
+    @Test
     void shouldStartWithReceivedStatus() {
         ServiceOrder serviceOrder = serviceOrder();
 

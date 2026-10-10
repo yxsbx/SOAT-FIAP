@@ -25,6 +25,7 @@ public class ServiceOrder {
     private Money totalAmount;
     private @Nullable LocalDateTime budgetGeneratedAt;
     private @Nullable LocalDateTime approvedAt;
+    private @Nullable LocalDateTime rejectedAt;
     private @Nullable LocalDateTime startedAt;
     private @Nullable LocalDateTime finishedAt;
     private @Nullable LocalDateTime deliveredAt;
@@ -39,7 +40,7 @@ public class ServiceOrder {
                 List.of(),
                 List.of(),
                 Money.zero(),
-                LocalDateTime.now(),
+                LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS),
                 null,
                 null,
                 null,
@@ -62,6 +63,40 @@ public class ServiceOrder {
             @Nullable LocalDateTime startedAt,
             @Nullable LocalDateTime finishedAt,
             @Nullable LocalDateTime deliveredAt) {
+        this(
+                id,
+                customerId,
+                vehicleId,
+                status,
+                diagnosticNotes,
+                services,
+                parts,
+                totalAmount,
+                createdAt,
+                budgetGeneratedAt,
+                approvedAt,
+                startedAt,
+                finishedAt,
+                deliveredAt,
+                null);
+    }
+
+    public ServiceOrder(
+            UUID id,
+            UUID customerId,
+            UUID vehicleId,
+            ServiceOrderStatus status,
+            String diagnosticNotes,
+            List<ServiceOrderService> services,
+            List<ServiceOrderPart> parts,
+            Money totalAmount,
+            LocalDateTime createdAt,
+            @Nullable LocalDateTime budgetGeneratedAt,
+            @Nullable LocalDateTime approvedAt,
+            @Nullable LocalDateTime startedAt,
+            @Nullable LocalDateTime finishedAt,
+            @Nullable LocalDateTime deliveredAt,
+            @Nullable LocalDateTime rejectedAt) {
         this.id = Objects.requireNonNull(id, "id is required");
         this.customerId = Objects.requireNonNull(customerId, "customerId is required");
         this.vehicleId = Objects.requireNonNull(vehicleId, "vehicleId is required");
@@ -76,6 +111,7 @@ public class ServiceOrder {
         this.startedAt = startedAt;
         this.finishedAt = finishedAt;
         this.deliveredAt = deliveredAt;
+        this.rejectedAt = rejectedAt;
     }
 
     private static String requireText(String value, String message) {
@@ -106,26 +142,38 @@ public class ServiceOrder {
     }
 
     public Money generateBudget() {
+        ensureCanChangeBudgetItems();
         Budget budget = createBudget();
+        this.rejectedAt = null;
         this.totalAmount = budget.totalAmount();
-        this.budgetGeneratedAt = LocalDateTime.now();
+        this.budgetGeneratedAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
         this.status = ServiceOrderStatus.AGUARDANDO_APROVACAO;
         return totalAmount;
     }
 
     public void approveBudget() {
+        if (approvedAt != null) {
+            return;
+        }
         requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Budget can only be approved while waiting approval");
         if (budgetGeneratedAt == null) {
             throw new DomainException("Budget must be generated before approval");
         }
-        this.approvedAt = LocalDateTime.now();
+        this.approvedAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
     }
 
     public void rejectBudget() {
+        if (rejectedAt != null) {
+            return;
+        }
+        if (approvedAt != null) {
+            throw new InvalidServiceOrderStatusTransitionException("Approved budget cannot be rejected");
+        }
         requireStatus(ServiceOrderStatus.AGUARDANDO_APROVACAO, "Budget can only be rejected while waiting approval");
         if (budgetGeneratedAt == null) {
             throw new DomainException("Budget must be generated before rejection");
         }
+        this.rejectedAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
         this.budgetGeneratedAt = null;
         this.approvedAt = null;
         this.status = ServiceOrderStatus.EM_DIAGNOSTICO;
@@ -137,19 +185,19 @@ public class ServiceOrder {
             throw new DomainException("Execution cannot start without budget approval");
         }
         this.status = ServiceOrderStatus.EM_EXECUCAO;
-        this.startedAt = LocalDateTime.now();
+        this.startedAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
     }
 
     public void finish() {
         requireStatus(ServiceOrderStatus.EM_EXECUCAO, "Service order can only be finished while in progress");
         this.status = ServiceOrderStatus.FINALIZADA;
-        this.finishedAt = LocalDateTime.now();
+        this.finishedAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
     }
 
     public void deliver() {
         requireStatus(ServiceOrderStatus.FINALIZADA, "Service order can only be delivered after finished");
         this.status = ServiceOrderStatus.ENTREGUE;
-        this.deliveredAt = LocalDateTime.now();
+        this.deliveredAt = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
     }
 
     public UUID id() {
@@ -202,6 +250,10 @@ public class ServiceOrder {
 
     public @Nullable LocalDateTime approvedAt() {
         return approvedAt;
+    }
+
+    public @Nullable LocalDateTime rejectedAt() {
+        return rejectedAt;
     }
 
     public @Nullable LocalDateTime startedAt() {

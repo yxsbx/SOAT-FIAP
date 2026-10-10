@@ -29,12 +29,6 @@ public class GenerateServiceOrderBudgetUseCase {
     }
 
     private void reserveParts(ServiceOrder serviceOrder) {
-        for (ServiceOrder.ServiceOrderPart serviceOrderPart : serviceOrder.parts()) {
-            var part = partRepository
-                    .findById(serviceOrderPart.partId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Part not found"));
-            part.reserveStock(serviceOrderPart.quantity());
-            partRepository.save(part);
-        }
+        BudgetStock.update(serviceOrder, partRepository, br.com.autocarehub.domain.model.Part::reserveStock);
     }
 }

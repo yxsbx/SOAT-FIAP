@@ -33,6 +33,26 @@ class ApproveServiceOrderBudgetUseCaseTest {
     }
 
     @Test
+    void shouldReportMissingOrderForEitherDecision() {
+        DecideServiceOrderBudgetUseCase useCase =
+                new DecideServiceOrderBudgetUseCase(serviceOrderRepository, partRepository);
+        for (var decision : DecideServiceOrderBudgetUseCase.Decision.values()) {
+            assertThatThrownBy(() -> useCase.execute(
+                            new DecideServiceOrderBudgetUseCase.Command(UUID.randomUUID(), decision, "test", null)))
+                    .isInstanceOf(br.com.autocarehub.application.exception.ResourceNotFoundException.class);
+        }
+    }
+
+    @Test
+    void shouldRejectMissingDecisionAndOrderId() {
+        assertThatThrownBy(() -> new DecideServiceOrderBudgetUseCase.Command(
+                        null, DecideServiceOrderBudgetUseCase.Decision.REJECTED, "test", null))
+                .isInstanceOf(DomainException.class);
+        assertThatThrownBy(() -> new DecideServiceOrderBudgetUseCase.Command(UUID.randomUUID(), null, "test", null))
+                .isInstanceOf(DomainException.class);
+    }
+
+    @Test
     void shouldReservePartWhenBudgetIsGeneratedAndReduceStockWhenBudgetIsApproved() {
         Part part = partRepository.save(part());
         ServiceOrder serviceOrder = new ServiceOrder(UUID.randomUUID(), UUID.randomUUID(), "Cliente relata vazamento");
